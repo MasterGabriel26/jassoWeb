@@ -24,11 +24,12 @@ function getQueryParam(param) {
     var urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }
+var idGrupo = ""
 $(function() {
     initEventListeners();
     initCardScroll(); // Inicializar la funcionalidad de scroll de tarjetas
-    var idGrupo = getQueryParam("idGrupoInvitados");
-    alert(idGrupo);
+     idGrupo = getQueryParam("idGrupoInvitados");
+   
 });
 
 var padrinoCount = 1;
@@ -308,6 +309,7 @@ async function getWeddingData() {
         );
 
         return {
+            idGrupoInvitacion: idGrupo,
             pareja,
             descripcionFelicidad: $('#descripcionFelicidad').val() || '',
             detallesEvento,
