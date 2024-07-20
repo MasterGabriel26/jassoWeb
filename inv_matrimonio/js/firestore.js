@@ -20,10 +20,15 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 var storage = firebase.storage();
-
+function getQueryParam(param) {
+    var urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
 $(function() {
     initEventListeners();
     initCardScroll(); // Inicializar la funcionalidad de scroll de tarjetas
+    var idGrupo = getQueryParam("idGrupoInvitados");
+    alert(idGrupo);
 });
 
 var padrinoCount = 1;
