@@ -1,11 +1,12 @@
+
 // Configuración de Firebase
-var f1 = "AIzaSyBTD0WrmlvOYViJ5J8_Tt3vDzCDmxQL3tQ"
-var f2 = "jassodb-4b8e4.firebaseapp.com"
-var f3 = "jassodb-4b8e4"
-var f4 = "jassodb-4b8e4.appspot.com"
-var f5 = "851107842246"
-var f6 = "1:851107842246:web:166bb374ed3dd2cf7e6fc7"
-var f7 = "G-WXYY0N3TMG"
+var f1 = "AIzaSyBTD0WrmlvOYViJ5J8_Tt3vDzCDmxQL3tQ";
+var f2 = "jassodb-4b8e4.firebaseapp.com";
+var f3 = "jassodb-4b8e4";
+var f4 = "jassodb-4b8e4.appspot.com";
+var f5 = "851107842246";
+var f6 = "1:851107842246:web:166bb374ed3dd2cf7e6fc7";
+var f7 = "G-WXYY0N3TMG";
 
 const firebaseConfig = {
     apiKey: f1,
@@ -20,16 +21,18 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 var storage = firebase.storage();
+
 function getQueryParam(param) {
     var urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }
-var idGrupo = ""
+
+var idGrupo = "";
+
 $(function() {
     initEventListeners();
     initCardScroll(); // Inicializar la funcionalidad de scroll de tarjetas
-     idGrupo = getQueryParam("idGrupoInvitados");
-   
+    idGrupo = getQueryParam("idGrupoInvitados");
 });
 
 var padrinoCount = 1;
@@ -37,56 +40,52 @@ var galeriaFiles = [];
 var portadaFiles = [];
 
 function initEventListeners() {
-   
-  
-        let optionsHtml = '';
-        for (const key in LUGARES) {
-            if (LUGARES.hasOwnProperty(key)) {
-               // const lugar = LUGARES[key].lugar;
-                optionsHtml += `<option value="${key}">${key}</option>`;
-            }
+    let optionsHtml = '';
+    for (const key in LUGARES) {
+        if (LUGARES.hasOwnProperty(key)) {
+            optionsHtml += `<option value="${key}">${key}</option>`;
         }
-        $('#lugarEvento').html(optionsHtml)
-    
+    }
+    $('#lugarEvento').html(optionsHtml);
 
     $('#galeriaFotos').on('change', function() {
-        previewImages(this, 'galeriaPreview');
+        compressAndPreviewImages(this, 'galeriaPreview');
     });
 
     $('#portadaFotos').on('change', function() {
-        previewImages(this, 'portadaPreview');
+        compressAndPreviewImages(this, 'portadaPreview');
     });
 
     $('#fotoPrimerEncuentro').on('change', function() {
-        previewSingleImage(this, 'fotoPrimerEncuentroPreview');
+        compressAndPreviewSingleImage(this, 'fotoPrimerEncuentroPreview');
     });
 
     $('#fotoPrimeraCita').on('change', function() {
-        previewSingleImage(this, 'fotoPrimeraCitaPreview');
+        compressAndPreviewSingleImage(this, 'fotoPrimeraCitaPreview');
     });
 
     $('#fotoPropuesta').on('change', function() {
-        previewSingleImage(this, 'fotoPropuestaPreview');
+        compressAndPreviewSingleImage(this, 'fotoPropuestaPreview');
     });
 
     $('#fotoCompromiso').on('change', function() {
-        previewSingleImage(this, 'fotoCompromisoPreview');
+        compressAndPreviewSingleImage(this, 'fotoCompromisoPreview');
     });
 
     $('#fotoMarido').on('change', function() {
-        previewSingleImage(this, 'fotoMaridoPreview');
+        compressAndPreviewSingleImage(this, 'fotoMaridoPreview');
     });
 
     $('#fotoMujer').on('change', function() {
-        previewSingleImage(this, 'fotoMujerPreview');
+        compressAndPreviewSingleImage(this, 'fotoMujerPreview');
     });
 
     $('#fotoLugar').on('change', function() {
-        previewSingleImage(this, 'fotoLugarPreview');
+        compressAndPreviewSingleImage(this, 'fotoLugarPreview');
     });
 
     $(`#fotoPadrino1`).on('change', function() {
-        previewSingleImage(this, `fotoPadrinoPreview1`);
+        compressAndPreviewSingleImage(this, `fotoPadrinoPreview1`);
     });
 
     $('#addPadrinoButton').on('click', function() {
@@ -123,21 +122,53 @@ function addPadrino() {
     `;
     document.getElementById('padrinosContainer').appendChild(padrinoDiv);
     $(`#fotoPadrino${padrinoCount}`).on('change', function() {
-        previewSingleImage(this, `fotoPadrinoPreview${padrinoCount}`);
+        compressAndPreviewSingleImage(this, `fotoPadrinoPreview${padrinoCount}`);
     });
 }
 
-
-function previewImages(input, previewContainerId) {
+function compressAndPreviewImages(input, previewContainerId) {
     var previewContainer = document.getElementById(previewContainerId);
     var filesArray = Array.from(input.files);
 
-    if (input.id === 'galeriaFotos') {
-        galeriaFiles = galeriaFiles.concat(filesArray);
-        updatePreview(galeriaFiles, previewContainer);
-    } else if (input.id === 'portadaFotos') {
-        portadaFiles = portadaFiles.concat(filesArray);
-        updatePreview(portadaFiles, previewContainer);
+    filesArray.forEach(file => {
+        new Compressor(file, {
+            quality: 0.6, // Reduce la calidad para comprimir
+            success(result) {
+                if (input.id === 'galeriaFotos') {
+                    galeriaFiles.push(result);
+                    updatePreview(galeriaFiles, previewContainer);
+                } else if (input.id === 'portadaFotos') {
+                    portadaFiles.push(result);
+                    updatePreview(portadaFiles, previewContainer);
+                }
+            },
+            error(err) {
+                console.log(err.message);
+            },
+        });
+    });
+}
+
+function compressAndPreviewSingleImage(input, previewContainerId) {
+    var previewContainer = document.getElementById(previewContainerId);
+    if (input.files && input.files[0]) {
+        new Compressor(input.files[0], {
+            quality: 0.6, // Reduce la calidad para comprimir
+            success(result) {
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    var img = document.createElement('img');
+                    img.src = event.target.result;
+                    img.classList.add('card-categoria');
+                    previewContainer.innerHTML = '';
+                    previewContainer.appendChild(img);
+                }
+                reader.readAsDataURL(result);
+            },
+            error(err) {
+                console.log(err.message);
+            },
+        });
     }
 }
 
@@ -164,21 +195,6 @@ function initializeCarousel(previewContainerId) {
         prevArrow: '<button type="button" class="slick-prev">‹</button>',
         nextArrow: '<button type="button" class="slick-next">›</button>',
     });
-}
-
-function previewSingleImage(input, previewContainerId) {
-    var previewContainer = document.getElementById(previewContainerId);
-    if (input.files && input.files[0]) {
-        var reader = new FileReader();
-        reader.onload = function(event) {
-            var img = document.createElement('img');
-            img.src = event.target.result;
-            img.classList.add('card-categoria');
-            previewContainer.innerHTML = '';
-            previewContainer.appendChild(img);
-        }
-        reader.readAsDataURL(input.files[0]);
-    }
 }
 
 function showConfirmationDialog(onConfirm) {
@@ -324,7 +340,6 @@ async function getWeddingData() {
         throw error; // Lanzar error para que se capture en handleFormSubmit
     }
 }
-
 
 function showLoadingDialog() {
     document.getElementById('loadingDialog').style.display = 'flex';

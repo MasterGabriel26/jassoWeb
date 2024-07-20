@@ -12,7 +12,7 @@ firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 
 $(function() {
-    loadInvitacion("1FUpUYh6x72s9zUURyLC");
+    loadInvitacion("RJvrdlnY9uu1GnLwQ8Mm");
     iniciarQR()
 });
 
