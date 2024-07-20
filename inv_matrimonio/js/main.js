@@ -1,6 +1,22 @@
 (function ($) {
     "use strict";
-
+    document.addEventListener('DOMContentLoaded', function () {
+        const soundBack = document.getElementById('soundBack');
+    
+        // Event listener for visibility change
+        document.addEventListener('visibilitychange', function () {
+            if (document.hidden) {
+                soundBack.pause();
+            } else {
+                soundBack.play();
+            }
+        });
+    
+        // Resto de tu código existente...
+    
+        // Aquí va el resto de tu código de inicialización
+    });
+    
     // Navbar on scrolling
     $(window).scroll(function () {
         if ($(this).scrollTop() > 200) {
@@ -34,7 +50,7 @@
         $('.btn-play').click(function () {
             $videoSrc = $(this).data("src");
         });
-        console.log($videoSrc);
+       
 
         $('#videoModal').on('shown.bs.modal', function (e) {
             $("#video").attr('src', $videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0");

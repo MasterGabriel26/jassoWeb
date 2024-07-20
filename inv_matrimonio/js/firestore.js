@@ -31,6 +31,18 @@ var galeriaFiles = [];
 var portadaFiles = [];
 
 function initEventListeners() {
+   
+  
+        let optionsHtml = '';
+        for (const key in LUGARES) {
+            if (LUGARES.hasOwnProperty(key)) {
+               // const lugar = LUGARES[key].lugar;
+                optionsHtml += `<option value="${key}">${key}</option>`;
+            }
+        }
+        $('#lugarEvento').html(optionsHtml)
+    
+
     $('#galeriaFotos').on('change', function() {
         previewImages(this, 'galeriaPreview');
     });

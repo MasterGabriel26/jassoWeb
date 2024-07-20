@@ -138,7 +138,10 @@ function getContextForTextarea(textareaId, nombreMarido, nombreMujer, inputText)
             return `Describe brevemente cómo fue el compromiso de ${nombreMarido} y ${nombreMujer}. No es necesario que inicies con los nombres de ellos, sé creativo. Debe ser realista y emocionante. Aquí está la entrada del usuario: ${inputText}. Asegúrate de que la descripción sea completa y concluyente.`;
         case 'descripcionFelicidad':
             return `Describe brevemente la felicidad de ${nombreMarido} y ${nombreMujer} por su boda. Debe ser realista y emocionante. No es necesario que inicies con los nombres de ellos, sé creativo. Aquí está la entrada del usuario: ${inputText}. Asegúrate de que la descripción sea completa y concluyente.`;
-        default:
+        case 'descripcionEvento':
+            return `Describe brevemente la La boda de ${nombreMarido} y ${nombreMujer} será un evento lleno de amor y felicidad, donde celebraremos nuestra unión con familiares y amigos queridos. Estamos emocionados de compartir este día especial con ustedes. Debe ser realista y emocionante. Ten en cuenta que el evento será futuró porque se va a realizar, sé creativo. Aquí está la entrada del usuario: ${inputText}. Asegúrate de que la descripción sea completa y concluyente.`;
+           
+            default:
             return `Escribe una breve descripción. Aquí está la entrada del usuario: ${inputText}. Asegúrate de que la descripción sea completa y concluyente. No es necesario que inicies con los nombres de ellos, sé creativo.`;
     }
 }

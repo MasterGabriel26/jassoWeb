@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Jorge & Rosa - Nuestra boda</title>
+    <title>Nuestra boda</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="Plantillas HTML gratuitas" name="keywords">
     <meta content="Plantillas HTML gratuitas" name="description">
@@ -13,7 +13,8 @@
 
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600&display=swap" rel="stylesheet"> 
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -24,40 +25,25 @@
 
     <!-- Customized Bootstrap Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
-  
-     <!-- Firebase -->
-     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
-     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
-     
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
 
-    <script>
-        $(document).ready(function() {
-            var qrCode = new QRCode(document.getElementById("qrcode"), {
-                text: "",
-                width: 300,
-                height: 300,
-                colorDark : "#121F38",
-                colorLight : "#E47A2E",
-                correctLevel : QRCode.CorrectLevel.H
-            });
-
-            $('#qrModal').on('show.bs.modal', function () {
-                qrCode.makeCode("https://www.wippi.com.co");
-            });
-        });
-    </script>
 </head>
 
 <body data-spy="scroll" data-target=".navbar" data-offset="51">
     <!-- Navbar Start -->
-    
+
     <nav class="navbar fixed-top shadow-sm navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-lg-5">
         <a href="index.html" class="navbar-brand d-block d-lg-none">
-            <h1 id="navbarBrand" class="font-secondary text-white mb-n2">Jorge <span class="text-primary">&</span> Rosa</h1>
+            <h1 id="navbarBrand" class="font-secondary text-white mb-n2">Jorge <span class="text-primary">&</span> Rosa
+            </h1>
         </a>
         <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
             <span class="navbar-toggler-icon"></span>
@@ -67,11 +53,13 @@
                 <a href="#home" class="nav-item nav-link active">Inicio</a>
                 <a id="miQR" class="nav-item nav-link" data-toggle="modal" data-target="#qrModal">Mi QR</a>
                 <a class="nav-item nav-link" href="#rsvp">Confirmación</a>
-                <a id="ubicacionBoda" class="nav-item nav-link" data-toggle="modal" data-target="#locationModal">¿Dónde será?</a>
+                <a id="ubicacionBoda" class="nav-item nav-link" data-toggle="modal" data-target="#locationModal">¿Dónde
+                    será?</a>
                 <a id="preguntasFrecuentes" class="nav-item nav-link">Preguntas frecuentes</a>
             </div>
             <a href="index.html" class="navbar-brand mx-5 d-none d-lg-block">
-                <h1 id="navbarBrand" class="font-secondary text-white mb-n2">Jorge <span class="text-primary">&</span> Rosa</h1>
+                <h1 id="navbarBrand" class="font-secondary text-white mb-n2">Jorge <span class="text-primary">&</span>
+                    Rosa</h1>
             </a>
         </div>
     </nav>
@@ -85,9 +73,10 @@
                     <img id="fotoPortada1" class="position-absolute w-100 h-100" src="" style="object-fit: cover;">
                     <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                         <div class="p-3" style="max-width: 900px;">
-                            <h1 class="display-1 font-secondary text-white mt-n3 mb-md-4">Jorge & Rosa</h1>
+                            <h1 class="novios display-1 font-secondary text-white mt-n3 mb-md-4"></h1>
                             <div class="d-inline-block border-top border-bottom border-light py-3 px-4">
-                                <h3 class="text-uppercase font-weight-normal text-white m-0" style="letter-spacing: 2px;">Nos casamos</h3>
+                                <h3 class="text-uppercase font-weight-normal text-white m-0"
+                                    style="letter-spacing: 2px;">Nos casamos</h3>
                             </div>
                         </div>
                     </div>
@@ -96,16 +85,17 @@
                     <img id="fotoPortada2" class="position-absolute w-100 h-100" src="" style="object-fit: cover;">
                     <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
                         <div class="p-3" style="max-width: 900px;">
-                            <h1 class="display-1 font-secondary text-white mt-n3 mb-md-4">Jorge & Rosa</h1>
+                            <h1 class="novios display-1 font-secondary text-white mt-n3 mb-md-4"></h1>
                             <div class="d-inline-block border-top border-bottom border-light py-3 px-4">
-                                <h3 class="text-uppercase font-weight-normal text-white m-0" style="letter-spacing: 2px;">Nos casamos</h3>
+                                <h3 class="text-uppercase font-weight-normal text-white m-0"
+                                    style="letter-spacing: 2px;">Nos casamos</h3>
                             </div>
-                            <button type="button" class="btn-play mx-auto" data-toggle="modal"
-                                data-src="" data-target="#videoModal">
+                            <button type="button" class="btn-play mx-auto" data-toggle="modal" data-src=""
+                                data-target="#videoModal">
                                 <span></span>
                             </button>
                         </div>
-                    </div> 
+                    </div>
                 </div>
             </div>
             <a class="carousel-control-prev justify-content-start" href="#header-carousel" data-slide="prev">
@@ -123,24 +113,29 @@
     <!-- Carousel End -->
 
     <!-- Video Modal Start -->
-    <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-body">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
-                    </button>        
+                    </button>
                     <!-- 16:9 aspect ratio -->
                     <div class="embed-responsive embed-responsive-16by9">
                         <!-- <iframe class="embed-responsive-item" src="" id="video"  allowscriptaccess="always" allow="autoplay"></iframe> -->
-                        <iframe width="560" height="315" src="https://www.youtube.com/embed/zhcBigxoG3M?si=GmGmVkUeYcj-4Co0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        <iframe width="560" height="315"
+                            src="https://www.youtube.com/embed/zhcBigxoG3M?si=GmGmVkUeYcj-4Co0"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <!-- Video Modal End -->
-    <audio src="assets/soundBack.mp3" autoplay loop></audio>
+    <audio id="soundBack" src="assets/soundBack.mp3" autoplay loop></audio>
 
     <!-- About Start -->
     <div class="container-fluid py-3" id="about">
@@ -152,35 +147,49 @@
             </div>
             <div class="row m-0 mb-4 mb-md-0 pb-2 pb-md-0">
                 <div class="col-md-6 p-0 text-center text-md-right">
-                    <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-5">
+                    <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-3">
                         <h3 id="novio" class="mb-3 nombreMarido">El Novio</h3>
-                        <p id="descripcionMarido">Jorge es un hombre amable y carismático, conocido por su pasión por la música y su amor por la naturaleza. Desde pequeño, siempre soñó con encontrar a alguien con quien compartir sus aventuras y su corazón.</p>
-                        <h3 class="nombreMarido font-secondary font-weight-normal text-muted mb-3"><i class="fa fa-male text-primary pr-3"></i>Jorge</h3>
+                        <p id="descripcionMarido">Jorge es un hombre amable y carismático, conocido por su pasión por la
+                            música y su amor por la naturaleza. Desde pequeño, siempre soñó con encontrar a alguien con
+                            quien compartir sus aventuras y su corazón.</p>
+                        <h3 class="nombreMarido font-secondary font-weight-normal text-muted mb-3"><i
+                                class="fa fa-male text-primary pr-3"></i>Jorge</h3>
                         <div class="position-relative">
-                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-linkedin-in"></i></a>
                             <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-6 p-0" style="min-height: 400px;">
-                    <img class="position-absolute w-100 h-100" id="fotoMarido" src="img/about-1.jpg" style="object-fit: cover;">
+                    <img class="position-absolute w-100 h-100" id="fotoMarido" src="img/about-1.jpg"
+                        style="object-fit: cover;">
                 </div>
             </div>
             <div class="row m-0">
                 <div class="col-md-6 p-0" style="min-height: 400px;">
-                    <img class="position-absolute w-100 h-100" id="fotoMujer" src="img/about-2.jpg" style="object-fit: cover;">
+                    <img class="position-absolute w-100 h-100" id="fotoMujer" src="img/about-2.jpg"
+                        style="object-fit: cover;">
                 </div>
                 <div class="col-md-6 p-0 text-center text-md-left">
-                    <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-5">
-                        <h3 id="novia" class="mb-3 nombreMujer" >La Novia</h3>
-                        <p id="descripcionMujer">Rosa es una mujer brillante y compasiva, con un profundo amor por la literatura y los viajes. Su sonrisa ilumina cualquier habitación y su espíritu aventurero la ha llevado a vivir experiencias únicas alrededor del mundo.</p>
-                        <h3  class="nombreMujer font-secondary font-weight-normal text-muted mb-3"><i class="fa fa-female text-primary pr-3"></i>Rosa2</h3>
+                    <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-3">
+                        <h3 id="novia" class="mb-3 nombreMujer">La Novia</h3>
+                        <p id="descripcionMujer">Rosa es una mujer brillante y compasiva, con un profundo amor por la
+                            literatura y los viajes. Su sonrisa ilumina cualquier habitación y su espíritu aventurero la
+                            ha llevado a vivir experiencias únicas alrededor del mundo.</p>
+                        <h3 class="nombreMujer font-secondary font-weight-normal text-muted mb-3"><i
+                                class="fa fa-female text-primary pr-3"></i>Rosa2</h3>
                         <div class="position-relative">
-                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i class="fab fa-instagram"></i></a>
-                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-instagram"></i></a>
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-linkedin-in"></i></a>
                             <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
                         </div>
                     </div>
@@ -205,18 +214,23 @@
                     </div>
                     <div class="col-md-6 text-center text-md-left">
                         <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-4 ml-md-3">
-                            <h4 class="mb-2" >Primer Encuentro</h4>
+                            <h4 class="mb-2">Primer Encuentro</h4>
                             <p id="fechaPrimerEncuentro" class="text-uppercase mb-2">01 Ene 2020</p>
-                            <p id="descripcionPrimerEncuentro" class="m-0">Jorge y Rosa se conocieron en una cafetería local donde ambos solían pasar sus tardes leyendo y disfrutando de una buena taza de café. Sus miradas se cruzaron y desde ese momento supieron que había algo especial entre ellos.</p>
+                            <p id="descripcionPrimerEncuentro" class="m-0">Jorge y Rosa se conocieron en una cafetería
+                                local donde ambos solían pasar sus tardes leyendo y disfrutando de una buena taza de
+                                café. Sus miradas se cruzaron y desde ese momento supieron que había algo especial entre
+                                ellos.</p>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 text-center text-md-right">
                         <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-4 mr-md-3">
-                            <h4 class="mb-2" >Primera Cita</h4>
+                            <h4 class="mb-2">Primera Cita</h4>
                             <p id="fechaPrimeraCita" class="text-uppercase mb-2">14 Feb 2020</p>
-                            <p id="descripcionPrimeraCita" class="m-0">Su primera cita fue un paseo por el parque seguido de una cena romántica bajo las estrellas. Conversaron durante horas, descubriendo sus intereses comunes y soñando con aventuras futuras.</p>
+                            <p id="descripcionPrimeraCita" class="m-0">Su primera cita fue un paseo por el parque
+                                seguido de una cena romántica bajo las estrellas. Conversaron durante horas,
+                                descubriendo sus intereses comunes y soñando con aventuras futuras.</p>
                         </div>
                     </div>
                     <div class="col-md-6 text-center text-md-left">
@@ -229,18 +243,22 @@
                     </div>
                     <div class="col-md-6 text-center text-md-left">
                         <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-4 ml-md-3">
-                            <h4 class="mb-2" >Propuesta</h4>
+                            <h4 class="mb-2">Propuesta</h4>
                             <p id="fechaPropuesta" class="text-uppercase mb-2">25 Dic 2020</p>
-                            <p id="descripcionPropuesta" class="m-0">En la víspera de Navidad, Jorge llevó a Rosa a su lugar favorito en la ciudad y, bajo las luces festivas, se arrodilló y le pidió que fuera su compañera de vida. Rosa, con lágrimas de alegría, dijo que sí.</p>
+                            <p id="descripcionPropuesta" class="m-0">En la víspera de Navidad, Jorge llevó a Rosa a su
+                                lugar favorito en la ciudad y, bajo las luces festivas, se arrodilló y le pidió que
+                                fuera su compañera de vida. Rosa, con lágrimas de alegría, dijo que sí.</p>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-6 text-center text-md-right">
                         <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-4 mr-md-3">
-                            <h4 class="mb-2" >Compromiso</h4>
+                            <h4 class="mb-2">Compromiso</h4>
                             <p id="fechaCompromiso" class="text-uppercase mb-2">01 Ene 2021</p>
-                            <p id="descripcionCompromiso" class="m-0">El compromiso fue un evento íntimo con sus familiares y amigos más cercanos, celebrando el amor y la unión de Jorge y Rosa. Fue una noche llena de risas, lágrimas y promesas para el futuro.</p>
+                            <p id="descripcionCompromiso" class="m-0">El compromiso fue un evento íntimo con sus
+                                familiares y amigos más cercanos, celebrando el amor y la unión de Jorge y Rosa. Fue una
+                                noche llena de risas, lágrimas y promesas para el futuro.</p>
                         </div>
                     </div>
                     <div class="col-md-6 text-center text-md-left">
@@ -271,7 +289,7 @@
         <div class="gradient-overlay"></div>
         <!-- <img id="galleryImage" class="gallery-background" src="" alt="Galería de fotos"> -->
     </div>
-    
+
     <!-- Gallery End -->
 
     <!-- Event Start -->
@@ -284,17 +302,19 @@
             </div>
             <div class="row justify-content-center">
                 <div class="col-md-6 text-center">
-                    <h5 class="font-weight-normal text-muted mb-3 pb-3" id="descripcionFelicidad">La boda de Jorge y Rosa será un evento lleno de amor y felicidad, donde celebraremos nuestra unión con familiares y amigos queridos. Estamos emocionados de compartir este día especial con ustedes.</h5>
+                    <h5 class="font-weight-normal text-muted mb-3 pb-3" id="descripcionFelicidad">La boda de Jorge y
+                        Rosa será un evento lleno de amor y felicidad, donde celebraremos nuestra unión con familiares y
+                        amigos queridos. Estamos emocionados de compartir este día especial con ustedes.</h5>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6 border-right border-primary">
                     <div class="text-center text-md-right mr-md-3 mb-4 mb-md-0">
                         <img class="img-fluid mb-4" id="fotoLugar" src="img/event-1.jpg" alt="">
-                        <h4 class="mb-3" >La Recepción</h4>
-                        <p class="mb-2" id="lugarEvento" >123 Calle, Torreon, MEX.</p>
-                        <!-- <p class="mb-0" id="horaCeremonia">12:00PM - 13:00PM</p> -->
-                        <p class="mb-0" id="horaRecepcion">13:00PM - 14:00PM</p>
+                        <h4 class="mb-3">La Recepción</h4>
+                        <p class="mb-2" id="lugarEvento">123 Calle, Torreon, MEX.</p>
+                        <p class="mb-2" id="direccion" style="font-size: 12px;"></p>
+                        <p class="mb-3" id="horaRecepcion" style="font-weight: bold;">13:00PM - 14:00PM</p>
                         <p class="mb-0" id="descripcionEvento">La recepción será un evento inolvidable.</p>
                     </div>
                 </div>
@@ -322,8 +342,10 @@
             <div class="row">
                 <div class="col-12 text-center mb-2">
                     <ul class="list-inline mb-4" id="portfolio-flters">
-                        <li id="padrinoLi" class="btn btn-outline-primary font-weight-bold m-1 py-2 px-4" data-filter=".first">Padrinos</li>
-                        <li id="madrinaLi" class="btn btn-outline-primary font-weight-bold m-1 py-2 px-4" data-filter=".second">Madrinas</li>
+                        <li id="padrinoLi" class="btn btn-outline-primary font-weight-bold m-1 py-2 px-4"
+                            data-filter=".first">Padrinos</li>
+                        <li id="madrinaLi" class="btn btn-outline-primary font-weight-bold m-1 py-2 px-4"
+                            data-filter=".second">Madrinas</li>
                     </ul>
                 </div>
             </div>
@@ -332,7 +354,7 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Friends & Family End -->
 
     <!-- RSVP Start -->
@@ -344,12 +366,16 @@
                 <i class="far fa-heart text-dark"></i>
             </div>
             <div id="bloqueinvitacion" class="text-center mt-4">
-                <button class="btn btn-primary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button" style="width: 280px;" data-toggle="modal" data-target="#rsvpModal">Confirmo asistencia 😊</button>
-                <button class="btn btn-secondary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button" style="width: 280px; margin-top: 8px; margin-bottom: 8px;">No puedo asistir 😢</button>
-                <button class="btn btn-outline-primary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button" style="width: 280px;">¿Tienes preguntas? ❓</button>
+                <button class="btn btn-primary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button"
+                    style="width: 280px;" data-toggle="modal" data-target="#rsvpModal">Confirmo asistencia 😊</button>
+                <button class="btn btn-secondary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button"
+                    style="width: 280px; margin-top: 8px; margin-bottom: 8px;">No puedo asistir 😢</button>
+                <button class="btn btn-outline-primary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button"
+                    style="width: 280px;">¿Tienes preguntas? ❓</button>
             </div>
             <!-- Modal for RSVP Form -->
-            <div class="modal fade" id="rsvpModal" tabindex="-1" role="dialog" aria-labelledby="rsvpModalLabel" aria-hidden="true">
+            <div class="modal fade" id="rsvpModal" tabindex="-1" role="dialog" aria-labelledby="rsvpModalLabel"
+                aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content bg-secondary text-white">
                         <div class="modal-header">
@@ -362,11 +388,13 @@
                             <form>
                                 <div class="form-row">
                                     <div class="form-group col-sm-6">
-                                        <input type="text" class="form-control bg-secondary border-0 py-4 px-3" placeholder="Tu acompañante"/>
-                                    </div>                        
-                                </div>                         
+                                        <input type="text" class="form-control bg-secondary border-0 py-4 px-3"
+                                            placeholder="Tu acompañante" />
+                                    </div>
+                                </div>
                                 <div>
-                                    <button class="btn btn-primary font-weight-bold py-3 px-5" type="submit">Enviar</button>
+                                    <button class="btn btn-primary font-weight-bold py-3 px-5"
+                                        type="submit">Enviar</button>
                                 </div>
                             </form>
                         </div>
@@ -386,7 +414,8 @@
             </div>
             <div class="d-flex justify-content-center mb-4">
                 <a class="btn btn-lg btn-outline-light btn-lg-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
-                <a class="btn btn-lg btn-outline-light btn-lg-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
+                <a class="btn btn-lg btn-outline-light btn-lg-square mr-2" href="#"><i
+                        class="fab fa-facebook-f"></i></a>
                 <a class="btn btn-lg btn-outline-light btn-lg-square mr-2" href="#"><i la="fab fa-linkedin-in"></i></a>
                 <a class="btn btn-lg btn-outline-light btn-lg-square" href="#"><i class="fab fa-instagram"></i></a>
             </div>
@@ -404,7 +433,8 @@
     <i class="fa fa-2x fa-angle-down text-white scroll-to-bottom"></i>
 
     <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-outline-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+    <a href="#" class="btn btn-lg btn-outline-primary btn-lg-square back-to-top"><i
+            class="fa fa-angle-double-up"></i></a>
 
     <!-- Modal -->
     <div class="modal fade" id="qrModal" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">
@@ -412,7 +442,7 @@
             <div class="modal-content bg-secondary text-white">
                 <div class="modal-header">
                     <h5 class="modal-title" id="qrModalLabel">Código QR</h5>
-                    <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close text-black" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -426,7 +456,8 @@
         </div>
     </div>
     <!-- Modal for Location -->
-    <div class="modal fade" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="locationModalLabel" aria-hidden="true">
+    <div class="modal fade" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="locationModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content bg-secondary text-white">
                 <div class="modal-header">
@@ -435,13 +466,19 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body text-center">
-                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3603.5323380693844!2d-101.00077718858132!3d25.420460377474352!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x868872bbffffffff%3A0x86eacb0416aaf916!2sMOVE%20EVENTOS%20Saltillo!5e0!3m2!1ses!2sco!4v1721313810624!5m2!1ses!2sco" 
-                        width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <div class="modal-body text-center mapa">
+                   </div>
             </div>
         </div>
     </div>
     <style>
+        .mapa iframe {
+    width: 100%;
+    max-width: 100%;
+    height: 450px;
+    border: 0;
+}
+
         .qr-container {
             position: relative;
             display: flex;
@@ -451,7 +488,7 @@
             width: 300px;
             height: 300px;
         }
-
+      
         #qrcode {
             width: 100%;
             height: 100%;
@@ -467,13 +504,25 @@
         }
 
         @keyframes scan {
-            0% { top: 0; }
-            100% { top: 100%; }
+            0% {
+                top: 0;
+            }
+
+            100% {
+                top: 100%;
+            }
         }
 
         @keyframes flash {
-            0%, 100% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.75); }
-            50% { box-shadow: 0 0 20px rgba(255, 255, 255, 1); }
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+            }
         }
 
         .modal-lg {
@@ -493,6 +542,7 @@
     <!-- Template Javascript -->
     <script src="js/loadInvitacion.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/constantes.js"></script>
 </body>
 
 </html>

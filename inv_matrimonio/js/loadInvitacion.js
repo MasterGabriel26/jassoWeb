@@ -13,6 +13,7 @@ var db = firebase.firestore();
 
 $(function() {
     loadInvitacion("1FUpUYh6x72s9zUURyLC");
+    iniciarQR()
 });
 
 function loadInvitacion(docId) {
@@ -27,7 +28,9 @@ function loadInvitacion(docId) {
             $('#novioNovia').text(`${novio} & ${novia}`);
             $('#novio').text(novio);
             $('#novia').text(novia);
-
+            $('.novios').text(data.pareja.nombreMarido+" & "+data.pareja.nombreMujer);
+            
+            
             $('.nombreMarido').text(data.pareja.nombreMarido);
             $('#descripcionMarido').text(data.pareja.descripcionMarido);
             $('#fotoMarido').attr('src', data.pareja.fotoMarido);
@@ -42,9 +45,20 @@ function loadInvitacion(docId) {
             $('#fechaEvento').text(data.detallesEvento.fechaEvento);
             $('#descripcionEvento').text(data.detallesEvento.descripcionEvento);
             $('#fotoLugar').attr('src', data.detallesEvento.fotoLugar);
-            $('#lugarEvento').text(data.detallesEvento.lugarEvento);
+            
+            const lugarClave = data.detallesEvento.lugarEvento;
+            const nombreLugar = LUGARES[lugarClave] ? LUGARES[lugarClave].lugar : lugarClave;
+            const direccion = LUGARES[lugarClave] ? LUGARES[lugarClave].direccion : '';
+            const iframe = LUGARES[lugarClave] ? LUGARES[lugarClave].iframe : '';
+            console.log(direccion)
+            $('#lugarEvento').text(nombreLugar);
+            $('#direccion').text(direccion);
+            $('.mapa').html(iframe);
+            
+            
+            // $('#lugarEvento').text(data.detallesEvento.lugarEvento);
             $('#horaCeremonia').text(data.detallesEvento.horaCeremonia);
-            $('#horaRecepcion').text(data.detallesEvento.horaRecepcion);
+            $('#horaRecepcion').text("Hora: "+data.detallesEvento.horaRecepcion);
 
             // Historia
             $('#fechaPrimerEncuentro').text(data.historia.primerEncuentro.fecha);
@@ -77,7 +91,20 @@ function loadInvitacion(docId) {
     });
 }
 
+function iniciarQR(){
+    var qrCode = new QRCode(document.getElementById("qrcode"), {
+        text: "",
+        width: 300,
+        height: 300,
+        colorDark: "#121F38",
+        colorLight: "#E47A2E",
+        correctLevel: QRCode.CorrectLevel.H
+    });
 
+    $('#qrModal').on('show.bs.modal', function () {
+        qrCode.makeCode("https://www.wippi.com.co");
+    });
+}
 function loadGaleria(galeriaFotos) {
     const galeriaContainer = $('.gallery-carousel');
     let item = "";
