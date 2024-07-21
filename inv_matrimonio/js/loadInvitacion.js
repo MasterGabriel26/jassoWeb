@@ -10,10 +10,16 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
-
+var idGrupo = "";
+function getQueryParam(param) {
+    var urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
 $(function() {
-    loadInvitacion("RJvrdlnY9uu1GnLwQ8Mm");
+        idGrupo = getQueryParam("idGrupoInvitados");
+    loadInvitacion(idGrupo);
     iniciarQR()
+
 });
 
 function loadInvitacion(docId) {

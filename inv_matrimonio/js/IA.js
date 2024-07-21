@@ -53,7 +53,10 @@ document.addEventListener('DOMContentLoaded', function () {
         generateText(nombreMarido, nombreMujer, textareaValue);
     });
 });
-
+function autoResizeTextarea(textarea) {
+    textarea.style.height = 'auto';
+    textarea.style.height = textarea.scrollHeight + 'px';
+}
 async function generateText(nombreMarido, nombreMujer, inputText) {
     const resultDiv = document.getElementById('generatedText');
     resultDiv.textContent = 'Generando texto...';
@@ -94,6 +97,7 @@ async function generateText(nombreMarido, nombreMujer, inputText) {
         const data = await response.json();
         const generatedText = data.choices[0].message.content.trim();
         resultDiv.textContent = generatedText;
+        
         $('#aiModal').modal('show');
     } catch (error) {
         resultDiv.textContent = 'Ocurrió un error al generar el texto.';
@@ -107,6 +111,7 @@ function approveText() {
         const textarea = document.getElementById(targetTextareaId);
         const generatedText = document.getElementById('generatedText').textContent;
         textarea.value = generatedText;
+        autoResizeTextarea(textarea);
         $('#aiModal').modal('hide');
         alertify.success('Texto aprobado y guardado.');
     }
