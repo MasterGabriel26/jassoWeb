@@ -16,6 +16,7 @@ firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 var idTarjeta = "";
 var idInvitado = "";
+var idGrupo=""
 var nombreInvitado = "";
 var mesaInvitado = "";
 var statusInvitado = "";
@@ -33,7 +34,7 @@ $(function () {
 
     if (idInvitado) {
         loadInvitado(idInvitado);
-  initializeLottie();
+
     }
 
   
@@ -50,18 +51,18 @@ function loadInvitado(idInvitado) {
     db.collection('invitados').doc(idInvitado).onSnapshot(doc => {
         if (doc.exists) {
             const data = doc.data();
-            const idGrupo = data.idGrupoInvitados;
+
+            idGrupo = data.idGrupoInvitados;
             nombreInvitado = data.nombre;
             mesaInvitado = data.mesa;
             statusInvitado = data.status;
-            numeroAcompanantes = data.numeroAcompanantes;
+            numeroAcompanantes = data.personas;
 
-            console.log(statusInvitado);
             $("#status").html(statusInvitado);
 
             if (statusInvitado === 'CONFIRMADA' || statusInvitado === 'INGRESADO') {
                 
-                $("#invitationName").html(nombreInvitado+" y acompañante(s)");
+                $("#invitationName").html(nombreInvitado+" y sus "+numeroAcompanantes+" acompañante(s)");
                 $("#assignedTable").html("Mesa asignada: "+mesaInvitado);
              
                 if (statusInvitado === 'INGRESADO') {
@@ -75,7 +76,7 @@ function loadInvitado(idInvitado) {
                     colorQR = "#121F38"; // Valor predeterminado para CONFIRMADA
                 }
                 $("#miQR").show();
-                iniciarQR(idInvitado);
+               
             } else {
                 $("#miQR").hide();
             }
@@ -97,9 +98,10 @@ function getIdGrupoInvitado(idGrupo) {
         .then(querySnapshot => {
             if (!querySnapshot.empty) {
                 // Asumiendo que solo habrá un documento que cumple con la condición
-                const doc = querySnapshot.docs[0];
+                idTarjeta = querySnapshot.docs[0].id;
 
-                loadTarjeta(doc.id);
+                loadTarjeta(idTarjeta);
+                iniciarQR(idInvitado);
             } else {
                 console.log('No matching documents found.');
                 return null;
@@ -147,7 +149,7 @@ function loadTarjeta(docId) {
             const nombreLugar = LUGARES[lugarClave] ? LUGARES[lugarClave].lugar : lugarClave;
             const direccion = LUGARES[lugarClave] ? LUGARES[lugarClave].direccion : '';
             const iframe = LUGARES[lugarClave] ? LUGARES[lugarClave].iframe : '';
-            console.log(direccion)
+           
             $('#lugarEvento').text(nombreLugar);
             $('#direccion').text(direccion);
             $('.mapa').html(iframe);
@@ -192,9 +194,10 @@ function iniciarQR(idInvitado) {
     // Borrar cualquier QR existente antes de crear uno nuevo
     var qrElement = document.getElementById("qrcode");
     qrElement.innerHTML = ""; // Limpiar QR anterior
-
+const url="https://jassocompany.com/im/index.html?tj=" + idTarjeta + "&in=" + idInvitado+"&idGrupo="+idGrupo
+console.log("url "+url )
     var qrCode = new QRCode(qrElement, {
-        text: "https://jassocompany.com/im/index.html?tj=" + idTarjeta + "&in=" + idInvitado,
+        text:url ,
         width: 300,
         height: 300,
         colorDark: colorQR,
@@ -219,14 +222,7 @@ function iniciarQR(idInvitado) {
         });
     });
 
-      // Iniciar la animación de Lottie
-       lottieAnimation = lottie.loadAnimation({
-        container: document.getElementById('lottieAnimation'),
-        renderer: 'svg',
-        loop: true,
-        autoplay: false,
-        path: './assets/save.json' // Ruta al archivo Lottie
-    });
+   
 }
 function loadGaleria(galeriaFotos) {
     const galeriaContainer = $('.gallery-carousel');
@@ -243,7 +239,7 @@ function loadGaleria(galeriaFotos) {
                 </a>
             </div>
         `;
-        console.log(fotoUrl);
+
     });
 
     galeriaContainer.html(item);
