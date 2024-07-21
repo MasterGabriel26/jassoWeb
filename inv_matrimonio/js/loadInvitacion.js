@@ -10,19 +10,22 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
-var idGrupo = "";
+var idTarjeta = "";
+var idInvitado = "";
 function getQueryParam(param) {
     var urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
 }
 $(function() {
-        idGrupo = getQueryParam("idGrupoInvitados");
-    loadInvitacion(idGrupo);
+    idTarjeta = getQueryParam("idTarjeta");
+    idInvitado = getQueryParam("idInvitado");
+    loadInvitacion(idTarjeta);
     iniciarQR()
 
 });
 
 function loadInvitacion(docId) {
+
     db.collection('tarjetaInvitacion').doc(docId).get().then(doc => {
         if (doc.exists) {
             const data = doc.data();
@@ -103,12 +106,13 @@ function iniciarQR(){
         width: 300,
         height: 300,
         colorDark: "#121F38",
-        colorLight: "#E47A2E",
+        colorLight: "#fff",
         correctLevel: QRCode.CorrectLevel.H
     });
 
     $('#qrModal').on('show.bs.modal', function () {
-        qrCode.makeCode("https://www.wippi.com.co");
+        qrCode.makeCode("https://jassocompany.com/inv_matrimonio/index.html?idTarjeta="+idTarjeta+"&idInvitado="+idInvitado);
+
     });
 }
 function loadGaleria(galeriaFotos) {

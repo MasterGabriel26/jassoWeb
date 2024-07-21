@@ -33,8 +33,13 @@ $(function() {
     initEventListeners();
     initCardScroll(); // Inicializar la funcionalidad de scroll de tarjetas
     idGrupo = getQueryParam("idGrupoInvitados");
+    cargarDatosCliente(idGrupo)
     checkFirebaseConnection();
 });
+function cargarDatosCliente(idGrupo){
+    
+
+}
 function checkFirebaseConnection() {
     db.collection("test").get()
         .then(() => {
