@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarjeta de Invitación</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+        }
+        .container {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            max-width: 90%;
+            width: 500px;
+        }
+        .container h1 {
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 20px;
+        }
+        .container p {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .container img {
+            max-width: 100%;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+                width: 100%;
+            }
+            .container h1 {
+                font-size: 1.5em;
+            }
+            .container p {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="https://via.placeholder.com/400x200?text=Tarjeta+No+Disponible" alt="Sin Tarjeta de Invitación">
+        <h1>Tarjeta no disponible</h1>
+        <p>Lo sentimos, estamos diligenciando la lista de invitados. Por favor, vuelva más tarde.</p>
+    </div>
+</body>
+</html>

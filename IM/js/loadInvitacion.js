@@ -37,8 +37,41 @@ $(function () {
 
     }
 
-  
+    if (idInvitado ==null && idTarjeta==null) {
+        window.location.href="error.html" 
 
+    }
+
+    $("#confirmarAsistencia").click(function(e){
+        e.preventDefault(); // Prevent default button action
+        db.collection('invitados').doc(idInvitado).update({
+            status: CONFIRMADA
+        })
+        .then(() => {
+            console.log("Status updated to CONFIRMADA");
+            $("#rsvpModal").modal("hide")
+            $("#qrModal").modal("show")
+        })
+        .catch(error => {
+            console.error("Error updating status: ", error);
+        });
+    });
+
+    
+    $("#botonNoAsistire").click(function(e){
+        e.preventDefault(); // Prevent default button action
+        db.collection('invitados').doc(idInvitado).update({
+            status: NO_ASISTIRA
+        })
+        .then(() => {
+            console.log("Status updated to CONFIRMADA");
+            $("#botonConfirmar").show()
+            alert("Notificada tu ausencia.");
+        })
+        .catch(error => {
+            console.error("Error updating status: ", error);
+        });
+    });
 });
 
 
@@ -61,7 +94,7 @@ function loadInvitado(idInvitado) {
             $("#status").html(statusInvitado);
 
             if (statusInvitado === 'CONFIRMADA' || statusInvitado === 'INGRESADO') {
-                
+                $("#botonConfirmar").hide()
                 $("#invitationName").html(nombreInvitado+" y sus "+numeroAcompanantes+" acompañante(s)");
                 $("#assignedTable").html("Mesa asignada: "+mesaInvitado);
              
@@ -84,8 +117,10 @@ function loadInvitado(idInvitado) {
             getIdGrupoInvitado(idGrupo);
         } else {
             console.log('No such document!');
+              window.location.href="error.html"
         }
     }, error => {
+          window.location.href="error.html"
         console.error('Error getting document: ', error);
     });
 }
@@ -103,11 +138,13 @@ function getIdGrupoInvitado(idGrupo) {
                 loadTarjeta(idTarjeta);
                 iniciarQR(idInvitado);
             } else {
+                window.location.href="error.html"
                 console.log('No matching documents found.');
                 return null;
             }
         })
         .catch(error => {
+              window.location.href="error.html"
             console.error('Error searching for documents: ', error);
             return null;
         });
@@ -194,7 +231,7 @@ function iniciarQR(idInvitado) {
     // Borrar cualquier QR existente antes de crear uno nuevo
     var qrElement = document.getElementById("qrcode");
     qrElement.innerHTML = ""; // Limpiar QR anterior
-const url="https://jassocompany.com/im/index.html?tj=" + idTarjeta + "&in=" + idInvitado+"&idGrupo="+idGrupo
+const url="https://jassocompany.com/IM/index.html?tj=" + idTarjeta + "&in=" + idInvitado+"&idGrupo="+idGrupo
 console.log("url "+url )
     var qrCode = new QRCode(qrElement, {
         text:url ,
