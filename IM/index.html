@@ -365,9 +365,11 @@
                 <i class="far fa-heart text-dark"></i>
             </div>
             <div id="bloqueinvitacion" class="text-center mt-4">
-                <button id="botonConfirmar" class="btn btn-primary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button"
-                    style="width: 280px;" data-toggle="modal" data-target="#rsvpModal">Confirmo asistencia 😊</button>
-                <button id="botonNoAsistire" class="btn btn-secondary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button"
+                <button id="botonConfirmar" class="btn btn-primary btn-lg btn-block-custom font-weight-bold py-3 mx-2"
+                    type="button" style="width: 280px;" data-toggle="modal" data-target="#rsvpModal">Confirmo asistencia
+                    😊</button>
+                <button id="botonNoAsistire"
+                    class="btn btn-secondary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button"
                     style="width: 280px; margin-top: 8px; margin-bottom: 8px;">No puedo asistir 😢</button>
                 <button class="btn btn-outline-primary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button"
                     style="width: 280px;">¿Tienes preguntas? ❓</button>
@@ -387,12 +389,12 @@
                         <div class="modal-body">
                             <h6 style="color: #000;">Recomendaciones</h6>
                             <ul class="list-unstyled" style="color: #000;">
-                                <li><strong>Vestido hombre:</strong> Traje formal</li>
-                                <li><strong>Vestido mujer:</strong> Vestido de noche</li>
-                                <li><strong>Mesa asignada:</strong> Mesa 12</li>
-                                <li><strong>Número de invitados:</strong> 2</li>
-                                <li><strong>Dirección:</strong> Calle de la Fiesta 123, Ciudad</li>
-                                <li><strong>Hora:</strong> 7:00 PM</li>
+                                <li><strong>Vestido hombre:</strong> <span class="vestido-hombre"></span></li>
+                                <li><strong>Vestido mujer:</strong> <span class="vestido-mujer"></span></li>
+                                <li><strong>Mesa asignada:</strong> <span class="mesaAsignada"></span></li>
+                                <li><strong>Número de invitados:</strong> <span class="numero-invitados"></span></li>
+                                <li><strong>Dirección:</strong> <span class="direccion" style="font-size: 13px;"></span></li>
+                                <li><strong>Hora:</strong> <span class="hora-evento"></span></li>
                             </ul>
 
 
@@ -463,7 +465,7 @@
                         <div id="qrcode"></div>
                         <div class="scanner-line"></div>
                     </div>
-                   
+
                 </div>
             </div>
         </div>
@@ -528,7 +530,7 @@
 
         }
 
-    
+
 
         .qr-container {
             position: relative;

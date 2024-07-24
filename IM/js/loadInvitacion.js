@@ -16,7 +16,7 @@ firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 var idTarjeta = "";
 var idInvitado = "";
-var idGrupo=""
+var idGrupo = ""
 var nombreInvitado = "";
 var mesaInvitado = "";
 var statusInvitado = "";
@@ -37,40 +37,40 @@ $(function () {
 
     }
 
-    if (idInvitado ==null && idTarjeta==null) {
-        window.location.href="error.html" 
+    if (idInvitado == null && idTarjeta == null) {
+        window.location.href = "error.html"
 
     }
 
-    $("#confirmarAsistencia").click(function(e){
+    $("#confirmarAsistencia").click(function (e) {
         e.preventDefault(); // Prevent default button action
         db.collection('invitados').doc(idInvitado).update({
             status: CONFIRMADA
         })
-        .then(() => {
-            console.log("Status updated to CONFIRMADA");
-            $("#rsvpModal").modal("hide")
-            $("#qrModal").modal("show")
-        })
-        .catch(error => {
-            console.error("Error updating status: ", error);
-        });
+            .then(() => {
+                console.log("Status updated to CONFIRMADA");
+                $("#rsvpModal").modal("hide")
+                $("#qrModal").modal("show")
+            })
+            .catch(error => {
+                console.error("Error updating status: ", error);
+            });
     });
 
-    
-    $("#botonNoAsistire").click(function(e){
+
+    $("#botonNoAsistire").click(function (e) {
         e.preventDefault(); // Prevent default button action
         db.collection('invitados').doc(idInvitado).update({
             status: NO_ASISTIRA
         })
-        .then(() => {
-            console.log("Status updated to CONFIRMADA");
-            $("#botonConfirmar").show()
-            alert("Notificada tu ausencia.");
-        })
-        .catch(error => {
-            console.error("Error updating status: ", error);
-        });
+            .then(() => {
+                console.log("Status updated to CONFIRMADA");
+                $("#botonConfirmar").show()
+                alert("Notificada tu ausencia.");
+            })
+            .catch(error => {
+                console.error("Error updating status: ", error);
+            });
     });
 });
 
@@ -84,7 +84,6 @@ function loadInvitado(idInvitado) {
     db.collection('invitados').doc(idInvitado).onSnapshot(doc => {
         if (doc.exists) {
             const data = doc.data();
-
             idGrupo = data.idGrupoInvitados;
             nombreInvitado = data.nombre;
             mesaInvitado = data.mesa;
@@ -95,32 +94,38 @@ function loadInvitado(idInvitado) {
 
             if (statusInvitado === 'CONFIRMADA' || statusInvitado === 'INGRESADO') {
                 $("#botonConfirmar").hide()
-                $("#invitationName").html(nombreInvitado+" y sus "+numeroAcompanantes+" acompañante(s)");
-                $("#assignedTable").html("Mesa asignada: "+mesaInvitado);
-             
+                $("#invitationName").html(nombreInvitado + " y sus " + (numeroAcompanantes - 1) + " acompañante(s)");
+                $("#assignedTable").text("Mesa asignada: " + mesaInvitado);
+
                 if (statusInvitado === 'INGRESADO') {
                     colorQR = "#0b9422";
                     $("#status").html("Estado: Ingresado");
                     $("#status").css("color", colorQR);
-                   
+
                 } else {
-                  
-                 
+
+
                     colorQR = "#121F38"; // Valor predeterminado para CONFIRMADA
                 }
                 $("#miQR").show();
-               
+
             } else {
                 $("#miQR").hide();
             }
 
+
+            $(".numero-invitados").text(`${numeroAcompanantes - 1}`);
+            $(".mesaAsignada").html(`${mesaInvitado}`);
+
+
+
             getIdGrupoInvitado(idGrupo);
         } else {
             console.log('No such document!');
-              window.location.href="error.html"
+            window.location.href = "error.html"
         }
     }, error => {
-          window.location.href="error.html"
+        window.location.href = "error.html"
         console.error('Error getting document: ', error);
     });
 }
@@ -134,17 +139,18 @@ function getIdGrupoInvitado(idGrupo) {
             if (!querySnapshot.empty) {
                 // Asumiendo que solo habrá un documento que cumple con la condición
                 idTarjeta = querySnapshot.docs[0].id;
-
+                idTarjeta = querySnapshot.docs[0].id;
+               
                 loadTarjeta(idTarjeta);
                 iniciarQR(idInvitado);
             } else {
-                window.location.href="error.html"
+                window.location.href = "error.html"
                 console.log('No matching documents found.');
                 return null;
             }
         })
         .catch(error => {
-              window.location.href="error.html"
+            window.location.href = "error.html"
             console.error('Error searching for documents: ', error);
             return null;
         });
@@ -160,6 +166,8 @@ function loadTarjeta(docId) {
             // Novios
             const novio = data.pareja.generoMarido === 'hombre' ? 'Novio' : 'Novia';
             const novia = data.pareja.generoMujer === 'mujer' ? 'Novia' : 'Novio';
+
+          
 
             $('#novioNovia').text(`${novio} & ${novia}`);
             $('#novio').text(novio);
@@ -186,7 +194,11 @@ function loadTarjeta(docId) {
             const nombreLugar = LUGARES[lugarClave] ? LUGARES[lugarClave].lugar : lugarClave;
             const direccion = LUGARES[lugarClave] ? LUGARES[lugarClave].direccion : '';
             const iframe = LUGARES[lugarClave] ? LUGARES[lugarClave].iframe : '';
-           
+
+               // $(".vestido-hombre").html(`Vestido hombre: ${vestidoHombre}`);
+                 $(".hora-evento").text(data.detallesEvento.horaCeremonia);
+                $(".direccion").text(direccion);
+
             $('#lugarEvento').text(nombreLugar);
             $('#direccion').text(direccion);
             $('.mapa').html(iframe);
@@ -231,10 +243,10 @@ function iniciarQR(idInvitado) {
     // Borrar cualquier QR existente antes de crear uno nuevo
     var qrElement = document.getElementById("qrcode");
     qrElement.innerHTML = ""; // Limpiar QR anterior
-const url="https://jassocompany.com/IM/index.html?tj=" + idTarjeta + "&in=" + idInvitado+"&idGrupo="+idGrupo
-console.log("url "+url )
+    const url = "https://jassocompany.com/IM/index.html?tj=" + idTarjeta + "&in=" + idInvitado + "&idGrupo=" + idGrupo
+    console.log("url " + url)
     var qrCode = new QRCode(qrElement, {
-        text:url ,
+        text: url,
         width: 300,
         height: 300,
         colorDark: colorQR,
@@ -242,7 +254,7 @@ console.log("url "+url )
         correctLevel: QRCode.CorrectLevel.H
     });
 
-      document.getElementById('downloadQR').addEventListener('click', function () {
+    document.getElementById('downloadQR').addEventListener('click', function () {
         const scannerLine = document.querySelector('.scanner-line');
         scannerLine.style.display = 'none';
         console.log("descargando");
@@ -259,7 +271,7 @@ console.log("url "+url )
         });
     });
 
-   
+
 }
 function loadGaleria(galeriaFotos) {
     const galeriaContainer = $('.gallery-carousel');
