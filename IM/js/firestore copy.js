@@ -29,15 +29,15 @@ function getQueryParam(param) {
 
 var idGrupo = "";
 
-$(function () {
+$(function() {
     initEventListeners();
     initCardScroll(); // Inicializar la funcionalidad de scroll de tarjetas
     idGrupo = getQueryParam("idGrupoInvitados");
     cargarDatosCliente(idGrupo)
     checkFirebaseConnection();
 });
-function cargarDatosCliente(idGrupo) {
-
+function cargarDatosCliente(idGrupo){
+    
 
 }
 function checkFirebaseConnection() {
@@ -64,48 +64,48 @@ function initEventListeners() {
     }
     $('#lugarEvento').html(optionsHtml);
 
-    $('#galeriaFotos').on('change', function () {
+    $('#galeriaFotos').on('change', function() {
         compressAndPreviewImages(this, 'galeriaPreview');
     });
 
-    $('#portadaFotos').on('change', function () {
+    $('#portadaFotos').on('change', function() {
         compressAndPreviewImages(this, 'portadaPreview');
     });
 
-    $('#fotoPrimerEncuentro').on('change', function () {
+    $('#fotoPrimerEncuentro').on('change', function() {
         compressAndPreviewSingleImage(this, 'fotoPrimerEncuentroPreview');
     });
 
-    $('#fotoPrimeraCita').on('change', function () {
+    $('#fotoPrimeraCita').on('change', function() {
         compressAndPreviewSingleImage(this, 'fotoPrimeraCitaPreview');
     });
 
-    $('#fotoPropuesta').on('change', function () {
+    $('#fotoPropuesta').on('change', function() {
         compressAndPreviewSingleImage(this, 'fotoPropuestaPreview');
     });
 
-    $('#fotoCompromiso').on('change', function () {
+    $('#fotoCompromiso').on('change', function() {
         compressAndPreviewSingleImage(this, 'fotoCompromisoPreview');
     });
 
-    $('#fotoMarido').on('change', function () {
+    $('#fotoMarido').on('change', function() {
         compressAndPreviewSingleImage(this, 'fotoMaridoPreview');
     });
 
-    $('#fotoMujer').on('change', function () {
+    $('#fotoMujer').on('change', function() {
         compressAndPreviewSingleImage(this, 'fotoMujerPreview');
     });
 
-    $('#fotoLugar').on('change', function () {
+    $('#fotoLugar').on('change', function() {
         compressAndPreviewSingleImage(this, 'fotoLugarPreview');
     });
 
-    $(`#fotoPadrino1`).on('change', function () {
+    $(`#fotoPadrino1`).on('change', function() {
         compressAndPreviewSingleImage(this, `fotoPadrinoPreview1`);
     });
 
-    $('#addPadrinoButton').on('click', function () {
-        showConfirmationDialog(function () {
+    $('#addPadrinoButton').on('click', function() {
+        showConfirmationDialog(function() {
             addPadrino();
             showSuccessMessage(`Padrino ${padrinoCount} agregado exitosamente.`);
         });
@@ -137,7 +137,7 @@ function addPadrino() {
         </div>
     `;
     document.getElementById('padrinosContainer').appendChild(padrinoDiv);
-    $(`#fotoPadrino${padrinoCount}`).on('change', function () {
+    $(`#fotoPadrino${padrinoCount}`).on('change', function() {
         compressAndPreviewSingleImage(this, `fotoPadrinoPreview${padrinoCount}`);
     });
 }
@@ -164,6 +164,7 @@ function compressAndPreviewImages(input, previewContainerId) {
         });
     });
 }
+
 function compressAndPreviewSingleImage(input, previewContainerId) {
     var previewContainer = document.getElementById(previewContainerId);
     if (input.files && input.files[0]) {
@@ -171,7 +172,7 @@ function compressAndPreviewSingleImage(input, previewContainerId) {
             quality: 0.6, // Reduce la calidad para comprimir
             success(result) {
                 var reader = new FileReader();
-                reader.onload = function (event) {
+                reader.onload = function(event) {
                     var img = document.createElement('img');
                     img.src = event.target.result;
                     img.classList.add('card-categoria');
@@ -187,12 +188,11 @@ function compressAndPreviewSingleImage(input, previewContainerId) {
     }
 }
 
-
 function updatePreview(files, previewContainer) {
     previewContainer.innerHTML = '';
-    files.forEach(function (file) {
+    files.forEach(function(file) {
         var reader = new FileReader();
-        reader.onload = function (event) {
+        reader.onload = function(event) {
             var img = document.createElement('img');
             img.src = event.target.result;
             img.classList.add('card-categoria');
@@ -203,6 +203,65 @@ function updatePreview(files, previewContainer) {
     initializeCarousel(previewContainer.id);
 }
 
+function initializeCarousel(previewContainerId) {
+    $('#' + previewContainerId).not('.slick-initialized').slick({
+        infinite: true,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        prevArrow: '<button type="button" class="slick-prev">‹</button>',
+        nextArrow: '<button type="button" class="slick-next">›</button>',
+    });
+}
+
+function showConfirmationDialog(onConfirm) {
+    alertify.confirm(
+        'Confirmación',
+        '¿Desea agregar un padrino?',
+        function() {
+            onConfirm();
+        },
+        function() {
+            alertify.error('Cancelado');
+        }
+    );
+}
+
+function showSuccessMessage(message) {
+    alertify.success(message);
+}
+
+async function uploadImage(file, folder) {
+    const storageRef = storage.ref();
+    const timestamp = new Date().getTime();
+    const fileRef = storageRef.child(`${folder}/${timestamp}_${file.name}`);
+    const uploadTask = fileRef.put(file);
+
+    return new Promise((resolve, reject) => {
+        uploadTask.on('state_changed', 
+            (snapshot) => {},
+            (error) => reject(error),
+            () => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => resolve(downloadURL));
+            }
+        );
+    });
+}
+
+async function handleFormSubmit(event) {
+    event.preventDefault();
+    showLoadingDialog();
+
+    try {
+        const weddingData = await getWeddingData();
+        await db.collection('tarjetaInvitacion').add(weddingData);
+        location.reload(); // Refresca la página
+    } catch (error) {
+        console.error('Error al guardar los datos: ', error);
+        alertify.alert('Error', 'Error al guardar los datos. Por favor, intenta nuevamente.');
+    } finally {
+        hideLoadingDialog();
+    }
+}
 
 async function getWeddingData() {
     try {
@@ -257,9 +316,7 @@ async function getWeddingData() {
             redesSociales: {
                 facebook: $('#facebookLugar').val() || '',
                 instagram: $('#instagramLugar').val() || ''
-            },
-            codigoVestimentaHombre: $('#codigoVestimentaHombre').val() || '',
-            codigoVestimentaMujer: $('#codigoVestimentaMujer').val() || ''
+            }
         };
 
         const galeriaFotos = await Promise.all(
@@ -271,7 +328,7 @@ async function getWeddingData() {
         );
 
         const padrinos = await Promise.all(
-            $('.padrino').map(async function () {
+            $('.padrino').map(async function() {
                 const nombre = $(this).find('input[name="nombrePadrino[]"]').val() || '';
                 const genero = $(this).find('input[name^="generoPadrino"]:checked').val() || 'hombre';
                 const fotoInput = $(this).find('input[name="fotoPadrino[]"]');
@@ -297,74 +354,6 @@ async function getWeddingData() {
         console.error('Error al obtener los datos del formulario: ', error);
         alertify.alert('Error', `Error al obtener los datos del formulario: ${error.message}`);
         throw error; // Lanzar error para que se capture en handleFormSubmit
-    }
-}
-
-
-function initializeCarousel(previewContainerId) {
-    $('#' + previewContainerId).not('.slick-initialized').slick({
-        infinite: true,
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        prevArrow: '<button type="button" class="slick-prev">‹</button>',
-        nextArrow: '<button type="button" class="slick-next">›</button>',
-    });
-}
-
-function showConfirmationDialog(onConfirm) {
-    alertify.confirm(
-        'Confirmación',
-        '¿Desea agregar un padrino?',
-        function () {
-            onConfirm();
-        },
-        function () {
-            alertify.error('Cancelado');
-        }
-    );
-}
-
-function showSuccessMessage(message) {
-    alertify.success(message);
-}
-
-async function uploadImage(file, folder) {
-    const storageRef = storage.ref();
-    const timestamp = new Date().getTime();
-    const fileRef = storageRef.child(`tarjeta/${folder}/${timestamp}_${file.name}`);
-    const uploadTask = fileRef.put(file);
-
-    return new Promise((resolve, reject) => {
-        uploadTask.on('state_changed',
-            (snapshot) => { },
-            (error) => reject(error),
-            () => {
-                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => resolve(downloadURL));
-            }
-        );
-    });
-}
-
-
-
-async function handleFormSubmit(event) {
-    event.preventDefault();
-    showLoadingDialog();
-
-    try {
-        const weddingData = await getWeddingData();
-        await db.collection('tarjetaInvitacion').add(weddingData);
-
-        // Usa alertify.alert para confirmar antes de recargar
-        alertify.alert('Éxito', 'Tarjeta de invitación creada correctamente.', function () {
-            location.reload(); // Solo recarga la página después de que el usuario presione OK
-        });
-
-    } catch (error) {
-        console.error('Error al guardar los datos: ', error);
-        alertify.alert('Error', 'Error al guardar los datos. Por favor, intenta nuevamente.');
-    } finally {
-        hideLoadingDialog();
     }
 }
 

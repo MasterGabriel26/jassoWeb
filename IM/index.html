@@ -5,8 +5,6 @@
     <meta charset="utf-8">
     <title>Nuestra boda</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="Plantillas HTML gratuitas" name="keywords">
-    <meta content="Plantillas HTML gratuitas" name="description">
 
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
@@ -25,6 +23,23 @@
     <!-- Customized Bootstrap Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
+     <!-- Metaetiquetas Open Graph -->
+     <!-- <meta property="og:title" content="Jasso!">
+     <meta property="og:description" content="Tarjeta de Invitación">
+     <meta property="og:image" content="https://jassocompany.com/IM/img/matri.jpg">
+     <meta property="og:url" content="https://jassocompany.com/IM/"> -->
+
+     <meta property="og:title" content="Mi Página Web 3">
+     <meta property="og:description" content="Descripción de mi página 3">
+     <meta property="og:url" content="https://jassocompany.com/">
+     <meta property="og:image" content="">
+
+  <!-- Alertify CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+  <!-- Alertify JS -->
+  <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+     
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
@@ -53,7 +68,9 @@
             <div class="navbar-nav ml-auto py-0">
                 <a href="#home" class="nav-item nav-link active">Inicio</a>
                 <a id="miQR" class="nav-item nav-link" data-toggle="modal" data-target="#qrModal">Mi QR</a>
+                <a id="acompanantes" class="nav-item nav-link" >acompañantes</a>
                 <a class="nav-item nav-link" href="#rsvp">Confirmación</a>
+                <a class="nav-item nav-link" href="#">Vestidos</a>
                 <a id="ubicacionBoda" class="nav-item nav-link" data-toggle="modal" data-target="#locationModal">¿Dónde
                     será?</a>
                 <a id="preguntasFrecuentes" class="nav-item nav-link">Preguntas frecuentes</a>
@@ -77,7 +94,7 @@
                             <h1 class="novios display-1 font-secondary text-white mt-n3 mb-md-4"></h1>
                             <div class="d-inline-block border-top border-bottom border-light py-3 px-4">
                                 <h3 class="text-uppercase font-weight-normal text-white m-0"
-                                    style="letter-spacing: 2px;">Nos casamos</h3>
+                                    style="letter-spacing: 2px;">Nos casamos!!</h3>
                             </div>
                         </div>
                     </div>
@@ -136,7 +153,7 @@
         </div>
     </div>
     <!-- Video Modal End -->
-    <!-- <audio id="soundBack" src="assets/soundBack.mp3" autoplay loop></audio> -->
+    <audio id="soundBack" src="assets/soundBack.mp3" autoplay loop></audio>
 
     <!-- About Start -->
     <div class="container-fluid py-3" id="about">
@@ -317,14 +334,14 @@
                         <p class="mb-0" id="descripcionEvento">La recepción será un evento inolvidable.</p>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <!-- <div class="col-md-6">
                     <div class="text-center text-md-left ml-md-3">
                         <img class="img-fluid mb-4" id="fotoPortada2" src="img/event-2.jpg" alt="">
                         <h4 class="mb-3">Fiesta de Boda</h4>
                         <p class="mb-2">123 Calle, Torreon, MEX.</p>
                         <p class="mb-0">13:00PM - 14:00PM</p>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
     </div>
@@ -366,7 +383,7 @@
             </div>
             <div id="bloqueinvitacion" class="text-center mt-4">
                 <button id="botonConfirmar" class="btn btn-primary btn-lg btn-block-custom font-weight-bold py-3 mx-2"
-                    type="button" style="width: 280px;" data-toggle="modal" data-target="#rsvpModal">Confirmo asistencia
+                    type="button" style="width: 280px;" data-toggle="modal" data-target="#accompanyingGuestsModal">Confirmo asistencia
                     😊</button>
                 <button id="botonNoAsistire"
                     class="btn btn-secondary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button"
@@ -391,19 +408,21 @@
                             <ul class="list-unstyled" style="color: #000;">
                                 <li><strong>Vestido hombre:</strong> <span class="vestido-hombre"></span></li>
                                 <li><strong>Vestido mujer:</strong> <span class="vestido-mujer"></span></li>
-                                <li><strong>Mesa asignada:</strong> <span class="mesaAsignada"></span></li>
-                                <li><strong>Número de invitados:</strong> <span class="numero-invitados"></span></li>
+                                
+                                <!-- Enlace de recomendaciones con margen -->
+                                <li style="margin-top: 10px; margin-bottom: 10px;"><a href="#" style="color: blue;">Recomendaciones de vestidos.</a></li>
+                                
+                                <li id="li-mesaAsignada"><strong>Mesa asignada:</strong> <span class="mesaAsignada"></span></li>
+                                <li><strong>Acompañantes:</strong> <span id="listaAcompanantes"></span></li>
                                 <li><strong>Dirección:</strong> <span class="direccion" style="font-size: 13px;"></span></li>
                                 <li><strong>Hora:</strong> <span class="hora-evento"></span></li>
                             </ul>
-
-
+                        
                             <div>
-                                <button id="confirmarAsistencia" class="btn btn-primary font-weight-bold py-3 px-5"
-                                    type="submit">Confirmar</button>
+                                <button id="confirmarAsistencia" class="btn btn-primary font-weight-bold py-3 px-5" type="submit">Confirmar</button>
                             </div>
-
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -412,6 +431,36 @@
         </div>
     </div>
     <!-- RSVP End -->
+<!-- acompañantes -->
+<!-- Modal for Listing Accompanying Guests -->
+<div class="modal fade" id="accompanyingGuestsModal" tabindex="-1" role="dialog" aria-labelledby="accompanyingGuestsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content bg-secondary">
+            <div class="modal-header">
+                <h5 class="modal-title" id="accompanyingGuestsModalLabel" style="color: #000;">Listado de Acompañantes</h5>
+                <button type="button" class="close text-black" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="numeroInvitadosSelect">Número de invitados:</label>
+                    <select id="numeroInvitadosSelect" class="custom-select" onchange="updateAccompanyingGuests(this.value)">
+                        <!-- Las opciones se generarán dinámicamente en JavaScript -->
+                    </select>
+                </div>
+                <form id="acompanantesInputsContainer">
+                    
+                    <!-- Los campos de input se generan dinámicamente aquí -->
+                </form>
+            </div>
+            <div class="modal-footer">               
+                <button id="guardarAcompanantes" class="btn btn-primary" >Guardar Listado de Acompañantes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
     <!-- Footer Start -->
     <div class="container-fluid bg-dark text-white py-5" id="contact" style="margin-top: 90px;">
@@ -490,6 +539,15 @@
         </div>
     </div>
     <style>
+    #numeroInvitadosSelect{
+    width: fit-content; /* Ajusta el ancho al contenido del select */
+    display: inline-block;
+}
+.is-invalid {
+    border-color: #dc3545; /* Rojo para errores */
+    background-color: #ffe5e9; /* Fondo suavemente rojo */
+}
+
         .mapa iframe {
             width: 100%;
             max-width: 100%;

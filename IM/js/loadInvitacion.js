@@ -22,11 +22,13 @@ var mesaInvitado = "";
 var statusInvitado = "";
 var numeroAcompanantes = "";
 var colorQR = "#121F38"
-
+let acompanantes = [];
 $(function () {
     idTarjeta = getQueryParam("tj");
     idInvitado = getQueryParam("in");
     $("#miQR").hide()
+    $("#acompanantes").hide()
+
     if (idTarjeta) {
         loadTarjeta(idTarjeta);
 
@@ -45,7 +47,9 @@ $(function () {
     $("#confirmarAsistencia").click(function (e) {
         e.preventDefault(); // Prevent default button action
         db.collection('invitados').doc(idInvitado).update({
-            status: CONFIRMADA
+            status: CONFIRMADA,
+            personas: (acompanantes.length + 1).toString(),
+            listadoAcompanantes: acompanantes
         })
             .then(() => {
                 console.log("Status updated to CONFIRMADA");
@@ -72,7 +76,55 @@ $(function () {
                 console.error("Error updating status: ", error);
             });
     });
+
+    $('#guardarAcompanantes').on('click', function (event) {
+        event.preventDefault(); // Prevenir la recarga de la página
+        let allFilled = true;
+        acompanantes = [];
+
+        // Recolectar todos los nombres de los inputs y verificar que no estén vacíos
+        $('#acompanantesInputsContainer .form-control').each(function () {
+            if (!$(this).val()) {
+                allFilled = false;
+                $(this).addClass('is-invalid'); // Agrega una clase para indicar error
+            } else {
+                $(this).removeClass('is-invalid');
+                acompanantes.push($(this).val()); // Agrega el valor al array si no está vacío
+            }
+        });
+
+        if (!allFilled) {
+            alertify.alert('Error', 'Por favor, complete todos los campos antes de guardar.');
+
+            return false; // Detiene la función si algún campo está vacío
+        }
+
+        // Aquí podrías enviar 'acompanantes' a un servidor o almacenarlo como prefieras
+        console.log(acompanantes); // Imprime la lista de acompañantes en la consola
+
+        // Cerrar el modal actual y abrir el siguiente si es necesario
+        $('#accompanyingGuestsModal').modal('hide');
+
+        // Si necesitas abrir otro modal inmediatamente, puedes hacerlo aquí.
+        $("#listaAcompanantes").html(acompanantes.length)
+        $("#rsvpModal").modal("show")
+    });
+
 });
+
+// Ejemplo de función que se llama cuando cambia el select en otro modal o en cualquier lógica de tu aplicación
+function updateAccompanyingGuests(count) {
+    const container = $('#acompanantesInputsContainer');
+    container.empty(); // Limpiar antiguos inputs
+
+    for (let i = 1; i <= count; i++) {
+        container.append(`<div class="form-group">
+            <label for="acompanante_${i}">Acompañante ${i}</label>
+            <input type="text" id="acompanante_${i}" name="acompanante_${i}" class="form-control" placeholder="Nombre del acompañante ${i}">
+        </div>`);
+    }
+}
+
 
 
 function getQueryParam(param) {
@@ -108,14 +160,30 @@ function loadInvitado(idInvitado) {
                     colorQR = "#121F38"; // Valor predeterminado para CONFIRMADA
                 }
                 $("#miQR").show();
-
+                $("#acompanantes").show()
             } else {
                 $("#miQR").hide();
+                $("#acompanantes").hide()
             }
+            acompanantes
 
+            // Agregar opciones al select de número de invitados
+            var select = $('#numeroInvitadosSelect');
+            select.empty(); // Limpiar opciones existentes
+            for (let i = numeroAcompanantes - 1; i >= 0; i--) {
+                select.append(`<option value="${i}">${i}</option>`);
+            }
+            select.val();
+            updateAccompanyingGuests(numeroAcompanantes - 1)
 
-            $(".numero-invitados").text(`${numeroAcompanantes - 1}`);
-            $(".mesaAsignada").html(`${mesaInvitado}`);
+            updateAccompanyingGuests(numeroAcompanantes - 1)
+            if (mesaInvitado=="") {
+                 $("#li-mesaAsignada").hide()
+            }else{               
+                $("#li-mesaAsignada").show()
+               $(".mesaAsignada").html(`${mesaInvitado}`); 
+            }
+            
 
 
 
@@ -140,7 +208,7 @@ function getIdGrupoInvitado(idGrupo) {
                 // Asumiendo que solo habrá un documento que cumple con la condición
                 idTarjeta = querySnapshot.docs[0].id;
                 idTarjeta = querySnapshot.docs[0].id;
-               
+
                 loadTarjeta(idTarjeta);
                 iniciarQR(idInvitado);
             } else {
@@ -156,18 +224,29 @@ function getIdGrupoInvitado(idGrupo) {
         });
 }
 
-
+function updateMetaImage(imageUrl) {
+    // Revisa si ya existe una etiqueta og:image, si no, la crea.
+    let ogImageTag = document.querySelector('meta[property="og:image"]');
+    if (!ogImageTag) {
+        ogImageTag = document.createElement('meta');
+        ogImageTag.setAttribute('property', 'og:image');
+        document.getElementsByTagName('head')[0].appendChild(ogImageTag);
+    }
+    ogImageTag.setAttribute('content', imageUrl);
+}
 function loadTarjeta(docId) {
 
     db.collection('tarjetaInvitacion').doc(docId).get().then(doc => {
         if (doc.exists) {
             const data = doc.data();
+            // Aquí ajustamos la metaetiqueta og:image con la imagen de la pareja
+            updateMetaImage(data.pareja.fotoMujer);
 
             // Novios
             const novio = data.pareja.generoMarido === 'hombre' ? 'Novio' : 'Novia';
             const novia = data.pareja.generoMujer === 'mujer' ? 'Novia' : 'Novio';
 
-          
+
 
             $('#novioNovia').text(`${novio} & ${novia}`);
             $('#novio').text(novio);
@@ -195,9 +274,9 @@ function loadTarjeta(docId) {
             const direccion = LUGARES[lugarClave] ? LUGARES[lugarClave].direccion : '';
             const iframe = LUGARES[lugarClave] ? LUGARES[lugarClave].iframe : '';
 
-               // $(".vestido-hombre").html(`Vestido hombre: ${vestidoHombre}`);
-                 $(".hora-evento").text(data.detallesEvento.horaCeremonia);
-                $(".direccion").text(direccion);
+            // $(".vestido-hombre").html(`Vestido hombre: ${vestidoHombre}`);
+            $(".hora-evento").text(data.detallesEvento.horaCeremonia);
+            $(".direccion").text(direccion);
 
             $('#lugarEvento').text(nombreLugar);
             $('#direccion').text(direccion);
