@@ -22,7 +22,7 @@ var mesaInvitado = "";
 var statusInvitado = "";
 var numeroAcompanantes = "";
 var colorQR = "#121F38"
-let acompanantes = [];
+var acompanantes = {};
 $(function () {
     idTarjeta = getQueryParam("tj");
     idInvitado = getQueryParam("in");
@@ -48,13 +48,13 @@ $(function () {
         e.preventDefault(); // Prevent default button action
         db.collection('invitados').doc(idInvitado).update({
             status: CONFIRMADA,
-            personas: (acompanantes.length + 1).toString(),
+            personas: (Object.keys(acompanantes).length + 1).toString(),
             listadoAcompanantes: acompanantes
         })
             .then(() => {
                 console.log("Status updated to CONFIRMADA");
-                $("#rsvpModal").modal("hide")
-                $("#qrModal").modal("show")
+                $("#rsvpModal").modal("hide");
+                $("#qrModal").modal("show");
             })
             .catch(error => {
                 console.error("Error updating status: ", error);
@@ -80,22 +80,22 @@ $(function () {
     $('#guardarAcompanantes').on('click', function (event) {
         event.preventDefault(); // Prevenir la recarga de la página
         let allFilled = true;
-        acompanantes = [];
-
+        acompanantes = {};
+        acompanantes[nombreInvitado] = 'habilitado' 
         // Recolectar todos los nombres de los inputs y verificar que no estén vacíos
         $('#acompanantesInputsContainer .form-control').each(function () {
-            if (!$(this).val()) {
+            const nombre = $(this).val();
+            if (!nombre) {
                 allFilled = false;
                 $(this).addClass('is-invalid'); // Agrega una clase para indicar error
             } else {
                 $(this).removeClass('is-invalid');
-                acompanantes.push($(this).val()); // Agrega el valor al array si no está vacío
+                acompanantes[nombre] = 'habilitado'; // Agrega el nombre y el valor al mapa
             }
         });
-
+       
         if (!allFilled) {
             alertify.alert('Error', 'Por favor, complete todos los campos antes de guardar.');
-
             return false; // Detiene la función si algún campo está vacío
         }
 
@@ -106,9 +106,10 @@ $(function () {
         $('#accompanyingGuestsModal').modal('hide');
 
         // Si necesitas abrir otro modal inmediatamente, puedes hacerlo aquí.
-        $("#listaAcompanantes").html(acompanantes.length)
-        $("#rsvpModal").modal("show")
+        $("#listaAcompanantes").html(Object.keys(acompanantes).length);
+        $("#rsvpModal").modal("show");
     });
+
 
 });
 
@@ -144,7 +145,7 @@ function loadInvitado(idInvitado) {
 
             $("#status").html(statusInvitado);
 
-            if (statusInvitado === 'CONFIRMADA' || statusInvitado === 'INGRESADO') {
+            if (statusInvitado === 'CONFIRMADA' || statusInvitado === 'INGRESADO' || statusInvitado === 'INGRESO_PARCIAL') {
                 $("#botonConfirmar").hide()
                 $("#invitationName").html(nombreInvitado + " y sus " + (numeroAcompanantes - 1) + " acompañante(s)");
                 $("#assignedTable").text("Mesa asignada: " + mesaInvitado);
@@ -154,6 +155,8 @@ function loadInvitado(idInvitado) {
                     $("#status").html("Estado: Ingresado");
                     $("#status").css("color", colorQR);
 
+                }else if (statusInvitado === 'INGRESO_PARCIAL') {
+                    colorQR = "#7010ee";//morado
                 } else {
 
 
@@ -161,7 +164,7 @@ function loadInvitado(idInvitado) {
                 }
                 $("#miQR").show();
                 $("#acompanantes").show()
-            } else {
+            }  else {
                 $("#miQR").hide();
                 $("#acompanantes").hide()
             }
@@ -177,13 +180,13 @@ function loadInvitado(idInvitado) {
             updateAccompanyingGuests(numeroAcompanantes - 1)
 
             updateAccompanyingGuests(numeroAcompanantes - 1)
-            if (mesaInvitado=="") {
-                 $("#li-mesaAsignada").hide()
-            }else{               
+            if (mesaInvitado == "") {
+                $("#li-mesaAsignada").hide()
+            } else {
                 $("#li-mesaAsignada").show()
-               $(".mesaAsignada").html(`${mesaInvitado}`); 
+                $(".mesaAsignada").html(`${mesaInvitado}`);
             }
-            
+
 
 
 
