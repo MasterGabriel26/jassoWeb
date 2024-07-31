@@ -18,10 +18,16 @@
     <!-- Alertify JS -->
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/compressorjs@latest/dist/compressor.min.js"></script>
+   
+  
 
   
 </head>
 <body>
+    <div id="floatingContainer">
+        <div id="circleProgress"></div>
+        <div id="progressText">0%</div>
+    </div>
     <div class="container">
         <form id="weddingForm">
             <div class="form-section">
@@ -146,7 +152,7 @@
                     <label for="fotoPropuesta">Foto de la Propuesta</label>
                     <input type="file" id="fotoPropuesta" name="fotoPropuesta" accept="image/*" required>
                     <div class="single-image-preview" id="fotoPropuestaPreview"></div>
-                </div>
+                </div> 
             </div>
                 <div class="novio">
                 <div class="form-group">
@@ -167,18 +173,21 @@
                 <div class="form-group">
                     <label for="galeriaFotos">Seleccionar Fotos de Galería</label>
                     <input type="file" id="galeriaFotos" name="galeriaFotos" accept="image/*" multiple>
+                    <div id="galeriaImageCount">0/10 imágenes seleccionadas</div> <!-- Indicador de conteo -->
                     <div class="card-scroll-container" id="galeriaPreview"></div>
                 </div>
             </div>
-
+            
             <div class="form-section">
                 <h2>Fotos de Portada</h2>
                 <div class="form-group">
                     <label for="portadaFotos">Seleccionar Fotos de Portada</label>
                     <input type="file" id="portadaFotos" name="portadaFotos" accept="image/*" multiple>
+                    <div id="portadaImageCount">0/2 imágenes seleccionadas</div> <!-- Indicador de conteo -->
                     <div class="card-scroll-container" id="portadaPreview"></div>
                 </div>
-            </div> 
+            </div>
+            
 
             <div class="form-section">
                 <h2>Padrinos y Madrinas</h2>
@@ -296,11 +305,39 @@
     min-height: 3em; /* Altura mínima inicial */
 }
 
+
+
+        /* Estilo para el contenedor flotante redondo */
+        #floatingContainer {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background-color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        /* Estilo para centrar el texto dentro del progreso circular */
+        #progressText {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            font-weight: bold;
+        }
+ 
     </style>
 </div>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.rawgit.com/kottenator/jquery-circle-progress/1.2.2/dist/circle-progress.js"></script>
     <script src="./js/firestore.js"></script>
     <script src="./js/IA.js"></script>
     <script src="./js/constantes.js"></script>

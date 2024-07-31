@@ -77,55 +77,113 @@ $(function () {
             });
     });
 
-    $('#guardarAcompanantes').on('click', function (event) {
-        event.preventDefault(); // Prevenir la recarga de la página
-        let allFilled = true;
-        acompanantes = {};
-        acompanantes[nombreInvitado] = 'habilitado' 
-        // Recolectar todos los nombres de los inputs y verificar que no estén vacíos
-        $('#acompanantesInputsContainer .form-control').each(function () {
-            const nombre = $(this).val();
-            if (!nombre) {
-                allFilled = false;
-                $(this).addClass('is-invalid'); // Agrega una clase para indicar error
-            } else {
-                $(this).removeClass('is-invalid');
-                acompanantes[nombre] = 'habilitado'; // Agrega el nombre y el valor al mapa
-            }
-        });
+    // $('#guardarAcompanantes').on('click', function (event) {
+    //     event.preventDefault(); // Prevenir la recarga de la página
+    //     let allFilled = true;
+    //     acompanantes = {};
+    //     acompanantes[nombreInvitado] = 'habilitado' 
+    //     // Recolectar todos los nombres de los inputs y verificar que no estén vacíos
+    //     $('#acompanantesInputsContainer .form-control').each(function () {
+    //         const nombre = $(this).val();
+    //         if (!nombre) {
+    //             allFilled = false;
+    //             $(this).addClass('is-invalid'); // Agrega una clase para indicar error
+    //         } else {
+    //             $(this).removeClass('is-invalid');
+    //             acompanantes[nombre] = 'habilitado'; // Agrega el nombre y el valor al mapa
+    //         }
+    //     });
        
-        if (!allFilled) {
-            alertify.alert('Error', 'Por favor, complete todos los campos antes de guardar.');
-            return false; // Detiene la función si algún campo está vacío
-        }
+    //     if (!allFilled) {
+    //         alertify.alert('Error', 'Por favor, complete todos los campos antes de guardar.');
+    //         return false; // Detiene la función si algún campo está vacío
+    //     }
 
-        // Aquí podrías enviar 'acompanantes' a un servidor o almacenarlo como prefieras
-        console.log(acompanantes); // Imprime la lista de acompañantes en la consola
+    //     // Aquí podrías enviar 'acompanantes' a un servidor o almacenarlo como prefieras
+    //     console.log(acompanantes); // Imprime la lista de acompañantes en la consola
 
-        // Cerrar el modal actual y abrir el siguiente si es necesario
-        $('#accompanyingGuestsModal').modal('hide');
+    //     // Cerrar el modal actual y abrir el siguiente si es necesario
+    //     $('#accompanyingGuestsModal').modal('hide');
 
-        // Si necesitas abrir otro modal inmediatamente, puedes hacerlo aquí.
-        $("#listaAcompanantes").html(Object.keys(acompanantes).length);
-        $("#rsvpModal").modal("show");
-    });
+    //     // Si necesitas abrir otro modal inmediatamente, puedes hacerlo aquí.
+    //     $("#listaAcompanantes").html(Object.keys(acompanantes).length);
+    //     $("#rsvpModal").modal("show");
+    // });
 
 
 });
 
 // Ejemplo de función que se llama cuando cambia el select en otro modal o en cualquier lógica de tu aplicación
+// function updateAccompanyingGuests(count) {
+//     const container = $('#acompanantesInputsContainer');
+//     container.empty(); // Limpiar antiguos inputs
+
+//     for (let i = 1; i <= count; i++) {
+//         container.append(`<div class="form-group">
+//             <label for="acompanante_${i}">Acompañante ${i}</label>
+//             <input type="text" id="acompanante_${i}" name="acompanante_${i}" class="form-control" placeholder="Nombre del acompañante ${i}">
+//         </div>`);
+//     }
+// }
+
+$('#guardarAcompanantes').on('click', function (event) {
+    event.preventDefault(); // Prevenir la recarga de la página
+    let allFilled = true;
+    acompanantes = {}; // Reiniciar el objeto
+
+    $('#acompanantesInputsContainer .form-group').each(function (index) {
+        const nombre = $(this).find('input[type="text"]').val();
+        const genero = $(this).find('input[type="radio"]:checked').val();
+        
+        if (!nombre || !genero) {
+            allFilled = false;
+            $(this).find('input[type="text"]').addClass('is-invalid'); // Agrega una clase para indicar error
+        } else {
+            $(this).find('input[type="text"]').removeClass('is-invalid');
+            acompanantes[nombre] = {
+                genero: genero,
+                status: 'habilitado'
+            }; // Agrega el nombre, genero y el valor al mapa
+        }
+    });
+
+    if (!allFilled) {
+        alert('Por favor, complete todos los campos antes de guardar.');
+        return false; // Detiene la función si algún campo está vacío
+    }
+
+    // Aquí podrías enviar 'acompanantes' a un servidor o almacenarlo como prefieras
+    console.log(acompanantes); // Imprime la lista de acompañantes en la consola
+
+    // Cerrar el modal actual y abrir el siguiente si es necesario
+    $('#accompanyingGuestsModal').modal('hide');
+
+    // Si necesitas abrir otro modal inmediatamente, puedes hacerlo aquí.
+    $("#listaAcompanantes").html(Object.keys(acompanantes).length);
+    $("#rsvpModal").modal("show");
+});
+
 function updateAccompanyingGuests(count) {
     const container = $('#acompanantesInputsContainer');
     container.empty(); // Limpiar antiguos inputs
 
     for (let i = 1; i <= count; i++) {
-        container.append(`<div class="form-group">
-            <label for="acompanante_${i}">Acompañante ${i}</label>
-            <input type="text" id="acompanante_${i}" name="acompanante_${i}" class="form-control" placeholder="Nombre del acompañante ${i}">
-        </div>`);
+        container.append(`
+            <div class="form-group">
+                <label for="acompanante_${i}">Acompañante ${i}</label>
+                <input type="text" id="acompanante_${i}" name="acompanante_${i}" class="form-control" placeholder="Nombre del acompañante ${i}">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="genero_${i}" id="masculino_${i}" value="masculino">
+                    <label class="form-check-label" for="masculino_${i}">Masculino</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="genero_${i}" id="femenino_${i}" value="femenino">
+                    <label class="form-check-label" for="femenino_${i}">Femenino</label>
+                </div>
+            </div>
+        `);
     }
 }
-
 
 
 function getQueryParam(param) {

@@ -35,6 +35,7 @@ $(function () {
     idGrupo = getQueryParam("idGrupoInvitados");
     cargarDatosCliente(idGrupo)
     checkFirebaseConnection();
+    progress()
 });
 function cargarDatosCliente(idGrupo) {
 
@@ -65,11 +66,11 @@ function initEventListeners() {
     $('#lugarEvento').html(optionsHtml);
 
     $('#galeriaFotos').on('change', function () {
-        compressAndPreviewImages(this, 'galeriaPreview');
+        compressAndPreviewImages(this, 'galeriaPreview', galeriaFiles, 'galeriaImageCount', 10);
     });
-
+    
     $('#portadaFotos').on('change', function () {
-        compressAndPreviewImages(this, 'portadaPreview');
+        compressAndPreviewImages(this, 'portadaPreview', portadaFiles, 'portadaImageCount', 2);
     });
 
     $('#fotoPrimerEncuentro').on('change', function () {
@@ -140,23 +141,27 @@ function addPadrino() {
     $(`#fotoPadrino${padrinoCount}`).on('change', function () {
         compressAndPreviewSingleImage(this, `fotoPadrinoPreview${padrinoCount}`);
     });
+    var progressValue = calculateProgress();
+        updateProgress(progressValue);
 }
 
-function compressAndPreviewImages(input, previewContainerId) {
+function compressAndPreviewImages(input, previewContainerId, filesArray, countElementId, maxFiles) {
     var previewContainer = document.getElementById(previewContainerId);
-    var filesArray = Array.from(input.files);
+    var newFilesArray = Array.from(input.files);
 
-    filesArray.forEach(file => {
+    // Verificar si se excede el límite de archivos
+    if (filesArray.length + newFilesArray.length > maxFiles) {
+        alert(`No puedes seleccionar más de ${maxFiles} imágenes.`);
+        return;
+    }
+
+    newFilesArray.forEach(file => {
         new Compressor(file, {
             quality: 0.6, // Reduce la calidad para comprimir
             success(result) {
-                if (input.id === 'galeriaFotos') {
-                    galeriaFiles.push(result);
-                    updatePreview(galeriaFiles, previewContainer);
-                } else if (input.id === 'portadaFotos') {
-                    portadaFiles.push(result);
-                    updatePreview(portadaFiles, previewContainer);
-                }
+                filesArray.push(result);
+                updatePreview(filesArray, previewContainer);
+                updateImageCount(filesArray, countElementId, maxFiles);
             },
             error(err) {
                 console.log(err.message);
@@ -164,8 +169,19 @@ function compressAndPreviewImages(input, previewContainerId) {
         });
     });
 }
+function updateImageCount(filesArray, countElementId, maxFiles) {
+    var imageCountElement = document.getElementById(countElementId);
+    if (imageCountElement) {
+        imageCountElement.textContent = `${filesArray.length}/${maxFiles} imágenes seleccionadas`;
+    } else {
+        console.error(`Elemento con id ${countElementId} no encontrado.`);
+    }
+}
 function compressAndPreviewSingleImage(input, previewContainerId) {
     var previewContainer = document.getElementById(previewContainerId);
+
+   
+
     if (input.files && input.files[0]) {
         new Compressor(input.files[0], {
             quality: 0.6, // Reduce la calidad para comprimir
@@ -435,3 +451,64 @@ function initCardScroll() {
         });
     });
 }
+
+function progress() {
+    // Inicializar el progreso circular
+    $('#circleProgress').circleProgress({
+        value: 0,
+        size: 100,
+        fill: {
+            color: "#3498db"
+        }
+    });
+
+    // Función para actualizar el progreso
+  
+
+    // Función para calcular el progreso del formulario
+   
+
+    // Evento para actualizar el progreso cuando se cambie el formulario
+    $('#weddingForm').on('input change', function() {
+        var progress = calculateProgress();
+        updateProgress(progress);
+    });
+
+    // Actualizar el progreso inicialmente
+    var initialProgress = calculateProgress();
+    updateProgress(initialProgress);
+}
+function calculateProgress() {
+    // Selecciona todos los campos relevantes (input, textarea, select)
+    var totalFields = $('#weddingForm').find('input, textarea, select').length;
+    var filledFields = 0;
+
+    $('#weddingForm').find('input, textarea, select').each(function() {
+        if ($(this).val() && $(this).val() !== '') {
+            filledFields++;
+        }
+    });
+
+    var progress = (filledFields / totalFields) * 100;
+    return Math.round(progress);
+}
+function updateProgress(value) {
+    $('#circleProgress').circleProgress('value', value / 100);
+    $('#progressText').text(value + '%');
+    
+    // Cambiar el color del progreso a verde cuando sea 100%
+    if (value >= 100) {
+        $('#circleProgress').circleProgress({
+            fill: {
+                color: "#28a745"
+            }
+        });
+    } else {
+        $('#circleProgress').circleProgress({
+            fill: {
+                color: "#3498db"
+            }
+        });
+    }
+}
+
