@@ -31,7 +31,7 @@
     <div class="container">
         <form id="weddingForm">
             <div class="form-section">
-                <h3 id="isConectado" style="color: red;">conectando...</h3>
+              
                 <h2>Información de la Pareja</h2>
                 <div class="pareja-container">
                     <div class="novio">
@@ -305,32 +305,33 @@
     min-height: 3em; /* Altura mínima inicial */
 }
 
+      /* Estilo para el contenedor flotante redondo */
+/* Estilo para el contenedor flotante redondo */
+#floatingContainer {
+  position: fixed;
+  top: 20px; /* Ajusta el valor según tu preferencia */
+  right: 20px; /* Ajusta el valor según tu preferencia */
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+/* Estilo para centrar el texto dentro del progreso circular */
+#progressText {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    font-weight: bold;
+}
 
 
-        /* Estilo para el contenedor flotante redondo */
-        #floatingContainer {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background-color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        /* Estilo para centrar el texto dentro del progreso circular */
-        #progressText {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 16px;
-            font-weight: bold;
-        }
  
     </style>
 </div>

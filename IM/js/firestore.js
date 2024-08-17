@@ -34,24 +34,14 @@ $(function () {
     initCardScroll(); // Inicializar la funcionalidad de scroll de tarjetas
     idGrupo = getQueryParam("idGrupoInvitados");
     cargarDatosCliente(idGrupo)
-    checkFirebaseConnection();
+  
     progress()
 });
 function cargarDatosCliente(idGrupo) {
 
 
 }
-function checkFirebaseConnection() {
-    db.collection("test").get()
-        .then(() => {
-            $("#isConectado").text("Conectado a Firebase!");
-            $("#isConectado").css("color", "green");
-        })
-        .catch((error) => {
-            $("#isConectado").text("Error al conectar a Firebase");
-            console.error("Error al conectar a Firebase: ", error);
-        });
-}
+
 var padrinoCount = 1;
 var galeriaFiles = [];
 var portadaFiles = [];
