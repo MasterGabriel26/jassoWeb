@@ -28,11 +28,12 @@ function getQueryParam(param) {
 }
 
 var idGrupo = "";
-
+var html = "";
 $(function () {
     initEventListeners();
     initCardScroll(); // Inicializar la funcionalidad de scroll de tarjetas
     idGrupo = getQueryParam("idGrupoInvitados");
+    html=getQueryParam("html");
     cargarDatosCliente(idGrupo)
   
     progress()
@@ -290,6 +291,7 @@ async function getWeddingData() {
         );
 
         return {
+            html:html,
             idGrupoInvitacion: idGrupo,
             pareja,
             descripcionFelicidad: $('#descripcionFelicidad').val() || '',
