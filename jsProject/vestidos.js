@@ -17,20 +17,24 @@ $(function () {
 
 // Función para obtener documentos y mostrar las imágenes
 function obtenerDocumentos() {
-  const docRef = db.collection("galeriaCompartida");
+  const docRef = db.collection("galeria");
 
-  docRef.get().then((querySnapshot) => {
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      console.log(data.imagenes);
+  // Realiza una consulta donde categoriasDeImagenes sea igual a 'Vestidos'
+  docRef.where("categoriasDeImagenes", "==", "Vestidos")
+    .get()
+    .then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        console.log(data.imagenes);
 
-      if (Array.isArray(data.imagenes) && data.imagenes.length > 0) {
-        mostrarImagenes(data.imagenes);
-      }
+        if (Array.isArray(data.imagenes) && data.imagenes.length > 0) {
+          mostrarImagenes(data.imagenes);
+        }
+      });
+    })
+    .catch((error) => {
+      console.log("Error obteniendo documentos: ", error);
     });
-  }).catch((error) => {
-    console.log("Error obteniendo documentos: ", error);
-  });
 }
 
 // Función para mostrar las imágenes en el HTML
