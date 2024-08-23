@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MOVE | Vestidos</title>
+    <script src="./jsProject/listadoVestidos.js"></script>
 </head>
+
 <body>
     <h1>Información del Vestido</h1>
     <div id="detalles-vestido"></div>
@@ -20,36 +23,25 @@
 
         // Función para mostrar la información del vestido
         function mostrarInformacionVestido(id) {
-            // Aquí es donde cargarías la información del vestido usando el ID
-            // Puede ser a través de una llamada a una API, una base de datos, o un objeto local.
-
-            // Por ejemplo, supongamos que tienes un objeto con los datos de los vestidos:
-            const vestidos = {
-                "1": {
-                    nombre: "Vestido Rojo",
-                    imagen: "ruta-a-la-imagen-del-vestido-rojo.jpg",
-                    tallas: ["S", "M", "L"],
-                    descripcion: "Este es un vestido ver elegante..."
-                },
-                "2": {
-                    nombre: "Vestido Azul",
-                    imagen: "ruta-a-la-imagen-del-vestido-azul.jpg",
-                    tallas: ["M", "L", "XL"],
-                    descripcion: "Este es un vestido Rosa vibrante..."
-                }
-                // Puedes agregar más vestidos aquí
-            };
-
+            console.log(id)
             const vestido = vestidos[id];
 
             if (vestido) {
+                let imagenesHTML = '';
+
+                // Iterar sobre cada imagen del array
+                vestido.imagen.forEach((imgSrc) => {
+                    imagenesHTML += `<img src="${imgSrc}" alt="${vestido.nombre}" style="width:200px; margin-right: 10px;">`;
+                });
+
+                // Inyectar el contenido en el DOM
                 document.getElementById('detalles-vestido').innerHTML = `
-                    <h2>${vestido.nombre}</h2>
-                    <img src="${vestido.imagen}" alt="${vestido.nombre}" style="width:200px;">
-                    <p>${vestido.descripcion}</p>
-                    <p>Tallas disponibles: ${vestido.tallas.join(', ')}</p>
-                    <button onclick="agendarCita('${id}')">Agendar Cita</button>
-                `;
+            <h2>${vestido.nombre}</h2>
+            <div>${imagenesHTML}</div>
+            <p>${vestido.descripcion}</p>
+            <p>Tallas disponibles: ${vestido.tallas.join(', ')}</p>
+            <button onclick="agendarCita('${id}')">Agendar Cita</button>
+        `;
             } else {
                 document.getElementById('detalles-vestido').innerHTML = `<p>Vestido no encontrado.</p>`;
             }
@@ -71,5 +63,7 @@
             document.getElementById('detalles-vestido').innerHTML = `<p>No se ha especificado ningún vestido.</p>`;
         }
     </script>
+  
 </body>
+
 </html>
