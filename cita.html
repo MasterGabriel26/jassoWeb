@@ -39,16 +39,69 @@
                 <input type="tel" class="form-control" id="celular" value="5551234567" placeholder="Ingresa tu número de celular" required>
             </div>
             <div class="mb-3">
+                <label for="vestido" class="form-label">Vestido que busca</label>
+                <select class="form-select" id="vestido" required>
+                    <option value="Vestido Rojo">Vestido Rojo</option>
+                    <option value="Vestido Azul">Vestido Azul</option>
+                    <option value="Vestido Verde">Vestido Verde</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="color" class="form-label">Color</label>
+                <select class="form-select" id="color" required>
+                    <option value="Rojo">Rojo</option>
+                    <option value="Azul">Azul</option>
+                    <option value="Verde">Verde</option>
+                    <option value="Negro">Negro</option>
+                    <option value="Blanco">Blanco</option>
+                    <option value="Amarillo">Amarillo</option>
+                    <option value="Naranja">Naranja</option>
+                    <option value="Rosa">Rosa</option>
+                    <option value="Morado">Morado</option>
+                    <option value="Gris">Gris</option>
+                    <option value="Marrón">Marrón</option>
+                    <option value="Turquesa">Turquesa</option>
+                    <option value="Beige">Beige</option>
+                    <option value="Celeste">Celeste</option>
+                    <option value="Oliva">Oliva</option>
+                    <option value="Vino">Vino</option>
+                    <option value="Fucsia">Fucsia</option>
+                    <option value="Lavanda">Lavanda</option>
+                    <option value="Lila">Lila</option>
+                    <option value="Coral">Coral</option>
+                    <option value="Champán">Champán</option>
+                    <option value="Marino">Marino</option>
+                    <option value="Mostaza">Mostaza</option>
+                    <option value="Plateado">Plateado</option>
+                    <option value="Dorado">Dorado</option>
+                    <option value="Azul Claro">Azul Claro</option>
+                    <option value="Púrpura">Púrpura</option>
+                    <option value="Verde Esmeralda">Verde Esmeralda</option>
+                    <option value="Caqui">Caqui</option>
+                </select>
+            </div>
+            
+            <div class="mb-3">
+                <label for="color" class="form-label">Color</label>
+                <select class="form-select" id="color" required>
+                    <option value="Rojo">Rojo</option>
+                    <option value="Azul">Azul</option>
+                    <option value="Verde">Verde</option>
+                    <option value="Negro">Negro</option>
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="descripcion" class="form-label">Descripción</label>
                 <textarea class="form-control" id="descripcion" rows="3" placeholder="Describe el motivo de la cita" required>Reunión para discutir el proyecto</textarea>
             </div>
             <button type="submit" class="btn btn-primary">Enviar</button>
         </form>
         
+        
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.1.2/firebase-firestore.js"></script>
-    <script src="./jsProject/cita.js"></script>
+   
 </body>
 </html>

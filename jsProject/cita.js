@@ -10,10 +10,8 @@ $(function() {
         measurementId: "G-WXYY0N3TMG"
     };
 
-
     const app = firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
 
     function agregarCita(nuevaCita) {
         const idDocumentoPrincipal = "237fbntZSHSeUD3pUMk2xc4qu9L2";  
@@ -22,35 +20,42 @@ $(function() {
         const docRef = db.collection("citas").doc(idDocumentoPrincipal)
                         .collection("userCitas").doc(nuevoIdCita);
 
-        docRef.set(nuevaCita)
+        docRef.set(nuevaCita)  // El método `set` devuelve una promesa
         .then(() => {
             alertify.success("Cita agregada exitosamente.");
             $("#citaForm")[0].reset();
+            redirigirWhatsApp(nuevaCita);
         })
         .catch((error) => {
             console.error("Error al agregar la cita: ", error);
         });
     }
 
-    
+    function redirigirWhatsApp(cita) {
+        const mensaje = `Hola, mi nombre es ${cita.nombre}. Estoy interesad@ en este vestido de talla ${cita.talla}, me gustaría verlo en persona el día ${cita.fecha} a la hora ${cita.hora_inicio}.`;
+        const numeroWhatsApp = "+573022028700";
+        const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensaje)}`;
+        window.open(url, '_blank');
+    }
+
     $("#citaForm").on("submit", function(e) {
         e.preventDefault();
 
-      
         const fechaCita = $("#fechaCita").val();
         const horaInicioCita = $("#horaInicioCita").val();
         const horaFinCita = $("#horaFinCita").val();
         const nombre = $("#nombre").val();
         const celular = $("#celular").val();
         const descripcion = $("#descripcion").val();
+        const vestido = $("#vestido").val();
+        const talla = $("#talla").val();
+        const color = $("#color").val();
 
-  
         if (horaInicioCita >= horaFinCita) {
             alert("La hora de finalización debe ser posterior a la hora de inicio.");
             return;
         }
-
-  
+        
         const nuevaCita = {
             fecha: fechaCita,
             hora_inicio: horaInicioCita,
@@ -58,11 +63,13 @@ $(function() {
             nombre: nombre,
             celular: celular,
             descripcion: descripcion,
+            vestido: vestido,
+            talla: talla,
+            color: color,
             estado: "pendiente",
             titulo: "Cita Vestidos"
         };
-
-     
+       
         agregarCita(nuevaCita);
     });
 });
