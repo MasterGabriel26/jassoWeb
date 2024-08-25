@@ -33,7 +33,7 @@ $(function() {
 
     function redirigirWhatsApp(cita) {
         const mensaje = `Hola, mi nombre es ${cita.nombre}. Estoy interesad@ en este vestido de talla ${cita.talla}, me gustaría verlo en persona el día ${cita.fecha} a la hora ${cita.hora_inicio}.`;
-        const numeroWhatsApp = "+573022028700";
+        const numeroWhatsApp = "+578444938326";
         const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensaje)}`;
         window.open(url, '_blank');
     }
