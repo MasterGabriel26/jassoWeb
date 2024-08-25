@@ -7,6 +7,7 @@
     <title>MOVE | Vestidos</title>
     <script src="./jsProject/listadoVestidos.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/vestidosPDF.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -15,51 +16,74 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <!-- Alertify JS -->
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+
 </head>
 
 <body>
-    <h1>Información del Vestido</h1>
-    <div id="detalles-vestido"></div>
-    <img src="/img/1.png" alt="">
-    <div class="container mt-5">
-        <h2 class="mb-4">Formulario de Cita</h2>
+    <div class="container">
+        <div class="titles">
+            <h1>Gaby's Elegance</h1>
+            <p>MOVE Eventos Saltillo</p>
+        </div>
+        <div id="detalles-vestido">
+
+        </div>
+        <div id="info">
+
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="">Agenda tu visita</h2>
         <form id="citaForm">
-            <div class="mb-3">
-                <label for="fechaCita" class="form-label">Fecha de Cita</label>
-                <input type="date" class="form-control" id="fechaCita" value="2024-09-15" required>
+            <div class="mb-3 fechasInicio">
+                <div class="containerInput">
+                    <label for="fechaCita" class="form-label">Fecha de Cita</label>
+                    <input type="date" class="form-control" id="fechaCita" value="2024-09-15" required>
+                </div>
+                <div class="containerInput">
+                    <label for="horaInicioCita" class="form-label">Llegada</label>
+                    <input type="time" class="form-control" id="horaInicioCita" value="10:00" required>
+                </div>
+                <div class="containerInput">
+                    <label for="horaFinCita" class="form-label">Salida</label>
+                    <input type="time" class="form-control" id="horaFinCita" value="11:00" required>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="horaInicioCita" class="form-label">Hora de Inicio</label>
-                <input type="time" class="form-control" id="horaInicioCita" value="10:00" required>
-            </div>
-            <div class="mb-3">
-                <label for="horaFinCita" class="form-label">Hora de Finalización</label>
-                <input type="time" class="form-control" id="horaFinCita" value="11:00" required>
-            </div>
+
             <div class="mb-3">
                 <label for="nombre" class="form-label">Nombre</label>
-                <input type="text" class="form-control" id="nombre" value="Juan Pérez" placeholder="Ingresa tu nombre" required>
+                <input type="text" class="form-control" id="nombre" placeholder="Ingresa tu nombre"
+                    required>
             </div>
+
             <div class="mb-3">
                 <label for="celular" class="form-label">Celular</label>
-                <input type="tel" class="form-control" id="celular" value="5551234567" placeholder="Ingresa tu número de celular" required>
+                <input type="tel" class="form-control" id="celular"
+                    placeholder="Ingresa tu número de celular" required>
+            </div>
+            <div class="mb-3 fechasInicio">
+                <div class="containerInput">
+                    <label for="vestido" class="form-label">Vestido que busca</label>
+                    <select class="form-select" id="vestido" required>
+                        <option value="Vestido Rojo">Vestido Rojo</option>
+                        <option value="Vestido Azul">Vestido Azul</option>
+                        <option value="Vestido Verde">Vestido Verde</option>
+                    </select>
+                </div>
+                <div class="containerInput">
+                    <label for="talla" class="form-label">Talla</label>
+                    <select class="form-select" id="talla" required>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                    </select>
+                </div>
+
             </div>
             <div class="mb-3">
-                <label for="vestido" class="form-label">Vestido que busca</label>
-                <select class="form-select" id="vestido" required>
-                    <option value="Vestido Rojo">Vestido Rojo</option>
-                    <option value="Vestido Azul">Vestido Azul</option>
-                    <option value="Vestido Verde">Vestido Verde</option>
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="talla" class="form-label">Talla</label>
-                <select class="form-select" id="talla" required>
-                    <option value="S">S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                </select>
+
             </div>
             <div class="mb-3">
                 <label for="color" class="form-label">Color</label>
@@ -97,14 +121,15 @@
             </div>
             <div class="mb-3">
                 <label for="descripcion" class="form-label">Descripción</label>
-                <textarea class="form-control" id="descripcion" rows="3" placeholder="Describe el motivo de la cita" required>Reunión para discutir el proyecto</textarea>
+                <textarea class="form-control" id="descripcion" rows="3" placeholder="Describe el motivo de la cita"
+                    required>Visita a la renta y compra de vestidos</textarea>
             </div>
             <button type="submit" class="btn btn-primary">Enviar</button>
         </form>
     </div>
-    
-    
-    
+
+
+
 
     <script>
         // Función para obtener los parámetros de la URL
@@ -125,22 +150,26 @@
 
                 // Iterar sobre cada imagen del array
                 vestido.imagen.forEach((imgSrc) => {
-                    imagenesHTML += `<img src="${imgSrc}" alt="${vestido.nombre}" style="width:200px; margin-right: 10px;">`;
+                    imagenesHTML += `<img src="${imgSrc}" alt="${vestido.nombre}" class="imagenes"  loading="lazy">`;
                 });
 
                 // Inyectar el contenido en el DOM
                 document.getElementById('detalles-vestido').innerHTML = `
+                <div>${imagenesHTML}</div>
+`;
+
+                document.getElementById('info').innerHTML = `
+                
             <h2>${vestido.nombre}</h2>
-            <div>${imagenesHTML}</div>
             <p>${vestido.descripcion}</p>
-            <p>Tallas disponibles: ${vestido.tallas.join(', ')}</p>
-          
-        `;
+            <p>${vestido.tallas.join(' &#20; ')}</p>
+            <p>Tallas disponibles</p>`;
+
             } else {
                 document.getElementById('detalles-vestido').innerHTML = `<p>Vestido no encontrado.</p>`;
             }
         }
-//  <button onclick="agendarCita('${id}')">Agendar Cita</button>
+        //  <button onclick="agendarCita('${id}')">Agendar Cita</button>
         // Función para manejar el botón de agendar cita
         function agendarCita(id) {
             // Aquí puedes redirigir a un formulario o mostrar un formulario emergente para agendar la cita.
