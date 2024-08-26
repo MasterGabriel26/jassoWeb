@@ -1,4 +1,12 @@
+function getQueryParams() {
+    const params = new URLSearchParams(window.location.search);
+    return {
+        id: params.get('id')
+    };
+}
+
 $(function() {
+    const idVestido = getQueryParams().id;
     // Configuración de Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBTD0WrmlvOYViJ5J8_Tt3vDzCDmxQL3tQ",
@@ -14,6 +22,7 @@ $(function() {
     const db = firebase.firestore();
 
     function agregarCita(nuevaCita) {
+       
         const idDocumentoPrincipal = "237fbntZSHSeUD3pUMk2xc4qu9L2";  
         const nuevoIdCita = db.collection("citas").doc().id;
 
@@ -24,19 +33,27 @@ $(function() {
         .then(() => {
             alertify.success("Cita agregada exitosamente.");
             $("#citaForm")[0].reset();
-            redirigirWhatsApp(nuevaCita);
+            redirigirWhatsApp(nuevaCita,idVestido);
         })
         .catch((error) => {
             console.error("Error al agregar la cita: ", error);
         });
     }
-
-    function redirigirWhatsApp(cita) {
-        const mensaje = `Hola, mi nombre es ${cita.nombre}. Estoy interesad@ en este vestido de talla ${cita.talla}, me gustaría verlo en persona el día ${cita.fecha} a la hora ${cita.hora_inicio}.`;
-        const numeroWhatsApp = "+578444938326";
+    function redirigirWhatsApp(cita, idVestido) {    
+        const urlProductoCompleta = `https://jassocompany.com/PDFvestidos.html?id=${idVestido}`;
+        const mensaje = `Hola, mi nombre es ${cita.nombre}. Estoy interesad@ en este vestido de talla ${cita.talla}, me gustaría verlo en persona el día ${cita.fecha} a la hora ${cita.hora_inicio}. Puedes encontrarlo aquí: ${urlProductoCompleta}`;
+      
+        // Resto del código sin cambios
+        const numeroWhatsApp = "+528444938326";
         const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensaje)}`;
         window.open(url, '_blank');
-    }
+      }
+    // function redirigirWhatsApp(cita) {
+    //     const mensaje = `Hola, mi nombre es ${cita.nombre}. Estoy interesad@ en este vestido de talla ${cita.talla}, me gustaría verlo en persona el día ${cita.fecha} a la hora ${cita.hora_inicio}.`;
+    //     const numeroWhatsApp = "+578444938326";
+    //     const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensaje)}`;
+    //     window.open(url, '_blank');
+    // }
 
     $("#citaForm").on("submit", function(e) {
         e.preventDefault();
@@ -57,6 +74,7 @@ $(function() {
         }
         
         const nuevaCita = {
+            prospecto: "Vestidos",
             fecha: fechaCita,
             hora_inicio: horaInicioCita,
             hora_final: horaFinCita,
