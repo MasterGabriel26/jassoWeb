@@ -6,7 +6,17 @@ function getQueryParams() {
 }
 
 $(function() {
+   
     const idVestido = getQueryParams().id;
+
+
+    $('#talla').empty();
+    if (vestidos[idVestido] && vestidos[idVestido].tallas) {
+        vestidos[idVestido].tallas.forEach(function(talla) {
+            $('#talla').append(new Option(talla, talla));
+        });
+    }
+
     // Configuración de Firebase
     const firebaseConfig = {
         apiKey: "AIzaSyBTD0WrmlvOYViJ5J8_Tt3vDzCDmxQL3tQ",
@@ -60,30 +70,26 @@ $(function() {
 
         const fechaCita = $("#fechaCita").val();
         const horaInicioCita = $("#horaInicioCita").val();
-        const horaFinCita = $("#horaFinCita").val();
+   
         const nombre = $("#nombre").val();
         const celular = $("#celular").val();
         const descripcion = $("#descripcion").val();
-        const vestido = $("#vestido").val();
+        // const vestido = $("#vestido").val();
         const talla = $("#talla").val();
-        const color = $("#color").val();
+        // const color = $("#color").val();
 
-        if (horaInicioCita >= horaFinCita) {
-            alert("La hora de finalización debe ser posterior a la hora de inicio.");
-            return;
-        }
+        
         
         const nuevaCita = {
             prospecto: "Vestidos",
             fecha: fechaCita,
             hora_inicio: horaInicioCita,
-            hora_final: horaFinCita,
             nombre: nombre,
             celular: celular,
             descripcion: descripcion,
-            vestido: vestido,
+            // vestido: vestido,
             talla: talla,
-            color: color,
+            // color: color,
             estado: "pendiente",
             titulo: "Cita Vestidos"
         };
