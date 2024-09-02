@@ -10,7 +10,15 @@
    
     <script src="https://code.jquery.com/jquery-3.7.0.js"
     integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
-
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <!-- Alertify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+    <!-- Alertify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
 
 </head>
 
@@ -40,6 +48,14 @@
                     <input type="time" id="horaLlegadaNovios" name="horaLlegadaNovios" required>
                 </div>
                 <div class="form-group">
+                    <label for="horaCivil">Hora Civil</label>
+                    <input type="time" id="horaCivil" name="horaCivil" required>
+                </div>
+                <div class="form-group">
+                    <label for="horaMisa">Hora de la Misa</label>
+                    <input type="time" id="horaMisa" name="horaMisa" required>
+                </div>
+                <div class="form-group">
                     <label for="horaRecepcion">Hora de la Recepción</label>
                     <input type="time" id="horaRecepcion" name="horaRecepcion" required>
                 </div>
@@ -48,11 +64,15 @@
                     <input type="time" id="horaCena" name="horaCena" required>
                 </div>
                 <div class="form-group">
+                    <label for="horaFinEvento">Fin del Evento</label>
+                    <input type="time" id="horaFinEvento" name="horaFinEvento" required>
+                </div>
+                <div class="form-group">
                     <label for="numeroInvitados">Número de Invitados</label>
                     <input type="number" id="numeroInvitados" name="numeroInvitados" placeholder="Escribe aquí" required>
                 </div>
             </div>
-
+        
             <div class="form-section">
                 <h2>Menú</h2>
                 <div class="form-group">
@@ -72,7 +92,7 @@
                     <textarea id="postre" name="postre" rows="2" placeholder="Escribe aquí" required></textarea>
                 </div>
             </div>
-
+        
             <div class="form-section">
                 <h2>Decoración</h2>
                 <div class="form-group">
@@ -88,7 +108,7 @@
                     <input type="text" id="guiasDecoracion" name="guiasDecoracion" placeholder="Escribe aquí" required>
                 </div>
             </div>
-
+        
             <div class="form-section">
                 <h2>Ramos</h2>
                 <div class="form-group">
@@ -104,7 +124,7 @@
                     <input type="number" id="botoniers" name="botoniers" placeholder="Escribe aquí" required>
                 </div>
             </div>
-
+        
             <div class="form-section">
                 <h2>Montaje</h2>
                 <div class="form-group">
@@ -125,7 +145,7 @@
                     <textarea id="sillasAdicionales" name="sillasAdicionales" rows="2" placeholder="Escribe aquí" required></textarea>
                 </div>
             </div>
-
+        
             <div class="form-section">
                 <h2>Mantel</h2>
                 <div class="form-group">
@@ -145,7 +165,7 @@
                     </select>
                 </div>
             </div>
-
+        
             <div class="form-section">
                 <h2>Detalles Especiales</h2>
                 <div class="form-group">
@@ -153,43 +173,81 @@
                     <textarea id="detalleEspecial" name="detalleEspecial" rows="2" placeholder="Escribe aquí" required></textarea>
                 </div>
             </div>
-
+        
             <div class="form-actions">
                 <button type="submit">Enviar</button>
             </div>
         </form>
+        <div id="loadingDialog" class="loading-dialog">
+            <div class="loading-content">
+                <div id="loadingAnimation"></div>
+                <p>Espere...</p>
+            </div>
+            <style>
+                 .loading-dialog {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    justify-content: center;
+                    align-items: center;
+                    background: rgba(0, 0, 0, 0.5);
+                }
+        
+                .loading-content {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    background: white;
+                    padding: 20px;
+                    border-radius: 10px;
+                }
+                textarea {
+            width: 100%;
+            overflow: hidden;
+            resize: none; /* Evita el redimensionamiento manual del textarea */
+            min-height: 3em; /* Altura mínima inicial */
+        }
+        
+              /* Estilo para el contenedor flotante redondo */
+        /* Estilo para el contenedor flotante redondo */
+        #floatingContainer {
+          position: fixed;
+          top: 20px; /* Ajusta el valor según tu preferencia */
+          right: 20px; /* Ajusta el valor según tu preferencia */
+          width: 50px;
+          height: 50px;
+          border-radius: 50%;
+          background-color: white;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+        }
+        /* Estilo para centrar el texto dentro del progreso circular */
+        #progressText {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        
+         
+            </style>
+        </div>
+        
     </div>
-
+<script src="./jsProject/evento.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.rawgit.com/kottenator/jquery-circle-progress/1.2.2/dist/circle-progress.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#circleProgress').circleProgress({
-                value: 0.0,
-                size: 50,
-                fill: {
-                    gradient: ["#3aeabb", "#fdd250"]
-                }
-            });
-
-            // Lógica para actualizar el progreso
-            $('#eventForm').on('submit', function (e) {
-                e.preventDefault();
-                var progress = 0;
-
-                var interval = setInterval(function () {
-                    progress += 0.1;
-                    $('#circleProgress').circleProgress('value', progress);
-                    $('#progressText').text(Math.round(progress * 100) + '%');
-
-                    if (progress >= 1) {
-                        clearInterval(interval);
-                        // Aquí puedes agregar lógica adicional después de que el progreso llegue al 100%
-                    }
-                }, 100);
-            });
-        });
-    </script>
+   
 </body>
 
 </html>
