@@ -14,26 +14,24 @@ var db = firebase.firestore();
 var storage = firebase.storage();
 
 $(function () {
-    initEventListeners();
     progress();
+    $('#eventForm').on('submit', handleFormSubmit);
 });
+
+// Función para previsualizar la imagen seleccionada
+document.getElementById('imagenDecoracion').onchange = function(event) {
+    const [file] = event.target.files;
+    if (file) {
+        const preview = document.getElementById('previewImagenDecoracion');
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+    }
+};
 
 var galeriaFiles = [];
 var portadaFiles = [];
 
-function initEventListeners() {
-    $('#galeriaFotos').on('change', function () {
-        compressAndPreviewImages(this, 'galeriaPreview', galeriaFiles, 'galeriaImageCount', 10);
-    });
-
-    $('#portadaFotos').on('change', function () {
-        compressAndPreviewImages(this, 'portadaPreview', portadaFiles, 'portadaImageCount', 2);
-    });
-
-    $('#eventForm').on('submit', handleFormSubmit);
-}
-
-async function getEventData() {
+async function getEventData(imageURL) {
     try {
         const eventData = {
             fechaEvento: $('#fechaEvento').val() || '',
@@ -55,7 +53,8 @@ async function getEventData() {
             decoracion: {
                 concepto: $('#conceptoDecoracion').val() || '',
                 bases: $('#basesDecoracion').val() || '',
-                guias: $('#guiasDecoracion').val() || ''
+                guias: $('#guiasDecoracion').val() || '',
+                imagenURL: imageURL || ''  
             },
             ramos: {
                 ramoPrincipal: $('#ramoPrincipal').val() || '',
@@ -74,9 +73,8 @@ async function getEventData() {
                 servilletas: $('#servilletas').val() || '',
                 platoBase: $('#platoBase').val() || ''
             },
-            detallesEspeciales: $('#detalleEspecial').val() || ''
-            // galeriaFotos: await Promise.all(Array.from($('#galeriaFotos').prop('files')).map(file => uploadImage(file, 'galeria'))),
-            // portadaFotos: await Promise.all(Array.from($('#portadaFotos').prop('files')).map(file => uploadImage(file, 'portada')))
+            detallesEspeciales: $('#detalleEspecial').val() || '',
+            adicional: $('#adicional').val() || ''  // Nuevo campo select
         };
 
         // Validar que todos los campos obligatorios tienen valores
@@ -105,7 +103,17 @@ async function handleFormSubmit(event) {
     showLoadingDialog();
 
     try {
-        const eventData = await getEventData();
+        // Subir imagen a Firebase Storage
+        const file = document.getElementById('imagenDecoracion').files[0];
+        let imageURL = '';
+        if (file) {
+            imageURL = await uploadImage(file, 'decoracion');
+        }
+
+        // Obtener datos del evento junto con la URL de la imagen
+        const eventData = await getEventData(imageURL);
+        
+        // Guardar los datos en Firestore
         await db.collection('eventosHTML').add(eventData);
 
         alertify.alert('Éxito', 'Evento creado correctamente.', function () {
@@ -120,78 +128,7 @@ async function handleFormSubmit(event) {
     }
 }
 
-function compressAndPreviewImages(input, previewContainerId, filesArray, countElementId, maxFiles) {
-    var previewContainer = document.getElementById(previewContainerId);
-    var newFilesArray = Array.from(input.files);
-
-    if (filesArray.length + newFilesArray.length > maxFiles) {
-        alert(`No puedes seleccionar más de ${maxFiles} imágenes.`);
-        return;
-    }
-
-    newFilesArray.forEach(file => {
-        new Compressor(file, {
-            quality: 0.6,
-            success(result) {
-                filesArray.push(result);
-                updatePreview(filesArray, previewContainer);
-                updateImageCount(filesArray, countElementId, maxFiles);
-            },
-            error(err) {
-                console.log(err.message);
-            },
-        });
-    });
-}
-
-function updateImageCount(filesArray, countElementId, maxFiles) {
-    var imageCountElement = document.getElementById(countElementId);
-    if (imageCountElement) {
-        imageCountElement.textContent = `${filesArray.length}/${maxFiles} imágenes seleccionadas`;
-    } else {
-        console.error(`Elemento con id ${countElementId} no encontrado.`);
-    }
-}
-
-function compressAndPreviewSingleImage(input, previewContainerId) {
-    var previewContainer = document.getElementById(previewContainerId);
-
-    if (input.files && input.files[0]) {
-        new Compressor(input.files[0], {
-            quality: 0.6,
-            success(result) {
-                var reader = new FileReader();
-                reader.onload = function (event) {
-                    var img = document.createElement('img');
-                    img.src = event.target.result;
-                    img.classList.add('card-categoria');
-                    previewContainer.innerHTML = '';
-                    previewContainer.appendChild(img);
-                };
-                reader.readAsDataURL(result);
-            },
-            error(err) {
-                console.log(err.message);
-            },
-        });
-    }
-}
-
-function updatePreview(files, previewContainer) {
-    previewContainer.innerHTML = '';
-    files.forEach(function (file) {
-        var reader = new FileReader();
-        reader.onload = function (event) {
-            var img = document.createElement('img');
-            img.src = event.target.result;
-            img.classList.add('card-categoria');
-            previewContainer.appendChild(img);
-        };
-        reader.readAsDataURL(file);
-    });
-    initializeCarousel(previewContainer.id);
-}
-
+// Función para subir la imagen a Firebase Storage
 async function uploadImage(file, folder) {
     const storageRef = storage.ref();
     const timestamp = new Date().getTime();
@@ -327,3 +264,4 @@ function updateProgress(value) {
         });
     }
 }
+
