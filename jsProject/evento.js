@@ -217,7 +217,7 @@ function initCardScroll() {
 function progress() {
     $('#circleProgress').circleProgress({
         value: 0,
-        size: 100,
+        size: 60,
         fill: {
             color: "#3498db"
         }

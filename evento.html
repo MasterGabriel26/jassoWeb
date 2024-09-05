@@ -7,15 +7,15 @@
     <title>Formulario de Evento</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="./css/evento.css">
-   
+
     <script src="https://code.jquery.com/jquery-3.7.0.js"
-    integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
     <!-- Alertify CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
     <!-- Alertify JS -->
     <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
@@ -30,6 +30,9 @@
     <div class="container">
         <form id="eventForm">
             <div class="form-section">
+                <div class="container-logo">
+                    <img src="./img/MoveEventos.png" class="logo" alt="">
+                </div>
                 <h2>Información del Evento</h2>
                 <div class="form-group">
                     <label for="fechaEvento">Fecha del Evento</label>
@@ -69,10 +72,11 @@
                 </div>
                 <div class="form-group">
                     <label for="numeroInvitados">Número de Invitados</label>
-                    <input type="number" id="numeroInvitados" name="numeroInvitados" placeholder="Escribe aquí" required>
+                    <input type="number" id="numeroInvitados" name="numeroInvitados" placeholder="Escribe aquí"
+                        required>
                 </div>
             </div>
-        
+
             <div class="form-section">
                 <h2>Menú</h2>
                 <div class="form-group">
@@ -85,20 +89,22 @@
                 </div>
                 <div class="form-group">
                     <label for="platoFuerte">Plato Fuerte</label>
-                    <textarea id="platoFuerte" name="platoFuerte" rows="2" placeholder="Escribe aquí" required></textarea>
+                    <textarea id="platoFuerte" name="platoFuerte" rows="2" placeholder="Escribe aquí"
+                        required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="postre">Postre</label>
                     <textarea id="postre" name="postre" rows="2" placeholder="Escribe aquí" required></textarea>
                 </div>
             </div>
-        
+
             <div class="form-section">
                 <h2>Decoración</h2>
                 <!-- Concepto de decoración (textarea) -->
                 <div class="form-group">
                     <label for="conceptoDecoracion">Concepto de Decoración</label>
-                    <textarea id="conceptoDecoracion" name="conceptoDecoracion" rows="3" placeholder="Escribe aquí" required></textarea>
+                    <textarea id="conceptoDecoracion" name="conceptoDecoracion" rows="3" placeholder="Escribe aquí"
+                        required></textarea>
                 </div>
         
                 <!-- Selección de imagen para la decoración -->
@@ -122,7 +128,7 @@
                     <input type="text" id="guiasDecoracion" name="guiasDecoracion" placeholder="Escribe aquí" required>
                 </div>
             </div>
-        
+
             <div class="form-section">
                 <h2>Ramos</h2>
                 <div class="form-group">
@@ -138,12 +144,13 @@
                     <input type="number" id="botoniers" name="botoniers" placeholder="Escribe aquí" required>
                 </div>
             </div>
-        
+
             <div class="form-section">
                 <h2>Montaje</h2>
                 <div class="form-group">
                     <label for="mesasImperiales">Mesas Imperiales</label>
-                    <input type="number" id="mesasImperiales" name="mesasImperiales" placeholder="Escribe aquí" required>
+                    <input type="number" id="mesasImperiales" name="mesasImperiales" placeholder="Escribe aquí"
+                        required>
                 </div>
                 <div class="form-group">
                     <label for="mesasRedondas">Mesas Redondas</label>
@@ -156,10 +163,11 @@
                 <div class="form-group">
                     <label for="sillas">Sillas Crossback</label>
                     <input type="number" id="sillas" name="sillas" placeholder="Escribe aquí" required>
-                    <textarea id="sillasAdicionales" name="sillasAdicionales" rows="2" placeholder="Escribe aquí" required></textarea>
+                    <textarea id="sillasAdicionales" name="sillasAdicionales" rows="2" placeholder="Escribe aquí"
+                        required></textarea>
                 </div>
             </div>
-        
+
             <div class="form-section">
                 <h2>Mantel</h2>
                 <div class="form-group">
@@ -179,14 +187,16 @@
                     </select>
                 </div>
             </div>
-        
+
             <div class="form-section">
                 <h2>Detalles Especiales</h2>
                 <div class="form-group">
                     <label for="detalleEspecial">Detalle Especial</label>
-                    <textarea id="detalleEspecial" name="detalleEspecial" rows="2" placeholder="Escribe aquí" required></textarea>
+                    <textarea id="detalleEspecial" name="detalleEspecial" rows="2" placeholder="Escribe aquí"
+                        required></textarea>
                 </div>
             </div>
+
             <div class="form-section">
                 <h2>Adicional</h2>
                 <div class="form-group">
@@ -203,6 +213,7 @@
                 </div>
             </div>
         
+
             <div class="form-actions">
                 <button type="submit">Enviar</button>
             </div>
@@ -213,7 +224,7 @@
                 <p>Espere...</p>
             </div>
             <style>
-                 .loading-dialog {
+                .loading-dialog {
                     display: none;
                     position: fixed;
                     top: 0;
@@ -224,7 +235,7 @@
                     align-items: center;
                     background: rgba(0, 0, 0, 0.5);
                 }
-        
+
                 .loading-content {
                     display: flex;
                     flex-direction: column;
@@ -234,49 +245,26 @@
                     padding: 20px;
                     border-radius: 10px;
                 }
+
                 textarea {
-            width: 100%;
-            overflow: hidden;
-            resize: none; /* Evita el redimensionamiento manual del textarea */
-            min-height: 3em; /* Altura mínima inicial */
-        }
-        
-              /* Estilo para el contenedor flotante redondo */
-        /* Estilo para el contenedor flotante redondo */
-        #floatingContainer {
-          position: fixed;
-          top: 20px; /* Ajusta el valor según tu preferencia */
-          right: 20px; /* Ajusta el valor según tu preferencia */
-          width: 50px;
-          height: 50px;
-          border-radius: 50%;
-          background-color: white;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          z-index: 1000;
-        }
-        /* Estilo para centrar el texto dentro del progreso circular */
-        #progressText {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 16px;
-            font-weight: bold;
-        }
-        
-        
-         
+                    width: 100%;
+                    overflow: hidden;
+                    resize: none;
+                    /* Evita el redimensionamiento manual del textarea */
+                    min-height: 3em;
+                    /* Altura mínima inicial */
+                }
+
+                /* Estilo para el contenedor flotante redondo */
+                /* Estilo para el contenedor flotante redondo */
             </style>
         </div>
-        
+
     </div>
-<script src="./jsProject/evento.js"></script>
+    <script src="./jsProject/evento.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.rawgit.com/kottenator/jquery-circle-progress/1.2.2/dist/circle-progress.js"></script>
-   
+
 </body>
 
 </html>
