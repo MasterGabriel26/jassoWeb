@@ -95,10 +95,24 @@
         
             <div class="form-section">
                 <h2>Decoración</h2>
+                <!-- Concepto de decoración (textarea) -->
                 <div class="form-group">
                     <label for="conceptoDecoracion">Concepto de Decoración</label>
                     <textarea id="conceptoDecoracion" name="conceptoDecoracion" rows="3" placeholder="Escribe aquí" required></textarea>
                 </div>
+        
+                <!-- Selección de imagen para la decoración -->
+                <div class="form-group">
+                    <label for="imagenDecoracion">Seleccionar Imagen de Decoración</label>
+                    <input type="file" id="imagenDecoracion" name="imagenDecoracion" accept="image/*" required>
+                </div>
+        
+                <!-- Previsualización de la imagen -->
+                <div class="form-group">
+                    <img id="previewImagenDecoracion" src="#" alt="Previsualización de la Imagen" style="display:none; width: 300px; height: auto;">
+                </div>
+        
+                <!-- Otros campos existentes en la sección de decoración -->
                 <div class="form-group">
                     <label for="basesDecoracion">Bases de Decoración</label>
                     <input type="text" id="basesDecoracion" name="basesDecoracion" placeholder="Escribe aquí" required>
@@ -171,6 +185,21 @@
                 <div class="form-group">
                     <label for="detalleEspecial">Detalle Especial</label>
                     <textarea id="detalleEspecial" name="detalleEspecial" rows="2" placeholder="Escribe aquí" required></textarea>
+                </div>
+            </div>
+            <div class="form-section">
+                <h2>Adicional</h2>
+                <div class="form-group">
+                    <label for="adicional">Seleccione Opción Adicional</label>
+                    <select id="adicional" name="adicional" required>
+                        <option value="mixologia">Mixología (Menú)</option>
+                        <option value="juegoRamos">Juego de Ramos</option>
+                        <option value="decoracionArcos">Decoración Arcos</option>
+                        <option value="estructura">Estructura</option>
+                        <option value="hospedaje">Hospedaje (¿Qué habitaciones?)</option>
+                        <option value="menuTrasnochador">Menú Trasnochador</option>
+                        <option value="desayuno">Desayuno</option>
+                    </select>
                 </div>
             </div>
         
