@@ -38,7 +38,9 @@ async function getEventData() {
         const eventData = {
             fechaEvento: $('#fechaEvento').val() || '',
             nombrePareja: $('#nombrePareja').val() || '',
+            nombreParejaLower: ($('#nombrePareja').val() || '').toLowerCase(),
             lugarEvento: $('#lugarEvento').val() || '',
+            lugarEventoLower: ($('#lugarEvento').val() || '').toLowerCase(),
             horaLlegadaNovios: $('#horaLlegadaNovios').val() || '',
             horaCivil: $('#horaCivil').val() || '',
             horaMisa: $('#horaMisa').val() || '',

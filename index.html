@@ -10,10 +10,83 @@
     <title>Jasso | Inicio</title>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css" type="text/css">
+    <style>
+        /* Estilo para el loading */
+        #loadingScreen {
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 1);
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Imagen del logo en la parte superior */
+        #loadingImage {
+            width: 100px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+
+        /* Barra de progreso (más pequeña) */
+        #progressBarContainer {
+            width: 40%;
+            height: 5px; /* altura más pequeña */
+            background-color: #ccc;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        #progressBar {
+            width: 0;
+            height: 100%;
+            background-color: #1976D2;
+            animation: loadProgress 5s linear forwards; /* Duración de la animación ajustada a 5 segundos */
+        }
+
+        /* Animación para la barra de progreso */
+        @keyframes loadProgress {
+            from {
+                width: 0;
+            }
+
+            to {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 
 <body>
-<div>hola</div>
+    <div id="loadingScreen">
+        <!-- Imagen del logo -->
+        <img id="loadingImage" src="https://via.placeholder.com/100" alt="Logo">
+
+        <!-- Barra de progreso (más pequeña) -->
+        <div id="progressBarContainer">
+            <div id="progressBar"></div>
+        </div>
+    </div>
+
+    <div>
+        <!-- El contenido principal de la página -->
+        <h1>Bienvenido a la página</h1>
+        <p>Esta es tu página de inicio. El loading desaparecerá después de 5 segundos.</p>
+    </div>
+
+    <script>
+        // Ocultar el loading después de 5 segundos
+        window.onload = function() {
+            setTimeout(function() {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }, 50000); // 5000 milisegundos = 5 segundos
+        };
+    </script>
 </body>
 
 </html>
