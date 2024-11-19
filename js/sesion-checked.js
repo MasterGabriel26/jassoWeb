@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 firebase.auth().onAuthStateChanged((user) => {
     if (!user) {
         // No active session, redirect to login page
-        window.location.href = '/static/page-sign-in.html';
+        window.location.href = './page-sign-in.html';
     } else {
         // User is signed in, you can proceed with loading the page content
         console.log('User is signed in:', user.email);
