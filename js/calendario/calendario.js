@@ -254,6 +254,7 @@ document.getElementById("signoutButton").addEventListener("click", () => {
       });
     });
   }
+  const loaderContainer = document.getElementById('loader');
   
   // Generate Calendar
   function generateCalendar(year, month) {
@@ -291,7 +292,8 @@ document.getElementById("signoutButton").addEventListener("click", () => {
     }
   
     document.getElementById("calendarDays").innerHTML = calendarHTML;
-  
+    
+    loaderContainer.classList.add('hidden');
     // Add click event listeners to days
     document.querySelectorAll('.day').forEach(day => {
       day.addEventListener('click', () => openDayModal(day.dataset.date));

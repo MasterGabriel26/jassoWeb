@@ -15,11 +15,9 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 document.addEventListener('DOMContentLoaded', (event) => {
-    // Esperamos a que se verifique el estado de autenticación antes de mostrar el nombre
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
-            displayUserName('nombreUsuario', 'usuarios', 'name', user.uid);
-            displayUserPic('imgPerfil', 'usuarios', 'imageProfile', user.uid);
+            displayUserInfo('nombreUsuario', 'imgPerfil', 'usuarios', user.uid);
         }
     });
 });
@@ -27,76 +25,95 @@ document.addEventListener('DOMContentLoaded', (event) => {
 // Check for active session
 firebase.auth().onAuthStateChanged((user) => {
     if (!user) {
-        // No active session, redirect to login page
         window.location.href = './page-sign-in.html';
     } else {
-        // User is signed in, you can proceed with loading the page content
         console.log('User is signed in:', user.email);
-        // You can add any additional logic here, such as loading user-specific data
     }
 });
 
-function displayUserName(spanId, collectionName, attribute, userId) {
-    const span = document.getElementById(spanId);
+function displayUserInfo(nameSpanId, imgSpanId, collectionName, userId) {
+    const nameSpan = document.getElementById(nameSpanId);
+    const imgSpan = document.getElementById(imgSpanId);
     
-    if (!span) {
-        console.error('No se encontró el elemento span');
+    if (!nameSpan || !imgSpan) {
+        console.error('No se encontraron los elementos necesarios');
         return;
     }
     
-    // Obtenemos el documento del usuario actual
     db.collection(collectionName).doc(userId).get()
         .then((doc) => {
             if (doc.exists) {
-                span.textContent = doc.data()[attribute];
+                const userData = doc.data();
+                nameSpan.textContent = userData.name || "Usuario";
+                
+                if (userData.imageProfile) {
+                    const img = document.createElement('img');
+                    img.src = userData.imageProfile;
+                    img.alt = userData.name || 'Foto de perfil';
+                    img.className = 'avatar img-fluid rounded';
+                    imgSpan.appendChild(img);
+                } else {
+                    createInitialsCanvas(imgSpan, userData.name);
+                }
             } else {
                 console.log("No se encontró el documento del usuario");
-                span.textContent = "Usuario no encontrado";
+                nameSpan.textContent = "Usuario no encontrado";
+                createInitialsCanvas(imgSpan, "Usuario");
             }
         })
         .catch((error) => {
             console.error("Error fetching user data: ", error);
-            span.textContent = "Error al cargar el nombre";
+            nameSpan.textContent = "Error al cargar el nombre";
+            createInitialsCanvas(imgSpan, "Error");
         });
 }
 
-function displayUserPic(imgId, collectionName, attribute, userId) {
-    const img = document.getElementById(imgId);
+function createInitialsCanvas(container, name) {
+    const canvas = document.createElement('canvas');
+    const size = 32; // Ajusta este valor según el tamaño deseado
+    canvas.width = size;
+    canvas.height = size;
+    canvas.className = 'rounded';
     
-    if (!img) {
-        console.error('No se encontró el elemento imagen');
-        return;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = getConsistentColor(name);
+    ctx.fillRect(0, 0, size, size);
+    
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    const initials = getInitials(name);
+    ctx.fillText(initials, size / 2, size / 2);
+    
+    container.appendChild(canvas);
+}
+
+function getInitials(name) {
+    if (!name) return "?";
+    const names = name.split(' ');
+    if (names.length === 1) return names[0].charAt(0).toUpperCase();
+    return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+}
+
+function getConsistentColor(name) {
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
-    
-    // Obtenemos el documento del usuario actual
-    db.collection(collectionName).doc(userId).get()
-        .then((doc) => {
-            if (doc.exists && doc.data()[attribute]) {
-                img.src = doc.data()[attribute];
-                img.alt = doc.data().name || 'Foto de perfil';
-            } else {
-                console.log("No se encontró la imagen de perfil");
-              //  img.src = '/src/img/avatars/default-profile.png'; // Ajusta esta ruta según tu estructura
-               // img.alt = 'Imagen por defecto';
-            }
-        })
-        .catch((error) => {
-            console.error("Error fetching user data: ", error);
-           // img.src = '/src/img/avatars/default-profile.png';
-           // img.alt = 'Error al cargar la imagen';
-        });
+    const color = Math.abs(hash).toString(16).substring(0, 6);
+    return `#${'0'.repeat(6 - color.length)}${color}`;
 }
 
 document.getElementById('logOut').addEventListener('click', function(e) {
-    e.preventDefault(); // Previene la navegación por defecto del enlace
+    e.preventDefault();
     
     firebase.auth().signOut().then(() => {
-        // Cierre de sesión exitoso
         console.log('Sesión cerrada exitosamente');
-        
-        window.location.href = '/static/page-sign-in.html'; // Redirige a la página de login
+        window.location.href = './page-sign-in.html';
     }).catch((error) => {
-        // Error al cerrar sesión
         console.error('Error al cerrar sesión:', error);
     });
 });
+

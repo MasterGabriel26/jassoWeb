@@ -60,6 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarContratos(); // Carga inicial de contratos
   });
   
+  const loaderContainer = document.getElementById('loader');
   // Función para cargar contratos
   async function cargarContratos() {
     try {
@@ -100,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       console.error("Error al cargar contratos:", error);
     }
+    loaderContainer.classList.add('hidden');
   }
   
   // Función para formatear fechas

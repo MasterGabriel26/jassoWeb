@@ -155,6 +155,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  const loaderContainer = document.getElementById('loader');
   async function cargarProspectos(query, filtro, valorBusqueda) {
     isLoading = true;
     try {
@@ -173,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       isLoading = false;
     }
+    loaderContainer.classList.add('hidden');
   }
 
   async function cargarMasProspectos() {
