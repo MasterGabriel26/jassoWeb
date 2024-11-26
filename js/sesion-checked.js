@@ -17,20 +17,42 @@ const db = firebase.firestore();
 document.addEventListener('DOMContentLoaded', (event) => {
     firebase.auth().onAuthStateChanged((user) => {
         if (user) {
-            displayUserInfo('nombreUsuario', 'imgPerfil', 'usuarios', user.uid);
+            const userId = user.uid;
+
+            // Verificar si el usuario es admin
+            verifyAdminAndDisplayUser(userId);
+        } else {
+            // Si no está autenticado, redirigir al login
+            window.location.href = './page-sign-in.html';
         }
     });
 });
 
-// Check for active session
-firebase.auth().onAuthStateChanged((user) => {
-    if (!user) {
-        window.location.href = './page-sign-in.html';
-    } else {
-        console.log('User is signed in:', user.email);
-    }
-});
+// Función para verificar si el usuario es admin y mostrar información
+function verifyAdminAndDisplayUser(userId) {
+    db.collection('usuarios').doc(userId).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const userData = doc.data();
+                if (userData.userType === 'admin') {
+                    console.log('Usuario es administrador.');
+                    displayUserInfo('nombreUsuario', 'imgPerfil', 'usuarios', userId);
+                } else {
+                    console.warn('Usuario no es administrador. Cerrando sesión.');
+                    logOutUser(); // Cierra la sesión si no es admin
+                }
+            } else {
+                console.error("No se encontró el documento del usuario.");
+                logOutUser(); // Cierra la sesión si no se encuentra el usuario
+            }
+        })
+        .catch((error) => {
+            console.error("Error verificando el tipo de usuario:", error);
+            logOutUser(); // Cierra la sesión en caso de error
+        });
+}
 
+// Mostrar información del usuario
 function displayUserInfo(nameSpanId, imgSpanId, collectionName, userId) {
     const nameSpan = document.getElementById(nameSpanId);
     const imgSpan = document.getElementById(imgSpanId);
@@ -68,9 +90,10 @@ function displayUserInfo(nameSpanId, imgSpanId, collectionName, userId) {
         });
 }
 
+// Crear avatar con iniciales como canvas
 function createInitialsCanvas(container, name) {
     const canvas = document.createElement('canvas');
-    const size = 32; // Ajusta este valor según el tamaño deseado
+    const size = 32; // Tamaño del avatar
     canvas.width = size;
     canvas.height = size;
     canvas.className = 'rounded';
@@ -90,6 +113,7 @@ function createInitialsCanvas(container, name) {
     container.appendChild(canvas);
 }
 
+// Obtener iniciales
 function getInitials(name) {
     if (!name) return "?";
     const names = name.split(' ');
@@ -97,6 +121,7 @@ function getInitials(name) {
     return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
 }
 
+// Generar un color basado en el nombre
 function getConsistentColor(name) {
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
@@ -106,14 +131,18 @@ function getConsistentColor(name) {
     return `#${'0'.repeat(6 - color.length)}${color}`;
 }
 
-document.getElementById('logOut').addEventListener('click', function(e) {
-    e.preventDefault();
-    
+// Cerrar sesión y redirigir al login
+function logOutUser() {
     firebase.auth().signOut().then(() => {
         console.log('Sesión cerrada exitosamente');
         window.location.href = './page-sign-in.html';
     }).catch((error) => {
         console.error('Error al cerrar sesión:', error);
     });
-});
+}
 
+// Botón para cerrar sesión
+document.getElementById('logOut').addEventListener('click', function(e) {
+    e.preventDefault();
+    logOutUser();
+});

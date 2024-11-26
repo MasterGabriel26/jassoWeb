@@ -9,7 +9,7 @@ var menu=`<div class="sidebar-content js-simplebar">
         </li>
 
         <li class="sidebar-item">
-            <a class="sidebar-link" href="page-contratos.html">
+            <a class="sidebar-link" href="index.html">
                 <i class="align-middle" data-feather="file-text"></i>
                 <span class="align-middle">Contratos</span>
             </a>
