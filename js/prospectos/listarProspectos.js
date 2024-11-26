@@ -1,3 +1,31 @@
+// Define formatearFecha in the global scope
+function formatearFecha(fecha) {
+  if (fecha instanceof firebase.firestore.Timestamp) {
+      const date = fecha.toDate();
+      return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+  } else if (typeof fecha === "string" || typeof fecha === "number") {
+      const date = new Date(fecha);
+      return `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1).toString().padStart(2, '0')}/${date.getFullYear()}`;
+  }
+  return "Fecha no disponible";
+}
+
+function mostrarModalProspecto(prospecto, id, nombreAsesor) {
+  document.getElementById("modalFolio").textContent = prospecto.folio || "Sin folio";
+  document.getElementById("modalNombre").textContent = prospecto.name || "Sin nombre";
+  document.getElementById("modalTelefono").textContent = prospecto.telefono_prospecto || "Sin teléfono";
+  document.getElementById("modalLugar").textContent = prospecto.pregunta_por || "No especificado";
+  document.getElementById("modalEvento").textContent = prospecto.tipo_evento || "No especificado";
+  document.getElementById("modalFecha").textContent = formatearFecha(prospecto.fecha_create);
+
+  const editarBtn = document.getElementById("editarProspectoBtn");
+  editarBtn.href = `formularioProspecto/editar-prospecto.html?id=${id}`;
+
+  const modal = new bootstrap.Modal(document.getElementById("prospectoModal"));
+  modal.show();
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const filtroSelect = document.getElementById("filtro-select");
   const filtroInput = document.getElementById("filtro-input");
@@ -77,8 +105,8 @@ document.addEventListener("DOMContentLoaded", () => {
         .orderBy("fecha_create","desc");
     } else if (filtro === "telefono_prospecto") {
       // Filtrado por teléfono
-      const phoneNumber = valor.startsWith("+52") ? valor : "+52" + valor;
-      query = query.where(filtro, "==", phoneNumber);
+      //const phoneNumber = valor.startsWith("+52") ? valor : "+52" + valor;
+      query = query.where(filtro, "==", valor);
     } else if (filtro === "asesor") {
          // Buscar los usuarios cuyo `name` coincide con el valor proporcionado
          const asesoresSnapshot = await db
@@ -192,31 +220,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+
+
   function crearFilaProspecto(prospecto, id, nombreAsesor) {
     const row = document.createElement("tr");
+    row.style.cursor = "pointer";
+    row.addEventListener("click", () => mostrarModalProspecto(prospecto, id, nombreAsesor));
     row.innerHTML = `
-            <td>${prospecto.folio || "Sin folio"}</td>
-            <td>${prospecto.name || "Sin nombre"}</td>
-            <td>${prospecto.telefono_prospecto || "Sin teléfono"}</td>
-            <td>${prospecto.pregunta_por || "No especificado"}</td>
-            <td>${prospecto.tipo_evento || "No especificado"}</td>
-            <td>${nombreAsesor}</td>
-            <td>${formatearFecha(prospecto.fecha_create)}</td>
-            <td>
-                <a href="/formularioProspecto/editar-prospecto.html?id=${id}" class="btn btn-primary">Ver más</a>
-            </td>
-        `;
+        <td>${prospecto.folio || "Sin folio"}</td>
+        <td>${prospecto.name || "Sin nombre"}</td>
+        <td>${prospecto.telefono_prospecto || "Sin teléfono"}</td>
+        <td>${prospecto.pregunta_por || "No especificado"}</td>
+        <td>${prospecto.tipo_evento || "No especificado"}</td>
+        <td>${nombreAsesor}</td>
+        <td>${formatearFecha(prospecto.fecha_create)}</td>
+    `;
     return row;
-  }
+}
 
-  function formatearFecha(fecha) {
-    if (fecha instanceof firebase.firestore.Timestamp) {
-      return fecha.toDate().toLocaleDateString();
-    } else if (typeof fecha === "string" || typeof fecha === "number") {
-      return new Date(fecha).toLocaleDateString();
-    }
-    return "Fecha no disponible";
-  }
+
+
+
+
 
   function resetAndLoadProspectos() {
     prospectosLista.innerHTML = "";
@@ -225,3 +250,5 @@ document.addEventListener("DOMContentLoaded", () => {
     cargarProspectos(currentQuery);
   }
 });
+
+

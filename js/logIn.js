@@ -13,7 +13,7 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
-const auth = firebase.auth(); // Initialize Firebase Authentication
+const auth = firebase.auth();
 
 // Login functionality
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -23,25 +23,31 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
 
     try {
         // Check if user exists in the 'usuarios' collection
-        const userDoc = await db.collection('usuarios').where('email', '==', email).get();
+        const userQuery = await db.collection('usuarios').where('email', '==', email).get();
         
-        if (userDoc.empty) {
+        if (userQuery.empty) {
             alert('Usuario no encontrado');
             return;
         }
 
-        const userData = userDoc.docs[0].data();
+        const userDoc = userQuery.docs[0];
+        const userData = userDoc.data();
         
         if (userData.password !== password) {
             alert('Contraseña incorrecta');
             return;
         }
 
-        // If credentials are correct, sign in with Firebase Auth
+        if (userData.userType !== 'admin') {
+            alert('Este tipo de usuario no tiene acceso a esta sección');
+            return;
+        }
+
+        // If credentials are correct and user is admin, sign in with Firebase Auth
         await auth.signInWithEmailAndPassword(email, password);
         
         // Redirect to index page or dashboard
-        window.location.href = 'index.html';
+        window.location.href = 'page-contratos.html';
     } catch (error) {
         console.error('Error during login:', error);
         alert('Error al iniciar sesión. Por favor, intenta de nuevo.');

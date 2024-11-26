@@ -76,14 +76,14 @@ function displayUserPic(imgId, collectionName, attribute, userId) {
                 img.alt = doc.data().name || 'Foto de perfil';
             } else {
                 console.log("No se encontró la imagen de perfil");
-                img.src = '/src/img/avatars/default-profile.png'; // Ajusta esta ruta según tu estructura
-                img.alt = 'Imagen por defecto';
+              //  img.src = '/src/img/avatars/default-profile.png'; // Ajusta esta ruta según tu estructura
+               // img.alt = 'Imagen por defecto';
             }
         })
         .catch((error) => {
             console.error("Error fetching user data: ", error);
-            img.src = '/src/img/avatars/default-profile.png';
-            img.alt = 'Error al cargar la imagen';
+           // img.src = '/src/img/avatars/default-profile.png';
+           // img.alt = 'Error al cargar la imagen';
         });
 }
 

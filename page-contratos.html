@@ -35,9 +35,98 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
+
+    <style>
+      .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(5px);
+        }
+
+        .loader {
+            width: 100px;
+            height: 100px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loader-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            font-family: Arial, sans-serif;
+            color: #333;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+         /* Responsive styles */
+         @media (max-width: 768px) {
+          
+
+            .main {
+                margin-left: 0 !important;
+            }
+
+         
+
+            .table-responsive {
+                overflow-x: auto;
+            }
+
+            .card-header .row {
+                flex-direction: column;
+            }
+
+            .card-header .col-4,
+            .card-header .col-2 {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            #filtrar-container {
+                margin-top: 10px !important;
+            }
+        }
+    </style>
   </head>
 
   <body>
+    <body>
+      <div id="loader" class="loader-container">
+          <div class="loader-content">
+              <div class="loader"></div>
+              
+          </div>
+      </div>
+  
     <div class="wrapper">
       <nav id="sidebar" class="sidebar js-sidebar">
         <div class="sidebar-content js-simplebar">
@@ -76,6 +165,13 @@
                 <span class="align-middle">Calendario</span>
               </a>
             </li>
+
+            <li class="sidebar-item">
+              <a class="sidebar-link" href="page-paquetes.html">
+                <i class="align-middle me-2" data-feather="calendar"></i>
+                <span class="align-middle">Paquetes</span>
+              </a>
+              </li>
           </ul>
         </div>
       </nav>
@@ -169,104 +265,74 @@
                   </div>
                 </div>
               </li>
-              <li class="nav-item dropdown">
-                <a
-                  class="nav-icon dropdown-toggle"
-                  href="#"
-                  id="messagesDropdown"
-                  data-bs-toggle="dropdown"
-                >
-                  <div class="position-relative">
-                    <i class="align-middle" data-feather="message-square"></i>
-                  </div>
-                </a>
-                <div
-                  class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0"
-                  aria-labelledby="messagesDropdown"
-                >
-                  <div class="dropdown-menu-header">
-                    <div class="position-relative">4 New Messages</div>
-                  </div>
-                  <div class="list-group">
-                    <a href="#" class="list-group-item">
-                      <div class="row g-0 align-items-center">
-                        <div class="col-2">
-                          <img
-                            src="img/avatars/avatar-5.jpg"
-                            class="avatar img-fluid rounded-circle"
-                            alt="Vanessa Tucker"
-                          />
-                        </div>
-                        <div class="col-10 ps-2">
-                          <div class="text-dark">Vanessa Tucker</div>
-                          <div class="text-muted small mt-1">
-                            Nam pretium turpis et arcu. Duis arcu tortor.
-                          </div>
-                          <div class="text-muted small mt-1">15m ago</div>
-                        </div>
-                      </div>
-                    </a>
-                    <a href="#" class="list-group-item">
-                      <div class="row g-0 align-items-center">
-                        <div class="col-2">
-                          <img
-                            src="img/avatars/avatar-2.jpg"
-                            class="avatar img-fluid rounded-circle"
-                            alt="William Harris"
-                          />
-                        </div>
-                        <div class="col-10 ps-2">
-                          <div class="text-dark">William Harris</div>
-                          <div class="text-muted small mt-1">
-                            Curabitur ligula sapien euismod vitae.
-                          </div>
-                          <div class="text-muted small mt-1">2h ago</div>
-                        </div>
-                      </div>
-                    </a>
-                    <a href="#" class="list-group-item">
-                      <div class="row g-0 align-items-center">
-                        <div class="col-2">
-                          <img
-                            src="img/avatars/avatar-4.jpg"
-                            class="avatar img-fluid rounded-circle"
-                            alt="Christina Mason"
-                          />
-                        </div>
-                        <div class="col-10 ps-2">
-                          <div class="text-dark">Christina Mason</div>
-                          <div class="text-muted small mt-1">
-                            Pellentesque auctor neque nec urna.
-                          </div>
-                          <div class="text-muted small mt-1">4h ago</div>
-                        </div>
-                      </div>
-                    </a>
-                    <a href="#" class="list-group-item">
-                      <div class="row g-0 align-items-center">
-                        <div class="col-2">
-                          <img
-                            src="img/avatars/avatar-3.jpg"
-                            class="avatar img-fluid rounded-circle"
-                            alt="Sharon Lessman"
-                          />
-                        </div>
-                        <div class="col-10 ps-2">
-                          <div class="text-dark">Sharon Lessman</div>
-                          <div class="text-muted small mt-1">
-                            Aenean tellus metus, bibendum sed, posuere ac,
-                            mattis non.
-                          </div>
-                          <div class="text-muted small mt-1">5h ago</div>
-                        </div>
-                      </div>
-                    </a>
-                  </div>
-                  <div class="dropdown-menu-footer">
-                    <a href="#" class="text-muted">Show all messages</a>
-                  </div>
-                </div>
-              </li>
+             <!--<li class="nav-item dropdown">
+							<a class="nav-icon dropdown-toggle" href="#" id="messagesDropdown" data-bs-toggle="dropdown">
+								<div class="position-relative">
+									<i class="align-middle" data-feather="message-square"></i>
+								</div>
+							</a>
+							<div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="messagesDropdown">
+								<div class="dropdown-menu-header">
+									<div class="position-relative">
+										4 New Messages
+									</div>
+								</div>
+								<div class="list-group">
+									<a href="#" class="list-group-item">
+										<div class="row g-0 align-items-center">
+											<div class="col-2">
+												<img src="img/avatars/avatar-5.jpg" class="avatar img-fluid rounded-circle" alt="Vanessa Tucker">
+											</div>
+											<div class="col-10 ps-2">
+												<div class="text-dark">Vanessa Tucker</div>
+												<div class="text-muted small mt-1">Nam pretium turpis et arcu. Duis arcu tortor.</div>
+												<div class="text-muted small mt-1">15m ago</div>
+											</div>
+										</div>
+									</a>
+									<a href="#" class="list-group-item">
+										<div class="row g-0 align-items-center">
+											<div class="col-2">
+												<img src="img/avatars/avatar-2.jpg" class="avatar img-fluid rounded-circle" alt="William Harris">
+											</div>
+											<div class="col-10 ps-2">
+												<div class="text-dark">William Harris</div>
+												<div class="text-muted small mt-1">Curabitur ligula sapien euismod vitae.</div>
+												<div class="text-muted small mt-1">2h ago</div>
+											</div>
+										</div>
+									</a>
+									<a href="#" class="list-group-item">
+										<div class="row g-0 align-items-center">
+											<div class="col-2">
+												<img src="img/avatars/avatar-4.jpg" class="avatar img-fluid rounded-circle" alt="Christina Mason">
+											</div>
+											<div class="col-10 ps-2">
+												<div class="text-dark">Christina Mason</div>
+												<div class="text-muted small mt-1">Pellentesque auctor neque nec urna.</div>
+												<div class="text-muted small mt-1">4h ago</div>
+											</div>
+										</div>
+									</a>
+									<a href="#" class="list-group-item">
+										<div class="row g-0 align-items-center">
+											<div class="col-2">
+												<img src="img/avatars/avatar-3.jpg" class="avatar img-fluid rounded-circle" alt="Sharon Lessman">
+											</div>
+											<div class="col-10 ps-2">
+												<div class="text-dark">Sharon Lessman</div>
+												<div class="text-muted small mt-1">Aenean tellus metus, bibendum sed, posuere ac, mattis non.</div>
+												<div class="text-muted small mt-1">5h ago</div>
+											</div>
+										</div>
+									</a>
+								</div>
+								<div class="dropdown-menu-footer">
+									<a href="#" class="text-muted">Show all messages</a>
+								</div>
+							</div>
+						</li>-->
+						
               <li class="nav-item dropdown">
                 <a
                   class="nav-icon dropdown-toggle d-inline-block d-sm-none"
@@ -403,6 +469,20 @@
 
     <script src="js/app.js"></script>
     <script src="js/sesion-checked.js"></script>
-    <script src="/js/contratos/listarContratos.js"></script>
+    <script src="js/contratos/listarContratos.js"></script>
+    
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+          const loader = document.getElementById('loader');
+          
+          // Simula un tiempo de carga
+          setTimeout(function() {
+              loader.classList.add('fade-out');
+              setTimeout(function() {
+                  loader.style.display = 'none';
+              }, 500);
+          }, 3000); // Ajusta este tiempo según sea necesario
+      });
+  </script>
   </body>
 </html>
