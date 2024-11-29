@@ -47,7 +47,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         await auth.signInWithEmailAndPassword(email, password);
         
         // Redirect to index page or dashboard
-        window.location.href = 'page-contratos.html';
+        window.location.href = 'index.html';
     } catch (error) {
         console.error('Error during login:', error);
         alert('Error al iniciar sesión. Por favor, intenta de nuevo.');
