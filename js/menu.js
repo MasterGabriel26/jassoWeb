@@ -35,6 +35,12 @@ var menu=`<div class="sidebar-content js-simplebar">
                 <span class="align-middle">Paquetes</span>
             </a>
         </li>
+          <li class="sidebar-item">
+            <a class="sidebar-link" href="page-usuarios.html">
+                <i class="align-middle" data-feather="users"></i>
+                <span class="align-middle">Usuarios</span>
+            </a>
+        </li>
     </ul>
 </div>
 

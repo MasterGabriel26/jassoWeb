@@ -53,65 +53,96 @@ document.getElementById("misaCheck").addEventListener("change", function () {
     }
   });
   
-  // Función para configurar los modales de firma
-  function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
-    const modal = document.getElementById(modalId);
-    const btn = document.getElementById(btnId);
-    const span = modal.getElementsByClassName("close")[0];
-    const canvas = document.getElementById(canvasId);
-    const ctx = canvas.getContext("2d");
-    const saveBtn = document.getElementById(saveButtonId);
-    const cloneCanvas = document.getElementById(cloneCanvasId);
-    const cloneCtx = cloneCanvas.getContext("2d");
-  
-    btn.onclick = function () {
-      modal.style.display = "block";
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-    };
-  
-    span.onclick = function () {
+// Modifica la función setupModal
+function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
+  const modal = document.getElementById(modalId);
+  const btn = document.getElementById(btnId);
+  const span = modal.getElementsByClassName("close")[0];
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext("2d");
+  const saveBtn = document.getElementById(saveButtonId);
+  const cloneCanvas = document.getElementById(cloneCanvasId);
+  const cloneCtx = cloneCanvas.getContext("2d");
+
+  btn.onclick = function () {
+    modal.style.display = "block";
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  };
+
+  span.onclick = function () {
+    modal.style.display = "none";
+  };
+
+  window.onclick = function (event) {
+    if (event.target === modal) {
       modal.style.display = "none";
-    };
-  
-    window.onclick = function (event) {
-      if (event.target === modal) {
-        modal.style.display = "none";
-      }
-    };
-  
-    let drawing = false;
-    canvas.onmousedown = function (e) {
-      drawing = true;
-      draw(e);
-    };
-    canvas.onmousemove = function (e) {
-      if (drawing) draw(e);
-    };
-    canvas.onmouseup = function () {
-      drawing = false;
-      ctx.beginPath();
-    };
-  
-    function draw(e) {
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      ctx.lineWidth = 2;
-      ctx.lineTo(x, y);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(x, y);
     }
-  
-    saveBtn.onclick = function () {
-      cloneCtx.clearRect(0, 0, cloneCanvas.width, cloneCanvas.height);
-      cloneCtx.drawImage(canvas, 0, 0);
-      console.log("Firma guardada y clonada en el contenedor externo.");
-      modal.style.display = "none";
-    };
+  };
+
+  let isDrawing = false;
+  let lastX = 0;
+  let lastY = 0;
+
+  function startDrawing(e) {
+    isDrawing = true;
+    [lastX, lastY] = getCoordinates(e);
   }
-  
+
+  function draw(e) {
+    if (!isDrawing) return;
+    e.preventDefault();
+
+    const [x, y] = getCoordinates(e);
+
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+
+    [lastX, lastY] = [x, y];
+  }
+
+  function stopDrawing() {
+    isDrawing = false;
+  }
+
+  function getCoordinates(e) {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+
+    if (e.touches && e.touches[0]) {
+      return [
+        (e.touches[0].clientX - rect.left) * scaleX,
+        (e.touches[0].clientY - rect.top) * scaleY
+      ];
+    }
+
+    return [
+      (e.clientX - rect.left) * scaleX,
+      (e.clientY - rect.top) * scaleY
+    ];
+  }
+
+  canvas.addEventListener('mousedown', startDrawing);
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('mouseup', stopDrawing);
+  canvas.addEventListener('mouseout', stopDrawing);
+
+  canvas.addEventListener('touchstart', startDrawing);
+  canvas.addEventListener('touchmove', draw);
+  canvas.addEventListener('touchend', stopDrawing);
+
+  saveBtn.onclick = function () {
+    cloneCtx.clearRect(0, 0, cloneCanvas.width, cloneCanvas.height);
+    cloneCtx.drawImage(canvas, 0, 0);
+    console.log("Firma guardada y clonada en el contenedor externo.");
+    modal.style.display = "none";
+  };
+}
+
+
   // Configuración de los modales para las firmas de cliente y empresa
   setupModal("firmaClienteModal", "firmaClienteBtn", "firmaClienteCanvas", "guardarFirmaCliente", "firmaClienteCanvasClone");
   setupModal("firmaEmpresaModal", "firmaEmpresaBtn", "firmaEmpresaCanvas", "guardarFirmaEmpresa", "firmaEmpresaCanvasClone");

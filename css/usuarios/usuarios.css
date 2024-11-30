@@ -1,0 +1,33 @@
+/* usuarios.css */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table th, .table td {
+    white-space: nowrap;
+}
+
+.modal-content {
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    background-color: #4a90e2;
+    color: #fff;
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+.modal-footer .btn-primary {
+    background-color: #546c85;
+    border: none;
+}
+
+.modal-footer .btn-primary:hover {
+    background-color: #3b4c63;
+}
+
