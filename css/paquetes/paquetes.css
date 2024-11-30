@@ -210,3 +210,32 @@ body {
         max-height: 40vh;
     }
 }
+
+
+
+
+.whatsapp-share {
+    text-align: center;
+}
+
+
+
+.whatsapp-share p {
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
+.whatsapp-share .input-group {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.whatsapp-share .btn-success {
+    background-color: #128C7E;
+    border-color: #128C7E;
+}
+
+.whatsapp-share .btn-success:hover {
+    background-color: #075E54;
+    border-color: #075E54;
+}
