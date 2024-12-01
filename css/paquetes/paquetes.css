@@ -13,6 +13,7 @@ body {
 }
 
 .container {
+
     max-width: 1200px;
     margin: 0 auto;
 }
@@ -231,6 +232,8 @@ body {
 }
 
 .whatsapp-share .btn-success {
+    min-width: 200px;
+    margin-top: 10px;
     background-color: #128C7E;
     border-color: #128C7E;
 }

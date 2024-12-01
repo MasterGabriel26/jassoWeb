@@ -48,22 +48,7 @@ function showModal(post) {
               .join("")}
         </div>
       
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <div class="whatsapp-share">
-                            <p>Compártelo por WhatsApp a un cliente</p>
-                            <div class="input-group mb-3">
-                                <input type="tel" id="phoneNumber" class="form-control" placeholder="Número de teléfono">
-                                <button onclick="sendWhatsAppMessage('${post.id}')" class="btn btn-success">
-                                    <i class="fab fa-whatsapp"></i> Enviar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+       
 
         <div class="modal-details">
             <p class="modal-text"><strong>Lugar:</strong> ${post.lugar}</p>
@@ -82,6 +67,21 @@ function showModal(post) {
             <pre class="modal-description"><strong>Descripción:</strong> ${
               post.descripcion
             }</pre>
+        </div>
+             <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="whatsapp-share">
+                            
+                            <div class="input-group mb-3" style="text-align: center;">
+                                <button onclick="sendWhatsAppMessage('${post.id}')" class="btn btn-success">
+                                    <i class="fab fa-whatsapp"></i> Compartir por WhatsApp
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="modal-footer">
             <p class="modal-date"><strong>Fecha:</strong> ${new Date(
@@ -116,27 +116,19 @@ function getCurrentUser() {
 }
 
 function sendWhatsAppMessage(postId) {
-  const phoneNumber = document.getElementById("phoneNumber").value;
-  if (!phoneNumber) {
-    alert("Por favor, introduce un número de teléfono");
-    return;
-  }
-
   getCurrentUser()
     .then((user) => {
-      const message = encodeURIComponent(
-        `Hola, tu asesor: ${user.name}, te está invitando a que conozcas más información del paquete que solicitaste: http://127.0.0.1:5500/paquete-detalle.html?id=
-${postId}`
-      );
-      const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
-      window.open(whatsappUrl, "_blank");
+      const message = encodeURIComponent(`Hola, tu asesor: ${user.name}, te está invitando a que conozcas más información del paquete que solicitaste: https://jassocompany.com/paquete-detalle.html?id=${postId}`);
+      
+      // Open WhatsApp with pre-filled message
+      const whatsappUrl = `https://api.whatsapp.com/send?text=${message}`;
+      window.open(whatsappUrl, '_blank');
     })
     .catch((error) => {
       console.error("Error getting current user:", error);
       alert("Debes iniciar sesión para enviar mensajes");
     });
 }
-
 
 function changeModalImage(url) {
   const modalImage = document.querySelector(".modal-image");
