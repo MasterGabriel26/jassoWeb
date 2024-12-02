@@ -38,14 +38,17 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             return;
         }
 
-        if (userData.userType !== 'admin') {
+        if (userData.userType !== 'admin' && userData.userType !== 'asesor') {
             alert('Este tipo de usuario no tiene acceso a esta sección');
             return;
         }
 
-        // If credentials are correct and user is admin, sign in with Firebase Auth
+        // If credentials are correct and user is admin or asesor, sign in with Firebase Auth
         await auth.signInWithEmailAndPassword(email, password);
         
+        // Store user type in local storage for menu generation
+        localStorage.setItem('userType', userData.userType);
+
         // Redirect to index page or dashboard
         window.location.href = 'index.html';
     } catch (error) {

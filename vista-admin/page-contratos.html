@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta
+      name="description"
+      content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5"
+    />
+    <meta name="author" content="AdminKit" />
+    <meta
+      name="keywords"
+      content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web"
+    />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <link
+      rel="canonical"
+      href="https://demo-basic.adminkit.io/pages-blank.html"
+    />
+
+    <title>CONTRATOs | JASSO</title>
+
+    <link href="../css/app.css" rel="stylesheet" />
+    <link rel="stylesheet" href="../css/contratos/contratos.css" />
+    <link rel="stylesheet" href="../css/loading.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+
+  
+  </head>
+
+  <body>
+    <body>
+      <div id="loader" class="loader-container">
+          <div class="loader-content">
+              <div class="loader"></div>
+              
+          </div>
+      </div>
+  
+    <div class="wrapper">
+      <nav id="sidebar" class="sidebar js-sidebar">
+        
+      </nav>
+
+      <div class="main">
+        <!--ESTO ES LO DE ARRIBA-->
+        <nav class="navbar navbar-expand navbar-light navbar-bg">
+          <a class="sidebar-toggle js-sidebar-toggle">
+            <i class="hamburger align-self-center"></i>
+          </a>
+
+          <div class="navbar-collapse collapse">
+            <ul class="navbar-nav navbar-align">
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-icon dropdown-toggle"
+                  href="#"
+                  id="alertsDropdown"
+                  data-bs-toggle="dropdown"
+                >
+                  <div class="position-relative">
+                    <i class="align-middle" data-feather="bell"></i>
+                    <span class="indicator">4</span>
+                  </div>
+                </a>
+                <div
+                  class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0"
+                  aria-labelledby="alertsDropdown"
+                >
+                  <div class="dropdown-menu-header">4 New Notifications</div>
+                  <div class="list-group">
+                    <a href="#" class="list-group-item">
+                      <div class="row g-0 align-items-center">
+                        <div class="col-2">
+                          <i
+                            class="text-danger"
+                            data-feather="alert-circle"
+                          ></i>
+                        </div>
+                        <div class="col-10">
+                          <div class="text-dark">Update completed</div>
+                          <div class="text-muted small mt-1">
+                            Restart server 12 to complete the update.
+                          </div>
+                          <div class="text-muted small mt-1">30m ago</div>
+                        </div>
+                      </div>
+                    </a>
+                    <a href="#" class="list-group-item">
+                      <div class="row g-0 align-items-center">
+                        <div class="col-2">
+                          <i class="text-warning" data-feather="bell"></i>
+                        </div>
+                        <div class="col-10">
+                          <div class="text-dark">Lorem ipsum</div>
+                          <div class="text-muted small mt-1">
+                            Aliquam ex eros, imperdiet vulputate hendrerit et.
+                          </div>
+                          <div class="text-muted small mt-1">2h ago</div>
+                        </div>
+                      </div>
+                    </a>
+                    <a href="#" class="list-group-item">
+                      <div class="row g-0 align-items-center">
+                        <div class="col-2">
+                          <i class="text-primary" data-feather="home"></i>
+                        </div>
+                        <div class="col-10">
+                          <div class="text-dark">Login from 192.186.1.8</div>
+                          <div class="text-muted small mt-1">5h ago</div>
+                        </div>
+                      </div>
+                    </a>
+                    <a href="#" class="list-group-item">
+                      <div class="row g-0 align-items-center">
+                        <div class="col-2">
+                          <i class="text-success" data-feather="user-plus"></i>
+                        </div>
+                        <div class="col-10">
+                          <div class="text-dark">New connection</div>
+                          <div class="text-muted small mt-1">
+                            Christina accepted your request.
+                          </div>
+                          <div class="text-muted small mt-1">14h ago</div>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                  <div class="dropdown-menu-footer">
+                    <a href="#" class="text-muted">Show all notifications</a>
+                  </div>
+                </div>
+              </li>
+          
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-icon dropdown-toggle d-inline-block d-sm-none"
+                  href="#"
+                  data-bs-toggle="dropdown"
+                >
+                  <i class="align-middle" data-feather="settings"></i>
+                </a>
+
+                <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+                  <span id="imgPerfil" class="avatar img-fluid rounded me-1"></span>
+                  <span class="text-dark" id="nombreUsuario"></span>
+                </a>
+                  <div class="dropdown-menu dropdown-menu-end">
+                    <a class="dropdown-item" href="pages-profile.html"
+                      ><i class="align-middle me-1" data-feather="user"></i>
+                      Profile</a
+                    >
+                    <a class="dropdown-item" href="#"
+                      ><i
+                        class="align-middle me-1"
+                        data-feather="pie-chart"
+                      ></i>
+                      Analytics</a
+                    >
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="index.html"
+                      ><i class="align-middle me-1" data-feather="settings"></i>
+                      Settings & Privacy</a
+                    >
+                    <a class="dropdown-item" href="#"
+                      ><i
+                        class="align-middle me-1"
+                        data-feather="help-circle"
+                      ></i>
+                      Help Center</a
+                    >
+                    <div class="dropdown-divider"></div>
+                    <a id="logOut" class="dropdown-item" href="#"
+                      >Cerrar sesion</a
+                    >
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main class="content">
+          <div class="container-fluid p-0">
+            <h1 class="h3 mb-3">Contratos</h1>
+
+            <div class="row">
+              <div class="col-12">
+                <div class="card">
+                  <div class="card-header">
+                    <div class="row align-items-center">
+                      <!-- Filtro de búsqueda -->
+                      <div class="col-4">
+                        <label for="filtro-select" class="form-label"
+                          >Filtrar por</label
+                        >
+                        <select id="filtro-select" class="form-control">
+                          <option value="all">Mostrar Todos</option>
+                          <option value="folio">Folio</option>
+                          <option value="cliente.nombre">
+                            Nombre del Cliente
+                          </option>
+                          <option value="asesor">Asesor</option>
+                          <option value="evento.fecha">Fecha del Evento</option>
+                          <option value="servicios.total">Total</option>
+                        </select>
+                      </div>
+
+                      <!-- Input dinámico -->
+                      <div class="col-4">
+                        <div id="filtro-input">
+                          <!-- Input dinámico aquí -->
+                        </div>
+                      </div>
+
+                      <!-- Botón de filtrar -->
+                      <div
+                        class="col-2"
+                        id="filtrar-container"
+                        style="display: none;margin-top: 30px;"
+                      >
+                        <button id="filtrar-btn" class="btn btn-primary w-100">
+                          Filtrar
+                        </button>
+                      </div>
+
+                      <!-- Botón para crear contrato -->
+                      <div class="col-2">
+                        <a
+                          href="formularioContrato/formulario-contrato.html"
+                          class="btn btn-primary w-100"
+                          style="margin-top: 30px"
+                        >
+                          Crear contrato
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Folio</th>
+                            <th>Cliente</th>
+                            <th>Asesor</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody id="contratos-lista">
+                          <!-- Los usuarios se insertarán aquí -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!--Script-->
+    <script src="../js/app.js"></script>
+    <script src="../js/sesion-checked.js"></script>
+    <script src="../js/contratos/listarContratos.js"></script>
+    <script src="../js/menu.js"></script>
+
+ 
+  </body>
+</html>

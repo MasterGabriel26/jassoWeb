@@ -77,3 +77,26 @@
             to { opacity: 0; }
         }
 	
+        .table-responsive {
+            max-height: 1000px; /* Ajusta la altura según tus necesidades */
+            overflow-y: auto; /* Permite el scroll vertical */
+        }
+        
+        .table {
+            width: 100%; /* Asegura que la tabla ocupe todo el ancho */
+            border-collapse: collapse; /* Para que no haya espacio entre las celdas */
+        }
+        
+        .table th, .table td {
+            overflow: hidden; /* Oculta el contenido que excede el ancho de la celda */
+            text-overflow: ellipsis; /* Añade puntos suspensivos para el texto que no cabe */
+            white-space: nowrap; /* Evita el salto de línea en las celdas */
+        }
+        
+        .table th {
+            background-color: #fff; /* Fondo blanco para el encabezado */
+            position: sticky; /* Hace que el encabezado sea fijo */
+            top: 0; /* Fija el encabezado al tope del contenedor */
+            z-index: 10; /* Asegura que el encabezado esté sobre el contenido */
+        }
+        

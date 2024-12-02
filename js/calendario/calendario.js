@@ -383,9 +383,17 @@ document.getElementById("signoutButton").addEventListener("click", () => {
         const eventEl = document.createElement('div');
         eventEl.innerHTML = `
           <strong>${event.summary}</strong> - ${new Date(event.start.dateTime || event.start.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-          <button onclick="editEvent('${event.id}', '${date}')">Editar</button>
-          <button onclick="deleteEvent('${event.id}', '${date}')">Eliminar</button>
+          <button onclick="viewMoreInfo('${event.id}')">Ver más información</button>
+          <button class="edit-btn" onclick="editEvent('${event.id}', '${date}')">Editar</button>
+          <button class="delete-btn" onclick="deleteEvent('${event.id}', '${date}')">Eliminar</button>
         `;
+        
+        // Ocultar botones si el usuario es asesor
+        if (localStorage.getItem('userType') === 'asesor') {
+          eventEl.querySelector('.edit-btn').style.display = 'none';
+          eventEl.querySelector('.delete-btn').style.display = 'none';
+        }
+        
         eventList.appendChild(eventEl);
       });
     })
@@ -393,7 +401,9 @@ document.getElementById("signoutButton").addEventListener("click", () => {
   
     modal.style.display = 'block';
     document.getElementById('addEventBtn').onclick = () => openEventForm(date);
-  }
+}
+
+
 
   function revokeToken() {
     if (!tokenClient || !accessToken) {
@@ -409,38 +419,63 @@ document.getElementById("signoutButton").addEventListener("click", () => {
 }
 
   
-  function openEventForm(date, eventId = null) {
-    const modal = document.getElementById('eventFormModal');
-    const form = document.getElementById('eventForm');
-    const titleInput = document.getElementById('eventTitle');
-    const timeInput = document.getElementById('eventTime');
-    const descriptionInput = document.getElementById('eventDescription');
-  
-    if (eventId) {
+function openEventForm(date, eventId = null, readOnly = false) {
+  const modal = document.getElementById('eventFormModal');
+  const form = document.getElementById('eventForm');
+  const titleInput = document.getElementById('eventTitle');
+  const timeInput = document.getElementById('eventTime');
+  const descriptionInput = document.getElementById('eventDescription');
+
+  if (eventId) {
       // Fetch event details if editing
       fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events/${eventId}`, {
-        headers: { Authorization: `Bearer ${accessToken}` }
+          headers: { Authorization: `Bearer ${accessToken}` }
       })
       .then(response => response.json())
       .then(event => {
-        titleInput.value = event.summary;
-        timeInput.value = new Date(event.start.dateTime || event.start.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
-        descriptionInput.value = event.description || '';
-        document.getElementById('eventId').value = eventId;
+          titleInput.value = event.summary;
+          timeInput.value = new Date(event.start.dateTime || event.start.date).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+          descriptionInput.value = event.description || '';
+          document.getElementById('eventId').value = eventId;
+
+          // Si es solo lectura, inhabilitar los inputs
+          if (readOnly) {
+              titleInput.disabled = true;
+              timeInput.disabled = true;
+              descriptionInput.disabled = true;
+              form.querySelector('button[type="submit"]').style.display = 'none'; // Ocultar botón de guardar
+          } else {
+              titleInput.disabled = false;
+              timeInput.disabled = false;
+              descriptionInput.disabled = false;
+              form.querySelector('button[type="submit"]').style.display = 'block'; // Mostrar botón de guardar
+          }
       })
       .catch(error => console.error('Error fetching event details:', error));
-    } else {
+  } else {
       form.reset();
       document.getElementById('eventId').value = '';
-    }
-  
-    modal.style.display = 'block';
-  
-    form.onsubmit = (e) => {
-      e.preventDefault();
-      saveEvent(date);
-    };
+      titleInput.disabled = false;
+      timeInput.disabled = false;
+      descriptionInput.disabled = false;
+      form.querySelector('button[type="submit"]').style.display = 'block'; // Mostrar botón de guardar
   }
+
+  modal.style.display = 'block';
+
+  form.onsubmit = (e) => {
+      e.preventDefault();
+      if (!readOnly) {
+          saveEvent(date);
+      }
+  };
+}
+
+// Nueva función para ver más información del evento
+function viewMoreInfo(eventId) {
+  openEventForm(null, eventId, true); // Abrir en modo solo lectura
+}
+
   
   function saveEvent(date) {
     const title = document.getElementById('eventTitle').value;

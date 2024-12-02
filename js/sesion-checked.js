@@ -19,36 +19,39 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (user) {
             const userId = user.uid;
 
-            // Verificar si el usuario es admin
-            verifyAdminAndDisplayUser(userId);
+            // Verify if the user is admin or asesor
+            verifyUserAndDisplayInfo(userId);
+
+           // loadNotifications(userId);
         } else {
-            // Si no está autenticado, redirigir al login
+            // If not authenticated, redirect to login
             window.location.href = './page-sign-in.html';
         }
     });
 });
 
-// Función para verificar si el usuario es admin y mostrar información
-function verifyAdminAndDisplayUser(userId) {
+// Function to verify if the user is admin or asesor and display information
+function verifyUserAndDisplayInfo(userId) {
     db.collection('usuarios').doc(userId).get()
         .then((doc) => {
             if (doc.exists) {
                 const userData = doc.data();
-                if (userData.userType === 'admin') {
-                    console.log('Usuario es administrador.');
+                if (userData.userType === 'admin' || userData.userType === 'asesor') {
+                    console.log('Usuario autorizado.');
                     displayUserInfo('nombreUsuario', 'imgPerfil', 'usuarios', userId);
+                    localStorage.setItem('userType', userData.userType);
                 } else {
-                    console.warn('Usuario no es administrador. Cerrando sesión.');
-                    logOutUser(); // Cierra la sesión si no es admin
+                    console.warn('Usuario no autorizado. Cerrando sesión.');
+                    logOutUser();
                 }
             } else {
                 console.error("No se encontró el documento del usuario.");
-                logOutUser(); // Cierra la sesión si no se encuentra el usuario
+                logOutUser();
             }
         })
         .catch((error) => {
             console.error("Error verificando el tipo de usuario:", error);
-            logOutUser(); // Cierra la sesión en caso de error
+            logOutUser();
         });
 }
 
@@ -141,8 +144,117 @@ function logOutUser() {
     });
 }
 
-// Botón para cerrar sesión
-document.getElementById('logOut').addEventListener('click', function(e) {
-    e.preventDefault();
-    logOutUser();
-});
+
+
+/*
+function loadNotifications(userId) {
+    const notificationList = document.getElementById('notificationList');
+    const notificationCount = document.getElementById('notificationCount');
+    const notificationHeader = document.getElementById('notificationHeader');
+
+    db.collection('Notificaciones')
+        .where('uidReceptor', '==', userId)
+        .where('visto', '==', false)
+        .onSnapshot((snapshot) => {
+            notificationList.innerHTML = '';
+            let count = 0;
+
+            snapshot.forEach((doc) => {
+                const notification = doc.data();
+                count++;
+
+                const notificationElement = createNotificationElement(doc.id, notification);
+                notificationList.appendChild(notificationElement);
+            });
+
+            notificationCount.textContent = count;
+            notificationHeader.textContent = `${count} New Notifications`;
+        }, (error) => {
+            console.error("Error loading notifications: ", error);
+        });
+}
+
+
+function formatDate(timestamp) {
+    const date = new Date(timestamp);
+    return date.toLocaleString();
+}
+function createNotificationElement(id, notification) {
+    const a = document.createElement('a');
+    a.href = '#';
+    a.className = 'list-group-item';
+    a.innerHTML = `
+        <div class="row g-0 align-items-center">
+            <div class="col-2">
+                <i class="text-${getNotificationIcon(notification.type)}" data-feather="${getNotificationIcon(notification.type)}"></i>
+            </div>
+            <div class="col-10">
+                <div class="text-dark">${notification.tituloNotificacion}</div>
+                <div class="text-muted small mt-1">${notification.mensaje}</div>
+                <div class="text-muted small mt-1">${formatDate(notification.fechaEnvio)}</div>
+            </div>
+        </div>
+    `;
+
+    a.addEventListener('click', (e) => {
+        e.preventDefault();
+        showNotificationDetails(id, notification);
+    });
+
+    return a;
+}
+
+
+function getNotificationIcon(type) {
+    switch (type) {
+        case 'CITA_AGENDADA':
+            return 'calendar';
+        // Add more cases for different notification types
+        default:
+            return 'bell';
+    }
+}
+
+
+function showNotificationDetails(id, notification) {
+    // Implement a modal or other UI to show notification details
+    console.log('Showing details for notification:', notification);
+
+    // Mark the notification as read
+    db.collection('Notificaciones').doc(id).update({ visto: true })
+        .then(() => console.log('Notification marked as read'))
+        .catch((error) => console.error('Error updating notification:', error));
+}
+*/
+
+const logoutButton = document.getElementById('logOut');
+if (logoutButton) {
+    logoutButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        logOutUser();
+    });
+}
+
+/*
+async function testNotificationQuery(userId) {
+    try {
+        const snapshot = await db.collection('Notificaciones')
+            .where('uidReceptor', '==', userId)
+            .where('visto', '==', false)
+            .get();
+
+        if (snapshot.empty) {
+            console.log('No matching documents.');
+            return;
+        }
+
+        snapshot.forEach(doc => {
+            console.log(doc.id, '=>', doc.data());
+        });
+    } catch (error) {
+        console.error("Error querying notifications: ", error);
+    }
+}
+
+// Test with a sample user ID
+testNotificationQuery('98ounVrtZoa6r7iOouYFXRAt4qf2');*/

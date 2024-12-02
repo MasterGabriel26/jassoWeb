@@ -13,9 +13,10 @@
 }
 
 .modal-header {
-    background-color: #4a90e2;
+    background-color: #08284d;
     color: #fff;
     border-bottom: none;
+    -webkit-text-fill-color: aliceblue;
 }
 
 .modal-footer {

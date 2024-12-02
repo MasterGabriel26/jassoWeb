@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Usuario | JASSO</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="formulario-usuario.css">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center my-4">Crear Nuevo Usuario</h1>
+        <a href="../page-usuarios.html"><button class="btn btn-secondary">Volver atras</button></a>
+
+        <form id="userForm" class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="name" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="name" required>
+                <div class="invalid-feedback">Por favor, ingrese un nombre.</div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" required>
+                <div class="invalid-feedback">Por favor, ingrese un email válido.</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="password" required>
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                        <i class="bi bi-eye"></i>
+                    </button>
+                </div>
+                <div class="invalid-feedback">Por favor, ingrese una contraseña.</div>
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">Teléfono</label>
+                <input type="tel" class="form-control" id="phone" required>
+                <div class="invalid-feedback">Por favor, ingrese un número de teléfono válido.</div>
+            </div>
+            <div class="mb-3">
+                <label for="userType" class="form-label">Tipo de Usuario</label>
+                <select class="form-select" id="userType" required>
+                    <option value="">Seleccione un tipo</option>
+                    <option value="cliente">Cliente</option>
+                    <option value="asesor">Asesor</option>
+                    <option value="admin">Administrador</option>
+                </select>
+                <div class="invalid-feedback">Por favor, seleccione un tipo de usuario.</div>
+            </div>
+            <div class="mb-3">
+                <label for="uidLider" class="form-label">UID del Líder (opcional)</label>
+                <input type="text" class="form-control" id="uidLider">
+            </div>
+            <div class="mb-3">
+                <label for="imageProfile" class="form-label">Imagen de Perfil</label>
+                <input type="file" class="form-control" id="imageProfile" accept="image/*">
+                <div id="imagePreview" class="mt-2"></div>
+            </div>
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="active" checked>
+                <label class="form-check-label" for="active">Usuario Activo</label>
+            </div>
+            <div class="row">
+           
+                <button type="submit" class="btn btn-primary">Crear Usuario</button>
+            </div>
+           
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="formulario-usuarios.js"></script>
+</body>
+</html>
