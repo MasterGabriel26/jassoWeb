@@ -22,8 +22,7 @@
 
 	<!-- CSS de Bootstrap -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-<!-- JavaScript de Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 
 	<link href="css/app.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/loading.css">
@@ -55,6 +54,26 @@
     border-radius: 8px; /* Bordes redondeados para las imágenes */
     transition: transform 0.2s; /* Efecto de hover */
 }
+
+.image-container {
+        position: relative;
+        width: 100%;
+        padding-bottom: 100%; /* Creates a 1:1 aspect ratio */
+    }
+    .image-container img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+.modal-image {
+            max-width: 100%;
+            max-height: 80vh;
+            display: block;
+            margin: 0 auto;
+        }
 	</style>
 </head>
 
@@ -166,47 +185,81 @@
 
 			<main class="content">
 				<div class="container-fluid p-0">
-
 					<h1 class="h3 mb-3">Galería</h1>
-
 					<div class="row">
 						<div class="col-12">
-						  <div class="card">
-							<div class="card-header">
-								<ul class="nav nav-tabs" id="myTab" role="tablist">
-									<li class="nav-item" role="presentation">
-										<a class="nav-link active" id="todo-tab" data-bs-toggle="tab" href="#todo" role="tab" aria-controls="todo" aria-selected="true">Todo</a>
-									</li>
-								</ul>
-							</div>
-							
-							  
-							  
-							<div class="card-body">
-								  
-								<div class="tab-content" id="myTabContent">
-									<div class="tab-pane fade show active" id="todo" role="tabpanel" aria-labelledby="todo-tab">
-										<div class="row" id="galeria-todo"></div>
+							<div class="card">
+								<div class="card-header">
+									<ul class="nav nav-tabs" id="myTab" role="tablist">
+										<li class="nav-item" role="presentation">
+											<a class="nav-link active" id="todo-tab" data-bs-toggle="tab" href="#todo" role="tab" aria-controls="todo" aria-selected="true">Todo</a>
+										</li>
+									</ul>
+									<button id="addImageBtn" class="btn btn-primary mt-2" style="display: none;">Agregar Imagen</button>
+								</div>
+								<div class="card-body">
+									<div class="tab-content" id="myTabContent">
+										<div class="tab-pane fade show active" id="todo" role="tabpanel" aria-labelledby="todo-tab">
+											<div class="row" id="galeria-todo"></div>
+										</div>
 									</div>
 								</div>
 							</div>
-							
-							
-							
-							
-							
-							
-							
-							
-						  </div>
-
 						</div>
-						
-					  </div>
-				
-					
+					</div>
 				</div>
 			</main>
+		
+
+
+			  <!-- Modal para ver imagen completa -->
+			  <div class="modal fade" id="imageModal" tabindex="-1" aria-labelledby="imageModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-lg">
+					<div class="modal-content">
+						<div class="modal-header">
+							
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<img src="" class="modal-image" id="modalImage" alt="Imagen completa">
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<!-- Modal para agregar imagen -->
+<div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addImageModalLabel">Agregar Imagen</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addImageForm">
+                    <div class="mb-3">
+                        <label for="imageFile" class="form-label">Seleccionar imagen</label>
+                        <input type="file" class="form-control" id="imageFile" accept="image/*" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="imageCategory" class="form-label">Categoría</label>
+                        <select class="form-select" id="imageCategory" required>
+                            <option value="">Seleccione una categoría</option>
+                            <option value="nueva">Agregar nueva categoría</option>
+                            <!-- Aquí se agregarán las categorías dinámicamente -->
+                        </select>
+                    </div>
+                    <div class="mb-3" id="newCategoryInput" style="display: none;">
+                        <label for="newCategory" class="form-label">Nueva categoría</label>
+                        <input type="text" class="form-control" id="newCategory">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Subir Imagen</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
         </div>
     </div>

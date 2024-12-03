@@ -25,6 +25,18 @@ function generateMenu() {
                 <span class="align-middle">Chat</span>
             </a>
         </li>
+          <li class="sidebar-item">
+                <a class="sidebar-link" href="/page-galeria.html">
+                    <i class="align-middle" data-feather="image"></i>
+                    <span class="align-middle">Galería</span>
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="/page-usuarios.html">
+                    <i class="align-middle" data-feather="user-plus"></i>
+                    <span class="align-middle">Invitados del Cliente</span>
+                </a>
+            </li>
     `;
 
     if (userType === 'admin') {
@@ -52,18 +64,7 @@ function generateMenu() {
 
     if (userType === 'asesor') {
         menuItems += `
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="/page-galeria.html">
-                    <i class="align-middle" data-feather="image"></i>
-                    <span class="align-middle">Galería</span>
-                </a>
-            </li>
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="/page-usuarios.html">
-                    <i class="align-middle" data-feather="user-plus"></i>
-                    <span class="align-middle">Invitados del Cliente</span>
-                </a>
-            </li>
+          
         `;
     }
 
