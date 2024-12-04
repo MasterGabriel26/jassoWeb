@@ -143,9 +143,10 @@ function showModal(post) {
                         <div class="whatsapp-share">
                             
                             <div class="input-group mb-3" style="text-align: center;">
-                                <button onclick="sendWhatsAppMessage('${post.id}')" class="btn btn-success">
-                                    <i class="fab fa-whatsapp"></i> Compartir por WhatsApp
-                                </button>
+                                <button onclick='sendWhatsAppMessage("${post.id}", ${JSON.stringify(post)})' class="btn btn-success">
+  <i class="fab fa-whatsapp"></i> Compartir por WhatsApp
+</button>
+
                             </div>
                         </div>
                     </div>
@@ -221,14 +222,55 @@ window.onclick = function (event) {
   }
 };
 
-function sendWhatsAppMessage(postId) {
+function sendWhatsAppMessage(postId, post) {
   if (!currentUser) {
     alert("Debes iniciar sesión para enviar mensajes");
     return;
   }
 
-  const message = encodeURIComponent(`Hola, tu asesor: ${currentUser.name}, te está invitando a que conozcas más información del paquete que solicitaste: https://jassocompany.com/paquete-detalle.html?id=${postId}`);
-  
+ 
+
+  // Actualizar las etiquetas de Open Graph
+  updateMetaTags(post);
+
+  const message = encodeURIComponent(
+    `Hola, tu asesor: ${currentUser.name}, te está invitando a que conozcas más información sobre "${post.tituloEvento}": https://jassocompany.com/paquete-detalle.html?id=${postId}`
+  );
+
   const whatsappUrl = `https://api.whatsapp.com/send?text=${message}`;
   window.open(whatsappUrl, '_blank');
 }
+
+
+function updateMetaTags(post) {
+  const titleMeta = document.querySelector('meta[property="og:title"]');
+  const descriptionMeta = document.querySelector('meta[property="og:description"]');
+  const imageMeta = document.querySelector('meta[property="og:image"]');
+  const urlMeta = document.querySelector('meta[property="og:url"]');
+
+  if (titleMeta) {
+    titleMeta.setAttribute('content', post.tituloEvento);
+  } else {
+    console.error('Meta tag og:title not found');
+  }
+
+  if (descriptionMeta) {
+    descriptionMeta.setAttribute('content', `${post.descripcion.substring(0, 100)}... | Costo: $${post.costoPaquete} | Lugar: ${post.lugar}`);
+  } else {
+    console.error('Meta tag og:description not found');
+  }
+
+  if (imageMeta) {
+    imageMeta.setAttribute('content', post.multimediaUrl[0]);
+  } else {
+    console.error('Meta tag og:image not found');
+  }
+
+  if (urlMeta) {
+    urlMeta.setAttribute('content', `https://jassocompany.com/paquete-detalle.html?id=${post.id}`);
+  } else {
+    console.error('Meta tag og:url not found');
+  }
+}
+
+

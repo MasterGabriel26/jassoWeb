@@ -13,6 +13,38 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+
+function updateMetaTags(post) {
+    const titleMeta = document.querySelector('meta[property="og:title"]');
+    const descriptionMeta = document.querySelector('meta[property="og:description"]');
+    const imageMeta = document.querySelector('meta[property="og:image"]');
+    const urlMeta = document.querySelector('meta[property="og:url"]');
+
+    if (titleMeta) {
+        titleMeta.setAttribute('content', post.tituloEvento);
+    } else {
+        console.error('Meta tag og:title not found');
+    }
+
+    if (descriptionMeta) {
+        descriptionMeta.setAttribute('content', `${post.descripcion.substring(0, 100)}... | Costo: $${post.costoPaquete} | Lugar: ${post.lugar}`);
+    } else {
+        console.error('Meta tag og:description not found');
+    }
+
+    if (imageMeta) {
+        imageMeta.setAttribute('content', post.multimediaUrl[0]);
+    } else {
+        console.error('Meta tag og:image not found');
+    }
+
+    if (urlMeta) {
+        urlMeta.setAttribute('content', `https://jassocompany.com/paquete-detalle.html?id=${post.id}`);
+    } else {
+        console.error('Meta tag og:url not found');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const postId = urlParams.get('id');
@@ -22,6 +54,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (doc.exists) {
                 const post = doc.data();
                 post.id = doc.id;
+                // Update meta tags first for proper WhatsApp preview
+                updateMetaTags(post);
+                // Then display the package details
                 displayPaqueteDetalle(post);
             } else {
                 console.log("No se encontró el documento");
@@ -91,6 +126,3 @@ function openImageModal(src) {
     const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
     imageModal.show();
 }
-
-
-
