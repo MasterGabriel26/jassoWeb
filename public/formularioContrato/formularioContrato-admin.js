@@ -1,5 +1,3 @@
-
-
 // Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyAOvefpvlXLtbTx1T2hYg2Ds56eiKI3eAk",
@@ -15,15 +13,122 @@ const firebaseConfig = {
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
- const storage = firebase.storage();
- const auth = firebase.auth();
+const storage = firebase.storage();
+const auth = firebase.auth();
 
 
- document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', (event) => {
     populateSelect('lugarEvento', 'lugares', 'nombreLugar');
     populateSelect('lugarMisa', 'lugares', 'nombreLugar');
     populateSelect('tipoEvento', 'eventos', 'evento');
+    const urlParams = new URLSearchParams(window.location.search);
+    const contratoId = urlParams.get('id');
+    if (contratoId) {
+        cargarDatosContrato(contratoId);
+    }
 });
+
+
+
+async function cargarOpciones(selectId, coleccion, campoNombre, valorActual) {
+  const select = document.getElementById(selectId);
+  select.innerHTML = ''; // Limpiar opciones existentes
+  
+  const querySnapshot = await db.collection(coleccion).get();
+  
+  querySnapshot.forEach((doc) => {
+      const option = document.createElement('option');
+      option.value = doc.data()[campoNombre];
+      option.textContent = doc.data()[campoNombre];
+      if (doc.data()[campoNombre] === valorActual) {
+          option.selected = true;
+      }
+      select.appendChild(option);
+  });
+
+  // Si el valor actual no está en la lista, añadirlo como una opción
+  if (!Array.from(select.options).some(option => option.value === valorActual)) {
+      const option = document.createElement('option');
+      option.value = valorActual;
+      option.textContent = valorActual;
+      option.selected = true;
+      select.appendChild(option);
+  }
+}
+
+let firmaCliente;
+let firmaAsesor;
+
+
+async function cargarDatosContrato(contratoId) {
+    try {
+        const doc = await db.collection('contratos_pendientes').doc(contratoId).get();
+        if (doc.exists) {
+            const data = doc.data();
+            document.getElementById('nombre').value = data.cliente.nombre;
+            document.getElementById('ciudad').value = data.cliente.ciudad;
+            document.getElementById('domicilio').value = data.cliente.domicilio;
+            document.getElementById('cp').value = data.cliente.cp;
+            document.getElementById('telefono').value = data.cliente.telefono;
+            document.getElementById('celular').value = data.cliente.celular.replace('+52', '');
+        
+            document.getElementById('fecha').value = data.evento.fecha;
+          
+            document.getElementById('horario').value = data.evento.horario;
+
+            firmaCliente= data.firmaAsesor
+            firmaAsesor=data.firmaAsesor
+              // Cargar opciones para los selects
+              
+              await cargarOpciones('lugarEvento', 'lugares', 'nombreLugar', data.evento.lugar);
+              await cargarOpciones('tipoEvento', 'eventos', 'evento', data.evento.tipo);
+            if (data.misa) {
+                document.getElementById('misaCheck').checked = true;
+                document.getElementById('misaDetails').style.display = 'block';
+                document.getElementById('lugarMisa').value = data.misa.lugar;
+                document.getElementById('direccionMisa').value = data.misa.direccion;
+                document.getElementById('horarioMisa').value = data.misa.horario;
+                document.getElementById('horaCivil').value = data.misa.horaCivil;
+            }
+
+            const tbody = document.getElementById('productosTable').getElementsByTagName('tbody')[0];
+            tbody.innerHTML = '';
+            data.servicios.forEach(servicio => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td><input type="text" name="servicio[]" value="${servicio.servicio}" placeholder="Servicio"></td>
+                    <td><input type="number" name="cantidad[]" value="${servicio.cantidad}" placeholder="Cantidad"></td>
+                    <td><input type="text" name="descripcion[]" value="${servicio.descripcion}" placeholder="Descripción"></td>
+                    <td><input type="number" name="precio[]" value="${servicio.precio}" placeholder="Precio"></td>
+                    <td><button type="button" class="deleteRow" onclick="eliminarFila(this)">-</button></td>`;
+            });
+
+            if (data.firmaCliente) {
+                const firmaClienteCanvas = document.getElementById('firmaClienteCanvasClone');
+                const ctx = firmaClienteCanvas.getContext('2d');
+                const img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0);
+                }
+                img.src = data.firmaCliente;
+            }
+
+            if (data.firmaEmpresa) {
+                const firmaEmpresaCanvas = document.getElementById('firmaEmpresaCanvasClone');
+                const ctx = firmaEmpresaCanvas.getContext('2d');
+                const img = new Image();
+                img.onload = function() {
+                    ctx.drawImage(img, 0, 0);
+                }
+                img.src = data.firmaEmpresa;
+            }
+        } else {
+            console.log("No se encontró el contrato");
+        }
+    } catch (error) {
+        console.error("Error al cargar los datos del contrato:", error);
+    }
+}
 
  function populateSelect(selectId, collectionName, attribute) {
     const select = document.getElementById(selectId);
@@ -143,10 +248,8 @@ function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
 }
 
 
-  // Configuración de los modales para las firmas de cliente y empresa
-  setupModal("firmaClienteModal", "firmaClienteBtn", "firmaClienteCanvas", "guardarFirmaCliente", "firmaClienteCanvasClone");
   setupModal("firmaEmpresaModal", "firmaEmpresaBtn", "firmaEmpresaCanvas", "guardarFirmaEmpresa", "firmaEmpresaCanvasClone");
-  
+
   document.getElementById("eventoForm").onsubmit = function (e) {
     e.preventDefault();
   
@@ -249,7 +352,7 @@ async function generarContratoPDF() {
   
     // Logo pequeño en la parte superior
     const logoImg = new Image();
-    logoImg.src = '/static/forumlarioContrato/logo.png';
+    logoImg.src = 'logo.png';
     await new Promise((resolve) => {
       logoImg.onload = resolve;
     });
@@ -291,7 +394,7 @@ async function generarContratoPDF() {
       ['Nombre:', document.getElementById('nombre').value],
       ['Domicilio:', document.getElementById('domicilio').value],
       ['Ciudad:', document.getElementById('ciudad').value, 'C.P.:', document.getElementById('cp').value],
-      ['Teléfono:', document.getElementById('telefono').value, 'Celular:',telefonoConPrefijo]
+      ['Teléfono:', document.getElementById('telefono').value, 'Celular:',telefonoIngresado]
     ];
   
     clienteData.forEach((row, index) => {
@@ -429,29 +532,61 @@ async function generarContratoPDF() {
     });
   
     // Firmas
-    y += 20;
-    doc.line(margin, y, margin + 60, y);
-    doc.line(pageWidth - margin - 60, y, pageWidth - margin, y);
-  
-    const firmaClienteCanvas = document.getElementById('firmaClienteCanvasClone');
-    const firmaEmpresaCanvas = document.getElementById('firmaEmpresaCanvasClone');
-  
-    if (firmaClienteCanvas.toDataURL() !== document.createElement('canvas').toDataURL()) {
-      const firmaClienteData = firmaClienteCanvas.toDataURL('image/png');
-      doc.addImage(firmaClienteData, 'PNG', margin, y - 20, 60, 20);
-    }
-    
-    if (firmaEmpresaCanvas.toDataURL() !== document.createElement('canvas').toDataURL()) {
-      const firmaEmpresaData = firmaEmpresaCanvas.toDataURL('image/png');
-      doc.addImage(firmaEmpresaData, 'PNG', pageWidth - margin - 60, y - 20, 60, 20);
-    }
-  
-    // Añadir el texto de las firmas debajo de las líneas
-    y += 5;
-    doc.setFontSize(8);
-    doc.text('Firma del Cliente', margin, y);
-    doc.text('Firma de la Empresa', pageWidth - margin - 60, y);
-  
+y += 20;
+
+// Líneas de firma
+doc.line(margin, y, margin + 60, y); // Línea para la firma del asesor
+doc.line(pageWidth - margin - 60, y, pageWidth - margin, y); // Línea para la firma de la empresa
+doc.line(pageWidth / 2 - 30, y + 30, pageWidth / 2 + 30, y + 30); // Línea para la firma del cliente
+
+const urlParams = new URLSearchParams(window.location.search);
+const contratoId = urlParams.get('id');
+
+// Obtener las firmas desde Firestore
+const firmaClienteData = await obtenerFirmaDesdeFirestore('contratos_pendientes', contratoId, 'firmaCliente');
+const firmaAsesorData = await obtenerFirmaDesdeFirestore('contratos_pendientes', contratoId, 'firmaAsesor');
+
+const firmaEmpresaCanvas = document.getElementById('firmaEmpresaCanvasClone');
+
+if (
+  firmaClienteData === document.createElement('canvas').toDataURL() ||
+  firmaEmpresaCanvas.toDataURL() === document.createElement('canvas').toDataURL() ||
+  firmaAsesorData === document.createElement('canvas').toDataURL()
+) {
+  alert("Se requieren todas las firmas (cliente, empresa y asesor) para generar el PDF.");
+  return;
+}
+
+// Añadir las firmas al documento PDF
+if (firmaAsesorData) {
+  doc.addImage(firmaAsesorData, 'PNG', margin, y - 20, 60, 20);
+} else {
+  alert("Se requiere la firma del asesor para generar el PDF.");
+  return;
+}
+
+if (firmaEmpresaCanvas.toDataURL() !== document.createElement('canvas').toDataURL()) {
+  const firmaEmpresaData = firmaEmpresaCanvas.toDataURL('image/png');
+  doc.addImage(firmaEmpresaData, 'PNG', pageWidth - margin - 60, y - 20, 60, 20);
+} else {
+  alert("Se requiere la firma de la empresa para generar el PDF.");
+  return;
+}
+
+if (firmaClienteData) {
+  doc.addImage(firmaClienteData, 'PNG', pageWidth / 2 - 30, y + 10, 60, 20);
+} else {
+  alert("Se requiere la firma del cliente para generar el PDF.");
+  return;
+}
+
+// Añadir el texto de las firmas debajo de las líneas
+y += 5;
+doc.setFontSize(8);
+doc.text('Firma del Asesor', margin, y);
+doc.text('Firma de la Empresa', pageWidth - margin - 60, y);
+doc.text('Firma del Cliente', pageWidth / 2, y + 35, { align: 'center' });
+
     // Guardar datos en Firebase
     const id = db.collection('contratos').doc().id;
     try {
@@ -508,6 +643,14 @@ async function generarContratoPDF() {
       // Actualizar el documento en Firestore con la URL del PDF
       await db.collection('contratos').doc(id).update({ pdfUrl: downloadURL });
       console.log('URL del PDF guardada en Firestore');
+
+      // Delete the document from contratos_pendientes
+      const urlParams = new URLSearchParams(window.location.search);
+      const contratoId = urlParams.get('id');
+      if (contratoId) {
+          await db.collection('contratos_pendientes').doc(contratoId).delete();
+          console.log('Contrato pendiente eliminado');
+      }
     } catch (error) {
       console.error('Error al guardar el contrato en Firebase:', error);
     }
@@ -526,6 +669,23 @@ async function generarContratoPDF() {
      return selectElement.options[selectElement.selectedIndex].text;
  }
 
+
+ async function obtenerFirmaDesdeFirestore(collection, contratoId, campoFirma) {
+  try {
+      const doc = await db.collection(collection).doc(contratoId).get();
+      if (doc.exists) {
+          const data = doc.data();
+          return data[campoFirma]; // Retorna la firma en formato base64
+      } else {
+          console.error("No se encontró el documento.");
+          return null;
+      }
+  } catch (error) {
+      console.error("Error al obtener la firma:", error);
+      return null;
+  }
+}
+
  // Función para resetear el formulario
 function resetearFormulario() {
     document.getElementById("eventoForm").reset();
@@ -535,7 +695,7 @@ function resetearFormulario() {
     document.getElementById("lugarMisa").removeAttribute("required");
     
     // Limpiar las firmas
-    const canvasIds = ["firmaClienteCanvas", "firmaEmpresaCanvas", "firmaClienteCanvasClone", "firmaEmpresaCanvasClone"];
+    const canvasIds = ["firmaClienteCanvas", "firmaEmpresaCanvas", "firmaClienteCanvasClone", "firmaEmpresaCanvasClone", "firmaAsesorCanvas", "firmaAsesorCanvasClone"];
     canvasIds.forEach(id => {
       const canvas = document.getElementById(id);
       if (canvas) {
@@ -580,3 +740,28 @@ function agregarFila() {
     const row = btn.parentNode.parentNode;
     row.parentNode.removeChild(row);
   }
+
+document.getElementById('enviarLinkBtn').addEventListener('click', async () => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const contratoId = urlParams.get('id');
+    if (!contratoId) {
+        alert('No se encontró el ID del contrato');
+        return;
+    }
+
+    try {
+        const doc = await db.collection('contratos_pendientes').doc(contratoId).get();
+        if (doc.exists) {
+            const data = doc.data();
+            const telefono = document.getElementById('celular').value;
+            const mensaje = encodeURIComponent(`Hola ${data.cliente.nombre}, aquí está el enlace para firmar tu contrato: ${data.linkFirmaCliente}`);
+            window.open(`https://wa.me/${telefono}?text=${mensaje}`, '_blank');
+        } else {
+            alert('No se encontró el contrato');
+        }
+    } catch (error) {
+        console.error('Error al obtener los datos del contrato:', error);
+        alert('Error al enviar el enlace. Por favor, intente de nuevo.');
+    }
+});
+

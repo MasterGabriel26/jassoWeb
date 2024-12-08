@@ -6,16 +6,16 @@
     <title>Formulario de Evento</title>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
-    <link rel="stylesheet" href="/formularioContrato/styleContrato.css" />
+    <link rel="stylesheet" href="styleContrato.css" />
   </head>
   <body>
 
-    <div> <a href="../index.html"><button>Volver atras</button></a></div>
+    <div> <a href="../vista-admin/page-contratos.html"><button>Volver atras</button></a></div>
     <form id="eventoForm">
       <div class="form-group">
       
@@ -141,49 +141,35 @@
         </button>
       </div>
 
+
       <div class="card">
         <div class="card-title">Firmas</div>
-        <button type="button" id="firmaClienteBtn">Firma del Cliente</button>
-        <button type="button" id="firmaEmpresaBtn">Firma de la Empresa</button>
+        <button type="button" id="firmaAsesorBtn">Firma del Asesor</button>
       </div>
 
-      <button type="submit">Generar Contrato</button>
+      <button type="submit">Enviar a revision</button>
     </form>
 
 
 
     <!-- Contenedor para la firma del cliente fuera del modal -->
-    <div id="firmaClienteContainer" style="display: none">
-      <canvas id="firmaClienteCanvasClone" width="300" height="150"></canvas>
+    <div id="firmaAsesorContainer" style="display: none">
+      <canvas id="firmaAsesorCanvasClone" width="300" height="150"></canvas>
     </div>
 
-    <!-- Contenedor para la firma de la empresa fuera del modal -->
-    <div id="firmaEmpresaContainer" style="display: none">
-      <canvas id="firmaEmpresaCanvasClone" width="300" height="150"></canvas>
-    </div>
+ 
 
-    <!-- Modales de firma -->
-    <div id="firmaClienteModal" class="modal">
+    <div id="firmaAsesorModal" class="modal">
       <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Firma del Cliente</h2>
-        <canvas id="firmaClienteCanvas" width="300" height="150"></canvas>
-        <hr>
-        <button id="guardarFirmaCliente">Guardar Firma</button>
+          <span class="close">&times;</span>
+          <h2>Firma del Asesor</h2>
+          <canvas id="firmaAsesorCanvas" width="300" height="150"></canvas>
+          <hr>
+          <button id="guardarFirmaAsesor">Guardar Firma</button>
       </div>
-    </div>
+  </div>
 
-    <div id="firmaEmpresaModal" class="modal">
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Firma de la Empresa</h2>
-        <canvas id="firmaEmpresaCanvas" width="300" height="150"></canvas>
-        <hr>
-        <button id="guardarFirmaEmpresa">Guardar Firma</button>
-      </div>
-      <p id="mensaje"></p>
-    </div>
-
-    <script src="/formularioContrato/formularioContrato.js"></script>
+  
+    <script src="contratos.js"></script>
   </body>
 </html>

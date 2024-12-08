@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Contrato</title>
+    <link rel="stylesheet" href="styleContrato.css">
+       
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+</head>
+<body>
+    <div><a href="../vista-admin/page-contratos-admin.html"><button>Volver atrás</button></a></div>
+    <form id="eventoForm">
+        <div class="card">
+            <div class="card-title">Datos del Cliente</div>
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" required />
+            </div>
+            <div class="form-group">
+                <label for="ciudad">Ciudad</label>
+                <input type="text" id="ciudad" name="ciudad" required />
+            </div>
+            <div class="form-group">
+                <label for="domicilio">Domicilio</label>
+                <input type="text" id="domicilio" name="domicilio" required />
+            </div>
+            <div class="form-group">
+                <label for="cp">Código Postal</label>
+                <input type="text" id="cp" name="cp" required />
+            </div>
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" required />
+            </div>
+            <div class="form-group">
+                <label for="celular">Celular</label>
+                <input type="tel" id="celular" name="celular" required />
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Datos del Evento</div>
+            <div class="form-group">
+                <label for="tipoEvento">Tipo de Evento</label>
+                <select id="tipoEvento" name="tipoEvento" required>
+                    <option value="">Seleccione un evento</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha" name="fecha" required />
+            </div>
+            <div class="form-group">
+                <label for="lugarEvento">Lugar</label>
+                <select id="lugarEvento" name="lugarEvento" required>
+                    <option value="">Seleccione un lugar</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="horario">Horario</label>
+                <input type="time" id="horario" name="horario" required />
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <input type="checkbox" id="misaCheck" name="misaCheck" />
+            <label for="misaCheck">Misa (Opcional)</label>
+        </div>
+
+        <div id="misaDetails" class="card" style="display: none;">
+            <div class="card-title">Datos de la Misa</div>
+            <div class="form-group">
+                <label for="lugarMisa">Lugar</label>
+                <select id="lugarMisa" name="lugarMisa">
+                    <option value="">Seleccione un lugar</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="direccionMisa">Dirección</label>
+                <input type="text" id="direccionMisa" name="direccionMisa" />
+            </div>
+            <div class="form-group">
+                <label for="horarioMisa">Horario</label>
+                <input type="time" id="horarioMisa" name="horarioMisa" />
+            </div>
+            <div class="form-group">
+                <label for="horaCivil">Hora Civil</label>
+                <input type="time" id="horaCivil" name="horaCivil" />
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Productos y/o servicios contratados</div>
+            <table id="productosTable">
+                <thead>
+                    <tr>
+                        <th>Servicios</th>
+                        <th>Cantidad</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input type="text" name="servicio[]" placeholder="Servicio" />
+                        </td>
+                        <td>
+                            <input type="number" name="cantidad[]" placeholder="Cantidad" />
+                        </td>
+                        <td>
+                            <input type="text" name="descripcion[]" placeholder="Descripción" />
+                        </td>
+                        <td>
+                            <input type="number" name="precio[]" placeholder="Precio" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" onclick="agregarFila()">Añadir Servicio/Producto</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Firmas</div>
+            <button type="button" id="firmaEmpresaBtn">Firma de la Empresa</button>
+        </div>
+
+        <button type="submit">Guardar Contrato</button>
+        <button type="button" id="enviarLinkBtn">Enviar Link de Firma al Cliente</button>
+    </form>
+  
+<!-- Contenedor para la firma de la empresa fuera del modal -->
+
+    
+<div id="firmaEmpresaContainer"style="display:none">
+<canvas id="firmaEmpresaCanvasClone" width="300" height="150">
+</canvas>
+</div>
+  
+</div>
+    <div id="firmaEmpresaModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Firma de la Empresa</h2>
+            <canvas id="firmaEmpresaCanvas" width="300" height="150"></canvas>
+            <hr>
+            <button id="guardarFirmaEmpresa">Guardar Firma</button>
+        </div>
+    </div>
+
+    <script src="formularioContrato-admin.js"></script>
+</body>
+</html>
