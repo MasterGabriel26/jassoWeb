@@ -307,32 +307,7 @@ function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
     return `${letras}${numeros}`;
 }
 
-let asesor; // Declarar la variable en un alcance superior
-let nombre;
-// Asesor
-firebase.auth().onAuthStateChanged(async (user) => {
-    if (user) {
-        asesor = user.uid; // Asegúrate de usar `uid`, no `id`
-        
-        try {
-            // Obtener el documento del asesor en Firestore
-            const docU = await db.collection('usuarios').doc(asesor).get();
 
-            if (docU.exists) {
-                 nombre = docU.data().name || "Sin nombre"; // Asegúrate de que el campo es correcto
-                console.log(`Asesor: ${nombre}`);
-
-                
-            } else {
-                console.log("No se encontró el documento del usuario");
-            }
-        } catch (error) {
-            console.error("Error al obtener datos del usuario:", error);
-        }
-    } else {
-        console.log("Usuario no autenticado.");
-    }
-});
 
 
 
@@ -415,8 +390,32 @@ function agregarFila() {
 
 
 
-
-
+  let asesor;
+  let nombre;
+  // Asesor
+  firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+          asesor = user.uid; // Asegúrate de usar `uid`, no `id`
+          
+          try {
+              // Obtener el documento del asesor en Firestore
+              const docU = await db.collection('usuarios').doc(asesor).get();
+  
+              if (docU.exists) {
+                   nombre = docU.data().name || "Sin nombre"; // Asegúrate de que el campo es correcto
+                  console.log(`Asesor: ${nombre}`);
+  
+                  
+              } else {
+                  console.log("No se encontró el documento del usuario");
+              }
+          } catch (error) {
+              console.error("Error al obtener datos del usuario:", error);
+          }
+      } else {
+          console.log("Usuario no autenticado.");
+      }
+  });
 
 
 async function generarContratoPDF() {
@@ -443,6 +442,8 @@ async function generarContratoPDF() {
   doc.addImage(logoImg, 'PNG', margin, y, 15, 15);
   y += 20;
 
+
+  
   // Encabezado
   doc.setFillColor(70, 70, 70);
   doc.rect(margin, y, pageWidth - 2 * margin, 15, 'F');
@@ -713,6 +714,7 @@ doc.text('Firma del Cliente', pageWidth / 2, y + 35, { align: 'center' });
     await db.collection('contratos').doc(id).update({ pdfUrl: downloadURL });
     console.log('URL del PDF guardada en Firestore');
 
+
  
   } catch (error) {
     console.error('Error al guardar el contrato en Firebase:', error);
@@ -725,4 +727,7 @@ doc.text('Firma del Cliente', pageWidth / 2, y + 35, { align: 'center' });
 
   // Mostrar un mensaje de éxito
   alert("El contrato se ha enviado a revision");
+  setTimeout(() => {
+    window.location.href="/vista-admin/page-contratos.html";
+  }, 1000);
 }

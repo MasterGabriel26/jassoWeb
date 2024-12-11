@@ -46,30 +46,37 @@ function mostrarPDFEnViewer(pdfUrl) {
 }
 
 async function aprobarContrato(contratoId) {
-    const firmaModal = document.getElementById('firmaEmpresaModal');
-    firmaModal.style.display = 'block';
+  const firmaModal = document.getElementById('firmaEmpresaModal');
+  firmaModal.style.display = 'block';
 
-    document.getElementById('guardarFirmaAsesor').onclick = async () => {
+  document.getElementById('guardarFirmaAsesor').onclick = async () => {
+      await generarContratoPDF();
+
       
-        generarContratoPDF()
-     
-    
-    };
-   
+      // Cerrar la ventana después de un pequeño retraso para que el usuario vea el mensaje
+      setTimeout(() => {
+        window.location.href="/vista-admin/page-contratos-admin.html";
+      }, 3000); // 1000 ms = 1 segundo
+  };
 }
 
 async function rechazarContrato(contratoId) {
-    const razon = prompt('Por favor, ingrese la razón del rechazo:');
-    if (razon) {
-        await db.collection('contratos').doc(contratoId).update({
-            estado: 'rechazado',
-            razonRechazo: razon,
-            fechaRechazo: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        alert('Contrato rechazado');
-        window.close();
-    }
+  const razon = prompt('Por favor, ingrese la razón del rechazo:');
+  if (razon) {
+      await db.collection('contratos').doc(contratoId).update({
+          estado: 'rechazado',
+          razonRechazo: razon,
+          fechaRechazo: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      alert('Contrato rechazado');
+
+      // Cerrar la ventana después de un pequeño retraso para que el usuario vea el mensaje
+      setTimeout(() => {
+          window.location.href="/vista-admin/page-contratos-admin.html";
+      }, 1000); // 1000 ms = 1 segundo
+  }
 }
+
 
 function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
     const modal = document.getElementById(modalId);
@@ -188,6 +195,33 @@ function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
         }
         const contratoData = contratoDoc.data();
       
+        let asesor;
+        let nombre;
+        // Asesor
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                asesor = contratoData.asesor; // Asegúrate de usar `uid`, no `id`
+                
+                try {
+                    // Obtener el documento del asesor en Firestore
+                    const docU = await db.collection('usuarios').doc(asesor).get();
+        
+                    if (docU.exists) {
+                         nombre = docU.data().name || "Sin nombre"; // Asegúrate de que el campo es correcto
+                        console.log(`Asesor: ${nombre}`);
+        
+                        
+                    } else {
+                        console.log("No se encontró el documento del usuario");
+                    }
+                } catch (error) {
+                    console.error("Error al obtener datos del usuario:", error);
+                }
+            } else {
+                console.log("Usuario no autenticado.");
+            }
+        });
+      
         // Logo pequeño en la parte superior
         const logoImg = new Image();
         logoImg.src = 'logo.png';
@@ -210,7 +244,7 @@ function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
       
         doc.setTextColor(0, 0, 0);
         doc.setFontSize(8);
-        doc.text(`Asesor: ${contratoData.asesor}`, margin, y);
+        doc.text(`Asesor: ${nombre}`, margin, y);
         y += 6;
       
         // Datos del Cliente
@@ -415,9 +449,7 @@ function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
           });
           console.log('URL del PDF guardada en Firestore');
     
-          // Guardar el PDF con el número de folio en el nombre
-          doc.save(`Contrato_MOVE_${contratoData.folio}.pdf`);
-
+          
           const firmaJefe = document.getElementById('firmaAsesorCanvas').toDataURL();
           await db.collection('contratos').doc(contratoId).update({
               estado: 'aprobado',

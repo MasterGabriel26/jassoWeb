@@ -1,46 +1,48 @@
+let unsubscribeContratos;
+let unsubscribeContratosRevision;
+
 document.addEventListener("DOMContentLoaded", () => {
     const filtroSelect = document.getElementById("filtro-select");
     const filtroInput = document.getElementById("filtro-input");
     const filtrarBtn = document.getElementById("filtrar-btn");
+    const filtrarContainer = document.getElementById("filtrar-container");
     const contratosLista = document.getElementById("contratos-lista");
-    const contratosPendientesLista = document.getElementById("contratos-pendientes-lista");
-
+  
     filtroSelect.addEventListener("change", () => {
         const filtro = filtroSelect.value;
-
+  
         if (filtro === "all") {
-            filtrarBtn.style.display = "none";
+            filtrarContainer.style.display = "none";
             cargarContratos();
-            cargarContratosPendientes();
             filtroInput.innerHTML = "";
         } else {
-            filtrarBtn.style.display = "block";
-
-            if (filtro === "fecha") {
+            filtrarContainer.style.display = "block";
+  
+            if (filtro === "evento.fecha") {
                 filtroInput.innerHTML = `
-                    <label for="filtro-min" class="form-label">Fecha mínima</label>
-                    <input type="date" id="filtro-min" class="form-control mb-2">
-                    <label for="filtro-max" class="form-label">Fecha máxima</label>
-                    <input type="date" id="filtro-max" class="form-control">
+                    <input type="date" id="filtro-min" class="form-control mb-2" placeholder="Fecha mínima">
+                    <input type="date" id="filtro-max" class="form-control" placeholder="Fecha máxima">
+                `;
+            } else if (filtro === "servicios.total") {
+                filtroInput.innerHTML = `
+                    <input type="number" id="filtro-min" class="form-control mb-2" placeholder="Monto mínimo">
+                    <input type="number" id="filtro-max" class="form-control" placeholder="Monto máximo">
                 `;
             } else {
-                filtroInput.innerHTML = `
-                    <label for="filtro-valor" class="form-label">Buscar por ${filtro}</label>
-                    <input type="text" id="filtro-valor" class="form-control">
-                `;
+                filtroInput.innerHTML = `<input type="text" id="filtro-valor" class="form-control" style="margin-top:30px;" placeholder="Buscar por ${filtro}">`;
             }
         }
     });
-
+  
     filtrarBtn.addEventListener("click", async () => {
         const filtro = filtroSelect.value;
-
-        if (filtro === "fecha") {
+  
+        if (filtro === "evento.fecha" || filtro === "servicios.total") {
             const min = document.getElementById("filtro-min").value;
             const max = document.getElementById("filtro-max").value;
-
+  
             if (min && max && min > max) {
-                alert("La fecha mínima no puede ser mayor que la fecha máxima.");
+                alert("El valor mínimo no puede ser mayor que el valor máximo.");
                 return;
             }
             await filtrarContratosPorRango(filtro, min || 0, max || Infinity);
@@ -53,84 +55,98 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
     });
+  
+    unsubscribeContratos = cargarContratos();
+    unsubscribeContratosRevision = cargarContratosRevision();
+});
+  
+const loaderContainer = document.getElementById('loader');
+  
+function cargarContratos() {
+    const contratosRef = db.collection("contratos");
+    const query = contratosRef.orderBy("fecha", "desc");
 
-    cargarContratos();
-    cargarContratosPendientes();
+    return query.onSnapshot((querySnapshot) => {
+        actualizarTabla(querySnapshot, "contratos-lista");
+        loaderContainer.classList.add('hidden');
+    }, (error) => {
+        console.error("Error al escuchar cambios en contratos:", error);
+        loaderContainer.classList.add('hidden');
+    });
+}
+
+function cargarContratosRevision() {
+    const contratosRef = db.collection("contratos");
+    const query = contratosRef.where("estado", "==", "en revision").orderBy("fecha", "desc");
+
+    return query.onSnapshot((querySnapshot) => {
+        actualizarTabla(querySnapshot, "contratos-revision-lista");
+    }, (error) => {
+        console.error("Error al escuchar cambios en contratos en revisión:", error);
+    });
+}
+
+window.addEventListener('beforeunload', () => {
+    if (unsubscribeContratos) {
+        unsubscribeContratos();
+    }
+    if (unsubscribeContratosRevision) {
+        unsubscribeContratosRevision();
+    }
 });
 
-const loaderContainer = document.getElementById('loader');
-
-async function cargarContratos() {
-    try {
-        const contratosRef = db.collection("contratos");
-        const querySnapshot = await contratosRef.orderBy("fecha", "desc").get();
-        actualizarTabla(querySnapshot, "contratos-lista");
-    } catch (error) {
-        console.error("Error al cargar contratos firmados:", error);
-    }
-}
-
-async function cargarContratosPendientes() {
-    try {
-        const contratosRef = db.collection("contratos_pendientes");
-        const querySnapshot = await contratosRef.orderBy("fecha", "desc").get();
-        actualizarTabla(querySnapshot, "contratos-pendientes-lista");
-    } catch (error) {
-        console.error("Error al cargar contratos pendientes:", error);
-    }
-    loaderContainer.classList.add('hidden');
-}
-
-function formatearFecha(fecha) {
-    if (fecha instanceof firebase.firestore.Timestamp) {
-        return fecha.toDate().toLocaleDateString();
-    } else if (typeof fecha === "string" || typeof fecha === "number") {
-        return new Date(fecha).toLocaleDateString();
-    } else {
-        return "Fecha no disponible";
-    }
-}
-
 async function filtrarContratosPorCampo(campo, valor) {
-    try {
-        const contratosRef = db.collection("contratos");
-        const contratosPendientesRef = db.collection("contratos_pendientes");
-        
-        const querySnapshotContratos = await contratosRef.where(campo, "==", valor).get();
-        const querySnapshotPendientes = await contratosPendientesRef.where(campo, "==", valor).get();
-        
-        actualizarTabla(querySnapshotContratos, "contratos-lista");
-        actualizarTabla(querySnapshotPendientes, "contratos-pendientes-lista");
-    } catch (error) {
+    if (unsubscribeContratos) {
+        unsubscribeContratos();
+    }
+    const contratosRef = db.collection("contratos");
+    const query = contratosRef.where(campo, "==", valor);
+    unsubscribeContratos = query.onSnapshot((querySnapshot) => {
+        actualizarTabla(querySnapshot, "contratos-lista");
+    }, (error) => {
         console.error("Error al filtrar contratos:", error);
-    }
+    });
 }
-
+  
 async function filtrarContratosPorRango(campo, min, max) {
-    try {
-        const contratosRef = db.collection("contratos");
-        const contratosPendientesRef = db.collection("contratos_pendientes");
-        
-        const querySnapshotContratos = await contratosRef
-            .where(campo, ">=", min)
-            .where(campo, "<=", max)
-            .get();
-        
-        const querySnapshotPendientes = await contratosPendientesRef
-            .where(campo, ">=", min)
-            .where(campo, "<=", max)
-            .get();
-        
-        actualizarTabla(querySnapshotContratos, "contratos-lista");
-        actualizarTabla(querySnapshotPendientes, "contratos-pendientes-lista");
-    } catch (error) {
-        console.error("Error al filtrar contratos por rango:", error);
+    if (unsubscribeContratos) {
+        unsubscribeContratos();
     }
+    const contratosRef = db.collection("contratos");
+    const query = contratosRef
+        .where(campo, ">=", min)
+        .where(campo, "<=", max);
+    unsubscribeContratos = query.onSnapshot((querySnapshot) => {
+        actualizarTabla(querySnapshot, "contratos-lista");
+    }, (error) => {
+        console.error("Error al filtrar contratos por rango:", error);
+    });
 }
-
+  
 async function actualizarTabla(querySnapshot, tableId) {
     const tabla = document.getElementById(tableId);
     tabla.innerHTML = "";
+
+    if (querySnapshot.empty) {
+
+        if(tableId=="contratos-revision-lista"){
+
+            tabla.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center">No hay contratos pendientes de revision</td>
+            </tr>
+        `;
+        return; 
+        }else{
+            tabla.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center">No hay contratos disponibles</td>
+            </tr>
+        `;
+        return;
+        }
+       
+    }
 
     for (const doc of querySnapshot.docs) {
         const contrato = doc.data();
@@ -148,32 +164,31 @@ async function actualizarTabla(querySnapshot, tableId) {
             }
         }
 
+        const estado = contrato.estado || "en revisión";
+        const color = obtenerColorPorEstado(estado);
+        const buttonHtml = obtenerBotonPorEstado(estado, doc.id);
+
         const row = `
-            <tr>
+            <tr style="background-color: ${color};">
                 <td>${contrato.folio}</td>
                 <td>${contrato.cliente.nombre}</td>
                 <td>${nombre}</td>
                 <td>${fecha}</td>
-                <td>
-                    <button class="btn btn-primary btn-sm" onclick="verMasInfo('${doc.id}', '${tableId === 'contratos-lista' ? 'contratos' : 'contratos_pendientes'}')">Ver más</button>
-                </td>
+                <td>${buttonHtml}</td>
             </tr>
         `;
         tabla.innerHTML += row;
     }
 }
-
-async function verMasInfo(docId, coleccion) {
+  
+async function verMasInfo(docId) {
     try {
-        const docRef = db.collection(coleccion).doc(docId);
+        const docRef = db.collection("contratos").doc(docId);
         const doc = await docRef.get();
-
+  
         if (doc.exists) {
             const contrato = doc.data();
-            if (coleccion === 'contratos_pendientes') {
-                // Redirect to the form with the contract ID
-                window.location.href = `../formularioContrato/formulario-contrato-admin.html?id=${docId}`;
-            } else if (contrato.pdfUrl) {
+            if (contrato.pdfUrl) {
                 window.open(contrato.pdfUrl, "_blank");
             } else {
                 alert("No se encontró el PDF para este contrato.");
@@ -182,7 +197,98 @@ async function verMasInfo(docId, coleccion) {
             console.log("No se encontró el documento");
         }
     } catch (error) {
-        console.error("Error al obtener el contrato:", error);
+        console.error("Error al obtener más información:", error);
+    }
+}
+  
+function accionEnRevision(docId) {
+    window.location.href=`/contratosprueba/revision.html?id=${docId}`;
+}
+  
+async function accionAprobado(docId) {
+    try {
+        const doc = await db.collection('contratos').doc(docId).get();
+        if (doc.exists) {
+            const data = doc.data();
+            const telefono = data.cliente.celular;
+            const mensaje = encodeURIComponent(`Hola ${data.cliente.nombre}, aquí está el enlace para firmar tu contrato: https://jassocompany.com/contratosprueba/firmaCliente.html?id=${docId}`);
+            window.open(`https://wa.me/${telefono}?text=${mensaje}`, '_blank');
+        } else {
+            alert('No se encontró el contrato');
+        }
+    } catch (error) {
+        console.error('Error al obtener los datos del contrato:', error);
+        alert('Error al enviar el enlace. Por favor, intente de nuevo.');
+    }
+}
+  
+function accionRechazado(docId) {
+    console.log("Acción para contrato rechazado:", docId);
+}
+  
+async function accionConcluido(docId) {
+    try {
+        const docRef = db.collection("contratos").doc(docId);
+        const doc = await docRef.get();
+  
+        if (doc.exists) {
+            const contrato = doc.data();
+            if (contrato.pdfUrl) {
+                window.open(contrato.pdfUrl, "_blank");
+            } else {
+                alert("No se encontró el PDF para este contrato.");
+            }
+        } else {
+            console.log("No se encontró el documento");
+        }
+    } catch (error) {
+        console.error("Error al obtener más información:", error);
+    }
+}
+
+function obtenerColorPorEstado(estado) {
+    switch (estado) {
+        case "en revision":
+            return "#ffeeba";
+        case "aprobado":
+            return "#d4edda";
+        case "rechazado":
+            return "#f8d7da";
+        case "concluido":
+            return "#d1ecf1";
+        default:
+            return "#ffffff";
+    }
+}
+  
+function obtenerBotonPorEstado(estado, docId) {
+    const usuarioTipo = localStorage.getItem('userType');
+    
+    if (estado === "en revision" && usuarioTipo === "asesor") {
+        return `<button class="btn btn-warning" disabled>En revisión</button>`;
+    }
+    
+    switch (estado) {
+        case "en revision":
+            return `<button class="btn btn-warning" onclick="accionEnRevision('${docId}')">En revisión</button>`;
+        case "aprobado":
+            return `<button class="btn btn-success" onclick="accionAprobado('${docId}')">Aprobado</button>`;
+        case "rechazado":
+            return `<button class="btn btn-danger" onclick="accionRechazado('${docId}')">Rechazado</button>`;
+        case "concluido":
+            return `<button class="btn btn-info" onclick="accionConcluido('${docId}')">Concluido</button>`;
+        default:
+            return `<button class="btn btn-secondary" onclick="verMasInfo('${docId}')">Ver más</button>`;
+    }
+}
+  
+function formatearFecha(fecha) {
+    if (fecha instanceof firebase.firestore.Timestamp) {
+        return fecha.toDate().toLocaleDateString();
+    } else if (typeof fecha === "string" || typeof fecha === "number") {
+        return new Date(fecha).toLocaleDateString();
+    } else {
+        return "Fecha no disponible";
     }
 }
 

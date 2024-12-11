@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             // Verify if the user is admin or asesor
             verifyUserAndDisplayInfo(userId);
 
-           // loadNotifications(userId);
+           loadNotifications(userId);
         } else {
             // If not authenticated, redirect to login
             window.location.href = './page-sign-in.html';
@@ -138,7 +138,7 @@ function getConsistentColor(name) {
 function logOutUser() {
     firebase.auth().signOut().then(() => {
         console.log('Sesión cerrada exitosamente');
-        window.location.href = './page-sign-in.html';
+        window.location.href = '/public/page-sign-in.html';
     }).catch((error) => {
         console.error('Error al cerrar sesión:', error);
     });
@@ -146,52 +146,74 @@ function logOutUser() {
 
 
 
-/*
-function loadNotifications(userId) {
-    const notificationList = document.getElementById('notificationList');
-    const notificationCount = document.getElementById('notificationCount');
-    const notificationHeader = document.getElementById('notificationHeader');
 
-    db.collection('Notificaciones')
-        .where('uidReceptor', '==', userId)
-        .where('visto', '==', false)
-        .onSnapshot((snapshot) => {
-            notificationList.innerHTML = '';
-            let count = 0;
+const logoutButton = document.getElementById('logOut');
+if (logoutButton) {
+    logoutButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        logOutUser();
+    });
+}
 
-            snapshot.forEach((doc) => {
-                const notification = doc.data();
-                count++;
+let allNotifications = [];
+const NOTIFICATIONS_LIMIT = 4; // Show only the top 10 notifications
 
-                const notificationElement = createNotificationElement(doc.id, notification);
-                notificationList.appendChild(notificationElement);
-            });
+function getNotificationIcon(type) {
+    switch (type) {
+        case 'SEGUIMIENTO':
+            return '<i class="fas fa-clipboard-check"></i>';
+        case 'FELICITACIONES':
+            return '<i class="fas fa-star"></i>';
+        case 'CITA_AGENDADA':
+            return '<i class="fas fa-calendar-check"></i>';
+        case 'MENSAJE':
+            return '<i class="fas fa-envelope"></i>';
+        case 'VIDEO':
+            return '<i class="fas fa-video"></i>';
+        case 'APROBACION':
+            return '<i class="fas fa-check-circle"></i>';
+        case 'RECHAZADO':
+            return '<i class="fas fa-times-circle"></i>';
+        case 'CAMBIO_ROL':
+            return '<i class="fas fa-user-tag"></i>';
+        default:
+            return '<i class="fas fa-bell"></i>';
+    }
+}
 
-            notificationCount.textContent = count;
-            notificationHeader.textContent = `${count} New Notifications`;
-        }, (error) => {
-            console.error("Error loading notifications: ", error);
-        });
+function formatearFecha(fecha) {
+    if (fecha instanceof firebase.firestore.Timestamp) {
+        return fecha.toDate().toLocaleDateString();
+    } else if (typeof fecha === "string" || typeof fecha === "number") {
+        return new Date(fecha).toLocaleDateString();
+    } else {
+        return "Fecha no disponible";
+    }
+}
+
+function showNotificationDetails(id, notification) {
+    console.log('Notification details:', id, notification);
+    db.collection('Notificaciones').doc(id).update({ visto: true }).then(() => {
+        updateNotificationDisplay();
+    }).catch((error) => {
+        console.error('Error updating notification:', error);
+    });
 }
 
 
-function formatDate(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleString();
-}
 function createNotificationElement(id, notification) {
     const a = document.createElement('a');
     a.href = '#';
-    a.className = 'list-group-item';
+    a.className = `list-group-item ${notification.visto ? 'notification-read' : 'notification-unread'}`;
     a.innerHTML = `
-        <div class="row g-0 align-items-center">
-            <div class="col-2">
-                <i class="text-${getNotificationIcon(notification.type)}" data-feather="${getNotificationIcon(notification.type)}"></i>
+        <div class="d-flex align-items-center">
+            <div class="notification-icon notification-${notification.type}">
+                ${getNotificationIcon(notification.type)}
             </div>
-            <div class="col-10">
-                <div class="text-dark">${notification.tituloNotificacion}</div>
+            <div class="flex-grow-1">
+                <div class="notification-title notification-${notification.type}">${notification.tituloNotificacion}</div>
                 <div class="text-muted small mt-1">${notification.mensaje}</div>
-                <div class="text-muted small mt-1">${formatDate(notification.fechaEnvio)}</div>
+                <div class="text-muted small mt-1">${formatearFecha(notification.fechaEnvio)}</div>
             </div>
         </div>
     `;
@@ -204,57 +226,46 @@ function createNotificationElement(id, notification) {
     return a;
 }
 
+function loadNotifications(userId) {
+    const notificationList = document.getElementById('notificationList');
+    const notificationCount = document.getElementById('notificationCount');
+    const notificationHeader = document.getElementById('notificationHeader');
 
-function getNotificationIcon(type) {
-    switch (type) {
-        case 'CITA_AGENDADA':
-            return 'calendar';
-        // Add more cases for different notification types
-        default:
-            return 'bell';
-    }
-}
-
-
-function showNotificationDetails(id, notification) {
-    // Implement a modal or other UI to show notification details
-    console.log('Showing details for notification:', notification);
-
-    // Mark the notification as read
-    db.collection('Notificaciones').doc(id).update({ visto: true })
-        .then(() => console.log('Notification marked as read'))
-        .catch((error) => console.error('Error updating notification:', error));
-}
-*/
-
-const logoutButton = document.getElementById('logOut');
-if (logoutButton) {
-    logoutButton.addEventListener('click', function(e) {
-        e.preventDefault();
-        logOutUser();
-    });
-}
-
-/*
-async function testNotificationQuery(userId) {
-    try {
-        const snapshot = await db.collection('Notificaciones')
-            .where('uidReceptor', '==', userId)
-            .where('visto', '==', false)
-            .get();
-
-        if (snapshot.empty) {
-            console.log('No matching documents.');
-            return;
-        }
-
-        snapshot.forEach(doc => {
-            console.log(doc.id, '=>', doc.data());
+    db.collection('Notificaciones')
+        .where('uidReceptor', '==', userId)
+        .orderBy('fechaEnvio', 'desc')
+        .limit(100)  // Obtener todas las notificaciones, pero mostrar solo algunas inicialmente
+        .get()
+        .then((querySnapshot) => {
+            allNotifications = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            updateNotificationDisplay();
+        })
+        .catch((error) => {
+            console.error("Error loading notifications: ", error);
         });
-    } catch (error) {
-        console.error("Error querying notifications: ", error);
-    }
 }
 
-// Test with a sample user ID
-testNotificationQuery('98ounVrtZoa6r7iOouYFXRAt4qf2');*/
+function updateNotificationDisplay() {
+    const notificationList = document.getElementById('notificationList');
+    const notificationCount = document.getElementById('notificationCount');
+    const notificationHeader = document.getElementById('notificationHeader');
+    
+    notificationList.innerHTML = '';
+    const displayedNotifications = allNotifications.slice(0, NOTIFICATIONS_LIMIT);
+    
+    displayedNotifications.forEach(notification => {
+        const notificationElement = createNotificationElement(notification.id, notification);
+        notificationList.appendChild(notificationElement);
+    });
+
+    const unreadCount = allNotifications.filter(n => !n.visto).length;
+    notificationCount.textContent = unreadCount;
+    notificationHeader.textContent = `${unreadCount} Nuevas Notificaciones`;
+}
+
+
+// Initialize Feather Icons
+feather.replace();

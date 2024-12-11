@@ -46,30 +46,39 @@ function mostrarPDFEnViewer(pdfUrl) {
 }
 
 async function aprobarContrato(contratoId) {
-    const firmaModal = document.getElementById('firmaEmpresaModal');
-    firmaModal.style.display = 'block';
+  const firmaModal = document.getElementById('firmaClienteModal');
+  firmaModal.style.display = 'block';
 
-    document.getElementById('guardarFirmaAsesor').onclick = async () => {
+  document.getElementById('guardarFirmaCliente').onclick = async () => {
+      await generarContratoPDF();
       
-        generarContratoPDF()
-     
-    
-    };
-   
+ 
+
+      // Redirigir a la página de agradecimiento
+      setTimeout(() => {
+          window.location.href = '/pagina-agradecimiento.html'; // Cambia esta URL por la de tu página de agradecimiento
+      }, 3000); // 3000 ms = 3 segundos para que el usuario vea el mensaje
+  };
 }
+
 
 async function rechazarContrato(contratoId) {
-    const razon = prompt('Por favor, ingrese la razón del rechazo:');
-    if (razon) {
-        await db.collection('contratos').doc(contratoId).update({
-            estado: 'rechazado',
-            razonRechazo: razon,
-            fechaRechazo: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        alert('Contrato rechazado');
-        window.close();
-    }
+  const razon = prompt('Por favor, ingrese la razón del rechazo:');
+  if (razon) {
+      await db.collection('contratos').doc(contratoId).update({
+          estado: 'rechazado',
+          razonRechazo: razon,
+          fechaRechazo: firebase.firestore.FieldValue.serverTimestamp()
+      });
+      alert('Contrato rechazado');
+
+      // Cerrar la ventana después de un pequeño retraso para que el usuario vea el mensaje
+      setTimeout(() => {
+          window.close();
+      }, 1000); // 1000 ms = 1 segundo
+  }
 }
+
 
 function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
     const modal = document.getElementById(modalId);
@@ -160,7 +169,7 @@ function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
   }
   
   
-    setupModal("firmaEmpresaModal", "aprobarBtn", "firmaAsesorCanvas", "guardarFirmaAsesor", "firmaAsesorCanvasClone");
+    setupModal("firmaClienteModal", "aprobarBtn", "firmaClienteCanvas", "guardarFirmaCliente", "firmaAsesorCanvasClone");
   
 
     async function generarContratoPDF() {
@@ -188,6 +197,35 @@ function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
         }
         const contratoData = contratoDoc.data();
       
+
+        let asesor;
+        let nombre;
+        // Asesor
+        firebase.auth().onAuthStateChanged(async (user) => {
+            if (user) {
+                asesor = contratoData.asesor; // Asegúrate de usar `uid`, no `id`
+                
+                try {
+                    // Obtener el documento del asesor en Firestore
+                    const docU = await db.collection('usuarios').doc(asesor).get();
+        
+                    if (docU.exists) {
+                         nombre = docU.data().name || "Sin nombre"; // Asegúrate de que el campo es correcto
+                        console.log(`Asesor: ${nombre}`);
+        
+                        
+                    } else {
+                        console.log("No se encontró el documento del usuario");
+                    }
+                } catch (error) {
+                    console.error("Error al obtener datos del usuario:", error);
+                }
+            } else {
+                console.log("Usuario no autenticado.");
+            }
+        });
+
+
         // Logo pequeño en la parte superior
         const logoImg = new Image();
         logoImg.src = 'logo.png';
@@ -208,29 +246,12 @@ function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
         doc.text(`Folio: N° ${contratoData.folio}`, pageWidth - margin - 30, y + 11);
         y += 19;
       
-     // Obtener el ID del asesor
-    const asesorId = contratoData.asesor;
-
-    // Obtener el nombre del asesor desde la colección 'usuarios'
-    let nombreAsesor = '';
-    try {
-        const asesorDoc = await db.collection('usuarios').doc(asesorId).get();
-        if (asesorDoc.exists) {
-            const asesorData = asesorDoc.data();
-            nombreAsesor = asesorData.nombre; // Suponiendo que el campo se llama 'nombre'
-        } else {
-            console.error('No se encontró el asesor con ID:', asesorId);
-            nombreAsesor = 'Asesor no encontrado';
-        }
-    } catch (error) {
-        console.error('Error al obtener el nombre del asesor:', error);
-        nombreAsesor = 'Error al obtener asesor';
-    }
+  
 
     // Configurar el texto del PDF
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(8);
-    doc.text(`Asesor: ${nombreAsesor}`, margin, y);
+    doc.text(`Asesor: ${nombre}`, margin, y);
     y += 6;
 
         // Datos del Cliente
@@ -385,7 +406,7 @@ function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
     
         const firmaAsesorData = contratoData.firmaAsesor;
         const firmaEmpresaData= contratoData.firmaEmpresa
-        const firmaClienteCanva = document.getElementById('firmaAsesorCanvas');
+        const firmaClienteCanva = document.getElementById('firmaClienteCanvas');
         
 
 
@@ -438,23 +459,21 @@ function setupModal(modalId, btnId, canvasId, saveButtonId, cloneCanvasId) {
           // Obtener la URL de descarga del PDF
           const downloadURL = await storageRef.getDownloadURL();
           
+          const firmaCliente = document.getElementById('firmaClienteCanvas').toDataURL();
           // Actualizar el documento en Firestore con la URL del PDF
           await db.collection('contratos').doc(contratoId).update({ 
             pdfUrl: downloadURL,
-            firmaEmpresa: firmaClienteCanva.toDataURL()
+            estado: 'concluido',
+            firmaCliente: firmaCliente,
+            fechaConclusion: firebase.firestore.FieldValue.serverTimestamp()
           });
           console.log('URL del PDF guardada en Firestore');
     
           // Guardar el PDF con el número de folio en el nombre
           doc.save(`Contrato_MOVE_${contratoData.folio}.pdf`);
 
-          const firmaCliente = document.getElementById('firmaAsesorCanvas').toDataURL();
-          await db.collection('contratos').doc(contratoId).update({
-              estado: 'concluido',
-              firmaCliente: firmaCliente,
-              fechaAprobacion: firebase.firestore.FieldValue.serverTimestamp()
-             
-          });
+          
+         
 
 
 
