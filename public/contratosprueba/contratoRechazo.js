@@ -23,10 +23,13 @@ document.addEventListener('DOMContentLoaded', (event) => {
     populateSelect('tipoEvento', 'eventos', 'evento');
     const urlParams = new URLSearchParams(window.location.search);
     const contratoId = urlParams.get('id');
+    console.log(contratoId)
     if (contratoId) {
+      console.log(contratoId)
         cargarDatosContrato(contratoId);
     }
 });
+
 
 
 
@@ -60,11 +63,35 @@ let firmaCliente;
 let firmaAsesor;
 
 
+function showRejectionModal(reason) {
+  const modal = document.getElementById('rejectionModal');
+  const reasonElement = document.getElementById('rejectionReason');
+  const okButton = document.getElementById('okButton');
+
+  reasonElement.textContent = reason;
+  modal.style.display = 'block';
+
+  okButton.onclick = function() {
+    modal.style.display = 'none';
+  };
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = 'none';
+    }
+  };
+}
+
 async function cargarDatosContrato(contratoId) {
     try {
-        const doc = await db.collection('contratos_pendientes').doc(contratoId).get();
+        const doc = await db.collection('contratos').doc(contratoId).get();
         if (doc.exists) {
             const data = doc.data();
+
+             // Show rejection reason modal
+      if (data.estado === 'rechazado' && data.razonRechazo) {
+        showRejectionModal(data.razonRechazo);
+      }
             document.getElementById('nombre').value = data.cliente.nombre;
             document.getElementById('ciudad').value = data.cliente.ciudad;
             document.getElementById('domicilio').value = data.cliente.domicilio;
@@ -419,6 +446,7 @@ function agregarFila() {
 
 
 async function generarContratoPDF() {
+ 
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
   
@@ -656,70 +684,115 @@ doc.text('Firma del Asesor', margin, y);
 doc.text('Firma de la Empresa', pageWidth - margin - 60, y);
 doc.text('Firma del Cliente', pageWidth / 2, y + 35, { align: 'center' });
 
-  // Guardar datos en Firebase
-  const id = db.collection('contratos').doc().id;
   try {
-    const contratoData = {
-      idContrato:id,
-      folio: folio,
-      fecha: Date.now(),
-      asesor:asesor,
-      firmaAsesor:document.getElementById('firmaAsesorCanvas').toDataURL(),
-      cliente: {
-        nombre: document.getElementById('nombre').value,
-        domicilio: document.getElementById('domicilio').value,
-        ciudad: document.getElementById('ciudad').value,
-        cp: document.getElementById('cp').value,
-        telefono: document.getElementById('telefono').value,
-        celular: telefonoIngresado
-      },
-      evento: {
-        tipo: getSelectedText(document.getElementById('tipoEvento')),
-        fecha: document.getElementById('fecha').value,
-        lugar: getSelectedText(document.getElementById('lugarEvento')),
-        horario: document.getElementById('horario').value
-      },
-      misa: document.getElementById('misaCheck').checked ? {
-        lugar: getSelectedText(document.getElementById('lugarMisa')),
-        horario: document.getElementById('horarioMisa').value,
-        direccion: document.getElementById('direccionMisa').value,
-        horaCivil: document.getElementById('horaCivil').value
-      } : null,
-      servicios: Array.from(document.getElementById('productosTable').getElementsByTagName('tbody')[0].rows).map(row => ({
-        servicio: row.cells[0].getElementsByTagName('input')[0].value,
-        cantidad: row.cells[1].getElementsByTagName('input')[0].value,
-        descripcion: row.cells[2].getElementsByTagName('input')[0].value,
-        precio: parseFloat(row.cells[3].getElementsByTagName('input')[0].value) || 0
-      })),
-      estado:"en revision",
-      subtotal: subtotal,
-      iva: iva,
-      total: total
-    };
-
-    await db.collection('contratos').doc(id).set(contratoData);
-    console.log('Contrato guardado en Firebase');
-
-    // Generar el PDF como Blob
-    const pdfBlob = doc.output('blob');
-
-    // Subir el PDF a Firebase Storage
-    const storageRef = storage.ref(`contratos/Contrato_MOVE_${folio}.pdf`);
-    await storageRef.put(pdfBlob);
-    console.log('PDF subido a Firebase Storage');
-
-    // Obtener la URL de descarga del PDF
-    const downloadURL = await storageRef.getDownloadURL();
     
-    // Actualizar el documento en Firestore con la URL del PDF
-    await db.collection('contratos').doc(id).update({ pdfUrl: downloadURL });
+    const contratoDoc = await db.collection('contratos').doc(contratoId).get();
+    if (!contratoDoc.exists) {
+        console.error('No se encontró el contrato');
+        return;
+    }
+    const contratoData = contratoDoc.data();
+    
+    
+  // Generar el PDF como Blob
+  const pdfBlob = doc.output('blob');
+      
+  // Subir el PDF a Firebase Storage
+  const storageRef = storage.ref(`contratos/Contrato_MOVE_${contratoData.folio}.pdf`);
+  await storageRef.put(pdfBlob);
+  
+  console.log(contratoId)
+  console.log('PDF subido a Firebase Storage');
+
+  // Obtener la URL de descarga del PDF
+  const downloadURL = await storageRef.getDownloadURL();
+  
+    console.log(contratoId)
+
+    await db.collection('contratos').doc(contratoId).set(
+      {
+        cliente: {
+          nombre: document.getElementById('nombre').value,
+          domicilio: document.getElementById('domicilio').value,
+          ciudad: document.getElementById('ciudad').value,
+          cp: document.getElementById('cp').value,
+          telefono: document.getElementById('telefono').value,
+          celular: document.getElementById('celular').value
+        },
+        evento: {
+          tipo: getSelectedText(document.getElementById('tipoEvento')),
+          fecha: document.getElementById('fecha').value,
+          lugar: getSelectedText(document.getElementById('lugarEvento')),
+          horario: document.getElementById('horario').value
+        },
+        misa: document.getElementById('misaCheck').checked
+          ? {
+              lugar: getSelectedText(document.getElementById('lugarMisa')),
+              horario: document.getElementById('horarioMisa').value,
+              direccion: document.getElementById('direccionMisa').value,
+              horaCivil: document.getElementById('horaCivil').value
+            }
+          : null,
+        servicios: Array.from(
+          document.getElementById('productosTable').getElementsByTagName('tbody')[0].rows
+        ).map(row => ({
+          servicio: row.cells[0].getElementsByTagName('input')[0].value,
+          cantidad: row.cells[1].getElementsByTagName('input')[0].value,
+          descripcion: row.cells[2].getElementsByTagName('input')[0].value,
+          precio: parseFloat(row.cells[3].getElementsByTagName('input')[0].value) || 0
+        })),
+        estado: "en revision",
+        subtotal:subtotal,
+        iva: iva,
+        firmaAsesor: document.getElementById('firmaAsesorCanvas').toDataURL(),
+        total:total,
+        pdfUrl: downloadURL
+      },
+      { merge: true } // <- Esto asegura que no se sobrescriba todo el documento
+    );
+    
+    
     console.log('URL del PDF guardada en Firestore');
 
-
+    console.log(contratoId)
+    console.log({
+      cliente: {
+          nombre: document.getElementById('nombre').value,
+          domicilio: document.getElementById('domicilio').value,
+          ciudad: document.getElementById('ciudad').value,
+          cp: document.getElementById('cp').value,
+          telefono: document.getElementById('telefono').value,
+          celular: telefonoIngresado
+      },
+      evento: {
+          tipo: getSelectedText(document.getElementById('tipoEvento')),
+          fecha: document.getElementById('fecha').value,
+          lugar: getSelectedText(document.getElementById('lugarEvento')),
+          horario: document.getElementById('horario').value
+      },
+      misa: document.getElementById('misaCheck').checked ? {
+          lugar: getSelectedText(document.getElementById('lugarMisa')),
+          horario: document.getElementById('horarioMisa').value,
+          direccion: document.getElementById('direccionMisa').value,
+          horaCivil: document.getElementById('horaCivil').value
+      } : null,
+      servicios: Array.from(document.getElementById('productosTable').getElementsByTagName('tbody')[0].rows).map(row => ({
+          servicio: row.cells[0].getElementsByTagName('input')[0].value,
+          cantidad: row.cells[1].getElementsByTagName('input')[0].value,
+          descripcion: row.cells[2].getElementsByTagName('input')[0].value,
+          precio: parseFloat(row.cells[3].getElementsByTagName('input')[0].value) || 0
+      })),
+      subtotal,
+      iva,
+      total,
+      pdfUrl: downloadURL
+  });
+  
  
   } catch (error) {
-    console.error('Error al guardar el contrato en Firebase:', error);
+    console.error('Error al guardar el contrato en Firebase:', error.message || error);
   }
+  
 
 
 
@@ -727,8 +800,11 @@ doc.text('Firma del Cliente', pageWidth / 2, y + 35, { align: 'center' });
   resetearFormulario();
 
   // Mostrar un mensaje de éxito
-  alert("El contrato se ha enviado a revision");
+  alert("El contrato se ha enviado a revision nuevamente");
   setTimeout(() => {
     window.location.href="/vista-admin/page-contratos.html";
   }, 1000);
 }
+
+
+

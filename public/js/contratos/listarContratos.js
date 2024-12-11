@@ -245,7 +245,7 @@ async function accionAprobado(docId) {
 }
   
 function accionRechazado(docId) {
-    console.log("Acción para contrato rechazado:", docId);
+    window.location.href=`/contratosprueba/contratoRechazo.html?id=${docId}`;
 }
   
 async function accionConcluido(docId) {
