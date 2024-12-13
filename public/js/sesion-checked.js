@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
            loadNotifications(userId);
         } else {
             // If not authenticated, redirect to login
-            window.location.href = './page-sign-in.html';
+            window.location.href = '/page-sign-in.html';
         }
     });
 });
@@ -138,7 +138,7 @@ function getConsistentColor(name) {
 function logOutUser() {
     firebase.auth().signOut().then(() => {
         console.log('Sesión cerrada exitosamente');
-        window.location.href = '/public/page-sign-in.html';
+        window.location.href = '/page-sign-in.html';
     }).catch((error) => {
         console.error('Error al cerrar sesión:', error);
     });

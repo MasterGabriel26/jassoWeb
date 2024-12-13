@@ -31,11 +31,47 @@
 
 	<link href="css/app.css" rel="stylesheet">
 	<link rel="stylesheet" href="css/loading.css">
-	<link rel="stylesheet" href="/css/prospectos/prospectos.css">
+	<link rel="stylesheet" href="css/prospectos/prospectos.css">
 	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-	
+	<style>
+		.modal-header {
+			background-color: #1a2942 !important;
+			color: white !important;
+		}
+		.modal-title {
+			font-size: 1.2rem;
+		}
+		.modal-title small {
+			font-size: 0.8rem;
+			opacity: 0.8;
+		}
+		.btn-close-white {
+			filter: invert(1) grayscale(100%) brightness(200%);
+		}
+
+		.paso-completado {
+    position: relative;
+}
+
+.paso-completado::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234CAF50"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>') center/50% no-repeat;
+    background-color: rgba(255, 255, 255, 0.9);
+    z-index: 1;
+}
+
+.btn-action {
+    min-width: 120px;
+    border-radius: 20px;
+}
+	</style>
 </head>
 
 <body>
@@ -212,29 +248,124 @@
 		
 		</div>
 	</div>
-	<div class="modal fade" id="prospectoModal" tabindex="-1" aria-labelledby="prospectoModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="prospectoModalLabel">Detalles del Prospecto</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<p><strong>Folio:</strong> <span id="modalFolio"></span></p>
-					<p><strong>Nombre:</strong> <span id="modalNombre"></span></p>
-					<p><strong>Teléfono:</strong> <span id="modalTelefono"></span></p>
-					<p><strong>Lugar:</strong> <span id="modalLugar"></span></p>
-					<p><strong>Evento:</strong> <span id="modalEvento"></span></p>
-					<p><strong>Fecha:</strong> <span id="modalFecha"></span></p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-					<a id="editarProspectoBtn" href="#" class="btn btn-primary">Editar Prospecto</a>
-				</div>
-			</div>
-		</div>
-	</div>
+
+
+<div class="modal fade" id="prospectoModal" tabindex="-1" aria-labelledby="prospectoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="prospectoModalLabel">
+                    <span id="modalFolio"></span>
+                    <br>
+                    <small id="modalFecha"></small>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h3 id="modalNombre"></h3>
+                <p id="modalTelefono"></p>
+                <div class="row text-center my-4">
+                    <div class="col">
+                        <i class="fas fa-phone fa-2x mb-2"></i>
+                        <h4 id="modalLlamadas">0</h4>
+                        <p>Llamadas</p>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-users fa-2x mb-2"></i>
+                        <h4 id="modalInvitados">100</h4>
+                        <p>Invitados</p>
+                    </div>
+                    <div class="col">
+                        <i class="fas fa-calendar fa-2x mb-2"></i>
+                        <h4 id="modalFechaEvento">Sin Fecha</h4>
+                        <p>Evento</p>
+                    </div>
+                </div>
+                <h5>DATOS GENERALES</h5>
+                <table class="table">
+                    <tr>
+                        <td><strong>Asesor:</strong></td>
+                        <td id="modalAsesor"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Último en editar:</strong></td>
+                        <td id="modalUltimoEditor"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Referencia:</strong></td>
+                        <td id="modalReferencia"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Preguntó por:</strong></td>
+                        <td id="modalPreguntoPor"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tipo de evento:</strong></td>
+                        <td id="modalTipoEvento"></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cita:</strong></td>
+                        <td id="modalCita"></td>
+                    </tr>
+                </table>
+                <h5>Observaciones:</h5>
+                <p id="modalObservaciones"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" id="btnContactar">Contactar</button>
+                <button type="button" class="btn btn-primary" id="btnPaquetes">Paquetes</button>
+                <button type="button" class="btn btn-warning" id="btnSeguimiento">Seguimiento</button>
+                <button type="button" class="btn btn-info" id="btnPagos">Pagos</button>
+            </div>
+        </div>
+    </div>
+</div>
 	
+
+<!-- Add this modal template to your HTML file -->
+<div class="modal fade" id="seguimientoModal" tabindex="-1" aria-labelledby="seguimientoModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="seguimientoModalLabel">
+                    <span id="pasoTitulo"></span>
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="dropdown ms-2">
+                    <button class="btn btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="#" id="marcarCompletado">Marcar como completado</a></li>
+                        <li><a class="dropdown-item" href="#" id="verDetalles">Ver detalles</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div id="pasoContenido" class="mb-4"></div>
+                <div id="accionesRecomendadas" class="mb-4"></div>
+                
+                <!-- Botones de acción específicos del paso -->
+                <div id="botonesAccion" class="d-flex justify-content-center gap-3 mb-4">
+                    <!-- Los botones se agregarán dinámicamente -->
+                </div>
+
+                <!-- Navegación entre pasos -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <button class="btn btn-outline-secondary" id="pasoAnterior">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <span id="numeroPaso">Paso 1 de 13</span>
+                    <button class="btn btn-outline-secondary" id="pasoSiguiente">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 	<script src="js/app.js"></script>
 	<script src="js/sesion-checked.js"></script>
