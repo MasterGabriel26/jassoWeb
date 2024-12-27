@@ -38,7 +38,8 @@ const firebaseConfig = {
   
   document.getElementById("eventoForm").onsubmit = function (e) {
       e.preventDefault();
-      generarProspecto();
+     
+     generarProspecto();
   };
   
   // Función para obtener el texto seleccionado de un select
@@ -60,21 +61,21 @@ const firebaseConfig = {
   }
   
   function generarFolio() {
-      const letrasAleatorias = (longitud) => {
-          const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Letras posibles
-          let resultado = "";
-          for (let i = 0; i < longitud; i++) {
-              const indice = Math.floor(Math.random() * caracteres.length);
-              resultado += caracteres[indice];
-          }
-          return resultado;
-      };
-  
-      const letras = letrasAleatorias(4); // Generar 4 letras aleatorias
-      const numeros = Math.floor(Math.random() * 99999).toString().padStart(5, '0'); // Generar un número aleatorio de 5 dígitos
-  
-      return `${letras}${numeros}`; // Combinar letras y números
-  }
+    const letrasAleatorias = (longitud) => {
+        const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Letras posibles
+        let resultado = "";
+        for (let i = 0; i < longitud; i++) {
+            const indice = Math.floor(Math.random() * caracteres.length);
+            resultado += caracteres[indice];
+        }
+        return resultado;
+    };
+
+    const letras = letrasAleatorias(3); // Generar 3 letras aleatorias
+    const numeros = Math.floor(Math.random() * 99999).toString().padStart(5, '0'); // Generar un número aleatorio de 5 dígitos
+
+    return `P-${letras}R-${numeros}`; // Combinar letras y números con la estructura deseada
+}
   
   let asesor; // Declarar la variable en un alcance superior
   let nombre;
@@ -128,18 +129,18 @@ const firebaseConfig = {
   
           const prospectoData = {
               asesor: asesor || null,
-              citaHora: null,
+              citaHora: 0,
               colorEtiqueta: null,
-              contador_llamadas: null,
+              contador_llamadas: 0,
               etiqueta: null,
               fechaModificacion: [null],
-              fechaParaLlamada: null,
-              fecha_cita: null,
+              fechaParaLlamada: 0,
+              fecha_cita: 0,
               fecha_create: currentTime,
-              fecha_evento: fechaEvento,
+              fecha_evento: fechaEvento||0,
               folio: folio,
               folioMin: folio.toLowerCase(),
-              horaParaLlamada: null,
+              horaParaLlamada: 0,
               id: id,
               idPaqueteVendido: null,
               invitados: document.getElementById('invitados').value || "0",
@@ -147,16 +148,16 @@ const firebaseConfig = {
               name: document.getElementById('nombre').value || "Sin nombre",
               nameMin: (document.getElementById('nombre').value || "Sin nombre").toLowerCase(),
               nombreUsuarioModificador: [],
-              num_llamadas: null,
+              num_llamadas: 0,
               observacion: document.getElementById('observacion').value || "Sin observaciones",
               pagina: getSelectedText(document.getElementById('referencia')),
-              porcentaje: "7",
+              porcentaje: 7,
               pregunta_por: getSelectedText(document.getElementById('lugarEvento')),
               pregunta_porMin: getSelectedText(document.getElementById('lugarEvento')).toLowerCase(),
               registro_de_pagos: null,
               segundo_telefono_prospecto: null,
               status: "PROSPECTO_CREADO",
-              telefono_prospecto: telefonoConPrefijo || "Sin teléfono",
+              telefono_prospecto: telefonoIngresado || "Sin teléfono",
               tipo_evento: getSelectedText(document.getElementById('tipoEvento')),
               uid: asesor || null,
               uidLiderProspectoCreado: lider || null,
@@ -207,6 +208,7 @@ const firebaseConfig = {
               nameMin: prospectoData.nameMin,
               telefono_prospecto: telefonoConPrefijo,
               uid: asesor || null,
+              creado_en: "web"
           };
           await db.collection('prospectosMini').doc(id).set(prospectoMini);
           console.log('Prospecto mini guardado en Firebase');
@@ -214,6 +216,7 @@ const firebaseConfig = {
           // Resetear el formulario y mostrar mensaje de éxito
           resetearFormulario();
           alert("Prospecto creado con éxito. El formulario ha sido reseteado.");
+          window.location.href="/public/page-prospectos.html"
       } catch (error) {
           console.error('Error al guardar el prospecto en Firebase:', error);
           alert("Hubo un error al crear el prospecto. Por favor, intenta de nuevo.");

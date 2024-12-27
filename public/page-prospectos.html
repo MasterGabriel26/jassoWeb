@@ -336,8 +336,10 @@
                 <h5 class="modal-title" id="seguimientoModalLabel">
                     <span id="pasoTitulo"></span>
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-              
+				<button type="button" class="btn btn-outline-light" onclick="abrirModalMasInformacion()">
+					<i class="fas fa-bars"></i>
+				</button>
+				<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <div id="pasoContenido" class="mb-4"></div>
@@ -380,6 +382,30 @@
 	  </div>
 	</div>
   </div>
+
+
+
+
+  
+  <div class="modal fade" id="modalMasInformacion" tabindex="-1" aria-labelledby="modalMasInformacionLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark text-white">
+                <h5 class="modal-title" id="modalMasInformacionLabel">Más Información</h5>
+                <button type="button" class="btn-close btn-close-white" onclick="cerrarModalMasInformacion()" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Aquí se mostrarán los archivos adjuntos -->
+                <div id="archivosAdjuntos" class="mb-4">
+                    <!-- Los archivos se cargan dinámicamente -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="cerrarModalMasInformacion()">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 	<script src="js/app.js"></script>
