@@ -4,8 +4,91 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+
 .modal-backdrop {
-    background-color: rgba(0, 0, 0, 0.5) !important;
+    opacity: 0.5 !important;
+}
+
+body.modal-open {
+    overflow: hidden;
+    padding-right: 0 !important;
+}
+
+/* Estilos mejorados para los modales */
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #1a2942 0%, #2c3e50 100%);
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+.modal-title {
+    color: white;
+    font-weight: 600;
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-footer {
+    border-top: 1px solid #eee;
+    padding: 1.5rem;
+}
+
+/* Estilos para los botones de acción */
+.btn-action {
+    padding: 0.6rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Estilos para la navegación de pasos */
+#numeroPaso {
+    font-weight: 500;
+    color: #1a2942;
+}
+
+/* Mejoras visuales para los iconos y badges */
+.fas {
+    margin-right: 0.5rem;
+}
+
+/* Estilos para el contenido de los pasos */
+#pasoContenido {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #2c3e50;
+}
+
+#accionesRecomendadas {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin: 1rem 0;
+}
+
+#accionesRecomendadas ul {
+    margin-bottom: 0;
+    padding-left: 1.5rem;
+}
+
+#accionesRecomendadas li {
+    margin-bottom: 0.5rem;
+    color: #2c3e50;
 }
 
 .modal-header {
@@ -100,3 +183,16 @@
             z-index: 10; /* Asegura que el encabezado esté sobre el contenido */
         }
         
+
+
+        .is-invalid {
+            border-color: #dc3545 !important;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+        
+        .modal-left .is-invalid {
+            background-image: none;
+        }

@@ -79,7 +79,10 @@ async function mostrarModalProspecto(prospecto, id, nombreAsesor) {
         return 13; // Para 93% o más
     }
     
-    const modal = new bootstrap.Modal(document.getElementById("prospectoModal"));
+    const modal = new bootstrap.Modal(document.getElementById("prospectoModal"), {
+        backdrop: 'static',
+        keyboard: false
+    });
     modal.show();
     
 }
@@ -161,10 +164,61 @@ async function mostrarPasoSeguimiento(paso) {
     
     // Personalizar botones según el paso
     switch(paso) {
-        case 2:
-        case 4:
-        case 9:
-        case 10:
+        case 3:
+            if (pasosCompletados.has(paso)) {
+                const fechaCita = new Date(seguimientoData[`paso11_agendarCitaParaEntregaPorcentaje`] || seguimientoData[`paso11_agendarCitaParaEntregaPorcentaje`]);
+                botonesHTML = `
+                    <button class="btn btn-success btn-action" disabled>
+                        <i class="fas fa-calendar-check"></i> Cita agendada
+                    </button>
+                    <p class="mt-2">Fecha de la cita: ${fechaCita.toLocaleString()}</p>
+                `;
+            } else {
+                botonesHTML = `
+                    <button class="btn btn-secondary btn-action" onclick="agendarCita(${paso})">
+                        <i class="fas fa-calendar"></i> Agendar cita
+                    </button>
+                `;
+            }
+            break;
+        case 9:         
+           if (pasosCompletados.has(paso)) {
+            const mensajeWhatsApp = seguimientoData.paso9_confirmacionCita || '';
+            botonesHTML = `
+                <div class="text-center">
+                    <button class="btn btn-success btn-action mb-3" disabled>
+                        <i class="fas fa-check"></i> Confirmación enviada
+                    </button>
+                    <div class="mt-3">
+                        <label class="block text-sm font-medium mb-2">Mensaje enviado:</label>
+                        <div class="p-3 bg-gray-100 rounded-lg">
+                            ${mensajeWhatsApp}
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            botonesHTML = `
+                <div class="space-y-4">
+                    <div class="space-y-4">
+                    <div class="form-group">
+                       <textarea 
+                            id="mensajeWhatsApp" 
+                            class="form-control w-full p-5 border rounded" 
+                            rows="3"
+                            placeholder="Escribe el mensaje que enviaste al prospecto..."
+                        ></textarea>
+                    </div>
+                    <div class="flex flex-col gap-2" style="justify-content:center;" >
+                        <button class="btn btn-primary" style="margin-top:10px;" onclick="guardarConfirmacionCita()">
+                            <i class="fas fa-save me-2"></i>Guardar confirmación
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        break;
+
         case 12:
             if (pasosCompletados.has(paso)) {
                 botonesHTML = `
@@ -175,13 +229,12 @@ async function mostrarPasoSeguimiento(paso) {
             } else {
                 botonesHTML = `
                     <button class="btn btn-secondary btn-action" onclick="adjuntarArchivo(${paso})" data-paso="${paso}">
-                        <i class="fas fa-paperclip"></i> Adjuntar evidencia
+                        <i class="fas fa-paperclip"></i> Adjuntar recibo
                     </button>
                 `;
             }
             break;
-        case 3:
-        case 6:
+    
         case 8:
             if (pasosCompletados.has(paso)) {
                 const fechaCita = new Date(seguimientoData[`paso8_agendarCitaParaFirmar`] || seguimientoData[`paso${paso}_fechaCitaAtendida`]);
@@ -201,7 +254,7 @@ async function mostrarPasoSeguimiento(paso) {
             break;
         case 11:
             if (pasosCompletados.has(paso)) {
-                const fechaCita = new Date(seguimientoData[`paso${paso}_agendarCita`] || seguimientoData[`paso${paso}_fechaCitaAtendida`]);
+                const fechaCita = new Date(seguimientoData[`paso11_agendarCitaParaEntregaPorcentaje`] || seguimientoData[`paso11_agendarCitaParaEntregaPorcentaje`]);
                 botonesHTML = `
                     <button class="btn btn-success btn-action" disabled>
                         <i class="fas fa-calendar-check"></i> Cita agendada
@@ -218,10 +271,21 @@ async function mostrarPasoSeguimiento(paso) {
             break;
         case 5:
             if (pasosCompletados.has(paso)) {
-                botonesHTML = `
+                const descripcion = seguimientoData.paso5_descripcion || '';
+            botonesHTML = `
+                <div class="text-center">
+                   
                     <button class="btn btn-success btn-action" disabled>
                         <i class="fas fa-check"></i> Paquetes ofrecidos
                     </button>
+                    <div class="mt-3">
+                        <label class="block text-sm font-medium mb-2">Descripcion:</label>
+                        <div class="p-3 bg-gray-100 rounded-lg">
+                            ${descripcion}
+                        </div>
+                    </div>
+                </div>
+                
                 `;
             } else {
                 botonesHTML = `
@@ -236,11 +300,11 @@ async function mostrarPasoSeguimiento(paso) {
                             >${seguimientoData.paso5_descripcion || ''}</textarea>
                         </div>
                         <div class="flex flex-col gap-2">
-                            <button class="btn btn-secondary btn-action" onclick="adjuntarArchivo(5)" data-paso="5">
-                                <i class="fas fa-paperclip me-2"></i>Adjuntar
+                            <button class="btn btn-secondary btn-action" onclick="adjuntarArchivoPaso(5)" data-paso="5">
+                                <i class="fas fa-paperclip me-2"></i>Adjuntar archivos
                             </button>
-                            <button class="btn btn-secondary btn-action" onclick="mostrarPublicaciones()">
-                                <i class="fas fa-share me-2"></i>Publicaciones
+                            <button class="btn btn-secondary btn-action" onclick="mostrarPublicaciones()" data-paso="55">
+                                <i class="fas fa-share me-2"></i>Seleccionar paquetes
                             </button>
                             <button class="btn btn-primary mt-4" onclick="verificarPaso5()">
                                 Guardar y Completar
@@ -288,6 +352,36 @@ async function mostrarPasoSeguimiento(paso) {
                 `;
             }
             break;
+            case 13:
+                if (pasosCompletados.has(13)) {
+                    const email = seguimientoData.paso13_correo;
+                    const password = seguimientoData.paso13_pass;
+                    botonesHTML = `
+                        <div class="text-center">
+                            
+                            <div class="credentials-container">
+                                <div class="credential-item mb-3">
+                                    <label class="text-muted d-block mb-2">Email</label>
+                                    <div class="credential-value">${email}</div>
+                                </div>
+                                <div class="credential-item mb-4">
+                                    <label class="text-muted d-block mb-2">Password</label>
+                                    <div class="credential-value">${password}</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-dark w-100 py-2" onclick="copiarCredenciales('${email}', '${password}')">
+                                Copiar
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    botonesHTML = `
+                        <button class="btn btn-primary btn-action" onclick="generarCredenciales()">
+                            <i class="fas fa-user-plus me-2"></i>Generar Credenciales
+                        </button>
+                    `;
+                }
+                break;
         default:
             if (pasosCompletados.has(paso)) {
                 botonesHTML = `
@@ -329,7 +423,10 @@ async function mostrarPasoSeguimiento(paso) {
     
     // Mostrar modal
     if (!modal.classList.contains('show')) {
-        const modalInstance = new bootstrap.Modal(modal);
+        const modalInstance = new bootstrap.Modal(modal, {
+            backdrop: 'static',
+            keyboard: false
+        });
         modalInstance.show();
     }
 }
@@ -345,39 +442,211 @@ async function obtenerLugaresOptions() {
 
 
 
+async function generarCredenciales() {
+    try {
+        console.log("Iniciando generación de credenciales");
 
-// Almacena el ID del modal abierto previamente
-let modalAnteriorAbierto = null;
+        const prospectoDoc = await db.collection("prospectos").doc(prospectoActualId).get();
+        const prospectoData = prospectoDoc.data();
+        
+        if (!prospectoData || !prospectoData.name) {
+            throw new Error('El prospecto no tiene nombre registrado o no se encontró');
+        }
 
-// Abrir el modal de "Más información"
+        console.log("Datos del prospecto obtenidos:", prospectoData);
+
+        // Generar email y contraseña
+        const fechaActual = new Date();
+        const nombreLimpio = prospectoData.name.toLowerCase()
+            .replace(/\s+/g, '')
+            .replace(/[áäà]/g, 'a')
+            .replace(/[éëè]/g, 'e')
+            .replace(/[íïì]/g, 'i')
+            .replace(/[óöò]/g, 'o')
+            .replace(/[úüù]/g, 'u')
+            .replace(/ñ/g, 'n')
+            .replace(/[^a-z0-9]/g, '');
+
+        const dia = fechaActual.getDate().toString().padStart(2, '0');
+        const mes = (fechaActual.getMonth() + 1).toString().padStart(2, '0');
+        const año = fechaActual.getFullYear().toString().slice(-4);
+        
+        const email = `${nombreLimpio}${dia}${mes}${año}@jasso.com`;
+        const password = Math.floor(100000 + Math.random() * 900000).toString();
+
+        console.log("Email generado:", email);
+        console.log("Contraseña generada:", password);
+
+        // Crear una instancia secundaria de Firebase
+        let secondaryApp;
+        try {
+            secondaryApp = firebase.initializeApp(
+                {
+                    ...firebase.app().options,
+                    apiKey: firebase.app().options.apiKey,
+                    authDomain: firebase.app().options.authDomain,
+                    projectId: firebase.app().options.projectId
+                },
+                'secondary'
+            );
+        } catch (e) {
+            // Si la app ya existe, obtenerla
+            secondaryApp = firebase.app('secondary');
+        }
+
+        // Crear usuario usando la instancia secundaria
+        let userCredential;
+        try {
+            userCredential = await secondaryApp.auth().createUserWithEmailAndPassword(email, password);
+            console.log("Usuario creado en Firebase Authentication");
+        } catch (authError) {
+            console.error("Error al crear usuario en Firebase Authentication:", authError);
+            // Asegurarse de eliminar la app secundaria en caso de error
+            await secondaryApp.delete();
+            throw authError;
+        }
+
+        // Guardar información en Firestore (seguimientoProspectos)
+        try {
+            await db.collection("seguimientoProspectos").doc(prospectoActualId).update({
+                paso13_asignacionUsuario: true,
+                paso13_correo: email,
+                paso13_pass: password
+            });
+            console.log("Información guardada en seguimientoProspectos");
+        } catch (seguimientoError) {
+            console.error("Error al guardar en seguimientoProspectos:", seguimientoError);
+            // Revertir la creación del usuario
+            await userCredential.user.delete();
+            await secondaryApp.delete();
+            throw seguimientoError;
+        }
+
+        // Crear documento en 'usuarios' colección
+        const userData = {
+            active: true,
+            email: email,
+            imageProfile: "",
+            name: prospectoData.name,
+            onLine: true,
+            password: password,
+            phone: prospectoData.telefono_prospecto || "",
+            timestamp: Date.now(),
+            uid: userCredential.user.uid,
+            userType: "cliente"
+        };
+
+        try {
+            await db.collection('usuarios').doc(userCredential.user.uid).set(userData);
+            console.log("Usuario creado exitosamente en la colección 'usuarios'");
+        } catch (usuariosError) {
+            console.error("Error al crear usuario en la colección 'usuarios':", usuariosError);
+            // Revertir la creación del usuario
+            await userCredential.user.delete();
+            await db.collection("seguimientoProspectos").doc(prospectoActualId).update({
+                paso13_asignacionUsuario: false,
+                paso13_correo: firebase.firestore.FieldValue.delete(),
+                paso13_pass: firebase.firestore.FieldValue.delete()
+            });
+            await secondaryApp.delete();
+            throw usuariosError;
+        }
+
+        // Actualizar porcentaje
+        try {
+            await db.collection("prospectos").doc(prospectoActualId).update({
+                porcentaje: 100
+            });
+            console.log("Porcentaje actualizado en la colección 'prospectos'");
+        } catch (porcentajeError) {
+            console.error("Error al actualizar el porcentaje:", porcentajeError);
+        }
+
+        // Eliminar la instancia secundaria después de completar todo
+        await secondaryApp.delete();
+
+        console.log("Proceso de generación de credenciales completado con éxito");
+        alert("El usuario y credenciales han sido generados exitosamente.");
+        mostrarPasoSeguimiento(13)
+    } catch (error) {
+        console.error("Error en el proceso de generación de credenciales:", error);
+        alert("Ocurrió un error al generar las credenciales.");
+    }
+}
+
+
+
+
+
+
+
+async function copiarCredenciales(email, password) {
+    try {
+        const texto = `Email: ${email}\nContraseña: ${password}`;
+        await navigator.clipboard.writeText(texto);
+        alert('Credenciales copiadas al portapapeles');
+    } catch (err) {
+        console.error('Error al copiar al portapapeles:', err);
+        alert('Error al copiar las credenciales');
+    }
+}
+
+
+async function guardarConfirmacionCita() {
+    const mensajeWhatsApp = document.getElementById('mensajeWhatsApp').value.trim();
+    
+    if (!mensajeWhatsApp) {
+        alert('Por favor, ingrese el mensaje que envió por WhatsApp.');
+        return;
+    }
+    
+    try {
+        await db.collection("seguimientoProspectos").doc(prospectoActualId).update({
+            
+            paso9_confirmacionCita: mensajeWhatsApp
+        });
+        
+        const porcentaje = calcularPorcentaje(9);
+        await db.collection("prospectos").doc(prospectoActualId).update({
+            porcentaje: porcentaje
+        });
+        
+        alert('Confirmación guardada exitosamente');
+        mostrarPasoSeguimiento(9);
+    } catch (error) {
+        console.error("Error al guardar la confirmación:", error);
+        alert("Error al guardar la confirmación");
+    }
+}
+
+
+
+let modalAnteriorAbierto;
+
 function abrirModalMasInformacion() {
-    modalAnteriorAbierto = new bootstrap.Modal(document.getElementById("seguimientoModal"));
-    modalAnteriorAbierto.hide(); // Oculta el modal actual
+    modalAnteriorAbierto = bootstrap.Modal.getInstance(document.getElementById("seguimientoModal"));
+    modalAnteriorAbierto.hide();
 
-    // Mostrar el modal de más información
-    const modalMasInformacion = new bootstrap.Modal(document.getElementById("modalMasInformacion"));
+    const modalMasInformacion = new bootstrap.Modal(document.getElementById("modalMasInformacion"), {
+        backdrop: 'static',
+        keyboard: false
+    });
     modalMasInformacion.show();
 
-    // Cargar archivos adjuntos del paso actual
     cargarArchivosAdjuntos();
 }
 
-// Cerrar el modal de "Más información" y reabrir el anterior
 function cerrarModalMasInformacion() {
     const modalMasInformacion = bootstrap.Modal.getInstance(document.getElementById("modalMasInformacion"));
     modalMasInformacion.hide();
 
-    // Reabrir el modal anterior
     if (modalAnteriorAbierto) {
         modalAnteriorAbierto.show();
     }
 }
 
-// Función para cargar los archivos adjuntos del paso actual
-// Función para cargar los archivos adjuntos del paso actual
 async function cargarArchivosAdjuntos() {
     try {
-        // Obtener el documento de seguimiento del prospecto actual
         const seguimientoDoc = await db.collection("seguimientoProspectos").doc(prospectoActualId).get();
 
         if (!seguimientoDoc.exists) {
@@ -386,56 +655,332 @@ async function cargarArchivosAdjuntos() {
         }
 
         const seguimientoData = seguimientoDoc.data();
-
-        // Seleccionar la URL de los archivos según el paso actual
         let archivos = [];
+
         switch (pasoActual) {
+            case 12:
+                archivos = Array.isArray(seguimientoData.paso12_atencionCitaEvidenciaRecibosURL) ? 
+                    seguimientoData.paso12_atencionCitaEvidenciaRecibosURL : 
+                    [seguimientoData.paso12_atencionCitaEvidenciaRecibosURL];
+                break;
+            case 10:
+                archivos = Array.isArray(seguimientoData.paso10_firmaContratoEvidendiasURL) ? 
+                    seguimientoData.paso10_firmaContratoEvidendiasURL : 
+                    [seguimientoData.paso10_firmaContratoEvidendiasURL];
+                break;
             case 7:
-                archivos = Array.isArray(seguimientoData.paso7_adjuntarRecibosAnticipoURL) ? seguimientoData.paso7_adjuntarRecibosAnticipoURL : [seguimientoData.paso7_adjuntarRecibosAnticipoURL];
+                archivos = Array.isArray(seguimientoData.paso7_adjuntarRecibosAnticipoURL) ? 
+                    seguimientoData.paso7_adjuntarRecibosAnticipoURL : 
+                    [seguimientoData.paso7_adjuntarRecibosAnticipoURL];
                 break;
             case 5:
-                archivos = Array.isArray(seguimientoData.paso5_adjuntarCotizacionURL) ? seguimientoData.paso5_adjuntarCotizacionURL : [seguimientoData.paso5_adjuntarCotizacionURL];
+                archivos = Array.isArray(seguimientoData.paso5_adjuntarCotizacionURL) ? 
+                    seguimientoData.paso5_adjuntarCotizacionURL : 
+                    [seguimientoData.paso5_adjuntarCotizacionURL];
                 break;
             case 4:
-                archivos = Array.isArray(seguimientoData.paso4_adjuntarEvidenciaURL) ? seguimientoData.paso4_adjuntarEvidenciaURL : [seguimientoData.paso4_adjuntarEvidenciaURL];
+                archivos = Array.isArray(seguimientoData.paso4_adjuntarEvidenciaURL) ? 
+                    seguimientoData.paso4_adjuntarEvidenciaURL : 
+                    [seguimientoData.paso4_adjuntarEvidenciaURL];
                 break;
             case 2:
-                archivos = Array.isArray(seguimientoData.paso2_adjuntarEvidenciaURL) ? seguimientoData.paso2_adjuntarEvidenciaURL : [seguimientoData.paso2_adjuntarEvidenciaURL];
+                archivos = Array.isArray(seguimientoData.paso2_adjuntarEvidenciaURL) ? 
+                    seguimientoData.paso2_adjuntarEvidenciaURL : 
+                    [seguimientoData.paso2_adjuntarEvidenciaURL];
                 break;
-            // Agregar más casos según los pasos que tengan archivos adjuntos
             default:
                 archivos = [];
                 break;
         }
+
+        // Filtrar valores null o undefined
+        archivos = archivos.filter(url => url);
 
         if (archivos.length === 0) {
             document.getElementById("archivosAdjuntos").innerHTML = "<p>No hay archivos adjuntos disponibles para este paso.</p>";
             return;
         }
 
-        // Crear una lista de enlaces para los archivos adjuntos
-        const archivoLinks = archivos.map((archivoURL, index) => {
-            return `
-                <div class="mb-2">
-                    <a href="${archivoURL}" target="_blank" class="text-primary">
-                        Archivo ${index + 1}
-                    </a>
-                </div>
-            `;
-        }).join("");
+        console.log("URLs de archivos:", archivos); // Para debugging
 
-        document.getElementById("archivosAdjuntos").innerHTML = archivoLinks;
+        const thumbnailsHTML = await Promise.all(archivos.map(async (archivoURL, index) => {
+            try {
+                // Obtener la URL de descarga
+                const storageRef = firebase.storage().refFromURL(archivoURL);
+                const url = await storageRef.getDownloadURL();
+                const extension = url.split('.').pop().toLowerCase();
+
+                return `
+                    <div class="thumbnail-wrapper">
+                        <a href="${url}" target="_blank" class="thumbnail-link">
+                            <div class="thumbnail-image-container">
+                                <img src="${url}" 
+                                     alt="Archivo ${index + 1}"
+                                     class="thumbnail-image"
+                                     onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMTQgMkgyNnYySDI0djIwSDZ2LTIwSDR2LTJIMnYtMmgyNHYyaC0ydjIwSDZ2LTIwSDR2LTJIMTR6Ii8+PC9zdmc+';">
+                            </div>
+                            <div class="thumbnail-info">
+                                <span class="thumbnail-name">Archivo ${index + 1}</span>
+                                <span class="thumbnail-type">${extension.toUpperCase()}</span>
+                            </div>
+                        </a>
+                    </div>
+                `;
+            } catch (error) {
+                console.error(`Error al procesar archivo ${index + 1}:`, error);
+                return '';
+            }
+        }));
+
+        document.getElementById("archivosAdjuntos").innerHTML = `
+            <div class="thumbnails-container">
+                ${thumbnailsHTML.join('')}
+            </div>
+        `;
+
     } catch (error) {
         console.error("Error al cargar archivos adjuntos:", error);
         document.getElementById("archivosAdjuntos").innerHTML = "<p>Error al cargar los archivos adjuntos.</p>";
     }
 }
 
-
-
-function mostrarPublicaciones(){
-    window.open("/public/index.html", '_blank');
+// Estilos CSS
+const styles = `
+.thumbnails-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 15px;
+    padding: 15px;
 }
+
+.thumbnail-wrapper {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s;
+    background: white;
+}
+
+.thumbnail-wrapper:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.thumbnail-link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+}
+
+.thumbnail-image-container {
+    width: 100%;
+    height: 120px;
+    overflow: hidden;
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.thumbnail-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumbnail-info {
+    padding: 8px;
+    background: #f8f9fa;
+    border-top: 1px solid #eee;
+}
+
+.thumbnail-name {
+    display: block;
+    font-size: 12px;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.thumbnail-type {
+    display: block;
+    font-size: 10px;
+    color: #666;
+    margin-top: 2px;
+}
+`;
+
+// Agregar los estilos
+if (!document.getElementById('thumbnails-styles')) {
+    const styleSheet = document.createElement("style");
+    styleSheet.id = 'thumbnails-styles';
+    styleSheet.innerText = styles;
+    document.head.appendChild(styleSheet);
+}
+
+async function mostrarPublicaciones() {
+    // Crear el modal de publicaciones
+    const modalHTML = `
+        <div class="modal fade" id="publicacionesModal" tabindex="-1" aria-labelledby="publicacionesModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-dark text-white">
+                        <div class="d-flex align-items-center w-100">
+                            <button type="button" class="btn-close btn-close-white me-2" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h5 class="modal-title flex-grow-1" id="publicacionesModalLabel">Buscar publicación</h5>
+                            <div class="position-relative">
+                                <input type="text" id="searchPublicaciones" class="form-control" placeholder="Buscar...">
+                                <i class="fas fa-search position-absolute end-0 top-50 translate-middle-y me-2"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-body">
+                        <div id="publicacionesList" class="list-group">
+                            <!-- Las publicaciones se cargarán aquí -->
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" onclick="guardarPublicacionesSeleccionadas()">Guardar Selección</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Eliminar modal anterior si existe
+    const modalAnterior = document.getElementById('publicacionesModal');
+    if (modalAnterior) {
+        modalAnterior.remove();
+    }
+
+    // Agregar el nuevo modal al DOM
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Mostrar el modal
+    const modal = new bootstrap.Modal(document.getElementById('publicacionesModal'));
+    modal.show();
+
+    // Cargar las publicaciones
+    await cargarPublicaciones();
+
+    // Configurar el buscador
+    const searchInput = document.getElementById('searchPublicaciones');
+    searchInput.addEventListener('input', debounce(async (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        await cargarPublicaciones(searchTerm);
+    }, 300));
+}
+
+// Función de debounce para el buscador
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+let publicacionesSeleccionadas = new Set();
+
+async function cargarPublicaciones(searchTerm = '') {
+    const publicacionesList = document.getElementById('publicacionesList');
+    publicacionesList.innerHTML = '<div class="text-center"><div class="spinner-border" role="status"></div></div>';
+
+    try {
+        // Obtener las publicaciones ya seleccionadas
+        const seguimientoDoc = await db.collection("seguimientoProspectos").doc(prospectoActualId).get();
+        const seguimientoData = seguimientoDoc.exists ? seguimientoDoc.data() : {};
+        const idsSeleccionados = seguimientoData.paso5_idsPublicaciones || [];
+        publicacionesSeleccionadas = new Set(idsSeleccionados);
+
+        // Obtener las publicaciones de Firestore
+        let query = db.collection("publicaciones");
+        
+        if (searchTerm) {
+            query = query.where('titulo', '>=', searchTerm)
+                        .where('titulo', '<=', searchTerm + '\uf8ff');
+        }
+
+        const snapshot = await query.get();
+        
+        if (snapshot.empty) {
+            publicacionesList.innerHTML = '<div class="text-center">No se encontraron publicaciones</div>';
+            return;
+        }
+
+        let publicacionesHTML = '';
+        snapshot.forEach(doc => {
+            const publicacion = doc.data();
+            const isSelected = publicacionesSeleccionadas.has(doc.id);
+            publicacionesHTML += `
+                <div class="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3" role="button">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="${doc.id}" 
+                            id="check_${doc.id}" ${isSelected ? 'checked' : ''}
+                            onchange="togglePublicacion('${doc.id}')">
+                    </div>
+                    <img src="${publicacion.multimediaUrl[0] || '/placeholder.svg'}" class="rounded" width="64" height="64" alt="${publicacion.titulo}">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0">${publicacion.categoria}</h6>
+                        <p class="mb-0 text-muted">${publicacion.lugar || 'Sin descripción'}</p>
+                    </div>
+                </div>
+            `;
+        });
+
+        publicacionesList.innerHTML = publicacionesHTML;
+    } catch (error) {
+        console.error("Error al cargar publicaciones:", error);
+        publicacionesList.innerHTML = '<div class="text-center text-danger">Error al cargar las publicaciones</div>';
+    }
+}
+
+function togglePublicacion(publicacionId) {
+    if (publicacionesSeleccionadas.has(publicacionId)) {
+        publicacionesSeleccionadas.delete(publicacionId);
+    } else {
+        publicacionesSeleccionadas.add(publicacionId);
+    }
+}
+
+let publicacionesGuardadas = [];
+
+async function guardarPublicacionesSeleccionadas() {
+    try {
+        // Almacenar los IDs en la variable global
+        publicacionesGuardadas = Array.from(publicacionesSeleccionadas);
+        console.log("Publicaciones guardadas en memoria:", publicacionesGuardadas);
+        
+        // Cerrar el modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('publicacionesModal'));
+        modal.hide();
+        
+        // Opcional: mostrar confirmación
+        console.log('Publicaciones almacenadas exitosamente en memoria');
+
+        const botonAdjuntar = document.querySelector(`button[data-paso="55"]`);
+            if (botonAdjuntar) {
+                botonAdjuntar.innerHTML = `<i class="fas fa-check me-2"></i>${publicacionesGuardadas.length} paquete(s) seleccionado(s)`;
+                botonAdjuntar.classList.remove('btn-secondary');
+                botonAdjuntar.classList.add('btn-success');
+            }
+
+
+    } catch (error) {
+        console.error("Error al procesar las publicaciones:", error);
+        alert("Error al procesar las publicaciones seleccionadas");
+    }
+}
+
+
+
+
 
 // Función para adjuntar archivo
 // Update the adjuntarArchivo function to automatically mark steps as complete
@@ -450,6 +995,46 @@ async function adjuntarArchivo(paso) {
             if (paso === 5) {
                 tempStep5Data.file = file;
                 mostrarPasoSeguimiento(paso);
+            } else if(paso==10){
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adjuntando...';
+                    button.disabled = true;
+                    
+                    const storageRef = firebase.storage().ref(`prospectos/${prospectoActualId}/paso${paso}/${file.name}`);
+                    await storageRef.put(file);
+                    const downloadURL = await storageRef.getDownloadURL();
+                    
+
+                await db.collection("seguimientoProspectos").doc(prospectoActualId).update({
+                    paso10_firmaContratoEvidendiasURL:firebase.firestore.FieldValue.arrayUnion(downloadURL),
+                    paso10_revision:true
+                });
+                const porcentaje = calcularPorcentaje(paso);
+                await db.collection("prospectos").doc(prospectoActualId).update({
+                    porcentaje: porcentaje
+                });
+
+                alert("Archivo adjuntado exitosamente");
+                mostrarPasoSeguimiento(paso);
+            } else if(paso==12){
+                button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adjuntando...';
+                    button.disabled = true;
+                    
+                    const storageRef = firebase.storage().ref(`prospectos/${prospectoActualId}/paso${paso}/${file.name}`);
+                    await storageRef.put(file);
+                    const downloadURL = await storageRef.getDownloadURL();
+                    
+
+                await db.collection("seguimientoProspectos").doc(prospectoActualId).update({
+                 paso12_atencionCitaEvidenciaRecibosURL :firebase.firestore.FieldValue.arrayUnion(downloadURL),
+                 paso12_revision:true
+                });
+                const porcentaje = calcularPorcentaje(paso);
+                await db.collection("prospectos").doc(prospectoActualId).update({
+                    porcentaje: porcentaje
+                });
+
+                alert("Archivo adjuntado exitosamente");
+                mostrarPasoSeguimiento(paso);
             } else {
                 try {
                     button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adjuntando...';
@@ -459,6 +1044,8 @@ async function adjuntarArchivo(paso) {
                     await storageRef.put(file);
                     const downloadURL = await storageRef.getDownloadURL();
                     
+
+
                     const updateData = {
                         [`paso${paso}_adjuntarEvidenciaURL`]: firebase.firestore.FieldValue.arrayUnion(downloadURL)
                     };
@@ -542,6 +1129,11 @@ async function agendarCita(paso) {
                 updateData[`paso8_agendarCitaParaFirmar`] = fecha;
                 await db.collection("seguimientoProspectos").doc(prospectoActualId).update(updateData);
                 
+                } if(paso==11){
+                    const updateData = {};
+                updateData[`paso11_agendarCitaParaEntregaPorcentaje`] = fecha;
+                await db.collection("seguimientoProspectos").doc(prospectoActualId).update(updateData);
+                
                 }else{
                     const updateData = {};
                 updateData[`paso${paso}_agendarCita`] = fecha;
@@ -578,23 +1170,23 @@ function adjuntarArchivoPaso(paso) {
     const inputFile = document.createElement('input');
     inputFile.type = 'file';
     inputFile.accept = '.pdf,.jpg,.jpeg,.png';
+    inputFile.multiple = true;
 
     inputFile.onchange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            archivoAdjunto = file; // Guardar el archivo en la variable global
-            console.log("Archivo seleccionado en adjuntarArchivoPaso:", archivoAdjunto);
+        const files = event.target.files;
+        if (files.length > 0) {
+            archivoAdjunto = Array.from(files);
+            console.log("Archivos seleccionados en adjuntarArchivoPaso:", archivoAdjunto);
 
-            // Actualizar el botón para indicar que se adjuntó correctamente
+            // Actualizar el botón para indicar que se adjuntaron correctamente
             const botonAdjuntar = document.querySelector(`button[data-paso="${paso}"]`);
             if (botonAdjuntar) {
-                botonAdjuntar.innerHTML = '<i class="fas fa-check me-2"></i>Adjuntado';
+                botonAdjuntar.innerHTML = `<i class="fas fa-check me-2"></i>${archivoAdjunto.length} archivo(s) adjuntado(s)`;
                 botonAdjuntar.classList.remove('btn-secondary');
                 botonAdjuntar.classList.add('btn-success');
-                botonAdjuntar.disabled = true; // Desactivar el botón después de adjuntar
             }
         } else {
-            archivoAdjunto = null;
+            archivoAdjunto = [];
             alert('No se seleccionó ningún archivo.');
         }
     };
@@ -637,7 +1229,7 @@ async function guardarDatosAnticipo() {
         const seguimientoData = seguimientoDoc.data();
 
         await db.collection("seguimientoProspectos").doc(prospectoActualId).update({
-            paso7_adjuntarRecibosAnticipoURL: archivoURL,
+            paso7_adjuntarRecibosAnticipoURL: firebase.firestore.FieldValue.arrayUnion(archivoURL),
             paso7_revision: true
         });
 
@@ -821,13 +1413,15 @@ const pasosData = [
         ],
         campoCompletado: "paso12_atencionCitaEvidenciaRecibosURL"
     },{
-        titulo: "Asignacion de usuario y contraseña",
-        contenido: "Programa una cita con el prospecto para discutir los detalles en persona.",
+        titulo: "Asignación de usuario y contraseña",
+        contenido: "Genera las credenciales de acceso para el cliente.",
         accionesRecomendadas: [
-            "Propón varias opciones de fecha y hora",
-            "Confirma la ubicación de la cita"
+            "Genera un usuario basado en el nombre del prospecto",
+            "Asegúrate de que el cliente reciba sus credenciales de acceso"
         ],
-        botones: [],
+        botones: [
+            { texto: "Generar Credenciales", icono: "fas fa-user-plus", clase: "btn-primary", accion: "generarCredenciales()" }
+        ],
         campoCompletado: "paso13_asignacionUsuario"
     }
 
@@ -874,39 +1468,50 @@ async function cargarDatosAnticipo() {
 
 async function verificarPaso5() {
     const descripcion = document.getElementById('descripcion').value.trim();
-    tempStep5Data.description = descripcion;
-
+    
     if (!descripcion) {
         alert('Por favor, ingrese una descripción de los paquetes ofrecidos.');
         return;
     }
     
-    const seguimientoDoc = await db.collection("seguimientoProspectos").doc(prospectoActualId).get();
-    const seguimientoData = seguimientoDoc.data() || {};
-    
-    if (!tempStep5Data.file && !seguimientoData.paso5_adjuntarCotizacionURL?.length) {
+    if (archivoAdjunto.length === 0) {
         alert('Por favor, adjunte al menos un archivo de evidencia.');
+        return;
+    }
+
+    if (publicacionesGuardadas.size === 0) {
+        alert('Por favor, seleccione al menos un paquete.');
         return;
     }
     
     try {
         const updateData = {
-            paso5_descripcion: descripcion
+            paso5_descripcion: descripcion,
+            paso5_idsPublicaciones: Array.from(publicacionesGuardadas)
         };
 
-        if (tempStep5Data.file) {
-            const storageRef = firebase.storage().ref(`prospectos/${prospectoActualId}/paso5/${tempStep5Data.file.name}`);
-            await storageRef.put(tempStep5Data.file);
+        const downloadURLs = [];
+        for (const file of archivoAdjunto) {
+            const storageRef = firebase.storage().ref(`prospectos/${prospectoActualId}/paso5/${file.name}`);
+            await storageRef.put(file);
             const downloadURL = await storageRef.getDownloadURL();
-            updateData.paso5_adjuntarCotizacionURL = firebase.firestore.FieldValue.arrayUnion(downloadURL);
+            downloadURLs.push(downloadURL);
         }
+        updateData.paso5_adjuntarCotizacionURL = firebase.firestore.FieldValue.arrayUnion(...downloadURLs);
         
         await db.collection("seguimientoProspectos").doc(prospectoActualId).set(updateData, { merge: true });
         
-        // Completar el paso 5
+        // Complete step 5
         await completarPaso(5);
         
+        const porcentaje = calcularPorcentaje(5);
+        await db.collection("prospectos").doc(prospectoActualId).update({
+            porcentaje: porcentaje
+        });
+
         alert('Paso 5 completado exitosamente');
+
+        mostrarPasoSeguimiento(5);
     } catch (error) {
         console.error("Error al guardar:", error);
         alert("Error al guardar los cambios");
@@ -1142,18 +1747,31 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 async function completarPaso(paso) {
-    // Lógica para marcar el paso como completado
+    // Logic to mark the step as completed
     pasosCompletados.add(paso);
     
-    // Actualizar el documento en Firestore
-    const updateData = {};
-    updateData[`paso${paso}_completado`] = true;
-    await db.collection("seguimientoProspectos").doc(prospectoActualId).update(updateData);
-    
-    // Habilitar el botón de siguiente paso
+
+    // Enable the next step button
     document.getElementById('pasoSiguiente').disabled = false;
     
-    // Actualizar la visualización del paso actual
+
+    // Update the current step visualization
     mostrarPasoSeguimiento(paso);
 }
 
+
+// Add this function to handle backdrop cleanup
+function limpiarBackdrop() {
+    const backdrops = document.getElementsByClassName('modal-backdrop');
+    while(backdrops.length > 0) {
+        backdrops[0].parentNode.removeChild(backdrops[0]);
+    }
+    document.body.classList.remove('modal-open');
+}
+
+// Modify the event listeners for modal closing
+document.getElementById('prospectoModal').addEventListener('hidden.bs.modal', limpiarBackdrop);
+document.getElementById('seguimientoModal').addEventListener('hidden.bs.modal', limpiarBackdrop);
+document.getElementById('modalMasInformacion').addEventListener('hidden.bs.modal', limpiarBackdrop);
+
+console.log("Modal backdrop and outside click issues have been addressed.");

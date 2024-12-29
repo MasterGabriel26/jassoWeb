@@ -1,0 +1,677 @@
+/* Modal Base Styles */
+.modal-content {
+    border: none;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.modal-header {
+    padding: 24px 32px;
+    border: none;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    position: relative;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    letter-spacing: -0.02em;
+}
+
+.modal-body {
+    padding: 32px;
+    background: linear-gradient(to bottom, #ffffff, #f8fafc);
+}
+
+.modal-footer {
+    padding: 24px 32px;
+    border-top: 1px solid #f1f5f9;
+    background-color: #ffffff;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+}
+
+/* Botones y Acciones */
+.btn-action {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    background: #0f172a;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.15);
+    background: #1e293b;
+}
+
+.btn-action:active {
+    transform: translateY(0);
+}
+
+/* Navegación por pasos */
+.step-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 16px;
+}
+
+.step-button {
+    padding: 10px 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background-color: white;
+    color: #0f172a;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.step-button:hover:not(:disabled) {
+    background: #0f172a;
+    color: white;
+    border-color: #0f172a;
+}
+
+.step-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.step-progress {
+    padding: 8px 16px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    font-weight: 500;
+    color: #0f172a;
+    font-size: 0.9rem;
+}
+
+/* Efectos y Animaciones */
+.modal {
+    backdrop-filter: blur(8px);
+    background-color: rgba(15, 23, 42, 0.4);
+}
+
+.modal.fade .modal-content {
+    transform: scale(0.95) translateY(-10px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal.show .modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Scrollbar personalizado */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Efectos de hover y focus */
+.form-control:focus,
+.btn:focus {
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+    outline: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modal-content {
+        margin: 16px;
+        border-radius: 20px;
+    }
+
+    .modal-header,
+    .modal-body,
+    .modal-footer {
+        padding: 20px;
+    }
+}
+
+/* Glass effect para elementos específicos */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+
+
+
+/*Esto estaba en el html*/
+
+
+.modal-header {
+    background-color: #1a2942 !important;
+    color: white !important;
+}
+.modal-title {
+    color: white !important;
+    font-size: 1.2rem;
+}
+.modal-title small {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+.btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.paso-completado {
+position: relative;
+}
+
+.paso-completado::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234CAF50"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>') center/50% no-repeat;
+background-color: rgba(255, 255, 255, 0.9);
+z-index: 1;
+}
+
+.btn-action {
+min-width: 120px;
+border-radius: 20px;
+}
+/* Animaciones */
+@keyframes modalFadeIn {
+from {
+opacity: 0;
+transform: scale(0.95);
+}
+to {
+opacity: 1;
+transform: scale(1);
+}
+}
+
+@keyframes slideInRight {
+from {
+opacity: 0;
+transform: translateX(20px);
+}
+to {
+opacity: 1;
+transform: translateX(0);
+}
+}
+
+#crearProspectoModal .modal-dialog {
+max-width: 850px;
+margin: 2rem auto;
+height: auto;
+animation: modalFadeIn 0.3s ease-out;
+}
+
+#crearProspectoModal .modal-content {
+display: flex;
+flex-direction: row;
+border: none;
+border-radius: 20px;
+overflow: hidden;
+max-height: 80vh;
+box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+#crearProspectoModal .modal-left {
+background-color: rgb(82, 91, 98);
+padding: 30px;
+width: 45%;
+color: white;
+display: flex;
+flex-direction: column;
+gap: 20px;
+}
+
+#crearProspectoModal .modal-right {
+background-color: white;
+padding: 30px;
+width: 55%;
+position: relative;
+animation: slideInRight 0.4s ease-out;
+}
+
+#crearProspectoModal h1 {
+color: white;
+font-size: 2.8rem;
+font-weight: 700;
+margin-bottom: 30px;
+line-height: 1.2;
+}
+
+#crearProspectoModal .form-group {
+margin-bottom: 20px;
+}
+
+#crearProspectoModal label {
+display: block;
+margin-bottom: 8px;
+font-weight: 500;
+font-size: 0.95rem;
+}
+
+#crearProspectoModal .form-control,
+#crearProspectoModal .form-select {
+border-radius: 12px;
+padding: 12px 15px;
+border: 1px solid #e0e0e0;
+width: 100%;
+background-color: transparent;
+font-size: 0.95rem;
+height: auto;
+}
+
+#crearProspectoModal .modal-left .form-control,
+#crearProspectoModal .modal-left .form-select {
+background-color: rgba(255, 255, 255, 0.1);
+border: 2px solid rgba(255, 255, 255, 0.2);
+color: white;
+}
+
+#crearProspectoModal .form-row {
+display: flex;
+gap: 15px;
+margin-bottom: 20px;
+}
+
+#crearProspectoModal .form-row .form-group {
+flex: 1;
+margin-bottom: 0;
+}
+
+#crearProspectoModal textarea {
+min-height: 100px;
+resize: none;
+}
+
+#crearProspectoModal .close-button {
+position: absolute;
+top: 15px;
+right: 15px;
+background: none;
+border: none;
+font-size: 24px;
+cursor: pointer;
+color: #333;
+padding: 5px;
+line-height: 1;
+transition: transform 0.2s ease;
+}
+
+#crearProspectoModal .close-button:hover {
+transform: scale(1.1);
+}
+
+#crearProspectoModal .crear-prospecto-btn {
+width: 100%;
+padding: 12px;
+background-color: #1a2234;
+color: white;
+border: none;
+border-radius: 12px;
+margin-top: 20px;
+cursor: pointer;
+font-weight: 500;
+font-size: 0.95rem;
+transition: all 0.3s ease;
+}
+
+#crearProspectoModal .crear-prospecto-btn:hover {
+background-color: #2d3456;
+transform: translateY(-2px);
+}
+
+/* Placeholders */
+#crearProspectoModal .modal-left input::placeholder {
+color: rgba(255, 255, 255, 0.6);
+}
+
+#crearProspectoModal .modal-right input::placeholder {
+color: #999;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+#crearProspectoModal .modal-dialog {
+max-width: 90%;
+margin: 1rem auto;
+}
+}
+
+@media (max-width: 768px) {
+#crearProspectoModal .modal-content {
+flex-direction: column;
+}
+
+#crearProspectoModal .modal-left,
+#crearProspectoModal .modal-right {
+width: 100%;
+padding: 25px;
+}
+
+#crearProspectoModal h1 {
+font-size: 2.2rem;
+margin-bottom: 25px;
+}
+
+#crearProspectoModal .form-row {
+flex-direction: column;
+gap: 15px;
+}
+}
+
+/* Mejoras visuales */
+#crearProspectoModal .form-control:focus,
+#crearProspectoModal .form-select:focus {
+box-shadow: 0 0 0 3px rgba(26, 34, 52, 0.1);
+border-color: #1a2234;
+outline: none;
+}
+
+#crearProspectoModal .modal-left .form-control:focus,
+#crearProspectoModal .modal-left .form-select:focus {
+border-color: rgba(255, 255, 255, 0.5);
+box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+/* Scrollbar personalizado */
+#crearProspectoModal .modal-content::-webkit-scrollbar {
+width: 8px;
+}
+
+#crearProspectoModal .modal-content::-webkit-scrollbar-track {
+background: #f1f1f1;
+border-radius: 4px;
+}
+
+#crearProspectoModal .modal-content::-webkit-scrollbar-thumb {
+background: #888;
+border-radius: 4px;
+}
+
+#crearProspectoModal .modal-content::-webkit-scrollbar-thumb:hover {
+background: #555;
+}
+
+#crearProspectoModal #referencia {
+color: white;
+background-color: rgba(255, 255, 255, 0.1);
+border: 2px solid rgba(255, 255, 255, 0.2);
+border-radius: 12px;
+padding: 12px 15px;
+width: 100%;
+appearance: none; /* Elimina el estilo por defecto del select */
+cursor: pointer;
+}
+
+#crearProspectoModal #referencia:focus {
+border-color: rgba(255, 255, 255, 0.5);
+box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+outline: none;
+}
+
+/* Estilo para el hover */
+#crearProspectoModal #referencia:hover {
+border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Asegurarse de que el texto del placeholder también sea blanco */
+#crearProspectoModal #referencia:invalid {
+color: rgba(255, 255, 255, 0.6);
+}
+
+/* Estilo para cuando el select está abierto */
+#crearProspectoModal #referencia:focus option {
+color: black;
+background-color: white;
+}
+
+/* Estilo para el hover en las opciones */
+#crearProspectoModal #referencia option:hover {
+background-color: #f8f9fa;
+}
+
+
+
+
+#prospectoModal .modal-dialog {
+max-width: 400px;
+margin: 1.75rem auto;
+}
+
+#prospectoModal .modal-content {
+border: none;
+border-radius: 24px;
+background: white;
+box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+#prospectoModal .modal-header {
+background: #1e2330;
+padding: 20px;
+border: none;
+border-radius: 24px 24px 0 0;
+}
+
+#prospectoModal .modal-title {
+color: white;
+font-size: 20px;
+line-height: 1.2;
+}
+
+#prospectoModal .modal-title small {
+display: block;
+color: #8e95a3;
+font-size: 13px;
+margin-top: 4px;
+}
+
+#prospectoModal .btn-close {
+background: none;
+opacity: 1;
+}
+
+#prospectoModal .modal-body {
+padding: 20px;
+}
+
+#prospectoModal .contact-stats-container {
+margin-bottom: 15px;
+}
+
+#prospectoModal .contact-info {
+font-size: 15px;
+color: #1e2330;
+}
+
+#prospectoModal .stats-inline {
+display: flex;
+gap: 15px;
+margin-top: 8px;
+color: #8e95a3;
+font-size: 14px;
+}
+
+#prospectoModal .stats-inline span {
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+#prospectoModal .details-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 12px;
+margin: 15px 0;
+font-size: 14px;
+}
+
+#prospectoModal .info-item {
+display: flex;
+flex-direction: column;
+gap: 2px;
+}
+
+#prospectoModal .info-item .label {
+color: #8e95a3;
+}
+
+#prospectoModal .info-item .value {
+color: #1e2330;
+}
+
+#prospectoModal .observations {
+background: #f8f9fa;
+padding: 12px;
+border-radius: 12px;
+margin-top: 15px;
+}
+
+#prospectoModal .observations small {
+color: #8e95a3;
+display: block;
+margin-bottom: 4px;
+}
+
+#prospectoModal .observations p {
+margin: 0;
+font-size: 14px;
+color: #1e2330;
+}
+
+#prospectoModal .modal-footer {
+padding: 15px 20px;
+border-top: 1px solid #edf2f7;
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 10px;
+}
+
+#prospectoModal .modal-footer button {
+padding: 10px;
+border: none;
+border-radius: 12px;
+color: white;
+font-size: 14px;
+cursor: pointer;
+transition: transform 0.2s;
+}
+
+#prospectoModal #btnContactar,
+#prospectoModal #btnPaquetes {
+background: #2c3444;
+}
+
+#prospectoModal #btnSeguimiento,
+#prospectoModal #btnPagos {
+background: #404b61;
+}
+
+#prospectoModal .modal-footer button:hover {
+transform: translateY(-1px);
+}
+
+.modal-actions {
+display: flex;
+gap: 8px;
+margin-right: -8px; /* Para compensar el padding del último botón */
+}
+
+.btn-action-icon {
+background: rgba(255, 255, 255, 0.1);
+border: none;
+width: 32px;
+height: 32px;
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+
+.btn-action-icon:hover {
+background: rgba(255, 255, 255, 0.2);
+transform: translateY(-1px);
+}
+
+.btn-action-icon:active {
+transform: translateY(0);
+}
+
+.btn-action-icon i {
+font-size: 14px;
+}
+
+/* Asegúrate de que el título no se solape con los botones */
+.modal-title {
+padding-right: 80px; /* Espacio para los botones */
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+.modal-actions {
+position: absolute;
+top: 16px;
+right: 16px;
+}
+
+.btn-action-icon {
+width: 28px;
+height: 28px;
+}
+}
+
+
+@keyframes modalFade {
+from {
+opacity: 0;
+transform: translateY(10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+#prospectoModal .modal-content {
+animation: modalFade 0.3s ease-out;
+}

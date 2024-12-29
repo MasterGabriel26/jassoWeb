@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
            loadNotifications(userId);
         } else {
             // If not authenticated, redirect to login
-            window.location.href = '/page-sign-in.html';
+            window.location.href = '/public/page-sign-in.html';
         }
     });
 });
