@@ -3,6 +3,9 @@ let attachmentSuccess = false;
 let archivoAdjunto = null;
 let pasoActual = 0; // Cambia este valor dependiendo del paso en el que estés
 
+
+
+
 // Define formatearFecha in the global scope
 let pasosCompletados = new Set();
 function formatearFecha(fecha) {
@@ -42,7 +45,7 @@ async function mostrarModalProspecto(prospecto, id, nombreAsesor) {
     prospecto.fecha_evento
       ? formatearFecha(prospecto.fecha_evento)
       : "Sin Fecha";
-  document.getElementById("modalAsesor").textContent = nombreAsesor;
+
   document.getElementById("modalUltimoEditor").textContent =
     prospecto.nombreUsuarioModificador
       ? prospecto.nombreUsuarioModificador[
@@ -82,6 +85,83 @@ async function mostrarModalProspecto(prospecto, id, nombreAsesor) {
 
   const totalSteps = pasosData.length;
   const porcentaje = (completedSteps / totalSteps) * 100;
+
+
+
+  // Modificar la parte donde se establece el asesor
+const modalAsesor = document.getElementById("modalAsesor");
+if (modalAsesor) {
+    const asesorNameElement = modalAsesor.querySelector('.asesor-name');
+    if (asesorNameElement) {
+        asesorNameElement.textContent = nombreAsesor;
+    }
+
+    // Cargar datos del asesor para el tooltip
+    if (prospecto.asesor) {
+        try {
+            const asesorDoc = await db.collection("usuarios").doc(prospecto.asesor).get();
+            if (asesorDoc.exists) {
+                const asesorData = asesorDoc.data();
+                const profileCard = modalAsesor.querySelector('.asesor-profile-card');
+                
+                if (profileCard) {
+                    // Avatar
+                    const avatarElement = profileCard.querySelector('.profile-avatar');
+                    if (avatarElement) {
+                        if (asesorData.imageProfile) {
+                            avatarElement.style.backgroundImage = `url(${asesorData.imageProfile})`;
+                            avatarElement.textContent = '';
+                        } else {
+                            const initials = nombreAsesor
+                                .split(' ')
+                                .map(n => n[0])
+                                .join('')
+                                .toUpperCase();
+                            avatarElement.textContent = initials;
+                            avatarElement.style.backgroundImage = '';
+                            avatarElement.style.background = `linear-gradient(45deg, #2d3456, #1e2330)`;
+                        }
+                    }
+
+                    // Información básica
+                    const profileName = profileCard.querySelector('.profile-name');
+                    if (profileName) profileName.textContent = nombreAsesor;
+                    
+                    const profilePhone = profileCard.querySelector('.profile-phone');
+                    if (profilePhone) profilePhone.textContent = asesorData.phone || 'Sin teléfono';
+                    
+                    // Estado online/offline
+                    const statusElement = profileCard.querySelector('.profile-status');
+                    if (statusElement) {
+                        statusElement.className = `profile-status ${asesorData.onLine ? 'online' : 'offline'}`;
+                    }
+
+                    // Estadísticas
+                    const prospectosCount = await db.collection("prospectos")
+                        .where("asesor", "==", prospecto.asesor)
+                        .get()
+                        .then(snap => snap.size);
+
+                    const ventasCount = await db.collection("prospectos")
+                        .where("asesor", "==", prospecto.asesor)
+                        .where("estado", "==", "vendido")
+                        .get()
+                        .then(snap => snap.size);
+
+                    const prospectosElement = profileCard.querySelector('.prospectos-count');
+                    if (prospectosElement) prospectosElement.textContent = prospectosCount;
+
+                    const ventasElement = profileCard.querySelector('.ventas-count');
+                    if (ventasElement) ventasElement.textContent = ventasCount;
+                }
+            }
+        } catch (error) {
+            console.error("Error al cargar datos del asesor:", error);
+        }
+    }
+}
+
+
 
   const btnSeguimiento = document.getElementById("btnSeguimiento");
   btnSeguimiento.textContent = `Seguimiento ${prospecto.porcentaje}%`;
@@ -2860,250 +2940,365 @@ document.getElementById("pasoSiguiente").addEventListener("click", () => {
   }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-  const filtroSelect = document.getElementById("filtro-select");
-  const filtroInput = document.getElementById("filtro-input");
-  const filtrarBtn = document.getElementById("filtrar-btn");
-  const filtrarContainer = document.getElementById("filtrar-container");
-  const prospectosLista = document.getElementById("prospectos-lista");
-  const loaderContainer = document.getElementById("loader");
+// Variables globales
+let lastVisible = null;
+let currentQuery = null;
+const pageSize = 20;
 
-  let lastVisible = null;
-  const pageSize = 20;
-  let isLoading = false;
-  let currentQuery = null;
+// Elementos del DOM
+const elements = {
+    prospectosLista: document.getElementById('prospectos-lista'),
+    searchInput: document.getElementById('search-input'),
+    filterType: document.getElementById('filter-type'),
+    tableBody: document.querySelector(".table-responsive")
+};
 
-  filtroSelect.addEventListener("change", () => {
-    const filtro = filtroSelect.value;
-    if (filtro === "all") {
-      filtrarContainer.style.display = "none";
-      filtroInput.innerHTML = "";
-      resetAndLoadProspectos();
-    } else {
-      filtrarContainer.style.display = "block";
-      setupFilterInput(filtro);
-    }
-  });
+// Inicialización cuando el DOM está cargado
+document.addEventListener("DOMContentLoaded", initializeApp);
 
-  filtrarBtn.addEventListener("click", () => {
-    const filtro = filtroSelect.value;
-    const valor = getFilterValue(filtro);
-    if (valor !== null) {
-      filtrarProspectos(filtro, valor);
-    } else {
-      alert("Por favor, ingrese un valor para filtrar.");
-    }
-  });
+function initializeApp() {
+    setupSearchFunctionality();
+    setupScrollListener();
+    setupModalListeners();
+    loadInitialData();
+}
 
-  // Evento de scroll en el contenedor de la tabla
-  const tableBody = document.querySelector(".table-responsive");
-  tableBody.addEventListener("scroll", () => {
-    if (
-      tableBody.scrollTop + tableBody.clientHeight >=
-      tableBody.scrollHeight - 100
-    ) {
-      cargarMasProspectos(); // Llama a la función para cargar más prospectos
-    }
-  });
+// Configuración de la funcionalidad de búsqueda
+function setupSearchFunctionality() {
+  let searchTimeout;
 
-  resetAndLoadProspectos();
+  const updatePlaceholder = () => {
+      elements.searchInput.placeholder = `Buscar por ${elements.filterType.value === 'name' ? 'nombre' : 'teléfono'}...`;
+  };
 
-  function setupFilterInput(filtro) {
-    switch (filtro) {
-      case "fecha_create":
-        filtroInput.innerHTML = `
-                  <input type="date" id="filtro-min" class="form-control mb-2" placeholder="Fecha mínima">
-                  <input type="date" id="filtro-max" class="form-control" placeholder="Fecha máxima">
-              `;
-        break;
-      case "telefono_prospecto":
-        filtroInput.innerHTML = `<input type="tel" id="filtro-valor" class="form-control" style="margin-top:30px;" placeholder="Teléfono (con o sin prefijo)">`;
-        break;
-      default:
-        filtroInput.innerHTML = `<input type="text" id="filtro-valor" class="form-control" style="margin-top:30px;" placeholder="Buscar por ${filtro}">`;
-    }
-  }
+  const handleSearch = () => {
+      const searchValue = elements.searchInput.value.trim().toLowerCase();
+      const filterValue = elements.filterType.value;
 
-  async function filtrarProspectos(filtro, valor) {
-    prospectosLista.innerHTML = "";
-    lastVisible = null;
-    let query = db.collection("prospectos");
-
-    if (filtro === "fecha_create") {
-      const maxDate = new Date(valor.max);
-      maxDate.setDate(maxDate.getDate() + 1);
-
-      query = query
-        .where("fecha_create", ">=", valor.min.getTime())
-        .where("fecha_create", "<", maxDate.getTime())
-        .orderBy("fecha_create", "desc");
-    } else if (filtro === "telefono_prospecto") {
-      query = query.where(filtro, "==", valor);
-    } else if (filtro === "asesor") {
-      const asesoresSnapshot = await db
-        .collection("usuarios")
-        .where("name", ">=", valor)
-        .where("name", "<=", valor + "\uf8ff")
-        .get();
-
-      if (!asesoresSnapshot.empty) {
-        const asesorIds = asesoresSnapshot.docs.map((doc) => doc.id);
-        query = query
-          .where("asesor", "in", asesorIds)
-          .orderBy("fecha_create", "desc");
-      } else {
-        alert("No se encontraron asesores que coincidan con la búsqueda.");
-        return;
+      if (searchValue.length < 3) {
+          resetAndLoadProspectos();
+          return;
       }
-    } else if (
-      filtro === "folio" ||
-      filtro === "name" ||
-      filtro === "pregunta_por" ||
-      filtro === "tipo_evento"
-    ) {
-      query = query
-        .orderBy(filtro)
-        .orderBy("fecha_create", "desc")
-        .startAt(valor)
-        .endAt(valor + "\uf8ff");
-    }
 
-    currentQuery = query;
-    cargarProspectos(query);
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(async () => {
+          let query = db.collection("prospectos");
+
+          if (filterValue === 'name') {
+              // Realizar una búsqueda más precisa
+              const snapshot = await query.get();
+              const results = snapshot.docs
+                  .map(doc => ({
+                      ...doc.data(),
+                      id: doc.id,
+                      relevance: calculateRelevance(doc.data().name, searchValue)
+                  }))
+                  .filter(doc => doc.relevance > 0) // Solo mantener resultados relevantes
+                  .sort((a, b) => b.relevance - a.relevance); // Ordenar por relevancia
+
+              // Mostrar resultados filtrados
+              await mostrarResultadosFiltrados(results);
+          } else if (filterValue === 'telefono_prospecto') {
+              query = query
+                  .orderBy("telefono_prospecto")
+                  .startAt(searchValue)
+                  .endAt(searchValue + "\uf8ff");
+              cargarProspectos(query);
+          }
+      }, 300);
+  };
+
+  // Event Listeners
+  elements.searchInput.addEventListener('input', handleSearch);
+  elements.searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleSearch();
+  });
+  elements.filterType.addEventListener('change', () => {
+      updatePlaceholder();
+      if (elements.searchInput.value.trim()) handleSearch();
+  });
+
+  // Inicializar placeholder
+  updatePlaceholder();
+}
+
+// Función para calcular la relevancia de un resultado
+function calculateRelevance(name, searchValue) {
+  if (!name) return 0;
+  
+  const normalizedName = name.toLowerCase();
+  const searchTerms = searchValue.toLowerCase().split(' ');
+  
+  let relevance = 0;
+  
+  // Coincidencia exacta tiene la mayor relevancia
+  if (normalizedName === searchValue) {
+      relevance += 100;
+  }
+  
+  // Coincidencia al inicio del nombre
+  if (normalizedName.startsWith(searchValue)) {
+      relevance += 50;
+  }
+  
+  // Coincidencia de términos individuales
+  searchTerms.forEach(term => {
+      if (normalizedName.includes(term)) {
+          relevance += 25;
+          
+          // Bonus por coincidencia al inicio de una palabra
+          const words = normalizedName.split(' ');
+          if (words.some(word => word.startsWith(term))) {
+              relevance += 15;
+          }
+      }
+  });
+  
+  // Penalización para "Sin Nombre"
+  if (name === "Sin Nombre" || name === "sin nombre") {
+      relevance = Math.max(0, relevance - 50);
+  }
+  
+  return relevance;
+}
+
+// Función para mostrar los resultados filtrados
+async function mostrarResultadosFiltrados(results) {
+  elements.prospectosLista.innerHTML = "";
+  
+  if (results.length === 0) {
+      elements.prospectosLista.innerHTML = '<tr><td colspan="7" class="text-center">No se encontraron resultados</td></tr>';
+      return;
   }
 
-  function getFilterValue(filtro) {
-    if (filtro === "fecha_create") {
-      const min = document.getElementById("filtro-min").value;
-      const max = document.getElementById("filtro-max").value;
-      return min && max ? { min: new Date(min), max: new Date(max) } : null;
-    } else {
-      return document.getElementById("filtro-valor").value.trim() || null;
-    }
+  for (const result of results) {
+      const nombreAsesor = await obtenerNombreAsesor(result.asesor);
+      const row = crearFilaProspecto(result, result.id, nombreAsesor);
+      elements.prospectosLista.appendChild(row);
   }
+}
 
-  async function cargarProspectos(query) {
-    isLoading = true;
-    loaderContainer.classList.remove("hidden");
+// Configuración del scroll infinito
+function setupScrollListener() {
+    elements.tableBody.addEventListener("scroll", () => {
+        if (elements.tableBody.scrollTop + elements.tableBody.clientHeight >= elements.tableBody.scrollHeight - 100) {
+            cargarMasProspectos();
+        }
+    });
+}
+const loaderContainer = document.getElementById('loader');
+  
+
+function showLoader() {
+    if (elements.loader) {
+        elements.loader.style.display = 'block';
+    }
+}
+
+function hideLoader() {
+    if (elements.loader) {
+        elements.loader.style.display = 'none';
+ 
+    }
+}
+
+// Modificar la función cargarProspectos para manejar el loader
+async function cargarProspectos(query) {
+    showLoader();
     try {
-      const querySnapshot = await query.limit(pageSize).get();
-      if (querySnapshot.empty) {
-        prospectosLista.innerHTML =
-          "<tr><td colspan='8'>No se encontraron prospectos.</td></tr>";
-      } else {
-        actualizarTabla(querySnapshot.docs);
-        lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
-      }
+        const snapshot = await query.limit(pageSize).get();
+        
+        if (snapshot.empty) {
+            elements.prospectosLista.innerHTML = '<tr><td colspan="7" class="text-center">No se encontraron resultados</td></tr>';
+            return;
+        }
+
+        currentQuery = query;
+        await actualizarTabla(snapshot.docs);
+        loaderContainer.classList.add('hidden');
+        lastVisible = snapshot.docs[snapshot.docs.length - 1];
+       
     } catch (error) {
-      console.error("Error al cargar prospectos:", error);
-      prospectosLista.innerHTML =
-        "<tr><td colspan='8'>Error al cargar prospectos. Por favor, intente de nuevo.</td></tr>";
+        console.error("Error al cargar prospectos:", error);
+        elements.prospectosLista.innerHTML = '<tr><td colspan="7" class="text-center">Error al cargar los datos</td></tr>';
     } finally {
-      isLoading = false;
-      loaderContainer.classList.add("hidden");
+        hideLoader();
     }
-  }
+}
 
-  async function cargarMasProspectos() {
-    if (!lastVisible || !currentQuery || isLoading) return;
+// Modificar cargarMasProspectos también
+async function cargarMasProspectos() {
+  if (!lastVisible || !currentQuery || isLoading) return;
 
-    isLoading = true;
-    try {
-      const querySnapshot = await currentQuery
-        .startAfter(lastVisible)
-        .limit(pageSize)
-        .get();
+  isLoading = true;
+  showLoader();
+  try {
+      const snapshot = await currentQuery
+          .startAfter(lastVisible)
+          .limit(pageSize)
+          .get();
 
-      if (!querySnapshot.empty) {
-        actualizarTabla(querySnapshot.docs, true);
-        lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+      if (!snapshot.empty) {
+          await actualizarTabla(snapshot.docs, true);
+          lastVisible = snapshot.docs[snapshot.docs.length - 1];
       }
-    } catch (error) {
+  } catch (error) {
       console.error("Error al cargar más prospectos:", error);
-    } finally {
+  } finally {
       isLoading = false;
-    }
+      hideLoader();
   }
+}
 
-  function actualizarTabla(docs, append = false) {
-    if (!append) {
-      prospectosLista.innerHTML = "";
-    }
+// Asegurarse de que actualizarTabla sea async
+async function actualizarTabla(docs, append = false) {
+  if (!append) elements.prospectosLista.innerHTML = "";
 
-    docs.forEach(async (doc) => {
+  for (const doc of docs) {
       const prospecto = doc.data();
       const nombreAsesor = await obtenerNombreAsesor(prospecto.asesor);
       const row = crearFilaProspecto(prospecto, doc.id, nombreAsesor);
-      prospectosLista.appendChild(row);
-    });
+      elements.prospectosLista.appendChild(row);
   }
+}
 
-  async function obtenerNombreAsesor(asesorId) {
-    if (!asesorId) return "Sin asesor";
-    try {
-      const doc = await db.collection("usuarios").doc(asesorId).get();
-      return doc.exists ? doc.data().name || "Sin nombre" : "Sin asesor";
-    } catch (error) {
-      console.error("Error al obtener el nombre del asesor:", error);
-      return "Error al obtener asesor";
-    }
-  }
-
-  function crearFilaProspecto(prospecto, id, nombreAsesor) {
+function crearFilaProspecto(prospecto, id, nombreAsesor) {
     const row = document.createElement("tr");
     row.style.cursor = "pointer";
-    row.addEventListener("click", () =>
-      mostrarModalProspecto(prospecto, id, nombreAsesor)
-    );
-    row.innerHTML = `
-          <td>${prospecto.folio || "Sin folio"}</td>
-          <td>${prospecto.name || "Sin nombre"}</td>
-          <td>${prospecto.telefono_prospecto || "Sin teléfono"}</td>
-          <td>${prospecto.pregunta_por || "No especificado"}</td>
-          <td>${prospecto.tipo_evento || "No especificado"}</td>
-          <td>${nombreAsesor}</td>
-          <td>${formatearFecha(prospecto.fecha_create)}</td>
-      `;
-    return row;
-  }
+    row.addEventListener("click", () => mostrarModalProspecto(prospecto, id, nombreAsesor));
 
-  function resetAndLoadProspectos() {
-    prospectosLista.innerHTML = "";
+    const createCell = (content, defaultText) => {
+        const isDefault = content === defaultText || !content;
+        return `<td class="${isDefault ? 'text-muted' : ''}">${content || defaultText}</td>`;
+    };
+
+    row.innerHTML = `
+        ${createCell(prospecto.folio, "Sin folio")}
+        ${createCell(prospecto.name, "Sin Nombre")}
+        ${createCell(prospecto.telefono_prospecto, "Sin teléfono")}
+        ${createCell(prospecto.pregunta_por, "Sin preguntar")}
+        ${createCell(prospecto.tipo_evento, "Sin evento")}
+        <td>${nombreAsesor}</td>
+        <td>${formatearFecha(prospecto.fecha_create)}</td>
+    `;
+    return row;
+}
+
+async function obtenerNombreAsesor(asesorId) {
+    if (!asesorId) return "Sin asesor";
+    try {
+        const doc = await db.collection("usuarios").doc(asesorId).get();
+        return doc.exists ? doc.data().name || "Sin nombre" : "Sin asesor";
+    } catch (error) {
+        console.error("Error al obtener el nombre del asesor:", error);
+        return "Error al obtener asesor";
+    }
+}
+
+function formatearFecha(timestamp) {
+    if (!timestamp) return "Fecha no disponible";
+    const fecha = new Date(timestamp);
+    return fecha.toLocaleDateString('es-MX', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
+
+function resetAndLoadProspectos() {
+    elements.prospectosLista.innerHTML = "";
     lastVisible = null;
     currentQuery = db.collection("prospectos").orderBy("fecha_create", "desc");
     cargarProspectos(currentQuery);
-  }
-});
-
-async function completarPaso(paso) {
-  // Logic to mark the step as completed
-  pasosCompletados.add(paso);
-
-  // Enable the next step button
-  document.getElementById("pasoSiguiente").disabled = false;
-
-  // Update the current step visualization
-  mostrarPasoSeguimiento(paso);
 }
 
-// Add this function to handle backdrop cleanup
+// Configuración de modales
+function setupModalListeners() {
+    const modales = ['prospectoModal', 'seguimientoModal', 'modalMasInformacion'];
+    
+    modales.forEach(modalId => {
+        document.getElementById(modalId)?.addEventListener("hidden.bs.modal", limpiarBackdrop);
+    });
+}
+
 function limpiarBackdrop() {
-  const backdrops = document.getElementsByClassName("modal-backdrop");
-  while (backdrops.length > 0) {
-    backdrops[0].parentNode.removeChild(backdrops[0]);
-  }
-  document.body.classList.remove("modal-open");
+    const backdrops = document.getElementsByClassName("modal-backdrop");
+    while (backdrops.length > 0) {
+        backdrops[0].parentNode.removeChild(backdrops[0]);
+    }
+    document.body.classList.remove("modal-open");
 }
 
-// Modify the event listeners for modal closing
-document
-  .getElementById("prospectoModal")
-  .addEventListener("hidden.bs.modal", limpiarBackdrop);
-document
-  .getElementById("seguimientoModal")
-  .addEventListener("hidden.bs.modal", limpiarBackdrop);
-document
-  .getElementById("modalMasInformacion")
-  .addEventListener("hidden.bs.modal", limpiarBackdrop);
+// Función para cargar datos iniciales
+function loadInitialData() {
+    resetAndLoadProspectos();
+}
 
-console.log("Modal backdrop and outside click issues have been addressed.");
+
+
+
+
+
+
+async function cargarDatosAsesorModal(asesorId) {
+  if (!asesorId) return;
+
+  try {
+      const asesorDoc = await db.collection("usuarios").doc(asesorId).get();
+      if (asesorDoc.exists) {
+          const asesorData = asesorDoc.data();
+          const profileCard = document.querySelector('.asesor-profile-card');
+          
+          // Actualizar avatar
+          const avatarElement = profileCard.querySelector('.profile-avatar');
+          if (asesorData.imageProfile) {
+              avatarElement.style.backgroundImage = `url(${asesorData.imageProfile})`;
+              avatarElement.textContent = '';
+          } else {
+              const initials = asesorData.name
+                  .split(' ')
+                  .map(n => n[0])
+                  .join('')
+                  .toUpperCase();
+              avatarElement.textContent = initials;
+              avatarElement.style.backgroundImage = '';
+              avatarElement.style.background = `linear-gradient(45deg, #2d3456, #1e2330)`;
+          }
+
+          // Actualizar información
+          profileCard.querySelector('.profile-name').textContent = asesorData.name;
+          profileCard.querySelector('.profile-phone').textContent = asesorData.phone || 'Sin teléfono';
+          
+          // Actualizar estado online/offline
+          const statusElement = profileCard.querySelector('.profile-status');
+          statusElement.className = `profile-status ${asesorData.onLine ? 'online' : 'offline'}`;
+
+          // Obtener estadísticas (ejemplo)
+          const prospectosCount = await obtenerConteoProspectos(asesorId);
+          const ventasCount = await obtenerConteoVentas(asesorId);
+          
+          profileCard.querySelector('.prospectos-count').textContent = prospectosCount;
+          profileCard.querySelector('.ventas-count').textContent = ventasCount;
+      }
+  } catch (error) {
+      console.error("Error al cargar datos del asesor:", error);
+  }
+}
+
+// Funciones auxiliares para obtener estadísticas
+async function obtenerConteoProspectos(asesorId) {
+  try {
+      const snapshot = await db.collection("prospectos")
+          .where("asesor", "==", asesorId)
+          .get();
+      return snapshot.size;
+  } catch (error) {
+      console.error("Error al obtener conteo de prospectos:", error);
+      return 0;
+  }
+}
+
+async function obtenerConteoVentas(asesorId) {
+  // Implementar según tu lógica de negocio
+  return 0;
+}

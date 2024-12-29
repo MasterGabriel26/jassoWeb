@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   const crearProspectoBtn = document.querySelector(
-    'a.btn-primary[href="formularioProspecto/formulario-prospecto.html"]'
+    'a.btn-create[href="formularioProspecto/formulario-prospecto.html"]'
   );
 
   // Populate select options
@@ -311,7 +311,7 @@ async function generarProspecto() {
         pregunta_porMin: getSelectedText(document.getElementById("lugarEvento")).toLowerCase(),
         observacion: observacion || "Sin observaciones",
         pagina: getSelectedText(document.getElementById("referencia")),
-        fechaModificacion: firebase.firestore.FieldValue.arrayUnion(Date.now()),
+        fechaModificacion: firebase.firestore.FieldValue.arrayUnion(new Date().toISOString()),
         nombreUsuarioModificador: firebase.firestore.FieldValue.arrayUnion(nombre),
         uid_modify: asesor
       };
@@ -331,7 +331,7 @@ async function generarProspecto() {
         colorEtiqueta: null,
         contador_llamadas: 0,
         etiqueta: null,
-        fechaModificacion: [null],
+        fechaModificacion: [new Date().toISOString()],
         fechaParaLlamada: 0,
         fecha_cita: 0,
         fecha_create: currentTime,
@@ -530,3 +530,39 @@ if (!document.getElementById("modal-animations")) {
   styleSheet.textContent = stylei;
   document.head.appendChild(styleSheet);
 }
+
+
+// Agregar esto después de la inicialización del modal
+const modalElement = document.getElementById("crearProspectoModal");
+modalElement.addEventListener('hidden.bs.modal', function () {
+    // Reiniciar el formulario
+    const form = this.querySelector('form');
+    if (form) form.reset();
+
+    // Limpiar los selects
+    ['tipoEvento', 'lugarEvento', 'referencia'].forEach(selectId => {
+        const select = document.getElementById(selectId);
+        if (select) select.selectedIndex = 0;
+    });
+
+    // Reiniciar el modo del modal
+    this.setAttribute('data-mode', 'create');
+    this.removeAttribute('data-prospecto-id');
+
+    // Reiniciar el texto del botón
+    const submitButton = document.getElementById('crearProspectoBtn');
+    if (submitButton) {
+        submitButton.textContent = 'Crear prospecto';
+        submitButton.disabled = false;
+    }
+
+    // Limpiar las clases de validación
+    const inputs = this.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+        input.classList.remove('is-invalid', 'is-valid');
+    });
+
+    // Limpiar mensajes de error si existen
+    const errorMessages = this.querySelectorAll('.invalid-feedback');
+    errorMessages.forEach(msg => msg.remove());
+});
