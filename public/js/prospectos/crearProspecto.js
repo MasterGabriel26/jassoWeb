@@ -261,21 +261,29 @@ firebase.auth().onAuthStateChanged(async (user) => {
 });
 
 function generarFolio(selectedEvento, selectedPreguntaPor, selectedPagina, miNombre) {
-  // Obtener primera letra de cada valor o 'X' si no existe
-  const eventoFirstChar = selectedEvento?.[0]?.toUpperCase() ?? 'X';
-  const preguntoPorFirstChar = selectedPreguntaPor?.[0]?.toUpperCase() ?? 'X';
-  const paginaFirstChar = selectedPagina?.[0]?.toUpperCase() ?? 'X';
+  // Obtener los textos de los select
+  const selectTipoEvento = document.getElementById("tipoEvento");
+  const selectLugarEvento = document.getElementById("lugarEvento");
+  const selectReferencia = document.getElementById("referencia");
 
-  // Valores completos o valores por defecto
-  const tipoEvento = selectedEvento ?? "Sin evento";
-  const preguntaPor = selectedPreguntaPor ?? "Sin preguntar";
-  const pagina = selectedPagina ?? "Sin pagina";
+  // Obtener los valores seleccionados o valores por defecto
+  const eventoText = selectTipoEvento.selectedIndex > 0 ? 
+      selectTipoEvento.options[selectTipoEvento.selectedIndex].text : "Sin evento";
+  const lugarText = selectLugarEvento.selectedIndex > 0 ? 
+      selectLugarEvento.options[selectLugarEvento.selectedIndex].text : "Sin preguntar";
+  const paginaText = selectReferencia.selectedIndex > 0 ? 
+      selectReferencia.options[selectReferencia.selectedIndex].text : "Sin pagina";
+
+  // Obtener primera letra de cada valor o 'X' si es valor por defecto
+  const eventoFirstChar = eventoText === "Sin evento" ? 'X' : eventoText[0].toUpperCase();
+  const preguntaPorFirstChar = lugarText === "Sin preguntar" ? 'X' : lugarText[0].toUpperCase();
+  const paginaFirstChar = paginaText === "Sin pagina" ? 'X' : paginaText[0].toUpperCase();
 
   // Primera letra del nombre del asesor
   const AsesorFolio = miNombre[0].toUpperCase();
   
   // Generar folio base
-  const folio = `P-${paginaFirstChar}${eventoFirstChar}${preguntoPorFirstChar}${AsesorFolio}`;
+  const folio = `P-${paginaFirstChar}${eventoFirstChar}${preguntaPorFirstChar}${AsesorFolio}`;
   
   // Generar folio con número aleatorio
   return generateFolioWithRandomNumber(folio);
@@ -310,11 +318,13 @@ async function generarProspecto() {
   const observacion = document.getElementById("observacion").value;
   const pagina=getSelectedText(document.getElementById("referencia"))
 
-  const folio =  generarFolio(
-    tipoEvento === "Sin evento" ? null : tipoEvento,
-    lugarEvento === "Sin preguntar" ? null : lugarEvento,
-    pagina === "Sin pagina" ? null : pagina,
-    nombre // Esta variable ya la tienes definida globalmente
+  const nombreAsesor= localStorage.getItem('userName') 
+
+  const folio = generarFolio(
+    getSelectedText(document.getElementById("tipoEvento")),
+    getSelectedText(document.getElementById("lugarEvento")),
+    getSelectedText(document.getElementById("referencia")),
+    nombreAsesor
 );
   
 
