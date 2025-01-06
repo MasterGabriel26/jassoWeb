@@ -27,6 +27,82 @@ function formatearFecha(fecha) {
   return "Fecha no disponible";
 }
 
+
+// Función para mostrar alertas
+function mostrarAlerta(mensaje, tipo = 'info') {
+  // Si estás usando Bootstrap
+  const alertPlaceholder = document.getElementById('alertPlaceholder') || document.body;
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = `
+    <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+      ${mensaje}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  `;
+  alertPlaceholder.appendChild(wrapper);
+
+  // Remover la alerta después de 3 segundos
+  setTimeout(() => {
+    wrapper.remove();
+  }, 3000);
+}
+
+// Función para mostrar modal en desktop
+function mostrarModalLlamada(numero) {
+  const modalHTML = `
+    <div class="modal fade" id="llamadaModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Información de contacto</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <p>Número de teléfono:</p>
+            <h3 class="text-center">${numero}</h3>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Añadir el modal al DOM
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+  // Mostrar el modal
+  const modal = new bootstrap.Modal(document.getElementById('llamadaModal'));
+  modal.show();
+
+  // Eliminar el modal del DOM cuando se cierre
+  document.getElementById('llamadaModal').addEventListener('hidden.bs.modal', function () {
+    this.remove();
+  });
+}
+
+// Función para registrar la llamada en la base de datos
+async function registrarLlamada(prospectoId, prospecto) {
+  try {
+    // Incrementar el contador de llamadas
+    const numLlamadas = (prospecto.num_llamadas || 0) + 1;
+
+    // Actualizar el documento del prospecto
+    await db.collection("prospectos").doc(prospectoId).update({
+      num_llamadas: numLlamadas
+    });
+
+  
+
+  } catch (error) {
+    console.error("Error al registrar la llamada:", error);
+    mostrarAlerta('Error al registrar la llamada', 'danger');
+  }
+}
+
+
+
 async function mostrarModalProspecto(prospecto, id, nombreAsesor) {
   document.getElementById("modalFolio").textContent =
     prospecto.folio || "Sin folio";
@@ -273,6 +349,38 @@ if (modalAsesor) {
     const pasoToShow = calcularPasoInicial(seguimientoData);
     mostrarPasoSeguimiento(pasoToShow);
   };
+
+
+
+  const btnContactar = document.getElementById("btnContactar");
+  if (btnContactar) {
+    btnContactar.onclick = () => {
+      const telefono = prospecto.telefono_prospecto;
+      if (!telefono) {
+        // Si no hay número de teléfono
+        mostrarAlerta('No hay número de teléfono disponible', 'warning');
+        return;
+      }
+
+      // Limpiar el número de teléfono (eliminar espacios, guiones, etc.)
+      const numeroLimpio = telefono.replace(/[^\d+]/g, '');
+
+      // Verificar si es un dispositivo móvil
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+      if (isMobile) {
+        // En dispositivos móviles, abrir la aplicación de llamadas
+        window.location.href = `tel:${numeroLimpio}`;
+        
+        // Registrar la llamada en la base de datos
+        registrarLlamada(id, prospecto);
+      } else {
+        // En desktop, mostrar un modal con el número
+        mostrarModalLlamada(numeroLimpio);
+      }
+    };
+  }
+
 
   function calcularPaso(porcentaje) {
     if (porcentaje <= 7) return 2;

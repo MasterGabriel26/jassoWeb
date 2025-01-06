@@ -107,7 +107,7 @@ document.getElementById("btnEditar")?.addEventListener("click", async function (
             tipoEvento: document.getElementById("modalTipoEvento").textContent,
             invitados: document.getElementById("modalInvitados").textContent,
             fecha: document.getElementById("modalFechaEvento").textContent,
-            preguntaPor: document.getElementById("modalPreguntoPor").textContent,
+            pregunta_por: document.getElementById("modalPreguntoPor").textContent,
             observacion: document.getElementById("modalObservaciones").textContent,
             referencia: document.getElementById("modalReferencia").textContent,
         };
@@ -165,7 +165,7 @@ function cargarDatosEnFormulario(datos) {
   // Seleccionar opciones en los select
   setTimeout(() => {
     seleccionarOpcionEnSelect("tipoEvento", datos.tipoEvento);
-    seleccionarOpcionEnSelect("lugarEvento", datos.preguntaPor);
+    seleccionarOpcionEnSelect("lugarEvento", datos.pregunta_por);
     seleccionarOpcionEnSelect("referencia", datos.referencia);
   }, 500); // Dar tiempo a que se carguen las opciones
 
@@ -262,15 +262,31 @@ firebase.auth().onAuthStateChanged(async (user) => {
 
 function generarFolio(selectedEvento, selectedPreguntaPor, selectedPagina, miNombre) {
   // Obtener primera letra de cada valor o 'X' si no existe
-  const eventoFirstChar = selectedEvento?.firstOrNull()?.toUpperCase() ?? 'X';
-  const preguntoPorFirstChar = selectedPreguntaPor?.firstOrNull()?.toUpperCase() ?? 'X';
-  const paginaFirstChar = selectedPagina?.firstOrNull()?.toUpperCase() ?? 'X';
-  
-  // Obtener el primer nombre del asesor
-  const asesorFolio = miNombre.split(' ')[0];
+  const eventoFirstChar = selectedEvento?.[0]?.toUpperCase() ?? 'X';
+  const preguntoPorFirstChar = selectedPreguntaPor?.[0]?.toUpperCase() ?? 'X';
+  const paginaFirstChar = selectedPagina?.[0]?.toUpperCase() ?? 'X';
 
-  // Construir el folio
-  return `P-${paginaFirstChar}${eventoFirstChar}${preguntoPorFirstChar}${asesorFolio}`;
+  // Valores completos o valores por defecto
+  const tipoEvento = selectedEvento ?? "Sin evento";
+  const preguntaPor = selectedPreguntaPor ?? "Sin preguntar";
+  const pagina = selectedPagina ?? "Sin pagina";
+
+  // Primera letra del nombre del asesor
+  const AsesorFolio = miNombre[0].toUpperCase();
+  
+  // Generar folio base
+  const folio = `P-${paginaFirstChar}${eventoFirstChar}${preguntoPorFirstChar}${AsesorFolio}`;
+  
+  // Generar folio con número aleatorio
+  return generateFolioWithRandomNumber(folio);
+}
+
+function generateFolioWithRandomNumber(baseFolio) {
+  // Generar número aleatorio entre 0 y 99999
+  const random = Math.floor(Math.random() * 100000);
+  // Formatear el número a 5 dígitos con ceros a la izquierda
+  const randomString = random.toString().padStart(5, '0');
+  return `${baseFolio}${randomString}`;
 }
 
 async function generarProspecto() {
@@ -292,10 +308,11 @@ async function generarProspecto() {
   const invitados = document.getElementById("invitados").value;
   const lugarEvento = document.getElementById("lugarEvento").value;
   const observacion = document.getElementById("observacion").value;
+  const pagina=getSelectedText(document.getElementById("referencia"))
 
   const folio =  generarFolio(
     tipoEvento === "Sin evento" ? null : tipoEvento,
-    preguntaPor === "Sin preguntar" ? null : preguntaPor,
+    lugarEvento === "Sin preguntar" ? null : lugarEvento,
     pagina === "Sin pagina" ? null : pagina,
     nombre // Esta variable ya la tienes definida globalmente
 );
@@ -314,7 +331,7 @@ async function generarProspecto() {
         pregunta_por: getSelectedText(document.getElementById("lugarEvento")),
         pregunta_porMin: getSelectedText(document.getElementById("lugarEvento")).toLowerCase(),
         observacion: observacion || "Sin observaciones",
-        pagina: getSelectedText(document.getElementById("referencia")),
+        pagina: pagina,
         fechaModificacion: firebase.firestore.FieldValue.arrayUnion(new Date().toISOString()),
         nombreUsuarioModificador: firebase.firestore.FieldValue.arrayUnion(nombre),
         uid_modify: asesor
