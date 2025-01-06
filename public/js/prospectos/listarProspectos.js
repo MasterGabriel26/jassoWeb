@@ -46,12 +46,6 @@ async function mostrarModalProspecto(prospecto, id, nombreAsesor) {
       ? formatearFecha(prospecto.fecha_evento)
       : "Sin Fecha";
 
-  document.getElementById("modalUltimoEditor").textContent =
-    prospecto.nombreUsuarioModificador
-      ? prospecto.nombreUsuarioModificador[
-          prospecto.nombreUsuarioModificador.length - 1
-        ]
-      : "Sin editar";
   document.getElementById("modalReferencia").textContent =
     prospecto.referencia || "Sin referencia";
   document.getElementById("modalPreguntoPor").textContent =
@@ -87,7 +81,108 @@ async function mostrarModalProspecto(prospecto, id, nombreAsesor) {
   const porcentaje = (completedSteps / totalSteps) * 100;
 
 
+  const modalUltimoEditor = document.getElementById("modalUltimoEditor");
+  if (modalUltimoEditor) {const ultimoEditorId = prospecto.nombreUsuarioModificador && prospecto.nombreUsuarioModificador.length > 0 ? 
+    prospecto.nombreUsuarioModificador[prospecto.nombreUsuarioModificador.length - 1] : null;
 
+const asesorNameElement = modalUltimoEditor.querySelector('.asesor-name');
+
+if (!ultimoEditorId) {
+    // Si no hay último editor, mostrar "Sin editar"
+    if (asesorNameElement) {
+        asesorNameElement.textContent = "Sin editar";
+    }
+} else {
+    try {
+        // Cargar datos del último editor
+        const editorDoc = await db.collection("usuarios").doc(ultimoEditorId).get();
+        if (editorDoc.exists) {
+            const editorData = editorDoc.data();
+            
+            // Actualizar el nombre visible
+            if (asesorNameElement) {
+                asesorNameElement.textContent = editorData.name || "Usuario";
+            }
+
+            const profileCard = modalUltimoEditor.querySelector('.asesor-profile-card');
+            
+            if (profileCard && editorData) {
+                // Avatar
+                const avatarElement = profileCard.querySelector('.profile-avatar');
+                if (avatarElement) {
+                    if (editorData.imageProfile) {
+                        avatarElement.style.backgroundImage = `url(${editorData.imageProfile})`;
+                        avatarElement.textContent = '';
+                    } else {
+                        const initials = editorData.name
+                            ? editorData.name
+                                .split(' ')
+                                .map(n => n[0])
+                                .join('')
+                                .toUpperCase()
+                            : "U";
+                        avatarElement.textContent = initials;
+                        avatarElement.style.backgroundImage = '';
+                        avatarElement.style.background = `linear-gradient(45deg, #2d3456, #1e2330)`;
+                    }
+                }
+
+                // Información básica
+                const profileName = profileCard.querySelector('.profile-name');
+                if (profileName) {
+                    profileName.textContent = editorData.name || "Usuario";
+                }
+                
+                const profilePhone = profileCard.querySelector('.profile-phone');
+                if (profilePhone) {
+                    profilePhone.textContent = editorData.phone || 'Sin teléfono';
+                }
+                
+                // Estado online/offline
+                const statusElement = profileCard.querySelector('.profile-status');
+                if (statusElement) {
+                    statusElement.className = `profile-status ${editorData.onLine ? 'online' : 'offline'}`;
+                }
+
+                try {
+                    // Estadísticas
+                    const prospectosCount = await db.collection("prospectos")
+                        .where("nombreUsuarioModificador", "array-contains", ultimoEditorId)
+                        .get()
+                        .then(snap => snap.size);
+
+                    const ventasCount = await db.collection("prospectos")
+                        .where("nombreUsuarioModificador", "array-contains", ultimoEditorId)
+                        .where("estado", "==", "vendido")
+                        .get()
+                        .then(snap => snap.size);
+
+                    const prospectosElement = profileCard.querySelector('.prospectos-count');
+                    if (prospectosElement) prospectosElement.textContent = prospectosCount;
+
+                    const ventasElement = profileCard.querySelector('.ventas-count');
+                    if (ventasElement) ventasElement.textContent = ventasCount;
+                } catch (statsError) {
+                    console.error("Error al cargar estadísticas:", statsError);
+                }
+            }
+        } else {
+            // Si no se encuentra el documento del editor
+            if (asesorNameElement) {
+                asesorNameElement.textContent = "Usuario no encontrado";
+            }
+        }
+    } catch (error) {
+        console.error("Error al cargar datos del último editor:", error);
+        if (asesorNameElement) {
+            asesorNameElement.textContent = "Error al cargar editor";
+        }
+    }
+}
+  }
+
+
+  
   // Modificar la parte donde se establece el asesor
 const modalAsesor = document.getElementById("modalAsesor");
 if (modalAsesor) {

@@ -1,13 +1,23 @@
 let isAdmin = false;
-
+let currentImageIndex = 0;
+const loaderContainer = document.getElementById('loader');
+ 
+let galleryImages = [];
 
 // Cargar categorías desde Firebase
 function cargarCategorias() {
     db.collection('galeria').get().then((querySnapshot) => {
         const categorySelect = document.getElementById('imageCategory');
+        const categoriasUnicas = new Set();
+        
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            const categoria = data.categoriasDeImagenes;
+            if (data.categoriasDeImagenes) {
+                categoriasUnicas.add(data.categoriasDeImagenes);
+            }
+        });
+
+        categoriasUnicas.forEach(categoria => {
             const option = document.createElement('option');
             option.value = categoria;
             option.textContent = categoria;
@@ -17,7 +27,7 @@ function cargarCategorias() {
 }
 
 // Mostrar/ocultar el input para nueva categoría
-document.getElementById('imageCategory').addEventListener('change', function() {
+document.getElementById('imageCategory')?.addEventListener('change', function() {
     const newCategoryInput = document.getElementById('newCategoryInput');
     if (this.value === 'nueva') {
         newCategoryInput.style.display = 'block';
@@ -26,7 +36,7 @@ document.getElementById('imageCategory').addEventListener('change', function() {
     }
 });
 
-// Modificar la función addImage
+// Función para agregar imagen
 function addImage(file, category) {
     const storageRef = firebase.storage().ref();
     const imageRef = storageRef.child(`galeria/${file.name}`);
@@ -41,7 +51,7 @@ function addImage(file, category) {
                     fecha_create: Date.now()
                 }).then(() => {
                     alert('Imagen subida exitosamente');
-                    location.reload(); // Recargar la página para mostrar la nueva imagen
+                    location.reload();
                 });
             } else {
                 db.collection('galeria').where('categoriasDeImagenes', '==', category).get().then((querySnapshot) => {
@@ -61,7 +71,8 @@ function addImage(file, category) {
         alert('Error al subir la imagen');
     });
 }
-// Add this function to check if the user is an admin
+
+// Verificar estado de administrador
 function checkAdminStatus() {
     return new Promise((resolve) => {
         firebase.auth().onAuthStateChanged(function(user) {
@@ -79,25 +90,33 @@ function checkAdminStatus() {
     });
 }
 
-const loaderContainer = document.getElementById('loader');
-const addImageBtn = document.getElementById('addImageBtn');
-
-
+// Función para cargar la galería
 function cargarGaleria() {
     db.collection('galeria').get().then((querySnapshot) => {
         let categorias = {};
+        galleryImages = []; // Reiniciar el array de imágenes
 
         querySnapshot.forEach((doc) => {
             const data = doc.data();
-            const imagenes = data.imagenes;
+            const imagenes = data.imagenes || [];
             const categoria = data.categoriasDeImagenes;
+
+            // Agregar imágenes al array global
+            galleryImages = galleryImages.concat(imagenes);
 
             // Agregar imágenes a la pestaña "Todo"
             imagenes.forEach((imagen) => {
                 $('#galeria-todo').append(`
-                    <div class="col-6 col-md-4 col-lg-3 mb-4">
-                        <div class="image-container" style="height: 200px; overflow: hidden;">
-                            <img src="${imagen}" class="img-fluid w-100 h-100 object-fit-cover" alt="Imagen" onclick="openImageModal('${imagen}')">
+                    <div class="pin-container">
+                        <div class="pin">
+                            <img src="${imagen}" alt="Imagen de galería">
+                            <div class="pin-overlay">
+                                <div class="pin-actions">
+                                    <button class="pin-button" onclick="openImageModal('${imagen}')">
+                                        <i class="fas fa-expand-alt"></i> Ver
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `);
@@ -106,8 +125,19 @@ function cargarGaleria() {
             // Agregar imágenes a la categoría correspondiente
             if (!categorias[categoria]) {
                 categorias[categoria] = [];
-                $('#myTab').append(`<li class="nav-item" role="presentation"><a class="nav-link" id="${categoria}-tab" data-bs-toggle="tab" href="#${categoria}" role="tab" aria-controls="${categoria}" aria-selected="false">${categoria}</a></li>`);
-                $('#myTabContent').append(`<div class="tab-pane fade" id="${categoria}" role="tabpanel" aria-labelledby="${categoria}-tab"><div class="row" id="galeria-${categoria}"></div></div>`);
+                $('#myTab').append(`
+                    <li class="nav-item" role="presentation">
+                        <a class="nav-link" id="${categoria}-tab" data-bs-toggle="tab" 
+                           href="#${categoria}" role="tab" aria-controls="${categoria}" 
+                           aria-selected="false">${categoria}</a>
+                    </li>
+                `);
+                $('#myTabContent').append(`
+                    <div class="tab-pane fade" id="${categoria}" role="tabpanel" 
+                         aria-labelledby="${categoria}-tab">
+                        <div id="galeria-${categoria}"></div>
+                    </div>
+                `);
             }
             categorias[categoria].push(imagenes);
         });
@@ -117,9 +147,16 @@ function cargarGaleria() {
             imagenes.forEach((imagenArray) => {
                 imagenArray.forEach((imagen) => {
                     $(`#galeria-${categoria}`).append(`
-                        <div class="col-6 col-md-4 col-lg-3 mb-4">
-                            <div class="image-container" style="height: 200px; overflow: hidden;">
-                                <img src="${imagen}" class="img-fluid w-100 h-100 object-fit-cover" alt="Imagen" onclick="openImageModal('${imagen}')">
+                        <div class="pin-container">
+                            <div class="pin">
+                                <img src="${imagen}" alt="Imagen de galería">
+                                <div class="pin-overlay">
+                                    <div class="pin-actions">
+                                        <button class="pin-button" onclick="openImageModal('${imagen}')">
+                                            <i class="fas fa-expand-alt"></i> Ver
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     `);
@@ -129,46 +166,66 @@ function cargarGaleria() {
 
         loaderContainer.classList.add('hidden');
 
-        // Show add image button if user is admin
         if (isAdmin) {
             const addImageBtn = document.getElementById('addImageBtn');
             if (addImageBtn) {
                 addImageBtn.style.display = 'block';
             }
         }
+
+        // Inicializar los botones de navegación
+        initializeNavigationButtons();
     });
+}
+
+// Funciones de navegación del modal
+function initializeNavigationButtons() {
+    const prevButton = document.querySelector('.modal-nav-button.prev');
+    const nextButton = document.querySelector('.modal-nav-button.next');
+    
+    if (prevButton && nextButton) {
+        prevButton.addEventListener('click', navigatePrevious);
+        nextButton.addEventListener('click', navigateNext);
+    }
 }
 
 function openImageModal(imageSrc) {
     const modalImage = document.getElementById('modalImage');
     modalImage.src = imageSrc;
-    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
-    imageModal.show();
+    currentImageIndex = galleryImages.indexOf(imageSrc);
+    updateNavigationButtons();
+    new bootstrap.Modal(document.getElementById('imageModal')).show();
 }
 
-function addImage(file, category) {
-    const storageRef = firebase.storage().ref();
-    const imageRef = storageRef.child(`galeria/${file.name}`);
-
-    imageRef.put(file).then((snapshot) => {
-        snapshot.ref.getDownloadURL().then((downloadURL) => {
-            db.collection('galeria').add({
-                imagenes: [downloadURL],
-                categoriasDeImagenes: category
-            }).then(() => {
-                alert('Imagen subida exitosamente');
-                location.reload(); // Reload the page to show the new image
-            }).catch((error) => {
-                console.error("Error adding document: ", error);
-                alert('Error al subir la imagen');
-            });
-        });
-    }).catch((error) => {
-        console.error("Error uploading file: ", error);
-        alert('Error al subir la imagen');
-    });
+function updateNavigationButtons() {
+    const prevButton = document.querySelector('.modal-nav-button.prev');
+    const nextButton = document.querySelector('.modal-nav-button.next');
+    
+    if (prevButton && nextButton) {
+        prevButton.disabled = currentImageIndex <= 0;
+        nextButton.disabled = currentImageIndex >= galleryImages.length - 1;
+    }
 }
 
+function navigatePrevious() {
+    if (currentImageIndex > 0) {
+        currentImageIndex--;
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = galleryImages[currentImageIndex];
+        updateNavigationButtons();
+    }
+}
+
+function navigateNext() {
+    if (currentImageIndex < galleryImages.length - 1) {
+        currentImageIndex++;
+        const modalImage = document.getElementById('modalImage');
+        modalImage.src = galleryImages[currentImageIndex];
+        updateNavigationButtons();
+    }
+}
+
+// Inicialización cuando el documento está listo
 $(document).ready(function() {
     cargarGaleria();
     cargarCategorias();
@@ -181,8 +238,7 @@ $(document).ready(function() {
         addImageBtn.style.display = 'block';
         
         addImageBtn.addEventListener('click', function() {
-            const addImageModal = new bootstrap.Modal(document.getElementById('addImageModal'));
-            addImageModal.show();
+            new bootstrap.Modal(document.getElementById('addImageModal')).show();
         });
     }
 
@@ -192,14 +248,29 @@ $(document).ready(function() {
             e.preventDefault();
             const file = document.getElementById('imageFile').files[0];
             const category = document.getElementById('imageCategory').value;
-            addImage(file, category);
+            if (category === 'nueva') {
+                const newCategory = document.getElementById('newCategory').value;
+                if (newCategory) {
+                    addImage(file, newCategory);
+                } else {
+                    alert('Por favor, ingrese el nombre de la nueva categoría');
+                }
+            } else {
+                addImage(file, category);
+            }
         });
     }
-});
 
-function openImageModal(imageSrc) {
-    const modalImage = document.getElementById('modalImage');
-    modalImage.src = imageSrc;
-    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
-    imageModal.show();
-}
+
+    // Agregar navegación con teclado
+    document.addEventListener('keydown', function(e) {
+        const imageModal = document.getElementById('imageModal');
+        if (imageModal && imageModal.classList.contains('show')) {
+            if (e.key === 'ArrowLeft') {
+                navigatePrevious();
+            } else if (e.key === 'ArrowRight') {
+                navigateNext();
+            }
+        }
+    });
+});

@@ -31,7 +31,7 @@
 	
 	<!-- Bootstrap -->
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
-	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
 	
 	<!-- Font Awesome -->
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
@@ -60,11 +60,17 @@
 	<link rel="stylesheet" href="css/loading.css">
 	<link rel="stylesheet" href="css/prospectos/prospectos.css">
 	<link rel="stylesheet" href="css/prospectos/modal.css">
+    <link rel="stylesheet" href="css/userPic.css">
 	<link href="css/app.css" rel="stylesheet">
 	<style>
 
 
-
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
 
 
 
@@ -142,7 +148,7 @@
 .table-responsive {
     border-radius: 12px;
     background: white;
-    padding: 0.5rem;
+    padding: 0;
     overflow-x: auto;
     min-width: 100%;
 }
@@ -588,426 +594,415 @@
 </head>
 
 <body>
-	<div id="loader" class="loader-container">
+    <div id="loader" class="loader-container">
         <div class="loader-content">
             <div class="loader"></div>
-
         </div>
     </div>
-	
-	<div class="wrapper">
-		<nav id="sidebar" class="sidebar js-sidebar">
-		
-		</nav>
+    
+    <div class="wrapper">
+        <nav id="sidebar" class="sidebar js-sidebar">
+        </nav>
 
-		<div class="main">
-			<nav class="navbar navbar-expand navbar-light navbar-bg">
-				<a class="sidebar-toggle js-sidebar-toggle">
-				  <i class="hamburger align-self-center"></i>
-				</a>
-	  
-				<div class="navbar-collapse collapse">
-				  <ul class="navbar-nav navbar-align">
-					<li class="nav-item dropdown">
-					  <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
-						<div class="position-relative">
-						  <i class="align-middle" data-feather="bell"></i>
-						  <span class="indicator" id="notificationCount">0</span>
-						</div>
-					  </a>
-					 <!-- Update the notification list container in your HTML -->
-	<div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
-	  <div class="dropdown-menu-header" id="notificationHeader">0 Nuevas Notificaciones</div>
-	  <div class="list-group" id="notificationList">
-		<!-- Notifications will be inserted here -->
-	  </div>
-	  <div class="dropdown-menu-footer">
-		<a href="all-notifications.html" class="text-muted">Ver todas las notificaciones</a>
-	  </div>
-	</div>
-					</li>
-				
-					<li class="nav-item dropdown">
-					  <a
-						class="nav-icon dropdown-toggle d-inline-block d-sm-none"
-						href="#"
-						data-bs-toggle="dropdown"
-					  >
-						<i class="align-middle" data-feather="settings"></i>
-					  </a>
-	  
-					  <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-						<span id="imgPerfil" class="avatar img-fluid rounded me-1"></span>
-						<span class="text-dark" id="nombreUsuario"></span>
-					  </a>
-						<div class="dropdown-menu dropdown-menu-end">
-						  <a class="dropdown-item" href="pages-profile.html"
-							><i class="align-middle me-1" data-feather="user"></i>
-							Profile</a
-						  >
-						  <a class="dropdown-item" href="#"
-							><i
-							  class="align-middle me-1"
-							  data-feather="pie-chart"
-							></i>
-							Analytics</a
-						  >
-						  <div class="dropdown-divider"></div>
-						  <a class="dropdown-item" href="index.html"
-							><i class="align-middle me-1" data-feather="settings"></i>
-							Settings & Privacy</a
-						  >
-						  <a class="dropdown-item" href="#"
-							><i
-							  class="align-middle me-1"
-							  data-feather="help-circle"
-							></i>
-							Help Center</a
-						  >
-						  <div class="dropdown-divider"></div>
-						  <a id="logOut" class="dropdown-item" href="#"
-							>Cerrar sesion</a
-						  >
-			
-				
-				
-				</div>
-			  </nav>
+        <div class="main">
+            <nav class="navbar navbar-expand navbar-light navbar-bg">
+                <a class="sidebar-toggle js-sidebar-toggle">
+                  <i class="hamburger align-self-center"></i>
+                </a>
+      
+                <div class="navbar-collapse collapse">
+                  <ul class="navbar-nav navbar-align">
+                    <li class="nav-item dropdown">
+                      <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+                        <div class="position-relative">
+                          <i class="align-middle" data-feather="bell"></i>
+                          <span class="indicator" id="notificationCount">0</span>
+                        </div>
+                      </a>
+                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
+                      <div class="dropdown-menu-header" id="notificationHeader">0 Nuevas Notificaciones</div>
+                      <div class="list-group" id="notificationList">
+                        <!-- Notifications will be inserted here -->
+                      </div>
+                      <div class="dropdown-menu-footer">
+                        <a href="all-notifications.html" class="text-muted">Ver todas las notificaciones</a>
+                      </div>
+                    </div>
+                    </li>
+                
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <span id="imgPerfil" class="avatar-container"></span>
+                            <span class="text-dark" id="nombreUsuario"></span>
+                        </a>
+      
+                        <div class="dropdown-menu dropdown-menu-end">
+                          <a class="dropdown-item" href="pages-profile.html"
+                            ><i class="align-middle me-1" data-feather="user"></i>
+                            Profile</a
+                          >
+                          <a class="dropdown-item" href="#"
+                            ><i
+                              class="align-middle me-1"
+                              data-feather="pie-chart"
+                            ></i>
+                            Analytics</a
+                          >
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="index.html"
+                            ><i class="align-middle me-1" data-feather="settings"></i>
+                            Settings & Privacy</a
+                          >
+                          <a class="dropdown-item" href="#"
+                            ><i
+                              class="align-middle me-1"
+                              data-feather="help-circle"
+                            ></i>
+                            Help Center</a
+                          >
+                          <div class="dropdown-divider"></div>
+                          <a id="logOut" class="dropdown-item" href="#"
+                            >Cerrar sesion</a
+                          >
+                        </div>
+                    </li>
+                  </ul>
+                </div>
+            </nav>
 
-			<main class="content">
-				<div class="container-fluid p-0">
+            <main class="content">
+                <div class="container-fluid p-0">
+                    <h1 class="h3 mb-3">Prospectos</h1>
+                    <div class="row">
+                        <div class="col-12">
+                          <div class="card">
+                            <div class="card-header">
+                                <div class="header-content">
+                                    <div class="search-section">
+                                        <div class="search-container">
+                                            <div class="search-box">
+                                                <i class="fas fa-search search-icon"></i>
+                                                <input type="text" id="search-input" class="search-input" placeholder="Buscar...">
+                                            </div>
+                                            <div class="filter-box">
+                                                <select id="filter-type" class="filter-select">
+                                                    <option value="name">Nombre</option>
+                                                    <option value="telefono_prospecto">Teléfono</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="action-container">
+                                        <a href="formularioProspecto/formulario-prospecto.html" class="btn-create">
+                                            <i class="fas fa-plus"></i>
+                                            <span>Crear prospecto</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Folio</th>
+                                                <th>Nombre</th>
+                                                <th>Teléfono</th>
+                                                <th>Lugar</th>
+                                                <th>Evento</th>
+                                                <th>Asesor</th>
+                                                <th>Fecha</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="prospectos-lista">
+                                            <!-- Los prospectos se insertarán aquí -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
 
-					<h1 class="h3 mb-3">Prospectos</h1>
-
-					<div class="row">
-						<div class="col-12">
-						  <div class="card">
-							<div class="card-header">
-								<div class="header-content">
-									<div class="search-section">
-										<div class="search-container">
-											<div class="search-box">
-												<i class="fas fa-search search-icon"></i>
-												<input type="text" id="search-input" class="search-input" placeholder="Buscar...">
-											</div>
-											<div class="filter-box">
-												<select id="filter-type" class="filter-select">
-													<option value="name">Nombre</option>
-													<option value="telefono_prospecto">Teléfono</option>
-												</select>
-											</div>
-										</div>
-									</div>
-									<div class="action-container">
-										<a href="formularioProspecto/formulario-prospecto.html" class="btn-create">
-											<i class="fas fa-plus"></i>
-											<span>Crear prospecto</span>
-										</a>
-									</div>
-								</div>
-							</div>
-							
-							  
-							  
-							<div class="card-body">
-								<div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
-									<table class="table">
-										<thead>
-											<tr>
-												<th>Folio</th>
-												<th>Nombre</th>
-												<th>Teléfono</th>
-												<th>Lugar</th>
-												<th>Evento</th>
-												<th>Asesor</th>
-												<th>Fecha</th>
-											</tr>
-										</thead>
-										<tbody id="prospectos-lista">
-											<!-- Los prospectos se insertarán aquí -->
-										</tbody>
-									</table>
-								</div>
-							</div>
-							
-							
-							
-							
-							
-							
-							
-							
-						  </div>
-
-						</div>
-						
-					  </div>
-				</div>
-					
-				
-			</main>
-		
-		
-		</div>
-	</div>
-
-	<div class="modal fade" id="prospectoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="prospectoModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<!-- Header -->
-				<div class="modal-header">
-					<div class="modal-title" id="prospectoModalLabel">
-						<span id="modalNombre"></span>
-						<small>
-							<span id="modalFolio"></span> • 
-							<span id="modalFecha"></span>
-						</small>
-					</div>
-					<div class="modal-actions">
-						<button type="button" class="btn-action-icon" id="btnEditar">
-							<i class="fas fa-pencil-alt"></i>
-						</button>
-						<button type="button" class="btn-action-icon" data-bs-dismiss="modal" aria-label="Close">
-							<i class="fas fa-times"></i>
-						</button>
-					</div>
-				</div>
-	
-				<!-- Body -->
-				<div class="modal-body">
-					<!-- Información de contacto y stats -->
-					<div class="contact-stats-container">
-						<div class="contact-info">
-							<div id="modalTelefono"></div>
-							<div class="stats-inline">
-								<span><i class="fas fa-phone"></i> <span id="modalLlamadas">0</span></span>
-								<span><i class="fas fa-users"></i> <span id="modalInvitados">0</span></span>
-								<span><i class="fas fa-calendar"></i> <span id="modalFechaEvento">Sin Fecha</span></span>
-							</div>
-						</div>
-					</div>
-	
-					<!-- Información detallada -->
-					<div class="details-grid">
-						<div class="info-item">
-							<span class="label">Asesor:</span>
-							<div class="value asesor-hover" id="modalAsesor">
-								<span class="asesor-name"></span>
-								<div class="asesor-profile-card">
-									<div class="profile-header">
-										<div class="profile-avatar"></div>
-										<div class="profile-status"></div>
-									</div>
-									<div class="profile-info">
-										<h4 class="profile-name"></h4>
-										<p class="profile-phone"></p>
-										<div class="profile-stats">
-											<div class="stat-item">
-												<i class="fas fa-users"></i>
-												<span class="stat-value prospectos-count">0</span>
-												<span class="stat-label">Prospectos</span>
-											</div>
-											<div class="stat-item">
-												<i class="fas fa-check-circle"></i>
-												<span class="stat-value ventas-count">0</span>
-												<span class="stat-label">Ventas</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="info-item">
-							<span class="label">Último editor:</span>
-							<span class="value" id="modalUltimoEditor"></span>
-						</div>
-						<div class="info-item">
-							<span class="label">Referencia:</span>
-							<span class="value" id="modalReferencia"></span>
-						</div>
-						<div class="info-item">
-							<span class="label">Preguntó por:</span>
-							<span class="value" id="modalPreguntoPor"></span>
-						</div>
-						<div class="info-item">
-							<span class="label">Tipo evento:</span>
-							<span class="value" id="modalTipoEvento"></span>
-						</div>
-						<div class="info-item">
-							<span class="label">Cita:</span>
-							<span class="value" id="modalCita"></span>
-						</div>
-					</div>
-	
-					<!-- Observaciones -->
-					<div class="observations">
-						<small>Observaciones:</small>
-						<p id="modalObservaciones"></p>
-					</div>
-				</div>
-	
-				<!-- Footer -->
-				<div class="modal-footer">
-					<button type="button" id="btnContactar">Contactar</button>
-					<button type="button" id="btnPaquetes">Paquetes</button>
-					<button type="button" id="btnSeguimiento">Seguimiento</button>
-					<button type="button" id="btnPagos">Pagos</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-
-<!-- Add this modal template to your HTML file -->
-<div class="modal fade" id="seguimientoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="seguimientoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-			<div class="modal-header bg-dark text-white">
-                <div class="d-flex justify-content-between align-items-center w-100">
-                    <h5 class="modal-title" id="seguimientoModalLabel">
-                        <span id="pasoTitulo"></span>
-                    </h5>
-                    <div class="d-flex gap-2">
-                        <button type="button" class="btn btn-outline-light" onclick="abrirModalMasInformacion()">
-                            <i class="fas fa-bars"></i>
+    <div class="modal fade" id="prospectoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="prospectoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Header -->
+                <div class="modal-header">
+                    <div class="modal-title" id="prospectoModalLabel">
+                        <span id="modalNombre"></span>
+                        <small>
+                            <span id="modalFolio"></span> • 
+                            <span id="modalFecha"></span>
+                        </small>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-action-icon" id="btnEditar">
+                            <i class="fas fa-pencil-alt"></i>
                         </button>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-action-icon" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Body -->
+                <div class="modal-body">
+                    <!-- Información de contacto y stats -->
+                    <div class="contact-stats-container">
+                        <div class="contact-info">
+                            <div id="modalTelefono"></div>
+                            <div class="stats-inline">
+                                <span><i class="fas fa-phone"></i> <span id="modalLlamadas">0</span></span>
+                                <span><i class="fas fa-users"></i> <span id="modalInvitados">0</span></span>
+                                <span><i class="fas fa-calendar"></i> <span id="modalFechaEvento">Sin Fecha</span></span>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Información detallada -->
+                    <div class="details-grid">
+                        <div class="info-item">
+                            <span class="label">Asesor:</span>
+                            <div class="value asesor-hover" id="modalAsesor">
+                                <span class="asesor-name"></span>
+                                <div class="asesor-profile-card">
+                                    <div class="profile-header">
+                                        <div class="profile-avatar"></div>
+                                        <div class="profile-status"></div>
+                                    </div>
+                                    <div class="profile-info">
+                                        <h4 class="profile-name"></h4>
+                                        <p class="profile-phone"></p>
+                                        <div class="profile-stats">
+                                            <div class="stat-item">
+                                                <i class="fas fa-users"></i>
+                                                <span class="stat-value prospectos-count">0</span>
+                                                <span class="stat-label">Prospectos</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span class="stat-value ventas-count">0</span>
+                                                <span class="stat-label">Ventas</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="label">Ultimo editor:</span>
+                            <div class="value asesor-hover" id="modalUltimoEditor">
+                                <span class="asesor-name"></span>
+                                <div class="asesor-profile-card">
+                                    <div class="profile-header">
+                                        <div class="profile-avatar"></div>
+                                        <div class="profile-status"></div>
+                                    </div>
+                                    <div class="profile-info">
+                                        <h4 class="profile-name"></h4>
+                                        <p class="profile-phone"></p>
+                                        <div class="profile-stats">
+                                            <div class="stat-item">
+                                                <i class="fas fa-users"></i>
+                                                <span class="stat-value prospectos-count">0</span>
+                                                <span class="stat-label">Prospectos</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span class="stat-value ventas-count">0</span>
+                                                <span class="stat-label">Ventas</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Referencia:</span>
+                            <span class="value" id="modalReferencia"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Preguntó por:</span>
+                            <span class="value" id="modalPreguntoPor"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Tipo evento:</span>
+                            <span class="value" id="modalTipoEvento"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Cita:</span>
+                            <span class="value" id="modalCita"></span>
+                        </div>
+                    </div>
+    
+                    <!-- Observaciones -->
+                    <div class="observations">
+                        <small>Observaciones:</small>
+                        <p id="modalObservaciones"></p>
+                    </div>
+                </div>
+    
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button type="button" id="btnContactar">Contactar</button>
+                    <button type="button" id="btnPaquetes">Paquetes</button>
+                    <button type="button" id="btnSeguimiento">Seguimiento</button>
+                    <button type="button" id="btnPagos">Pagos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+
+    <div class="modal fade" id="seguimientoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="seguimientoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <h5 class="modal-title" id="seguimientoModalLabel">
+                            <span id="pasoTitulo"></span>
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-light" onclick="abrirModalMasInformacion()">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div id="pasoContenido" class="mb-4"></div>
+                    <div id="accionesRecomendadas" class="mb-4"></div>
+                    
+                    <!-- Botones de acción específicos del paso -->
+                    <div id="botonesAccion" class="d-flex justify-content-center gap-3 mb-4">
+                        <!-- Los botones se agregarán dinámicamente -->
+                    </div>
+
+                    <!-- Navegación entre pasos -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn btn-outline-secondary" id="pasoAnterior">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span id="numeroPaso">Paso 1 de 13</span>
+                        <button class="btn btn-outline-secondary" id="pasoSiguiente">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="modal-body">
-                <div id="pasoContenido" class="mb-4"></div>
-                <div id="accionesRecomendadas" class="mb-4"></div>
-                
-                <!-- Botones de acción específicos del paso -->
-                <div id="botonesAccion" class="d-flex justify-content-center gap-3 mb-4">
-                    <!-- Los botones se agregarán dinámicamente -->
-                </div>
-
-                <!-- Navegación entre pasos -->
-                <div class="d-flex justify-content-between align-items-center">
-                    <button class="btn btn-outline-secondary" id="pasoAnterior">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <span id="numeroPaso">Paso 1 de 13</span>
-                    <button class="btn btn-outline-secondary" id="pasoSiguiente">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
-</div>
 
-<div class="modal fade" id="calendarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
-	<div class="modal-dialog modal-dialog-centered">
-	  <div class="modal-content">
-		<div class="modal-header">
-		  <h5 class="modal-title" id="calendarModalLabel">Agendar Cita</h5>
-		  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-		</div>
-		<div class="modal-body">
-		  <input type="text" id="fecha-cita" class="form-control" placeholder="Seleccione fecha y hora">
-		</div>
-		<div class="modal-footer">
-		  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-		  <button type="button" class="btn btn-primary" id="guardarCita">Guardar Cita</button>
-		</div>
-	  </div>
-	</div>
-  </div>
-
-
-
-
-  
-  <div class="modal fade" id="modalMasInformacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalMasInformacionLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header bg-dark text-white">
-                <h5 class="modal-title" id="modalMasInformacionLabel">Más Información</h5>
-                <button type="button" class="btn-close btn-close-white" onclick="cerrarModalMasInformacion()" aria-label="Close"></button>
+    <div class="modal fade" id="calendarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="calendarModalLabel">Agendar Cita</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Aquí se mostrarán los archivos adjuntos -->
-                <div id="archivosAdjuntos" class="mb-4">
-                    <!-- Los archivos se cargan dinámicamente -->
-                </div>
+              <input type="text" id="fecha-cita" class="form-control" placeholder="Seleccione fecha y hora">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="cerrarModalMasInformacion()">Cerrar</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+              <button type="button" class="btn btn-primary" id="guardarCita">Guardar Cita</button>
             </div>
+          </div>
         </div>
     </div>
-</div>
 
-
-<div class="modal fade" id="crearProspectoModal" tabindex="-1" aria-labelledby="crearProspectoModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <!-- Lado izquierdo (fondo gris) -->
-            <div class="modal-left">
-                <h1>Crear nuevo prospecto</h1>
-                <div class="left-form">
-                    <div class="form-group">
-                        <label>Nombre</label>
-                        <input type="text" class="form-control" id="nombre" >
-                    </div>
-                    <div class="form-group">
-                        <label>Celular</label>
-                        <input type="tel" class="form-control" id="celular" >
-                    </div>
-                    <div class="form-group">
-                        <label>Referencia (Página de Facebook)</label>
-                        <select class="form-select" id="referencia">
-                            <option>Seleccione una página</option>
-                        </select>
+    <div class="modal fade" id="modalMasInformacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalMasInformacionLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="modalMasInformacionLabel">Más Información</h5>
+                    <button type="button" class="btn-close btn-close-white" onclick="cerrarModalMasInformacion()" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Aquí se mostrarán los archivos adjuntos -->
+                    <div id="archivosAdjuntos" class="mb-4">
+                        <!-- Los archivos se cargan dinámicamente -->
                     </div>
                 </div>
-            </div>
-            
-            <!-- Lado derecho (fondo blanco) -->
-            <div class="modal-right">
-                <button type="button" class="close-button" data-bs-dismiss="modal" aria-label="Close">×</button>
-                <div class="right-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Tipo de evento</label>
-                            <select class="form-select" id="tipoEvento" >
-                                <option>Seleccione un...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>Fecha</label>
-                            <input type="date" class="form-control" id="fecha">
-                        </div>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label>Invitados</label>
-                            <input type="number" class="form-control" id="invitados" placeholder="Número de invitado">
-                        </div>
-                        <div class="form-group">
-                            <label>Pregunta por</label>
-                            <select class="form-select" id="lugarEvento">
-                                <option>Seleccione un...</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Observación</label>
-                        <textarea class="form-control" id="observacion" placeholder="Agregue sus observaciones"></textarea>
-                    </div>
-                    <button type="button" class="crear-prospecto-btn" id="crearProspectoBtn">Crear prospecto</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalMasInformacion()">Cerrar</button>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <div class="modal fade" id="crearProspectoModal" tabindex="-1" aria-labelledby="crearProspectoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Lado izquierdo (fondo gris) -->
+                <div class="modal-left">
+                    <h1>Crear nuevo prospecto</h1>
+                    <div class="left-form">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control" id="nombre" >
+                        </div>
+                        <div class="form-group">
+                            <label>Celular (Con prefijo)</label>
+                            <input type="tel" class="form-control" id="celular" >
+                        </div>
+                        <div class="form-group">
+                            <label>Referencia (Página de Facebook)</label>
+                            <select class="form-select" id="referencia">
+                                <option>Seleccione una página</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lado derecho (fondo blanco) -->
+                <div class="modal-right">
+                    <button type="button" class="close-button" data-bs-dismiss="modal" aria-label="Close">×</button>
+                    <div class="right-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tipo de evento</label>
+                                <select class="form-select" id="tipoEvento" >
+                                    <option>Seleccione un...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha</label>
+                                <input type="date" class="form-control" id="fecha">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Invitados</label>
+                                <input type="number" class="form-control" id="invitados" placeholder="Número de invitado">
+                            </div>
+                            <div class="form-group">
+                                <label>Pregunta por</label>
+                                <select class="form-select" id="lugarEvento">
+                                    <option>Seleccione un...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Observación</label>
+                            <textarea class="form-control" id="observacion" placeholder="Agregue sus observaciones"></textarea>
+                        </div>
+                        <button type="button" class="crear-prospecto-btn" id="crearProspectoBtn">Crear prospecto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 
 
-+
 
 	<script src="js/app.js"></script>
 	<script src="js/sesion-checked.js"></script>

@@ -1,55 +1,129 @@
-/* Reset any potential conflicting styles */
-.loader-container {
+:root {
+    --loader-color: #194387;
+    --background-blur: rgba(0, 0, 0, 0.6);
+    --transition-speed: 0.3s;
+  }
+  
+  .loader-container {
     position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background: var(--background-blur) !important;
+    z-index: 99999 !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .loader-container.hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  
+  .loader-content {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  .loader {
+    width: 60px !important;
+    height: 60px !important;
+    border: none !important;
+    background: none !important;
+    position: relative !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: inline-block !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+  }
+  
+  .loader::after {
+    content: '' !important;
+    position: absolute !important;
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    background-color: rgba(0, 0, 0, 0.5) !important;
-    display: flex !important;
-    justify-content: center !important;
-    align-items: center !important;
-    z-index: 9999 !important;
-    backdrop-filter: blur(5px) !important;
-    transition: opacity 0.3s ease-out, visibility 0.3s ease-out !important;
-    opacity: 1;
-    visibility: visible;
-}
-
-.loader-container.hidden {
-    opacity: 0 !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
-}
-
-.loader-content {
-    background-color: rgba(255, 255, 255, 0) !important;
-    padding: 20px !important;
-    border-radius: 10px !important;
-    text-align: center !important;
-    box-shadow:none !important;
-}
-
-.loader {
-    width: 100px !important;
-    height: 100px !important;
-    border: 5px solid #f3f3f3f4 !important;
-    border-top: 5px solid #3498db !important;
     border-radius: 50% !important;
-    animation: spin 1s linear infinite !important;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Remove any conflicting fade animations */
-.fade-out {
-    animation: fadeOut 0.5s ease-out forwards !important;
-}
-
-@keyframes fadeOut {
-    from { opacity: 1; }
-    to { opacity: 0; }
-}
+    border: 3px solid transparent !important;
+    border-top-color: var(--loader-color) !important;
+    border-left-color: var(--loader-color) !important;
+    animation: loaderSpin 1s cubic-bezier(0.42, 0, 0.58, 1) infinite !important;
+    box-sizing: border-box !important;
+  }
+  
+  @keyframes loaderSpin {
+    0% {
+      transform: rotate(0deg) scale(1);
+    }
+    50% {
+      transform: rotate(180deg) scale(1.1);
+    }
+    100% {
+      transform: rotate(360deg) scale(1);
+    }
+  }
+  
+  /* Reset específico para el loader */
+  .loader,
+  .loader::before,
+  .loader::after {
+    box-sizing: border-box !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    outline: none !important;
+    background: none !important;
+  }
+  
+  /* Animación de desvanecimiento */
+  .fade-out {
+    animation: fadeOut 0.3s ease-out forwards !important;
+  }
+  
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  
+  /* Media queries */
+  @media screen and (max-width: 768px) {
+    .loader {
+      width: 35px !important;
+      height: 35px !important;
+    }
+    
+    .loader::after {
+      border-width: 2.5px !important;
+    }
+  }
+  
+  @media screen and (max-width: 480px) {
+    .loader {
+      width: 30px !important;
+      height: 30px !important;
+    }
+    
+    .loader::after {
+      border-width: 2px !important;
+    }
+  }

@@ -48,6 +48,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
         
         // Store user type in local storage for menu generation
         localStorage.setItem('userType', userData.userType);
+        localStorage.setItem('userName',userData.name)
         localStorage.setItem('uid',userData.uid)
         // Redirect to index page or dashboard
         window.location.href = 'index.html';

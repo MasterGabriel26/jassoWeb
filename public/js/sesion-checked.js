@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
            loadNotifications(userId);
         } else {
             // If not authenticated, redirect to login
-            window.location.href = '/public/page-sign-in.html';
+            window.location.href = '/page-sign-in.html';
         }
     });
 });
@@ -55,7 +55,7 @@ function verifyUserAndDisplayInfo(userId) {
         });
 }
 
-// Mostrar información del usuario
+// Función mejorada para mostrar información del usuario
 function displayUserInfo(nameSpanId, imgSpanId, collectionName, userId) {
     const nameSpan = document.getElementById(nameSpanId);
     const imgSpan = document.getElementById(imgSpanId);
@@ -65,6 +65,9 @@ function displayUserInfo(nameSpanId, imgSpanId, collectionName, userId) {
         return;
     }
     
+    // Limpiar el contenedor de imagen
+    imgSpan.innerHTML = '';
+    
     db.collection(collectionName).doc(userId).get()
         .then((doc) => {
             if (doc.exists) {
@@ -72,66 +75,92 @@ function displayUserInfo(nameSpanId, imgSpanId, collectionName, userId) {
                 nameSpan.textContent = userData.name || "Usuario";
                 
                 if (userData.imageProfile) {
-                    const img = document.createElement('img');
-                    img.src = userData.imageProfile;
-                    img.alt = userData.name || 'Foto de perfil';
-                    img.className = 'avatar img-fluid rounded';
-                    imgSpan.appendChild(img);
+                    createProfileImage(imgSpan, userData.imageProfile, userData.name);
                 } else {
-                    createInitialsCanvas(imgSpan, userData.name);
+                    createInitialsAvatar(imgSpan, userData.name);
                 }
             } else {
                 console.log("No se encontró el documento del usuario");
                 nameSpan.textContent = "Usuario no encontrado";
-                createInitialsCanvas(imgSpan, "Usuario");
+                createInitialsAvatar(imgSpan, "Usuario");
             }
         })
         .catch((error) => {
             console.error("Error fetching user data: ", error);
             nameSpan.textContent = "Error al cargar el nombre";
-            createInitialsCanvas(imgSpan, "Error");
+            createInitialsAvatar(imgSpan, "Error");
         });
 }
 
-// Crear avatar con iniciales como canvas
-function createInitialsCanvas(container, name) {
-    const canvas = document.createElement('canvas');
-    const size = 32; // Tamaño del avatar
-    canvas.width = size;
-    canvas.height = size;
-    canvas.className = 'rounded';
+// Función para crear imagen de perfil
+function createProfileImage(container, imageUrl, name) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'profile-image-wrapper';
     
-    const ctx = canvas.getContext('2d');
-    ctx.fillStyle = getConsistentColor(name);
-    ctx.fillRect(0, 0, size, size);
+    const img = document.createElement('img');
+    img.src = imageUrl;
+    img.alt = name || 'Foto de perfil';
+    img.className = 'profile-image';
     
-    ctx.fillStyle = 'white';
-    ctx.font = 'bold 16px Arial';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    
-    const initials = getInitials(name);
-    ctx.fillText(initials, size / 2, size / 2);
-    
-    container.appendChild(canvas);
+    wrapper.appendChild(img);
+    container.appendChild(wrapper);
 }
 
-// Obtener iniciales
+
+// Función mejorada para crear avatar con iniciales
+function createInitialsAvatar(container, name) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'avatar-wrapper';
+    
+    const avatar = document.createElement('div');
+    avatar.className = 'initials-avatar';
+    
+    // Usar el estilo que te gustó
+    if (name) {
+        const initials = name
+            .split(' ')
+            .map(n => n[0])
+            .join('')
+            .toUpperCase();
+        avatar.textContent = initials;
+    } else {
+        avatar.textContent = "U";
+    }
+    
+    // Aplicar el gradiente que te gustó en lugar del color sólido
+    avatar.style.background = 'linear-gradient(45deg, #2d3456, #1e2330)';
+    
+    wrapper.appendChild(avatar);
+    container.appendChild(wrapper);
+}
+
+// Función mejorada para obtener iniciales
 function getInitials(name) {
     if (!name) return "?";
-    const names = name.split(' ');
+    const names = name.trim().split(' ');
     if (names.length === 1) return names[0].charAt(0).toUpperCase();
     return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
 }
 
-// Generar un color basado en el nombre
+// Función mejorada para generar color consistente
 function getConsistentColor(name) {
+    const colors = [
+        '#4F46E5', // Indigo
+        '#7C3AED', // Purple
+        '#EC4899', // Pink
+        '#EF4444', // Red
+        '#F59E0B', // Yellow
+        '#10B981', // Green
+        '#3B82F6', // Blue
+        '#6366F1'  // Indigo
+    ];
+    
     let hash = 0;
     for (let i = 0; i < name.length; i++) {
         hash = name.charCodeAt(i) + ((hash << 5) - hash);
     }
-    const color = Math.abs(hash).toString(16).substring(0, 6);
-    return `#${'0'.repeat(6 - color.length)}${color}`;
+    
+    return colors[Math.abs(hash) % colors.length];
 }
 
 // Cerrar sesión y redirigir al login

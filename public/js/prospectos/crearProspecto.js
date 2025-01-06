@@ -260,21 +260,17 @@ firebase.auth().onAuthStateChanged(async (user) => {
   }
 });
 
-function generarFolio() {
-    const letrasAleatorias = (longitud) => {
-        const caracteres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; // Letras posibles
-        let resultado = "";
-        for (let i = 0; i < longitud; i++) {
-            const indice = Math.floor(Math.random() * caracteres.length);
-            resultado += caracteres[indice];
-        }
-        return resultado;
-    };
+function generarFolio(selectedEvento, selectedPreguntaPor, selectedPagina, miNombre) {
+  // Obtener primera letra de cada valor o 'X' si no existe
+  const eventoFirstChar = selectedEvento?.firstOrNull()?.toUpperCase() ?? 'X';
+  const preguntoPorFirstChar = selectedPreguntaPor?.firstOrNull()?.toUpperCase() ?? 'X';
+  const paginaFirstChar = selectedPagina?.firstOrNull()?.toUpperCase() ?? 'X';
+  
+  // Obtener el primer nombre del asesor
+  const asesorFolio = miNombre.split(' ')[0];
 
-    const letras = letrasAleatorias(3); // Generar 3 letras aleatorias
-    const numeros = Math.floor(Math.random() * 99999).toString().padStart(5, '0'); // Generar un número aleatorio de 5 dígitos
-
-    return `P-${letras}R-${numeros}`; // Combinar letras y números con la estructura deseada
+  // Construir el folio
+  return `P-${paginaFirstChar}${eventoFirstChar}${preguntoPorFirstChar}${asesorFolio}`;
 }
 
 async function generarProspecto() {
@@ -288,7 +284,7 @@ async function generarProspecto() {
     : null;
 
 
-    const folio = generarFolio();
+
   const nombre = document.getElementById("nombre").value;
   const celular = document.getElementById("celular").value;
   const tipoEvento = document.getElementById("tipoEvento").value;
@@ -296,6 +292,14 @@ async function generarProspecto() {
   const invitados = document.getElementById("invitados").value;
   const lugarEvento = document.getElementById("lugarEvento").value;
   const observacion = document.getElementById("observacion").value;
+
+  const folio =  generarFolio(
+    tipoEvento === "Sin evento" ? null : tipoEvento,
+    preguntaPor === "Sin preguntar" ? null : preguntaPor,
+    pagina === "Sin pagina" ? null : pagina,
+    nombre // Esta variable ya la tienes definida globalmente
+);
+  
 
   try {
     if (isEditing && prospectoId) {
@@ -408,7 +412,7 @@ async function generarProspecto() {
         id: id,
         name: prospectoData.name,
         nameMin: prospectoData.nameMin,
-        telefono_prospecto: telefonoConPrefijo,
+        telefono_prospecto: celular,
         uid: asesor || null,
         creado_en: "web",
       };
