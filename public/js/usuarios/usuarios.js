@@ -76,6 +76,65 @@ document.addEventListener('DOMContentLoaded', () => {
     usuarioModal.show();
 }
 
+
+
+const btnCreateUser = document.getElementById('btnCreateUser');
+
+// Función para limpiar el formulario
+function limpiarFormulario() {
+    document.getElementById('userId').value = '';
+    document.getElementById('userName').value = '';
+    document.getElementById('userEmail').value = '';
+    document.getElementById('userPhone').value = '';
+    document.getElementById('userType').value = 'cliente'; // valor por defecto
+    document.getElementById('userPassword').value = '';
+    document.getElementById('userActive').checked = true;
+}
+
+// Evento para el botón crear usuario
+btnCreateUser.addEventListener('click', () => {
+    currentUserId = null; // Indicar que es un nuevo usuario
+    limpiarFormulario();
+    usuarioModal.show();
+});
+
+// Modificar el evento saveUserBtn para manejar tanto creación como actualización
+saveUserBtn.addEventListener('click', () => {
+    const userData = {
+        name: document.getElementById('userName').value,
+        email: document.getElementById('userEmail').value,
+        phone: document.getElementById('userPhone').value,
+        userType: document.getElementById('userType').value,
+        password: document.getElementById('userPassword').value,
+        active: document.getElementById('userActive').checked
+    };
+
+    if (currentUserId) {
+        // Actualizar usuario existente
+        db.collection("usuarios").doc(currentUserId).update(userData)
+            .then(() => {
+                console.log("Usuario actualizado correctamente");
+                usuarioModal.hide();
+                cargarUsuarios();
+            })
+            .catch((error) => {
+                console.error("Error al actualizar usuario: ", error);
+            });
+    } else {
+        // Crear nuevo usuario
+        db.collection("usuarios").add(userData)
+            .then(() => {
+                console.log("Usuario creado correctamente");
+                usuarioModal.hide();
+                cargarUsuarios();
+            })
+            .catch((error) => {
+                console.error("Error al crear usuario: ", error);
+            });
+    }
+});
+
+
     // Evento para guardar cambios del usuario
     saveUserBtn.addEventListener('click', () => {
         const userData = {
@@ -98,12 +157,27 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     });
 
-    // Función para alternar la visibilidad de la contraseña
-    togglePasswordBtn.addEventListener('click', () => {
-        const type = userPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-        userPasswordInput.setAttribute('type', type);
-        togglePasswordBtn.innerHTML = type === 'password' ? '<i class="bi bi-eye"></i>' : '<i class="bi bi-eye-slash"></i>';
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('userPassword');
+
+    togglePassword.addEventListener('click', function(e) {
+        e.preventDefault(); // Prevenir cualquier comportamiento por defecto
+        
+        // Cambiar el tipo de input
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        
+        // Cambiar el icono
+        const icon = this.querySelector('i');
+        if (type === 'password') {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        } else {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
     });
+
 
     // Cargar usuarios al iniciar la página
     cargarUsuarios();

@@ -73,6 +73,20 @@ function generateMenu() {
         `;
     }
 
+
+      // Agregar el botón de limpiar caché al final del menú
+      menuItems += `
+      <li class="sidebar-header">
+          Herramientas
+      </li>
+      <li class="sidebar-item">
+          <a class="sidebar-link" href="#" onclick="clearCache(event)">
+              <i class="align-middle" data-feather="trash-2"></i>
+              <span class="align-middle">Limpiar Caché</span>
+          </a>
+      </li>
+  `;
+
     const menu = `
     <div class="sidebar-content js-simplebar">
         <a class="sidebar-brand" href="/index.html">
@@ -103,5 +117,76 @@ function generateMenu() {
         });
     });
 }
+
+
+// Función para limpiar el caché
+async function clearCache(event) {
+    event.preventDefault();
+    
+    try {
+        // Mostrar confirmación
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Esto limpiará todos los datos almacenados en caché",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, limpiar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed) {
+            // Mostrar loader
+            Swal.fire({
+                title: 'Limpiando caché...',
+                html: 'Por favor espera...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Limpiar diferentes tipos de almacenamiento
+            localStorage.clear();
+            sessionStorage.clear();
+
+            // Limpiar caché del service worker si existe
+            if ('caches' in window) {
+                const cacheKeys = await caches.keys();
+                await Promise.all(
+                    cacheKeys.map(key => caches.delete(key))
+                );
+            }
+
+            // Limpiar cookies
+            document.cookie.split(";").forEach(function(c) {
+                document.cookie = c.replace(/^ +/, "")
+                    .replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/");
+            });
+
+            // Mostrar mensaje de éxito
+            await Swal.fire({
+                title: '¡Completado!',
+                text: 'El caché ha sido limpiado exitosamente',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            });
+
+            // Recargar la página
+            window.location.reload(true);
+        }
+    } catch (error) {
+        console.error('Error al limpiar el caché:', error);
+        Swal.fire({
+            title: 'Error',
+            text: 'Hubo un problema al limpiar el caché',
+            icon: 'error',
+            confirmButtonText: 'OK'
+        });
+    }
+}
+
 
 generateMenu();

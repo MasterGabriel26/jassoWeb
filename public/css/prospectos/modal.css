@@ -723,6 +723,39 @@ cursor: pointer;
 transition: transform 0.2s;
 }
 
+
+/* Resetear todos los hovers */
+#prospectoModal .details-grid .info-item {
+    pointer-events: none;
+}
+
+/* Habilitar solo para asesor y último editor por ID */
+#prospectoModal .info-item:has(#modalAsesor),
+#prospectoModal .info-item:has(#modalUltimoEditor) {
+    pointer-events: auto;
+}
+
+#prospectoModal #modalAsesor,
+#prospectoModal #modalUltimoEditor {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#prospectoModal #modalAsesor:hover,
+#prospectoModal #modalUltimoEditor:hover {
+    background: #f8f9fc;
+    border-radius: 8px;
+    padding: 4px 8px;
+    margin: -4px -8px;
+}
+
+/* Asegurar que los demás elementos permanezcan estáticos */
+#prospectoModal .details-grid .info-item .value:not(#modalAsesor):not(#modalUltimoEditor) {
+    pointer-events: none;
+    cursor: default;
+}
+
+
 #prospectoModal #btnContactar,
 #prospectoModal #btnPaquetes {
 background: #2c3444;

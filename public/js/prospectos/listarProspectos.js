@@ -104,6 +104,11 @@ async function registrarLlamada(prospectoId, prospecto) {
 
 
 async function mostrarModalProspecto(prospecto, id, nombreAsesor) {
+
+
+  const loading = document.getElementById('modalLoading');
+  loading.classList.add('show');
+  try{
   document.getElementById("modalFolio").textContent =
     prospecto.folio || "Sin folio";
   document.getElementById("modalFecha").textContent = formatearFecha(
@@ -402,7 +407,18 @@ if (modalAsesor) {
     backdrop: "static",
     keyboard: false,
   });
+  loading.classList.remove('show');
   modal.show();
+
+
+}catch(error){
+  console.error("Error al cargar los datos:", error);
+  // Ocultar loading en caso de error
+  loading.classList.remove('show');
+  // Mostrar mensaje de error si lo deseas
+  mostrarAlerta('Error al cargar los datos del prospecto', 'error');
+}
+
 }
 
 function calcularPasoInicial(seguimientoData) {
