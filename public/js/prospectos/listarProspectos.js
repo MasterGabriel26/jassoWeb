@@ -47,6 +47,114 @@ function mostrarAlerta(mensaje, tipo = 'info') {
   }, 3000);
 }
 
+// Primero, el HTML del botón debe ser así
+const btnContactar = document.getElementById("btnContactar");
+btnContactar.innerHTML = `
+    <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown">
+        Contactar
+    </button>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" id="btnLlamada"><i class="fas fa-phone"></i> Llamada</a></li>
+        <li><a class="dropdown-item" id="btnWhatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</a></li>
+    </ul>
+`;
+
+// La función de inicialización se mantiene igual
+function inicializarBotonesContacto(prospecto, id) {
+    const btnLlamada = document.getElementById("btnLlamada");
+    const btnWhatsapp = document.getElementById("btnWhatsapp");
+
+    if (btnLlamada && btnWhatsapp) {
+        const telefono = prospecto.telefono_prospecto;
+        if (!telefono) {
+            btnLlamada.classList.add('disabled');
+            btnWhatsapp.classList.add('disabled');
+            return;
+        }
+
+        const numeroLimpio = telefono.replace(/[^\d+]/g, '');
+
+        btnLlamada.onclick = () => {
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            if (isMobile) {
+                window.location.href = `tel:${numeroLimpio}`;
+                registrarLlamada(id, prospecto);
+            } else {
+                mostrarModalLlamada(numeroLimpio);
+            }
+        };
+
+        const nombreAsesorMen= localStorage.getItem('userName') 
+        btnWhatsapp.onclick = () => {
+            const mensaje = `Hola, te habla tu asesor: ${nombreAsesorMen}`;
+            const mensajeCodificado = encodeURIComponent(mensaje);
+            const whatsappUrl = `https://wa.me/${numeroLimpio}?text=${mensajeCodificado}`;
+            window.open(whatsappUrl, '_blank');
+        };
+    }
+}
+
+// Y simplificamos los estilos CSS significativamente
+const styles3 = `
+#btnContactar {
+    height: 40px; /* Reducido de 45px a 40px */
+}
+
+#btnContactar button {
+    width: 100%;
+    height: 100%;
+    background: #2d3142;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra el texto horizontalmente */
+    padding: 8px 16px;
+}
+
+#btnContactar button::after {
+    display: none;
+}
+
+#btnContactar .dropdown-menu {
+    min-width: 160px;
+    margin-top: 5px;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 1px solid rgba(0,0,0,0.1);
+}
+
+#btnContactar .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    font-size: 14px;
+}
+
+#btnContactar .dropdown-item i {
+    width: 16px;
+    text-align: center;
+}
+
+#btnContactar .dropdown-item:hover {
+    background-color: #f8f9fa;
+}
+
+#btnContactar .dropdown-item#btnWhatsapp i {
+    color: #25D366;
+}
+`;
+
+// Agregar los estilos
+const styleSheet = document.createElement("style");
+styleSheet.textContent = styles3;
+document.head.appendChild(styleSheet);
+
+
 // Función para mostrar modal en desktop
 function mostrarModalLlamada(numero) {
   const modalHTML = `
@@ -357,34 +465,8 @@ if (modalAsesor) {
 
 
 
-  const btnContactar = document.getElementById("btnContactar");
-  if (btnContactar) {
-    btnContactar.onclick = () => {
-      const telefono = prospecto.telefono_prospecto;
-      if (!telefono) {
-        // Si no hay número de teléfono
-        mostrarAlerta('No hay número de teléfono disponible', 'warning');
-        return;
-      }
-
-      // Limpiar el número de teléfono (eliminar espacios, guiones, etc.)
-      const numeroLimpio = telefono.replace(/[^\d+]/g, '');
-
-      // Verificar si es un dispositivo móvil
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-      if (isMobile) {
-        // En dispositivos móviles, abrir la aplicación de llamadas
-        window.location.href = `tel:${numeroLimpio}`;
-        
-        // Registrar la llamada en la base de datos
-        registrarLlamada(id, prospecto);
-      } else {
-        // En desktop, mostrar un modal con el número
-        mostrarModalLlamada(numeroLimpio);
-      }
-    };
-  }
+ // Inicializar los botones de contacto
+ inicializarBotonesContacto(prospecto, id);
 
 
   function calcularPaso(porcentaje) {
