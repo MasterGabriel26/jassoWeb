@@ -112,24 +112,33 @@ document.getElementById("btnEditar")?.addEventListener("click", async function (
             referencia: document.getElementById("modalReferencia").textContent,
         };
 
-        // Cerrar modal de detalles y abrir modal de edición
+        // Cerrar modal de detalles
         const modalDetalles = bootstrap.Modal.getInstance(
-            document.getElementById("prospectoModal")
-        );
-        modalDetalles.hide();
+          document.getElementById("prospectoModal")
+      );
+      modalDetalles.hide();
 
-        // Abrir modal de crear/editar y cargar datos
-        const modalCrear = new bootstrap.Modal(
-            document.getElementById("crearProspectoModal")
-        );
-        modalCrear.show();
+      // Limpiar y preparar el modal de crear/editar
+      resetModal();
 
-        // Establecer modo edición y guardar el ID real
-        document.getElementById("crearProspectoModal").setAttribute("data-mode", "edit");
-        document.getElementById("crearProspectoModal").setAttribute("data-prospecto-id", docId);
+      // Establecer modo edición y guardar el ID
+      document.getElementById("crearProspectoModal").setAttribute("data-mode", "edit");
+      document.getElementById("crearProspectoModal").setAttribute("data-prospecto-id", docId);
 
-        // Cargar datos en el formulario
-        cargarDatosEnFormulario(prospectoData);
+      // Cargar datos en el formulario
+      cargarDatosEnFormulario(prospectoData);
+
+      // Mostrar el modal
+      const modalCrear = bootstrap.Modal.getInstance(document.getElementById("crearProspectoModal"));
+      if (modalCrear) {
+          modalCrear.show();
+      } else {
+          const newModal = new bootstrap.Modal(document.getElementById("crearProspectoModal"), {
+              backdrop: "static",
+              keyboard: false
+          });
+          newModal.show();
+      }
 
     } catch (error) {
         console.error("Error al preparar edición:", error);
@@ -261,34 +270,46 @@ firebase.auth().onAuthStateChanged(async (user) => {
 });
 
 function generarFolio(selectedEvento, selectedPreguntaPor, selectedPagina, miNombre) {
-  // Obtener los textos de los select
+  // Verificar que los elementos existan
   const selectTipoEvento = document.getElementById("tipoEvento");
   const selectLugarEvento = document.getElementById("lugarEvento");
   const selectReferencia = document.getElementById("referencia");
 
-  // Obtener los valores seleccionados o valores por defecto
-  const eventoText = selectTipoEvento.selectedIndex > 0 ? 
-      selectTipoEvento.options[selectTipoEvento.selectedIndex].text : "Sin evento";
-  const lugarText = selectLugarEvento.selectedIndex > 0 ? 
-      selectLugarEvento.options[selectLugarEvento.selectedIndex].text : "Sin preguntar";
-  const paginaText = selectReferencia.selectedIndex > 0 ? 
-      selectReferencia.options[selectReferencia.selectedIndex].text : "Sin pagina";
+  if (!selectTipoEvento || !selectLugarEvento || !selectReferencia) {
+      console.error("Uno o más elementos select no encontrados");
+      return "P-XXX00000"; // Folio por defecto
+  }
+
+  // Obtener los valores con verificación de null
+  const eventoText = selectTipoEvento?.selectedIndex > 0 && selectTipoEvento?.options[selectTipoEvento.selectedIndex]
+      ? selectTipoEvento.options[selectTipoEvento.selectedIndex].text
+      : "Sin evento";
+
+  const lugarText = selectLugarEvento?.selectedIndex > 0 && selectLugarEvento?.options[selectLugarEvento.selectedIndex]
+      ? selectLugarEvento.options[selectLugarEvento.selectedIndex].text
+      : "Sin preguntar";
+
+  const paginaText = selectReferencia?.selectedIndex > 0 && selectReferencia?.options[selectReferencia.selectedIndex]
+      ? selectReferencia.options[selectReferencia.selectedIndex].text
+      : "Sin pagina";
+
+  // Verificar que miNombre existe
+  if (!miNombre) {
+      console.error("Nombre de asesor no disponible");
+      miNombre = "X";
+  }
 
   // Obtener primera letra de cada valor o 'X' si es valor por defecto
-  const eventoFirstChar = eventoText === "Sin evento" ? 'X' : eventoText[0].toUpperCase();
-  const preguntaPorFirstChar = lugarText === "Sin preguntar" ? 'X' : lugarText[0].toUpperCase();
-  const paginaFirstChar = paginaText === "Sin pagina" ? 'X' : paginaText[0].toUpperCase();
+  const eventoFirstChar = eventoText === "Sin evento" ? 'X' : eventoText[0]?.toUpperCase() || 'X';
+  const preguntaPorFirstChar = lugarText === "Sin preguntar" ? 'X' : lugarText[0]?.toUpperCase() || 'X';
+  const paginaFirstChar = paginaText === "Sin pagina" ? 'X' : paginaText[0]?.toUpperCase() || 'X';
+  const AsesorFolio = miNombre[0]?.toUpperCase() ;
 
-  // Primera letra del nombre del asesor
-  const AsesorFolio = miNombre[0].toUpperCase();
-  
   // Generar folio base
   const folio = `P-${paginaFirstChar}${eventoFirstChar}${preguntaPorFirstChar}${AsesorFolio}`;
-  
-  // Generar folio con número aleatorio
+
   return generateFolioWithRandomNumber(folio);
 }
-
 function generateFolioWithRandomNumber(baseFolio) {
   // Generar número aleatorio entre 0 y 99999
   const random = Math.floor(Math.random() * 100000);
@@ -296,6 +317,67 @@ function generateFolioWithRandomNumber(baseFolio) {
   const randomString = random.toString().padStart(5, '0');
   return `${baseFolio}${randomString}`;
 }
+
+
+
+function resetModal() {
+  const modalElement = document.getElementById("crearProspectoModal");
+  if (!modalElement) return;
+
+  // Limpiar todos los inputs
+  const inputs = modalElement.querySelectorAll('input, textarea');
+  inputs.forEach(input => {
+      input.value = '';
+      input.classList.remove('is-invalid', 'is-valid');
+  });
+
+  // Reiniciar los selects
+  const selects = modalElement.querySelectorAll('select');
+  selects.forEach(select => {
+      select.selectedIndex = 0;
+      select.classList.remove('is-invalid', 'is-valid');
+  });
+
+  // Volver a poblar los selects
+  populateSelect("tipoEvento", "eventos", "evento");
+  populateSelect("lugarEvento", "lugares", "nombreLugar");
+  populateSelect("referencia", "paginas", "nombrePagina");
+
+  // Reiniciar el botón
+  const submitButton = modalElement.querySelector('#crearProspectoBtn');
+  if (submitButton) {
+      submitButton.textContent = 'Crear prospecto';
+      submitButton.disabled = false;
+  }
+
+  // Limpiar atributos del modal
+  modalElement.removeAttribute('data-mode');
+  modalElement.removeAttribute('data-prospecto-id');
+
+  // Limpiar mensajes de error
+  const errorMessages = modalElement.querySelectorAll('.invalid-feedback');
+  errorMessages.forEach(msg => msg.remove());
+}
+// Modificar el evento de cierre del modal
+document.getElementById("crearProspectoModal")?.addEventListener('hidden.bs.modal', function () {
+  const newModal = resetModal();
+  // Aquí puedes usar newModal si necesitas hacer algo con la nueva instancia
+});
+
+// Modificar el evento del botón de crear prospecto
+crearProspectoBtn?.addEventListener("click", function (e) {
+  e.preventDefault();
+  const newModal = resetModal();
+  newModal.show();
+});
+
+
+
+
+
+
+
+
 
 async function generarProspecto() {
   const isEditing =
@@ -330,6 +412,8 @@ async function generarProspecto() {
 
   try {
     if (isEditing && prospectoId) {
+
+      resetModal()
       // Actualizar prospecto existente
       const updateData = {
         name: nombre || "Sin nombre",
@@ -525,11 +609,25 @@ async function generarProspecto() {
 
 // Helper function to get selected text from a select element
 function getSelectedText(selectElement) {
-  if (selectElement.selectedIndex > 0) {
-    return selectElement.options[selectElement.selectedIndex].text;
-  } else {
-    return selectElement.id === "tipoEvento" ? "Sin evento" : "Sin preguntar";
+  // Verificar si el elemento existe
+  if (!selectElement) {
+      console.error('Select element is null or undefined');
+      return selectElement?.id === "tipoEvento" ? "Sin evento" : "Sin preguntar";
   }
+
+  // Verificar si hay opciones
+  if (!selectElement.options || selectElement.options.length === 0) {
+      console.error('Select element has no options');
+      return selectElement.id === "tipoEvento" ? "Sin evento" : "Sin preguntar";
+  }
+
+  // Verificar si hay una opción seleccionada válida
+  if (selectElement.selectedIndex > 0 && selectElement.options[selectElement.selectedIndex]) {
+      return selectElement.options[selectElement.selectedIndex].text;
+  }
+
+  // Valor por defecto basado en el ID
+  return selectElement.id === "tipoEvento" ? "Sin evento" : "Sin preguntar";
 }
 
 // Agregar estos estilos para las animaciones

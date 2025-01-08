@@ -2430,176 +2430,303 @@ function calcularPorcentaje(paso) {
 let fechaCitaSeleccionada = null;
 
 async function agendarCita(paso) {
-  const input = document.getElementById("fecha-cita");
-  if (!input) {
-    Swal.fire({
-      icon: "error",
-      title: "Error",
-      text: "Error en la configuración del calendario",
+  // Configuración de Google Calendar API
+  const CLIENT_ID = '851107842246-t571mmtul4jvch7sh6duc5l9pte0vh4s.apps.googleusercontent.com';
+  const API_KEY = 'AIzaSyBmSEe24W6jAvPwsqNKrGka2e5kCBRg5bE';
+  const SCOPES = 'https://www.googleapis.com/auth/calendar';
+
+  // Función para verificar el estado de autenticación
+  const checkGoogleAuth = () => {
+    return new Promise((resolve) => {
+      const tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: (response) => {
+          if (response.error) {
+            resolve(false);
+          } else {
+            localStorage.setItem('googleAccessToken', response.access_token);
+            resolve(true);
+          }
+        },
+      });
+
+      // Verificar si hay un token guardado
+      const savedToken = localStorage.getItem('googleAccessToken');
+      if (savedToken) {
+        // Verificar si el token es válido
+        fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${savedToken}`)
+          .then(response => {
+            if (response.ok) {
+              resolve(true);
+            } else {
+              tokenClient.requestAccessToken({ prompt: 'consent' });
+            }
+          })
+          .catch(() => {
+            tokenClient.requestAccessToken({ prompt: 'consent' });
+          });
+      } else {
+        tokenClient.requestAccessToken({ prompt: 'consent' });
+      }
     });
-    return;
-  }
+  };
 
-  // Inicializar Flatpickr con tema personalizado
-  const fp = flatpickr(input, {
-    enableTime: true,
-    dateFormat: "Y-m-d H:i",
-    minDate: "today",
-    locale: {
-      firstDayOfWeek: 1,
-      weekdays: {
-        shorthand: ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"],
-        longhand: [
-          "Domingo",
-          "Lunes",
-          "Martes",
-          "Miércoles",
-          "Jueves",
-          "Viernes",
-          "Sábado",
-        ],
-      },
-      months: {
-        shorthand: [
-          "Ene",
-          "Feb",
-          "Mar",
-          "Abr",
-          "May",
-          "Jun",
-          "Jul",
-          "Ago",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dic",
-        ],
-        longhand: [
-          "Enero",
-          "Febrero",
-          "Marzo",
-          "Abril",
-          "Mayo",
-          "Junio",
-          "Julio",
-          "Agosto",
-          "Septiembre",
-          "Octubre",
-          "Noviembre",
-          "Diciembre",
-        ],
-      },
-    },
-    theme: "dark", // Tema oscuro para combinar con el diseño
-  });
+  try {
+    // Mostrar loading mientras se verifica la autenticación
+    Swal.fire({
+      title: 'Verificando acceso',
+      html: `
+        <div class="auth-progress">
+          <div class="auth-icon">
+            <i class="fab fa-google fa-spin"></i>
+          </div>
+          <div class="auth-text">
+            Verificando acceso a Google Calendar...
+          </div>
+        </div>
+      `,
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
 
-  // Mostrar el modal del calendario
-  const modal = new bootstrap.Modal(document.getElementById("calendarModal"));
-  modal.show();
+    // Verificar autenticación
+    const isAuthenticated = await checkGoogleAuth();
+    
+    // Cerrar el loading
+    Swal.close();
 
-  // Manejar el guardado de la cita
-  document.getElementById("guardarCita").onclick = async function () {
-    const selectedDates = fp.selectedDates;
-    if (selectedDates.length === 0) {
+    if (!isAuthenticated) {
       Swal.fire({
-        icon: "warning",
-        title: "Fecha requerida",
-        text: "Por favor, selecciona una fecha y hora para la cita.",
-        confirmButtonText: "Entendido",
+        icon: 'error',
+        title: 'Acceso denegado',
+        text: 'Necesitas iniciar sesión con Google para agendar citas.',
+        confirmButtonText: 'Entendido'
       });
       return;
     }
 
-    try {
-      // Mostrar loading
-      Swal.fire({
-        title: "Agendando cita",
-        html: `
-                    <div class="scheduling-progress">
-                        <div class="scheduling-icon">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="scheduling-text">
-                            Guardando información de la cita...
-                        </div>
-                    </div>
-                `,
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
+    // Si está autenticado, mostrar el modal del formulario
+    const modal = new bootstrap.Modal(document.getElementById('calendarModal'));
+    modal.show();
 
-      const fecha = selectedDates[0].getTime();
-      const updateData = {};
-
-      // Determinar el campo a actualizar según el paso
-      switch (paso) {
-        case 6:
-          updateData.paso6_fechaCitaAtendida = fecha;
-          break;
-        case 8:
-          updateData.paso8_agendarCitaParaFirmar = fecha;
-          break;
-        case 11:
-          updateData.paso11_agendarCitaParaEntregaPorcentaje = fecha;
-          break;
-        default:
-          updateData[`paso${paso}_agendarCita`] = fecha;
+    
+    document.getElementById("guardarCita").onclick = async function () {
+      // Obtener el token de acceso
+      const accessToken = localStorage.getItem('googleAccessToken');
+      if (!accessToken) {
+          Swal.fire({
+              icon: 'error',
+              title: 'Error de autenticación',
+              text: 'No se encontró el token de acceso. Por favor, inicie sesión nuevamente.',
+              confirmButtonText: 'Entendido'
+          });
+          return;
       }
-
-      // Actualizar en Firestore
-      await db
-        .collection("seguimientoProspectos")
-        .doc(prospectoActualId)
-        .update(updateData);
-
-      // Actualizar porcentaje
-      const porcentaje = calcularPorcentaje(paso);
-      await db.collection("prospectos").doc(prospectoActualId).update({
-        porcentaje: porcentaje,
-      });
-
-      // Mostrar mensaje de éxito
-      await Swal.fire({
-        icon: "success",
-        title: "¡Cita agendada!",
-        html: `
-                    <div class="success-schedule">
-                        <div class="success-icon">
-                            <i class="fas fa-calendar-check"></i>
-                        </div>
-                        <div class="success-details">
-                            <p>La cita se ha agendado para:</p>
-                            <strong>${selectedDates[0].toLocaleString("es-ES", {
+  
+      const formData = {
+          titulo: document.getElementById('titulo').value,
+          descripcion: document.getElementById('descripcion').value,
+          lugarCita: document.getElementById('lugarCita').value,
+          nombreCliente: document.getElementById('nombreCliente').value,
+          categoria: document.getElementById('categoria').value,
+          fecha: document.getElementById('fecha').value,
+          hora: document.getElementById('hora').value
+      };
+  
+      // Validar campos requeridos
+      if (!formData.titulo || !formData.lugarCita || !formData.nombreCliente || 
+          !formData.categoria || !formData.fecha || !formData.hora) {
+          Swal.fire({
+              icon: "warning",
+              title: "Campos requeridos",
+              text: "Por favor, complete todos los campos requeridos.",
+              confirmButtonText: "Entendido",
+          });
+          return;
+      }
+  
+      try {
+          // Verificar si el token sigue siendo válido
+          const tokenCheck = await fetch(`https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=${accessToken}`);
+          
+          if (!tokenCheck.ok) {
+              // Si el token no es válido, solicitar uno nuevo
+              const tokenClient = google.accounts.oauth2.initTokenClient({
+                  client_id: CLIENT_ID,
+                  scope: SCOPES,
+                  callback: async (response) => {
+                      if (response.error) {
+                          throw new Error('Error al renovar el token de acceso');
+                      }
+                      localStorage.setItem('googleAccessToken', response.access_token);
+                      // Reintentar la operación con el nuevo token
+                      await createCalendarEvent(response.access_token);
+                  }
+              });
+              tokenClient.requestAccessToken({ prompt: 'consent' });
+              return;
+          }
+  
+          // Si el token es válido, continuar con la creación del evento
+          await createCalendarEvent(accessToken);
+  
+      } catch (error) {
+          console.error("Error al agendar cita:", error);
+          Swal.fire({
+              icon: "error",
+              title: "Error al agendar la cita",
+              text: error.message,
+              confirmButtonText: "Entendido",
+          });
+      }
+  
+      // Función para crear el evento en el calendario
+      async function createCalendarEvent(token) {
+          // Mostrar loading...
+          Swal.fire({
+              title: "Agendando cita",
+              html: `
+                  <div class="scheduling-progress">
+                      <div class="scheduling-icon">
+                          <i class="fas fa-calendar-check"></i>
+                      </div>
+                      <div class="scheduling-text">
+                          Guardando información de la cita...
+                      </div>
+                  </div>
+              `,
+              allowOutsideClick: false,
+              showConfirmButton: false,
+              didOpen: () => {
+                  Swal.showLoading();
+              },
+          });
+  
+          // Crear evento en Google Calendar
+          const event = {
+            summary: formData.titulo,
+            description: buildEventDescription(
+                formData.descripcion,
+                formData.nombreCliente,
+                formData.lugarCita,
+                localStorage.getItem('userName') || 'Unknown'
+            ),
+            location: formData.lugarCita,
+            start: {
+                dateTime: `${formData.fecha}T${formData.hora}:00`,
+                timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+            },
+            end: {
+                dateTime: `${formData.fecha}T${formData.hora}:00`,
+                timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+            },
+            extendedProperties: {
+                shared: {
+                    category: formData.categoria,
+                    creator: localStorage.getItem('userName') || 'Unknown',
+               
+                }
+            }
+        };
+  
+          const response = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+              method: 'POST',
+              headers: {
+                  'Authorization': `Bearer ${token}`,
+                  'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(event)
+          });
+  
+          if (!response.ok) {
+              throw new Error('Error al crear evento en Google Calendar');
+          }
+  
+          // Actualizar en Firestore
+          const fecha = new Date(`${formData.fecha}T${formData.hora}`).getTime();
+          const updateData = {};
+  
+          switch (paso) {
+              case 6:
+                  updateData.paso6_fechaCitaAtendida = fecha;
+                  break;
+              case 8:
+                  updateData.paso8_agendarCitaParaFirmar = fecha;
+                  break;
+              case 11:
+                  updateData.paso11_agendarCitaParaEntregaPorcentaje = fecha;
+                  break;
+              default:
+                  updateData[`paso${paso}_agendarCita`] = fecha;
+          }
+  
+          updateData.categoria = formData.categoria;
+  
+          await db.collection("seguimientoProspectos")
+              .doc(prospectoActualId)
+              .update(updateData);
+  
+          const porcentaje = calcularPorcentaje(paso);
+          await db.collection("prospectos")
+              .doc(prospectoActualId)
+              .update({
+                  porcentaje: porcentaje,
+              });
+  
+          // Mostrar mensaje de éxito
+          await Swal.fire({
+              icon: "success",
+              title: "¡Cita agendada!",
+              html: `
+                  <div class="success-schedule">
+                      <div class="success-icon">
+                          <i class="fas fa-calendar-check"></i>
+                      </div>
+                      <div class="success-details">
+                          <p>La cita se ha agendado para:</p>
+                          <strong>${new Date(fecha).toLocaleString("es-ES", {
                               weekday: "long",
                               year: "numeric",
                               month: "long",
                               day: "numeric",
                               hour: "2-digit",
                               minute: "2-digit",
-                            })}</strong>
-                        </div>
-                    </div>
-                `,
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-      });
-
-      modal.hide();
-      mostrarPasoSeguimiento(paso);
-    } catch (error) {
-      console.error("Error al agendar cita:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error al agendar la cita",
-        text: error.message,
-        confirmButtonText: "Entendido",
-      });
-    }
+                          })}</strong>
+                          <p class="mt-2">
+                              <i class="fab fa-google text-primary"></i>
+                              Evento agregado a Google Calendar
+                          </p>
+                      </div>
+                  </div>
+              `,
+              showConfirmButton: false,
+              timer: 3000,
+              timerProgressBar: true,
+          });
+  
+          modal.hide();
+          mostrarPasoSeguimiento(paso);
+      }
   };
+
+  } catch (error) {
+    console.error("Error en la autenticación:", error);
+    Swal.fire({
+      icon: "error",
+      title: "Error de autenticación",
+      text: "No se pudo verificar el acceso a Google Calendar.",
+      confirmButtonText: "Entendido",
+    });
+  }
+}
+
+
+function buildEventDescription(description, client, location, creator) {
+  return `${description}\nCliente: ${client}\nLugar: ${location}\nConvocado por: ${creator}`;
 }
 
 function calcularPorcentaje(paso) {
