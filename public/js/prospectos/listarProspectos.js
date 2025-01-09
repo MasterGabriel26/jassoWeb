@@ -209,7 +209,314 @@ async function registrarLlamada(prospectoId, prospecto) {
   }
 }
 
+// Función principal para mostrar el modal de pagos
+// Función principal para mostrar el modal de pagos
+async function mostrarModalPagos(prospecto) {
+  const modalHTML = `
+    <div class="modal fade" id="pagosModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Registro de Pagos</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="table-container">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Monto</th>
+                  
+                  </tr>
+                </thead>
+                <tbody id="tablaPagos">
+                  <!-- Aquí se cargarán los pagos dinámicamente -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <button class="btn-add-payment" onclick="mostrarFormularioPago()">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+      </div>
+    </div>
 
+    <!-- Modal para nuevo pago -->
+    <div class="modal fade" id="nuevoPagoModal" tabindex="-1">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Nuevo Pago</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="formNuevoPago">
+              <div class="mb-3">
+                <label for="fechaPago" class="form-label">Fecha</label>
+                <input type="date" class="form-control" id="fechaPago" required>
+              </div>
+              <div class="mb-3">
+                <label for="montoPago" class="form-label">Monto</label>
+                <input type="number" class="form-control" id="montoPago" required>
+              </div>
+              <button type="submit" class="btn btn-primary w-100">Guardar Pago</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  // Remover modales existentes si los hay
+  const modalExistente = document.getElementById('pagosModal');
+  const nuevoPagoModalExistente = document.getElementById('nuevoPagoModal');
+  if (modalExistente) modalExistente.remove();
+  if (nuevoPagoModalExistente) nuevoPagoModalExistente.remove();
+
+  // Agregar los modales al DOM
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+  // Inicializar el modal principal
+  const modal = new bootstrap.Modal(document.getElementById('pagosModal'));
+  
+  // Cargar los pagos
+  cargarPagos(prospecto.registro_de_pagos || []);
+  
+  // Inicializar el formulario de nuevo pago
+  inicializarFormularioPago(prospecto);
+
+  modal.show();
+}
+
+// Función para cargar los pagos en la tabla
+function cargarPagos(pagos) {
+  const tablaPagos = document.getElementById('tablaPagos');
+  tablaPagos.innerHTML = '';
+
+  if (!pagos || pagos.length === 0) {
+    tablaPagos.innerHTML = `
+      <tr>
+        <td colspan="3">
+          <div class="no-payments">
+            <i class="fas fa-file-invoice-dollar mb-2" style="font-size: 24px; color: #6c757d;"></i>
+            <p class="mb-0">Aún no hay pagos registrados</p>
+          </div>
+        </td>
+      </tr>
+    `;
+    return;
+  }
+
+  // Ordenar pagos por fecha (más reciente primero)
+  const pagosOrdenados = [...pagos].sort((a, b) => {
+    return new Date(b.fecha.split('/').reverse().join('-')) - 
+           new Date(a.fecha.split('/').reverse().join('-'));
+  });
+
+  pagosOrdenados.forEach((pago, index) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${pago.fecha}</td>
+      <td>$${parseFloat(pago.monto).toLocaleString('es-MX')}</td>
+    `;
+    tablaPagos.appendChild(tr);
+  });
+}
+
+// Función para mostrar el formulario de nuevo pago
+function mostrarFormularioPago() {
+  const nuevoPagoModal = new bootstrap.Modal(document.getElementById('nuevoPagoModal'));
+  nuevoPagoModal.show();
+}
+
+function inicializarFormularioPago(prospecto) {
+  const form = document.getElementById('formNuevoPago');
+  if (!form) return; // Validación adicional
+  
+  form.onsubmit = async (e) => {
+    e.preventDefault();
+    
+    const fecha = document.getElementById('fechaPago').value;
+    const monto = document.getElementById('montoPago').value;
+
+    // Formatear fecha a DD/MM/YYYY
+    const fechaFormateada = new Date(fecha).toLocaleDateString('es-MX');
+
+    const nuevoPago = {
+      fecha: fechaFormateada,
+      monto: monto
+    };
+
+    try {
+      // Actualizar el array de pagos
+      const nuevosPagos = [...(prospecto.registro_de_pagos || []), nuevoPago];
+      
+      // Actualizar en Firestore
+      await db.collection('prospectos').doc(prospectoActualId).update({
+        registro_de_pagos: nuevosPagos
+      });
+
+      // Actualizar la tabla
+      cargarPagos(nuevosPagos);
+      
+      // Cerrar el modal de nuevo pago
+      const nuevoPagoModal = bootstrap.Modal.getInstance(document.getElementById('nuevoPagoModal'));
+      nuevoPagoModal.hide();
+      
+      // Limpiar el formulario
+      form.reset();
+      
+      // Mostrar confirmación
+      mostrarAlerta('Pago registrado correctamente', 'success');
+      
+    } catch (error) {
+      console.error("Error al registrar el pago:", error);
+      mostrarAlerta('Error al registrar el pago', 'error');
+    }
+  };
+}
+
+
+// Función para eliminar un pago
+async function eliminarPago(index) {
+  if (!confirm('¿Está seguro de eliminar este pago?')) return;
+
+  try {
+    const prospectoDoc = await db.collection('prospectos').doc(prospectoActualId).get();
+    const prospecto = prospectoDoc.data();
+    
+    const nuevosPagos = [...prospecto.registro_de_pagos];
+    nuevosPagos.splice(index, 1);
+    
+    await db.collection('prospectos').doc(prospectoActualId).update({
+      registro_de_pagos: nuevosPagos
+    });
+
+    cargarPagos(nuevosPagos);
+    mostrarAlerta('Pago eliminado correctamente', 'success');
+    
+  } catch (error) {
+    console.error("Error al eliminar el pago:", error);
+    mostrarAlerta('Error al eliminar el pago', 'error');
+  }
+}
+
+// Función principal para mostrar el modal de paquetes
+async function mostrarModalPaquetes(telefonoProspecto) {
+  // Crear estructura del modal
+  const modalHTML = `
+  <div class="modal fade" id="paquetesModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Seleccionar Paquete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-2" id="paquetesContainer">
+            <!-- Aquí se cargarán los paquetes dinámicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+`;
+
+  // Agregar el modal al DOM
+  document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+  // Inicializar el modal
+  const modal = new bootstrap.Modal(document.getElementById('paquetesModal'));
+
+  try {
+    // Obtener las publicaciones
+    const querySnapshot = await db.collection("publicaciones")
+      .where("active", "==", true)
+      .get();
+
+    const paquetesContainer = document.getElementById('paquetesContainer');
+    
+    querySnapshot.forEach(doc => {
+      const paquete = doc.data();
+      const card = createPaqueteCard(paquete, doc.id, telefonoProspecto);
+      paquetesContainer.appendChild(card);
+    });
+
+    modal.show();
+
+  } catch (error) {
+    console.error("Error al cargar los paquetes:", error);
+    mostrarAlerta('Error al cargar los paquetes', 'error');
+  }
+}
+
+// Función para crear la tarjeta de cada paquete
+function createPaqueteCard(paquete, paqueteId, telefonoProspecto) {
+  const card = document.createElement('div');
+  card.className = 'col-md-6 col-lg-4';
+  
+  card.innerHTML = `
+    <div class="card h-100">
+      <img src="${paquete.multimediaUrl[0] || 'ruta-imagen-default.jpg'}" 
+           class="card-img-top" 
+           alt="${paquete.tituloEvento}"
+           style="height: 200px; object-fit: cover;">
+      <div class="card-body">
+        <h5 class="card-title">${paquete.tituloEvento}</h5>
+        <p class="card-text">
+          <small>
+            ${paquete.descripcion.substring(0, 100)}...
+          </small>
+        </p>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-primary fw-bold">
+            $${parseFloat(paquete.costoPaquete).toLocaleString('es-MX')}
+          </span>
+          <button class="btn btn-primary btn-sm" 
+                  onclick="enviarPaqueteWhatsApp('${paqueteId}', '${telefonoProspecto}')">
+            Enviar por WhatsApp
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  return card;
+}
+
+// Función para enviar el paquete por WhatsApp
+async function enviarPaqueteWhatsApp(paqueteId, telefonoProspecto) {
+  try {
+    const aseName= localStorage.getItem('userName')
+    
+    // Formatear el número de teléfono (eliminar el + si existe)
+    const telefono = telefonoProspecto.replace('+', '');
+    
+    const message = encodeURIComponent(
+      `Hola, tu asesor: ${aseName}, te está invitando a que conozcas más información del paquete que solicitaste: https://jassocompany.com/paquete-detalle.html?id=${paqueteId}`
+    );
+    
+    // Abrir WhatsApp con mensaje pre-llenado
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${telefono}&text=${message}`;
+    window.open(whatsappUrl, '_blank');
+    
+    // Cerrar el modal después de enviar
+    const modal = bootstrap.Modal.getInstance(document.getElementById('paquetesModal'));
+    modal.hide();
+    
+    // Mostrar confirmación
+    mostrarAlerta('Paquete enviado correctamente', 'success');
+    
+  } catch (error) {
+    console.error("Error al enviar el paquete:", error);
+    mostrarAlerta('Error al enviar el paquete', 'error');
+  }
+}
+
+// Para usar el modal, llamar a:
+// mostrarModalPaquetes(telefonoProspecto);
 
 async function mostrarModalProspecto(prospecto, id, nombreAsesor) {
 
@@ -248,6 +555,8 @@ async function mostrarModalProspecto(prospecto, id, nombreAsesor) {
     prospecto.observacion || "Sin observaciones";
 
   prospectoActualId = id;
+
+
 
   // Fetch seguimiento data
   const seguimientoDoc = await db
@@ -464,6 +773,12 @@ if (modalAsesor) {
   };
 
 
+  const btnPaquetes= document.getElementById("btnPaquetes")
+  const btnPagos= document.getElementById("btnPagos")
+// En el botón de paquetes:
+btnPaquetes.onclick = () => mostrarModalPaquetes(prospecto.telefono_prospecto);
+
+btnPagos.onclick = () => mostrarModalPagos(prospecto);
 
  // Inicializar los botones de contacto
  inicializarBotonesContacto(prospecto, id);

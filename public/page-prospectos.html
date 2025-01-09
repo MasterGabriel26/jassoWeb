@@ -750,6 +750,362 @@ html, body {
 
 
 
+/* Estilos específicos para el modal de paquetes */
+#paquetesModal .modal-dialog {
+  max-width: 800px;
+  margin: 1.75rem auto;
+}
+
+#paquetesModal .modal-content {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+#paquetesModal .modal-header {
+  border-bottom: 1px solid #e9ecef;
+  padding: 0.75rem 1rem;
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+#paquetesModal .modal-title {
+  color: #2d3456;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+#paquetesModal .modal-body {
+  padding: 1rem;
+  max-height: 70vh; /* Altura máxima fija */
+  overflow-y: auto; /* Habilita el scroll */
+}
+
+#paquetesContainer .card {
+  transition: transform 0.2s ease-in-out;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+#paquetesContainer .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+#paquetesContainer .card-img-top {
+  height: 150px;
+  object-fit: cover;
+  border-bottom: 1px solid #e9ecef;
+}
+
+#paquetesContainer .card-body {
+  padding: 0.75rem;
+}
+
+#paquetesContainer .card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2d3456;
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
+
+#paquetesContainer .card-text {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+#paquetesContainer .text-primary {
+  color: #2d3456 !important;
+  font-size: 1rem;
+}
+
+#paquetesContainer .btn-primary {
+  background-color: #2d3456;
+  border-color: #2d3456;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+#paquetesContainer .btn-primary:hover {
+  background-color: #1e2330;
+  border-color: #1e2330;
+}
+
+/* Grid para 3 tarjetas por fila */
+#paquetesContainer .col-md-6 {
+  flex: 0 0 33.333333%;
+  max-width: 33.333333%;
+  padding: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #paquetesModal .modal-dialog {
+    max-width: 95%;
+    margin: 1rem auto;
+  }
+  
+  #paquetesModal .modal-body {
+    max-height: 60vh;
+  }
+  
+  #paquetesContainer .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 0.4rem;
+  }
+  
+  #paquetesContainer .card-img-top {
+    height: 130px;
+  }
+}
+
+@media (max-width: 576px) {
+  #paquetesContainer .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+/* Scrollbar customization */
+#paquetesModal .modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+#paquetesModal .modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+#paquetesModal .modal-body::-webkit-scrollbar-thumb {
+  background: #2d3456;
+  border-radius: 3px;
+}
+
+#paquetesModal .modal-body::-webkit-scrollbar-thumb:hover {
+  background: #1e2330;
+}
+
+
+
+
+
+
+
+/* Modal principal */
+#pagosModal .modal-dialog {
+  width: 450px !important;
+  max-width: 450px;
+  margin: 1.75rem auto;
+}
+
+#pagosModal .modal-content {
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  position: relative;
+  height: 500px;
+  background: #fff;
+}
+
+#pagosModal .modal-header {
+  background-color: #fff;
+  border-bottom: 1px solid #e9ecef;
+  padding: 1rem;
+}
+
+#pagosModal .modal-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2d3456;
+  margin: 0;
+}
+
+#pagosModal .modal-body {
+  padding: 1.5rem;
+  position: relative;
+}
+
+/* Contenedor de la tabla */
+#pagosModal .table-container {
+  height: 350px; /* Altura fija para la tabla */
+  width: 380px; /* Ancho fijo más pequeño que el modal */
+  margin: 0 auto; /* Centrar la tabla */
+  overflow-y: auto;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  background: #fff;
+}
+
+/* Estilos de la tabla */
+#pagosModal .table {
+  margin: 0;
+  width: 100%;
+  background: #fff;
+  font-size: 0.9rem;
+}
+
+#pagosModal .table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8f9fa;
+}
+
+#pagosModal .table th {
+  padding: 0.75rem;
+  font-weight: 600;
+  color: #2d3456;
+  background: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+}
+
+#pagosModal .table td {
+  padding: 0.75rem;
+  vertical-align: middle;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Ancho de columnas */
+#pagosModal .table th:nth-child(1),
+#pagosModal .table td:nth-child(1) {
+  width: 40%;
+}
+
+#pagosModal .table th:nth-child(2),
+#pagosModal .table td:nth-child(2) {
+  width: 40%;
+}
+
+#pagosModal .table th:nth-child(3),
+#pagosModal .table td:nth-child(3) {
+  width: 20%;
+  text-align: center;
+}
+
+/* Mensaje cuando no hay pagos */
+#pagosModal .no-payments {
+  padding: 2rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+#pagosModal .no-payments i {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 24px;
+}
+
+/* Botón flotante */
+.btn-add-payment {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: #2d3456;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-add-payment i {
+  font-size: 20px;
+  line-height: 45px;
+  width: 45px;
+  text-align: center;
+}
+
+.btn-add-payment:hover {
+  background-color: #1e2330;
+}
+
+/* Scrollbar */
+#pagosModal .table-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#pagosModal .table-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+#pagosModal .table-container::-webkit-scrollbar-thumb {
+  background: #2d3456;
+  border-radius: 3px;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  #pagosModal .modal-dialog {
+    width: 95% !important;
+    margin: 0.5rem auto;
+  }
+
+  #pagosModal .table-container {
+    width: 100%;
+    height: 300px;
+  }
+
+  #pagosModal .table {
+    font-size: 0.85rem;
+  }
+
+  #pagosModal .table th,
+  #pagosModal .table td {
+    padding: 0.5rem;
+  }
+}
+
+
+/* Botón flotante */
+.btn-add-payment {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: #2d3456;
+  color: white;
+  border: none;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  padding: 0; /* Elimina el padding */
+  display: flex;
+  align-items: center;     /* Centra verticalmente */
+  justify-content: center; /* Centra horizontalmente */
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Icono dentro del botón */
+.btn-add-payment i {
+  font-size: 20px;
+  display: flex;           /* Asegura que el icono se comporte como flex */
+  align-items: center;     /* Centra el icono verticalmente */
+  justify-content: center; /* Centra el icono horizontalmente */
+  width: auto;            /* Elimina el ancho fijo */
+  height: auto;           /* Elimina la altura fija */
+  line-height: 1;         /* Reset line-height */
+  margin: 0;              /* Elimina márgenes */
+  padding: 0;             /* Elimina padding */
+}
+
+.btn-add-payment:hover {
+  background-color: #1e2330;
+  transform: scale(1.05);
+}
+
 	</style>
 </head>
 
