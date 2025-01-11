@@ -898,34 +898,51 @@ html, body {
 
 
 
-
+/* Variables globales */
+:root {
+  --primary-color: #2d3456;
+  --secondary-color: #1e2330;
+  --border-color: #e9ecef;
+  --text-color: #2d3456;
+  --background-light: #f8f9fa;
+  --shadow: 0 0 20px rgba(0,0,0,0.1);
+  --transition: all 0.3s ease;
+}
 
 /* Modal principal */
 #pagosModal .modal-dialog {
-  width: 450px !important;
-  max-width: 450px;
+  width: 500px !important;
+  max-width: 500px;
   margin: 1.75rem auto;
 }
 
 #pagosModal .modal-content {
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
   position: relative;
-  height: 500px;
+  height: 600px;
   background: #fff;
+  border: none;
 }
 
 #pagosModal .modal-header {
-  background-color: #fff;
-  border-bottom: 1px solid #e9ecef;
-  padding: 1rem;
+  background-color: var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px 12px 0 0;
 }
 
 #pagosModal .modal-title {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 600;
-  color: #2d3456;
+  color: #fff;
   margin: 0;
+}
+
+#pagosModal .btn-close {
+  color: #fff;
+  opacity: 1;
+  filter: brightness(0) invert(1);
 }
 
 #pagosModal .modal-body {
@@ -935,13 +952,14 @@ html, body {
 
 /* Contenedor de la tabla */
 #pagosModal .table-container {
-  height: 350px; /* Altura fija para la tabla */
-  width: 380px; /* Ancho fijo más pequeño que el modal */
-  margin: 0 auto; /* Centrar la tabla */
+  height: 400px;
+  width: 100%;
+  margin: 0 auto;
   overflow-y: auto;
-  border: 1px solid #e9ecef;
-  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
 /* Estilos de la tabla */
@@ -949,99 +967,113 @@ html, body {
   margin: 0;
   width: 100%;
   background: #fff;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
 }
 
 #pagosModal .table thead {
   position: sticky;
   top: 0;
   z-index: 1;
-  background: #f8f9fa;
+  background: var(--primary-color);
 }
 
 #pagosModal .table th {
-  padding: 0.75rem;
+  padding: 1rem;
   font-weight: 600;
-  color: #2d3456;
-  background: #f8f9fa;
-  border-bottom: 2px solid #dee2e6;
+  color: #020202;
+  border: none;
 }
 
 #pagosModal .table td {
-  padding: 0.75rem;
+  padding: 0.875rem 1rem;
   vertical-align: middle;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* Ancho de columnas */
-#pagosModal .table th:nth-child(1),
-#pagosModal .table td:nth-child(1) {
-  width: 40%;
+#pagosModal .table tbody tr:hover {
+  background-color: rgba(45, 52, 86, 0.05);
 }
 
-#pagosModal .table th:nth-child(2),
-#pagosModal .table td:nth-child(2) {
-  width: 40%;
+/* Botones de acción */
+.action-buttons {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 1rem;
 }
 
-#pagosModal .table th:nth-child(3),
-#pagosModal .table td:nth-child(3) {
-  width: 20%;
-  text-align: center;
+.btn-add-payment {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
 }
 
-/* Mensaje cuando no hay pagos */
-#pagosModal .no-payments {
-  padding: 2rem;
+.btn-share {
+  background-color: #25D366;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+  box-shadow: 0 3px 6px rgba(37, 211, 102, 0.2);
+}
+
+.btn-share i {
+  font-size: 1.1rem;
+}
+
+/* Efectos hover */
+.btn-add-payment:hover {
+  transform: scale(1.05);
+  background-color: var(--secondary-color);
+}
+
+.btn-share:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);
+}
+
+/* Mensaje sin pagos */
+.no-payments {
+  padding: 3rem 1.5rem;
   text-align: center;
   color: #6c757d;
 }
 
-#pagosModal .no-payments i {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-size: 24px;
+.no-payments i {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  opacity: 0.5;
 }
 
-/* Botón flotante */
-.btn-add-payment {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background-color: #2d3456;
-  color: white;
-  border: none;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-add-payment i {
-  font-size: 20px;
-  line-height: 45px;
-  width: 45px;
-  text-align: center;
-}
-
-.btn-add-payment:hover {
-  background-color: #1e2330;
-}
-
-/* Scrollbar */
+/* Scrollbar personalizado */
 #pagosModal .table-container::-webkit-scrollbar {
   width: 6px;
 }
 
 #pagosModal .table-container::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--background-light);
+  border-radius: 3px;
 }
 
 #pagosModal .table-container::-webkit-scrollbar-thumb {
-  background: #2d3456;
+  background: var(--primary-color);
   border-radius: 3px;
 }
 
@@ -1052,60 +1084,270 @@ html, body {
     margin: 0.5rem auto;
   }
 
+  #pagosModal .modal-content {
+    height: 90vh;
+  }
+
   #pagosModal .table-container {
-    width: 100%;
-    height: 300px;
+    height: calc(90vh - 200px);
   }
 
-  #pagosModal .table {
-    font-size: 0.85rem;
-  }
-
-  #pagosModal .table th,
-  #pagosModal .table td {
-    padding: 0.5rem;
+  .action-buttons {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
   }
 }
 
 
-/* Botón flotante */
+/* Botón flotante de agregar */
 .btn-add-payment {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
-  background-color: #2d3456;
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16);
   padding: 0; /* Elimina el padding */
-  display: flex;
-  align-items: center;     /* Centra verticalmente */
-  justify-content: center; /* Centra horizontalmente */
+  position: relative; /* Para posicionamiento absoluto del ícono */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  display: flex; /* Usar flexbox */
+  align-items: center; /* Centrar verticalmente */
+  justify-content: center; /* Centrar horizontalmente */
 }
 
-/* Icono dentro del botón */
+/* Estilos específicos para el ícono */
 .btn-add-payment i {
   font-size: 20px;
-  display: flex;           /* Asegura que el icono se comporte como flex */
-  align-items: center;     /* Centra el icono verticalmente */
-  justify-content: center; /* Centra el icono horizontalmente */
-  width: auto;            /* Elimina el ancho fijo */
-  height: auto;           /* Elimina la altura fija */
-  line-height: 1;         /* Reset line-height */
-  margin: 0;              /* Elimina márgenes */
-  padding: 0;             /* Elimina padding */
+  line-height: 1; /* Resetear line-height */
+  width: auto; /* Eliminar ancho fijo */
+  height: auto; /* Eliminar altura fija */
+  margin: 0; /* Eliminar márgenes */
+  padding: 0; /* Eliminar padding */
+  position: absolute; /* Posicionamiento absoluto */
+  top: 50%; /* Posicionar al centro vertical */
+  left: 50%; /* Posicionar al centro horizontal */
+  transform: translate(-50%, -50%); /* Centrar perfectamente */
 }
 
+/* Efecto hover */
 .btn-add-payment:hover {
-  background-color: #1e2330;
+  background-color: var(--secondary-color);
   transform: scale(1.05);
 }
 
+/* Asegurar que el ícono no se mueva en hover */
+.btn-add-payment:hover i {
+  transform: translate(-50%, -50%); /* Mantener centrado en hover */
+}
+
+
+
+.btn-action-icon {
+    width: 32px;  /* Tamaño fijo del botón */
+    height: 32px; /* Mismo tamaño que el ancho para hacerlo cuadrado */
+    padding: 0;   /* Eliminar padding */
+    border: none; /* Eliminar borde */
+    border-radius: 50%; /* Hacer el botón circular */
+    background-color: transparent; /* Fondo transparente */
+    cursor: pointer;
+    position: relative; /* Para posicionamiento del ícono */
+    display: inline-flex; /* Usar flexbox */
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+    transition: all 0.2s ease; /* Transición suave para efectos */
+}
+
+.btn-action-icon i {
+    font-size: 14px; /* Tamaño del ícono */
+    line-height: 1; /* Resetear line-height */
+    display: block; /* Asegurar que el ícono sea un bloque */
+    margin: 0; /* Eliminar márgenes */
+}
+
+/* Efectos hover */
+.btn-action-icon:hover {
+    background-color: rgba(0, 0, 0, 0.05); /* Fondo sutil al hover */
+}
+
+/* Estilos específicos para cada tipo de botón si es necesario */
+#btnEditar {
+    color: #4a5568; /* Color para el ícono de editar */
+}
+
+#btnEditar:hover {
+    color: #2d3748; /* Color más oscuro al hover */
+}
+
+/* Para el botón de cerrar */
+.btn-action-icon[aria-label="Close"] {
+    color: #718096; /* Color para el ícono de cerrar */
+}
+
+.btn-action-icon[aria-label="Close"]:hover {
+    color: #4a5568; /* Color más oscuro al hover */
+}
+
+
+/* Contenedor principal de búsqueda */
+.search-container {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor de la caja de búsqueda */
+.search-box {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+/* Estilos compartidos para input y select */
+.search-input,
+.filter-select {
+    height: 45px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1e2330;
+    transition: all 0.2s ease;
+    background: #f9fafb;
+}
+
+/* Estilos específicos para el select de filtro */
+#filter-type {
+    width: 180px;
+    padding: 0 1rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236B7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-color: #ffffff;
+}
+
+/* Contenedor del input de búsqueda */
+.search-input-container {
+    position: relative;
+    flex: 1;
+}
+
+/* Input de búsqueda */
+#search-input {
+    width: 100%;
+    padding: 0 1rem 0 2.5rem;
+}
+
+/* Select para valores */
+#select-value {
+    flex: 1;
+    padding: 0 1rem;
+    background-color: #ffffff;
+}
+
+/* Icono de búsqueda */
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+/* Estados hover */
+.search-input:hover,
+.filter-select:hover {
+    border-color: #cbd5e0;
+    background-color: #ffffff;
+}
+
+/* Estados focus */
+.search-input:focus,
+.filter-select:focus {
+    border-color: #2d3456;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(45, 52, 86, 0.1);
+    outline: none;
+}
+
+/* Estilos para las opciones del select */
+.filter-select option {
+    padding: 8px;
+    font-size: 0.95rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .search-box {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    #filter-type {
+        width: 100%;
+    }
+
+    .search-input-container,
+    #select-value {
+        width: 100%;
+    }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .search-container {
+        padding: 0.75rem;
+    }
+
+    .search-input,
+    .filter-select {
+        height: 40px;
+        font-size: 0.9rem;
+    }
+
+    .search-icon {
+        font-size: 0.85rem;
+    }
+}
+
+/* Animaciones suaves */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.search-input-container,
+#select-value {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Mejoras visuales adicionales */
+.search-container {
+    background: linear-gradient(to right, #ffffff, #f9fafb);
+}
+
+.filter-select {
+    cursor: pointer;
+}
+
+/* Estilo para placeholder */
+.search-input::placeholder {
+    color: #9ca3af;
+    opacity: 0.8;
+}
+
+/* Efecto de transición suave para cambios */
+.search-box > * {
+    transition: all 0.3s ease;
+}
 	</style>
 </head>
 
@@ -1197,13 +1439,23 @@ html, body {
                                     <div class="search-section">
                                         <div class="search-container">
                                             <div class="search-box">
-                                                <i class="fas fa-search search-icon"></i>
-                                                <input type="text" id="search-input" class="search-input" placeholder="Buscar...">
-                                            </div>
-                                            <div class="filter-box">
                                                 <select id="filter-type" class="filter-select">
                                                     <option value="name">Nombre</option>
                                                     <option value="telefono_prospecto">Teléfono</option>
+                                                    <option value="lugar">Lugar</option>
+                                                    <option value="tipo_evento">Tipo de Evento</option>
+                                                    <option value="asesor">Asesor</option>
+                                                </select>
+                                                
+                                                <!-- Input para búsqueda por texto -->
+                                                <div id="text-search" class="search-input-container">
+                                                    <i class="fas fa-search search-icon"></i>
+                                                    <input type="text" id="search-input" class="search-input" placeholder="Buscar...">
+                                                </div>
+                                                
+                                                <!-- Select para búsqueda por lista -->
+                                                <select id="select-value" class="filter-select" style="display: none;">
+                                                    <!-- Se llenará dinámicamente -->
                                                 </select>
                                             </div>
                                         </div>

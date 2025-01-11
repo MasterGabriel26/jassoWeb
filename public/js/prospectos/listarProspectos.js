@@ -212,6 +212,7 @@ async function registrarLlamada(prospectoId, prospecto) {
 // Función principal para mostrar el modal de pagos
 // Función principal para mostrar el modal de pagos
 async function mostrarModalPagos(prospecto) {
+  prospectoActual=prospecto
   const modalHTML = `
     <div class="modal fade" id="pagosModal" tabindex="-1">
       <div class="modal-dialog">
@@ -235,10 +236,16 @@ async function mostrarModalPagos(prospecto) {
                 </tbody>
               </table>
             </div>
-          </div>
-          <button class="btn-add-payment" onclick="mostrarFormularioPago()">
-            <i class="fas fa-plus"></i>
-          </button>
+          </div> 
+          <div class="action-buttons">
+  <button class="btn-share" onclick="compartirPorWhatsApp()">
+    <i class="fab fa-whatsapp"></i>
+    Compartir
+  </button>
+  <button class="btn-add-payment" onclick="mostrarFormularioPago()">
+    <i class="fas fa-plus"></i>
+  </button>
+</div>
         </div>
       </div>
     </div>
@@ -377,6 +384,60 @@ function inicializarFormularioPago(prospecto) {
     }
   };
 }
+
+// Función para generar el mensaje formateado
+function generarMensajePagos(prospecto) {
+  const fecha = new Date().toLocaleDateString('es-MX');
+  const hora = new Date().toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit' });
+
+  let mensaje = `REGISTRO DE PAGOS\n`;
+  mensaje += `------------------\n\n`;
+  mensaje += `Fecha: ${fecha}\n`;
+  mensaje += `Hora: ${hora}\n`;
+  mensaje += `Cliente: ${prospecto.name}\n\n`;
+  mensaje += `DETALLE DE PAGOS:\n`;
+  mensaje += `------------------\n\n`;
+  
+  if (!prospecto.registro_de_pagos || prospecto.registro_de_pagos.length === 0) {
+    mensaje += "No hay pagos registrados\n";
+    return mensaje;
+  }
+
+  // Ordenar pagos por fecha (más reciente primero)
+  const pagosOrdenados = [...prospecto.registro_de_pagos].sort((a, b) => {
+    return new Date(b.fecha.split('/').reverse().join('-')) - 
+           new Date(a.fecha.split('/').reverse().join('-'));
+  });
+
+  let total = 0;
+  pagosOrdenados.forEach((pago, index) => {
+    mensaje += `Fecha: ${pago.fecha}\n`;
+    mensaje += `Monto: $${parseFloat(pago.monto).toLocaleString('es-MX')}\n`;
+    mensaje += `------------------\n`;
+    total += parseFloat(pago.monto);
+  });
+
+  mensaje += `\nRESUMEN:\n`;
+  mensaje += `------------------\n`;
+  mensaje += `Total de pagos: ${pagosOrdenados.length}\n`;
+  mensaje += `Monto total: $${total.toLocaleString('es-MX')}\n\n`;
+  mensaje += `------------------\n`;
+  mensaje += `Este es un registro automático de pagos.\n`;
+  mensaje += `Gracias por su preferencia.`;
+
+  return mensaje;
+}
+
+// Función para compartir por WhatsApp
+function compartirPorWhatsApp() {
+  const mensaje = generarMensajePagos(prospectoActual);
+  const mensajeCodificado = encodeURIComponent(mensaje);
+  const urlWhatsApp = `https://wa.me/?text=${mensajeCodificado}`;
+  window.open(urlWhatsApp, '_blank');
+}
+
+// Modificar la función mostrarModalPagos para guardar el prospecto actual
+let prospectoActual = null;
 
 
 // Función para eliminar un pago
@@ -3686,37 +3747,49 @@ document.getElementById("pasoSiguiente").addEventListener("click", () => {
 // Variables globales
 let lastVisible = null;
 let currentQuery = null;
-const pageSize = 20;
+const pageSize = 7;
 
 // Elementos del DOM
 const elements = {
-    prospectosLista: document.getElementById('prospectos-lista'),
-    searchInput: document.getElementById('search-input'),
-    filterType: document.getElementById('filter-type'),
-    tableBody: document.querySelector(".table-responsive")
+  prospectosLista: document.getElementById('prospectos-lista'),
+  filterType: document.getElementById('filter-type'),
+  textSearch: document.getElementById('text-search'),
+  searchInput: document.getElementById('search-input'),
+  selectValue: document.getElementById('select-value'),
+  tableBody: document.querySelector(".table-responsive")
 };
 
 // Inicialización cuando el DOM está cargado
 document.addEventListener("DOMContentLoaded", initializeApp);
 
 function initializeApp() {
-    setupSearchFunctionality();
-    setupScrollListener();
-    setupModalListeners();
-    loadInitialData();
+  setupSearchFunctionality();
+  setupScrollListener();
+  setupModalListeners();
+  loadInitialData();
 }
 
 // Configuración de la funcionalidad de búsqueda
 function setupSearchFunctionality() {
   let searchTimeout;
 
-  const updatePlaceholder = () => {
-      elements.searchInput.placeholder = `Buscar por ${elements.filterType.value === 'name' ? 'nombre' : 'teléfono'}...`;
+  const updateSearchInterface = () => {
+      const filterType = elements.filterType.value;
+      const isTextSearch = filterType === 'name' || filterType === 'telefono_prospecto';
+
+      elements.textSearch.style.display = isTextSearch ? 'flex' : 'none';
+      elements.selectValue.style.display = isTextSearch ? 'none' : 'flex';
+
+      if (isTextSearch) {
+          elements.searchInput.placeholder = `Buscar por ${filterType === 'name' ? 'nombre' : 'teléfono'}...`;
+      } else {
+          updateSelectOptions(filterType);
+      }
   };
 
-  const handleSearch = () => {
+  const handleTextSearch = () => {
       const searchValue = elements.searchInput.value.trim().toLowerCase();
-      const filterValue = elements.filterType.value;
+      const filterType = elements.filterType.value;
 
       if (searchValue.length < 3) {
           resetAndLoadProspectos();
@@ -3727,8 +3800,7 @@ function setupSearchFunctionality() {
       searchTimeout = setTimeout(async () => {
           let query = db.collection("prospectos");
 
-          if (filterValue === 'name') {
-              // Realizar una búsqueda más precisa
+          if (filterType === 'name') {
               const snapshot = await query.get();
               const results = snapshot.docs
                   .map(doc => ({
@@ -3736,12 +3808,11 @@ function setupSearchFunctionality() {
                       id: doc.id,
                       relevance: calculateRelevance(doc.data().name, searchValue)
                   }))
-                  .filter(doc => doc.relevance > 0) // Solo mantener resultados relevantes
-                  .sort((a, b) => b.relevance - a.relevance); // Ordenar por relevancia
+                  .filter(doc => doc.relevance > 0)
+                  .sort((a, b) => b.relevance - a.relevance);
 
-              // Mostrar resultados filtrados
               await mostrarResultadosFiltrados(results);
-          } else if (filterValue === 'telefono_prospecto') {
+          } else if (filterType === 'telefono_prospecto') {
               query = query
                   .orderBy("telefono_prospecto")
                   .startAt(searchValue)
@@ -3751,20 +3822,64 @@ function setupSearchFunctionality() {
       }, 300);
   };
 
-  // Event Listeners
-  elements.searchInput.addEventListener('input', handleSearch);
-  elements.searchInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handleSearch();
-  });
-  elements.filterType.addEventListener('change', () => {
-      updatePlaceholder();
-      if (elements.searchInput.value.trim()) handleSearch();
-  });
+  const handleSelectSearch = () => {
+      const filterType = elements.filterType.value;
+      const filterValue = elements.selectValue.value;
 
-  // Inicializar placeholder
-  updatePlaceholder();
+      if (!filterValue) {
+          resetAndLoadProspectos();
+          return;
+      }
+
+      let query = db.collection("prospectos");
+      query = query.where(filterType, "==", filterValue);
+      cargarProspectos(query);
+  };
+
+  function updateSelectOptions(filterType) {
+      elements.selectValue.innerHTML = '<option value="">Seleccione...</option>';
+
+      const collectionMap = {
+          'lugar': { collection: 'lugares', attribute: 'nombreLugar' },
+          'tipo_evento': { collection: 'eventos', attribute: 'evento' },
+          'asesor': { collection: 'usuarios', attribute: 'name' }
+      };
+
+      const config = collectionMap[filterType];
+      if (config) {
+          populateSelect('select-value', config.collection, config.attribute);
+      }
+  }
+
+  // Event Listeners
+  elements.filterType.addEventListener('change', updateSearchInterface);
+  elements.searchInput.addEventListener('input', handleTextSearch);
+  elements.searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleTextSearch();
+  });
+  elements.selectValue.addEventListener('change', handleSelectSearch);
+
+  // Inicializar interfaz
+  updateSearchInterface();
 }
 
+// Función para poblar los selects
+function populateSelect(selectId, collectionName, attribute) {
+  const select = document.getElementById(selectId);
+  db.collection(collectionName)
+      .get()
+      .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+              const option = document.createElement("option");
+              option.value = doc.id;
+              option.textContent = doc.data()[attribute];
+              select.appendChild(option);
+          });
+      })
+      .catch((error) => {
+          console.error("Error fetching data: ", error);
+      });
+}
 // Función para calcular la relevancia de un resultado
 function calculateRelevance(name, searchValue) {
   if (!name) return 0;

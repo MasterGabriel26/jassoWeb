@@ -78,7 +78,7 @@ function checkAdminStatus() {
         firebase.auth().onAuthStateChanged(function(user) {
             if (user) {
                 db.collection('users').doc(user.uid).get().then((doc) => {
-                    if (doc.exists && doc.data().role === 'admin') {
+                    if (doc.exists && doc.data().role === 'admin' ||doc.exists && doc.data().role === 'asesor'||doc.exists && doc.data().role === 'lider'  ) {
                         isAdmin = true;
                     }
                     resolve();
@@ -166,7 +166,10 @@ function cargarGaleria() {
 
         loaderContainer.classList.add('hidden');
 
-        if (isAdmin) {
+        const tipoUsuario= localStorage.getItem("userType")
+
+
+        if (tipoUsuario=='asesor'||tipoUsuario=='admin'||tipoUsuario=='lider') {
             const addImageBtn = document.getElementById('addImageBtn');
             if (addImageBtn) {
                 addImageBtn.style.display = 'block';
