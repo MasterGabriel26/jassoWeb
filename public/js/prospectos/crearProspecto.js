@@ -243,6 +243,9 @@ function populateSelect(selectId, collectionName, attribute) {
     });
 }
 
+
+
+
 let asesor; // Declarar la variable en un alcance superior
 let nombre;
 let lider;
@@ -530,6 +533,9 @@ async function generarProspecto() {
       await db.collection("prospectosMini").doc(id).set(prospectoMini);
       console.log("Prospecto mini guardado en Firebase");
 
+      await db.collection("contador").doc('wPc2ckyNQ069CQkbjy6h').update({
+        contador: firebase.firestore.FieldValue.increment(1)
+    });
     
     }
 

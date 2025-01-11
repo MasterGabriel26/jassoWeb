@@ -1348,6 +1348,56 @@ html, body {
 .search-box > * {
     transition: all 0.3s ease;
 }
+
+
+
+/* Estilo para el contador */
+.counter-badge {
+    background: linear-gradient(135deg, #2d3456 0%, #1e2330 100%);
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    margin-left: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.counter-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.counter-badge i {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+#total-prospectos {
+    font-weight: 600;
+}
+
+/* Animación para el contador */
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.counter-badge {
+    animation: fadeInRight 0.5s ease-out;
+}
+
+
+
 	</style>
 </head>
 
@@ -1430,7 +1480,13 @@ html, body {
 
             <main class="content">
                 <div class="container-fluid p-0">
-                    <h1 class="h3 mb-3">Prospectos</h1>
+                <div class="d-flex align-items-center mb-3">
+                    <h1 class="h3 mb-0">Prospectos</h1>
+                    <div class="counter-badge" id="counter-badge">
+                        <i class="fas fa-users"></i>
+                        <span id="total-prospectos">0</span>
+                    </div>
+                </div>
                     <div class="row">
                         <div class="col-12">
                           <div class="card">
@@ -1469,7 +1525,7 @@ html, body {
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                                <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
                                     <table class="table">
                                         <thead>
                                             <tr>

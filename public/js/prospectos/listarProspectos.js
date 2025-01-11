@@ -3751,134 +3751,163 @@ const pageSize = 7;
 
 // Elementos del DOM
 const elements = {
-  prospectosLista: document.getElementById('prospectos-lista'),
-  filterType: document.getElementById('filter-type'),
-  textSearch: document.getElementById('text-search'),
-  searchInput: document.getElementById('search-input'),
-  selectValue: document.getElementById('select-value'),
-  tableBody: document.querySelector(".table-responsive")
+    prospectosLista: document.getElementById('prospectos-lista'),
+    filterType: document.getElementById('filter-type'),
+    textSearch: document.getElementById('text-search'),
+    searchInput: document.getElementById('search-input'),
+    selectValue: document.getElementById('select-value'),
+    tableBody: document.querySelector(".table-responsive")
 };
 
 // Inicialización cuando el DOM está cargado
 document.addEventListener("DOMContentLoaded", initializeApp);
 
 function initializeApp() {
-  setupSearchFunctionality();
-  setupScrollListener();
-  setupModalListeners();
-  loadInitialData();
+    actualizarContadorProspectos()
+    setupSearchFunctionality();
+    setupScrollListener();
+    setupModalListeners();
+    loadInitialData();
 }
 
 // Configuración de la funcionalidad de búsqueda
 function setupSearchFunctionality() {
-  let searchTimeout;
+    let searchTimeout;
 
-  const updateSearchInterface = () => {
-      const filterType = elements.filterType.value;
-      const isTextSearch = filterType === 'name' || filterType === 'telefono_prospecto';
+    const updateSearchInterface = () => {
+        const filterType = elements.filterType.value;
+        const isTextSearch = filterType === 'name' || filterType === 'telefono_prospecto';
 
-      elements.textSearch.style.display = isTextSearch ? 'flex' : 'none';
-      elements.selectValue.style.display = isTextSearch ? 'none' : 'flex';
+        elements.textSearch.style.display = isTextSearch ? 'flex' : 'none';
+        elements.selectValue.style.display = isTextSearch ? 'none' : 'flex';
 
-      if (isTextSearch) {
-          elements.searchInput.placeholder = `Buscar por ${filterType === 'name' ? 'nombre' : 'teléfono'}...`;
-      } else {
-          updateSelectOptions(filterType);
-      }
-  };
+        if (isTextSearch) {
+            elements.searchInput.placeholder = `Buscar por ${filterType === 'name' ? 'nombre' : 'teléfono'}...`;
+            elements.searchInput.value = ''; // Limpiar input al cambiar
+        } else {
+            elements.selectValue.value = ''; // Limpiar select al cambiar
+            updateSelectOptions(filterType);
+        }
 
-  const handleTextSearch = () => {
-      const searchValue = elements.searchInput.value.trim().toLowerCase();
-      const filterType = elements.filterType.value;
+        // Resetear la búsqueda al cambiar el tipo
+        resetAndLoadProspectos();
+    };
 
-      if (searchValue.length < 3) {
-          resetAndLoadProspectos();
-          return;
-      }
+    const handleTextSearch = () => {
+        const searchValue = elements.searchInput.value.trim().toLowerCase();
+        const filterType = elements.filterType.value;
 
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(async () => {
-          let query = db.collection("prospectos");
+        if (searchValue.length < 3) {
+            resetAndLoadProspectos();
+            return;
+        }
 
-          if (filterType === 'name') {
-              const snapshot = await query.get();
-              const results = snapshot.docs
-                  .map(doc => ({
-                      ...doc.data(),
-                      id: doc.id,
-                      relevance: calculateRelevance(doc.data().name, searchValue)
-                  }))
-                  .filter(doc => doc.relevance > 0)
-                  .sort((a, b) => b.relevance - a.relevance);
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(async () => {
+            let query = db.collection("prospectos");
 
-              await mostrarResultadosFiltrados(results);
-          } else if (filterType === 'telefono_prospecto') {
-              query = query
-                  .orderBy("telefono_prospecto")
-                  .startAt(searchValue)
-                  .endAt(searchValue + "\uf8ff");
-              cargarProspectos(query);
-          }
-      }, 300);
-  };
+            if (filterType === 'name') {
+                // Búsqueda por nombre con relevancia
+                const snapshot = await query.get();
+                const results = snapshot.docs
+                    .map(doc => ({
+                        ...doc.data(),
+                        id: doc.id,
+                        relevance: calculateRelevance(doc.data().name, searchValue)
+                    }))
+                    .filter(doc => doc.relevance > 0)
+                    .sort((a, b) => b.relevance - a.relevance);
 
-  const handleSelectSearch = () => {
-      const filterType = elements.filterType.value;
-      const filterValue = elements.selectValue.value;
+                await mostrarResultadosFiltrados(results);
+            } else if (filterType === 'telefono_prospecto') {
+                // Búsqueda por teléfono
+                query = query
+                    .orderBy("telefono_prospecto")
+                    .startAt(searchValue)
+                    .endAt(searchValue + "\uf8ff");
+                cargarProspectos(query);
+            }
+        }, 300);
+    };
 
-      if (!filterValue) {
-          resetAndLoadProspectos();
-          return;
-      }
+    const handleSelectSearch = async () => {
+        const filterType = elements.filterType.value;
+        const filterValue = elements.selectValue.value;
 
-      let query = db.collection("prospectos");
-      query = query.where(filterType, "==", filterValue);
-      cargarProspectos(query);
-  };
+        if (!filterValue) {
+            resetAndLoadProspectos();
+            return;
+        }
 
-  function updateSelectOptions(filterType) {
-      elements.selectValue.innerHTML = '<option value="">Seleccione...</option>';
+        let query = db.collection("prospectos");
+        
+        switch (filterType) {
+            case 'lugar':
+                // Obtener el nombre del lugar
+                const lugarDoc = await db.collection('lugares').doc(filterValue).get();
+                if (lugarDoc.exists) {
+                    query = query.where("pregunta_por", "==", lugarDoc.data().nombreLugar);
+                }
+                break;
+            case 'tipo_evento':
+                // Obtener el nombre del evento
+                const eventoDoc = await db.collection('eventos').doc(filterValue).get();
+                if (eventoDoc.exists) {
+                    query = query.where("tipo_evento", "==", eventoDoc.data().evento);
+                }
+                break;
+            case 'asesor':
+                // Para asesor usamos directamente el ID
+                query = query.where("asesor", "==", filterValue);
+                break;
+        }
 
-      const collectionMap = {
-          'lugar': { collection: 'lugares', attribute: 'nombreLugar' },
-          'tipo_evento': { collection: 'eventos', attribute: 'evento' },
-          'asesor': { collection: 'usuarios', attribute: 'name' }
-      };
+        cargarProspectos(query);
+    };
 
-      const config = collectionMap[filterType];
-      if (config) {
-          populateSelect('select-value', config.collection, config.attribute);
-      }
-  }
+    function updateSelectOptions(filterType) {
+        elements.selectValue.innerHTML = '<option value="">Seleccione...</option>';
 
-  // Event Listeners
-  elements.filterType.addEventListener('change', updateSearchInterface);
-  elements.searchInput.addEventListener('input', handleTextSearch);
-  elements.searchInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') handleTextSearch();
-  });
-  elements.selectValue.addEventListener('change', handleSelectSearch);
+        const collectionMap = {
+            'lugar': { collection: 'lugares', attribute: 'nombreLugar' },
+            'tipo_evento': { collection: 'eventos', attribute: 'evento' },
+            'asesor': { collection: 'usuarios', attribute: 'name' }
+        };
 
-  // Inicializar interfaz
-  updateSearchInterface();
+        const config = collectionMap[filterType];
+        if (config) {
+            populateSelect('select-value', config.collection, config.attribute);
+        }
+    }
+
+    // Event Listeners
+    elements.filterType.addEventListener('change', updateSearchInterface);
+    elements.searchInput.addEventListener('input', handleTextSearch);
+    elements.searchInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleTextSearch();
+    });
+    elements.selectValue.addEventListener('change', handleSelectSearch);
+
+    // Inicializar interfaz
+    updateSearchInterface();
 }
 
 // Función para poblar los selects
 function populateSelect(selectId, collectionName, attribute) {
-  const select = document.getElementById(selectId);
-  db.collection(collectionName)
-      .get()
-      .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-              const option = document.createElement("option");
-              option.value = doc.id;
-              option.textContent = doc.data()[attribute];
-              select.appendChild(option);
-          });
-      })
-      .catch((error) => {
-          console.error("Error fetching data: ", error);
-      });
+    const select = document.getElementById(selectId);
+    db.collection(collectionName)
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                const option = document.createElement("option");
+                option.value = doc.id;
+                option.textContent = doc.data()[attribute];
+                select.appendChild(option);
+            });
+        })
+        .catch((error) => {
+            console.error("Error fetching data: ", error);
+        });
 }
 // Función para calcular la relevancia de un resultado
 function calculateRelevance(name, searchValue) {
@@ -3958,6 +3987,36 @@ function hideLoader() {
         elements.loader.style.display = 'none';
  
     }
+}
+
+
+async function actualizarContadorProspectos() {
+  try {
+      const contadorDoc = await db.collection("contador")
+          .where("nombreColeccion", "==", "prospectos")
+          .get();
+
+      if (!contadorDoc.empty) {
+          const contador = contadorDoc.docs[0].data().contador;
+          const elementoContador = document.getElementById('total-prospectos');
+          
+          // Animación del contador
+          const duracion = 1000; // 1 segundo
+          const incremento = contador / (duracion / 16); // 60 FPS
+          let valorActual = 0;
+
+          const animacion = setInterval(() => {
+              valorActual = Math.min(valorActual + incremento, contador);
+              elementoContador.textContent = Math.round(valorActual).toLocaleString();
+
+              if (valorActual >= contador) {
+                  clearInterval(animacion);
+              }
+          }, 16);
+      }
+  } catch (error) {
+      console.error("Error al obtener el contador:", error);
+  }
 }
 
 // Modificar la función cargarProspectos para manejar el loader
