@@ -436,10 +436,10 @@ async function generarProspecto() {
           // Agregar console.log para verificar el ID
     console.log("ID del prospecto a editar:",prospectoId);
 
-      await db.collection("prospectos").doc(prospectoId).update(updateData);
+      await db.collection("prospectos2").doc(prospectoId).update(updateData);
       console.log("Prospecto actualizado en Firebase");
     } else {
-      const id = db.collection("prospectos").doc().id;
+      const id = db.collection("prospectos2").doc().id;
       const currentTime = Date.now();
       const fechaEvento = fecha ? new Date(fecha).getTime() : null;
 
@@ -513,11 +513,11 @@ async function generarProspecto() {
         uid: asesor || null,
       };
 
-      await db.collection("prospectos").doc(id).set(prospectoData);
+      await db.collection("prospectos2").doc(id).set(prospectoData);
       console.log("Prospecto guardado en Firebase");
 
       // Guardar el seguimiento
-      await db.collection("seguimientoProspectos").doc(id).set(seguimientoData);
+      await db.collection("seguimientoProspectos2").doc(id).set(seguimientoData);
       console.log("Seguimiento guardado en Firebase");
 
       // Guardar el prospecto mini (si aún lo necesitas)
@@ -530,7 +530,7 @@ async function generarProspecto() {
         uid: asesor || null,
         creado_en: "web",
       };
-      await db.collection("prospectosMini").doc(id).set(prospectoMini);
+      await db.collection("prospectosMini2").doc(id).set(prospectoMini);
       console.log("Prospecto mini guardado en Firebase");
 
       await db.collection("contador").doc('wPc2ckyNQ069CQkbjy6h').update({

@@ -197,7 +197,7 @@ async function registrarLlamada(prospectoId, prospecto) {
     const numLlamadas = (prospecto.num_llamadas || 0) + 1;
 
     // Actualizar el documento del prospecto
-    await db.collection("prospectos").doc(prospectoId).update({
+    await db.collection("prospectos2").doc(prospectoId).update({
       num_llamadas: numLlamadas
     });
 
@@ -361,7 +361,7 @@ function inicializarFormularioPago(prospecto) {
       const nuevosPagos = [...(prospecto.registro_de_pagos || []), nuevoPago];
       
       // Actualizar en Firestore
-      await db.collection('prospectos').doc(prospectoActualId).update({
+      await db.collection('prospectos2').doc(prospectoActualId).update({
         registro_de_pagos: nuevosPagos
       });
 
@@ -445,13 +445,13 @@ async function eliminarPago(index) {
   if (!confirm('¿Está seguro de eliminar este pago?')) return;
 
   try {
-    const prospectoDoc = await db.collection('prospectos').doc(prospectoActualId).get();
+    const prospectoDoc = await db.collection('prospectos2').doc(prospectoActualId).get();
     const prospecto = prospectoDoc.data();
     
     const nuevosPagos = [...prospecto.registro_de_pagos];
     nuevosPagos.splice(index, 1);
     
-    await db.collection('prospectos').doc(prospectoActualId).update({
+    await db.collection('prospectos2').doc(prospectoActualId).update({
       registro_de_pagos: nuevosPagos
     });
 
@@ -621,7 +621,7 @@ async function mostrarModalProspecto(prospecto, id, nombreAsesor) {
 
   // Fetch seguimiento data
   const seguimientoDoc = await db
-    .collection("seguimientoProspectos")
+    .collection("seguimientoProspectos2")
     .doc(id)
     .get();
   console.log(seguimientoDoc);
@@ -705,12 +705,12 @@ if (!ultimoEditorId) {
 
                 try {
                     // Estadísticas
-                    const prospectosCount = await db.collection("prospectos")
+                    const prospectosCount = await db.collection("prospectos2")
                         .where("nombreUsuarioModificador", "array-contains", ultimoEditorId)
                         .get()
                         .then(snap => snap.size);
 
-                    const ventasCount = await db.collection("prospectos")
+                    const ventasCount = await db.collection("prospectos2")
                         .where("nombreUsuarioModificador", "array-contains", ultimoEditorId)
                         .where("estado", "==", "vendido")
                         .get()
@@ -791,12 +791,12 @@ if (modalAsesor) {
                     }
 
                     // Estadísticas
-                    const prospectosCount = await db.collection("prospectos")
+                    const prospectosCount = await db.collection("prospectos2")
                         .where("asesor", "==", prospecto.asesor)
                         .get()
                         .then(snap => snap.size);
 
-                    const ventasCount = await db.collection("prospectos")
+                    const ventasCount = await db.collection("prospectos2")
                         .where("asesor", "==", prospecto.asesor)
                         .where("estado", "==", "vendido")
                         .get()
@@ -825,7 +825,7 @@ if (modalAsesor) {
     );
     prospectoModal.hide();
     const seguimientoDoc = await db
-      .collection("seguimientoProspectos")
+      .collection("seguimientoProspectos2")
       .doc(id)
       .get();
     const seguimientoData = seguimientoDoc.exists ? seguimientoDoc.data() : {};
@@ -845,22 +845,9 @@ btnPagos.onclick = () => mostrarModalPagos(prospecto);
  inicializarBotonesContacto(prospecto, id);
 
 
-  function calcularPaso(porcentaje) {
-    if (porcentaje <= 7) return 2;
-    if (porcentaje <= 15) return 3;
-    if (porcentaje <= 23) return 4;
-    if (porcentaje <= 32) return 5;
-    if (porcentaje <= 38) return 6;
-    if (porcentaje <= 46) return 7;
-    if (porcentaje <= 54) return 8;
-    if (porcentaje <= 62) return 9;
-    if (porcentaje <= 69) return 10;
-    if (porcentaje <= 77) return 11;
-    if (porcentaje <= 85) return 12;
-    if (porcentaje <= 92) return 13;
-    return 13; // Para 93% o más
-  }
 
+
+  
   const modal = new bootstrap.Modal(document.getElementById("prospectoModal"), {
     backdrop: "static",
     keyboard: false,
@@ -935,7 +922,7 @@ async function mostrarPasoSeguimiento(paso) {
   }
   if (!paso) {
     const seguimientoDoc = await db
-      .collection("seguimientoProspectos")
+      .collection("seguimientoProspectos2")
       .doc(prospectoActualId)
       .get();
     const seguimientoData = seguimientoDoc.exists ? seguimientoDoc.data() : {};
@@ -947,7 +934,7 @@ async function mostrarPasoSeguimiento(paso) {
 
   // Fetch seguimiento data from the correct collection
   const seguimientoDoc = await db
-    .collection("seguimientoProspectos")
+    .collection("seguimientoProspectos2")
     .doc(prospectoActualId)
     .get();
   const seguimientoData = seguimientoDoc.exists ? seguimientoDoc.data() : {};
@@ -1726,7 +1713,7 @@ async function generarCredenciales() {
      updateProgress(20, 'Obteniendo información del usuario');
 
     const prospectoDoc = await db
-      .collection("prospectos")
+      .collection("prospectos2")
       .doc(prospectoActualId)
       .get();
     const prospectoData = prospectoDoc.data();
@@ -1803,17 +1790,17 @@ async function generarCredenciales() {
     // Guardar información en Firestore (seguimientoProspectos)
     try {
       await db
-        .collection("seguimientoProspectos")
+        .collection("seguimientoProspectos2")
         .doc(prospectoActualId)
         .update({
           paso13_asignacionUsuario: true,
           paso13_correo: email,
           paso13_pass: password,
         });
-      console.log("Información guardada en seguimientoProspectos");
+      console.log("Información guardada en seguimientoProspectos2");
     } catch (seguimientoError) {
       console.error(
-        "Error al guardar en seguimientoProspectos:",
+        "Error al guardar en seguimientoProspectos2:",
         seguimientoError
       );
       // Revertir la creación del usuario
@@ -1850,7 +1837,7 @@ async function generarCredenciales() {
       // Revertir la creación del usuario
       await userCredential.user.delete();
       await db
-        .collection("seguimientoProspectos")
+        .collection("seguimientoProspectos2")
         .doc(prospectoActualId)
         .update({
           paso13_asignacionUsuario: false,
@@ -1863,7 +1850,7 @@ async function generarCredenciales() {
 
     // Actualizar porcentaje
     try {
-      await db.collection("prospectos").doc(prospectoActualId).update({
+      await db.collection("prospectos2").doc(prospectoActualId).update({
         porcentaje: 100,
       });
       console.log("Porcentaje actualizado en la colección 'prospectos'");
@@ -2006,13 +1993,13 @@ async function guardarConfirmacionCita() {
     });
 
     // Guardar en Firestore
-    await db.collection("seguimientoProspectos").doc(prospectoActualId).update({
+    await db.collection("seguimientoProspectos2").doc(prospectoActualId).update({
       paso9_confirmacionCita: mensajeWhatsApp,
     });
 
     // Actualizar porcentaje
     const porcentaje = calcularPorcentaje(9);
-    await db.collection("prospectos").doc(prospectoActualId).update({
+    await db.collection("prospectos2").doc(prospectoActualId).update({
       porcentaje: porcentaje,
     });
 
@@ -2088,7 +2075,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 async function cargarArchivosAdjuntos() {
   try {
     const seguimientoDoc = await db
-      .collection("seguimientoProspectos")
+      .collection("seguimientoProspectos2")
       .doc(prospectoActualId)
       .get();
 
@@ -2435,7 +2422,7 @@ async function cargarPublicaciones(searchTerm = "") {
   try {
     // Obtener las publicaciones ya seleccionadas
     const seguimientoDoc = await db
-      .collection("seguimientoProspectos")
+      .collection("seguimientoProspectos2")
       .doc(prospectoActualId)
       .get();
     const seguimientoData = seguimientoDoc.exists ? seguimientoDoc.data() : {};
@@ -2715,13 +2702,13 @@ async function adjuntarArchivo(paso) {
         };
 
         await db
-          .collection("seguimientoProspectos")
+          .collection("seguimientoProspectos2")
           .doc(prospectoActualId)
           .update(updateData);
 
         // Actualizar porcentaje
         const porcentaje = calcularPorcentaje(paso);
-        await db.collection("prospectos").doc(prospectoActualId).update({
+        await db.collection("prospectos2").doc(prospectoActualId).update({
           porcentaje: porcentaje,
         });
 
@@ -3124,12 +3111,12 @@ async function agendarCita(paso) {
   
           updateData.categoria = formData.categoria;
   
-          await db.collection("seguimientoProspectos")
+          await db.collection("seguimientoProspectos2")
               .doc(prospectoActualId)
               .update(updateData);
   
           const porcentaje = calcularPorcentaje(paso);
-          await db.collection("prospectos")
+          await db.collection("prospectos2")
               .doc(prospectoActualId)
               .update({
                   porcentaje: porcentaje,
@@ -3332,20 +3319,20 @@ async function guardarDatosAnticipo() {
 
     // Actualizar Firestore
     const seguimientoDoc = await db
-      .collection("seguimientoProspectos")
+      .collection("seguimientoProspectos2")
       .doc(prospectoActualId)
       .get();
     const seguimientoData = seguimientoDoc.data();
 
     await db
-      .collection("seguimientoProspectos")
+      .collection("seguimientoProspectos2")
       .doc(prospectoActualId)
       .update({
         paso7_adjuntarRecibosAnticipoURL:
           firebase.firestore.FieldValue.arrayUnion(...downloadURLs),
       });
 
-    await db.collection("prospectos").doc(prospectoActualId).update({
+    await db.collection("prospectos2").doc(prospectoActualId).update({
       fecha_evento: fechaEvento,
       invitados: numPersonas,
       pregunta_por: lugar,
@@ -3358,7 +3345,7 @@ async function guardarDatosAnticipo() {
     ).length;
     const porcentaje = Math.round((completedSteps / 13) * 100);
 
-    await db.collection("prospectos").doc(prospectoActualId).update({
+    await db.collection("prospectos2").doc(prospectoActualId).update({
       porcentaje: porcentaje.toString(),
     });
 
@@ -3573,7 +3560,7 @@ async function cargarDatosAnticipo() {
   try {
     // Obtener el documento del prospecto
     const prospectoDoc = await db
-      .collection("prospectos")
+      .collection("prospectos2")
       .doc(prospectoActualId)
       .get();
 
@@ -3673,7 +3660,7 @@ async function verificarPaso5() {
 
     // Actualizar datos en Firestore
     await db
-      .collection("seguimientoProspectos")
+      .collection("seguimientoProspectos2")
       .doc(prospectoActualId)
       .set(updateData, { merge: true });
 
@@ -3681,7 +3668,7 @@ async function verificarPaso5() {
     await completarPaso(5);
 
     const porcentaje = calcularPorcentaje(5);
-    await db.collection("prospectos").doc(prospectoActualId).update({
+    await db.collection("prospectos2").doc(prospectoActualId).update({
       porcentaje: porcentaje,
     });
 
@@ -3804,7 +3791,7 @@ function setupSearchFunctionality() {
 
         clearTimeout(searchTimeout);
         searchTimeout = setTimeout(async () => {
-            let query = db.collection("prospectos");
+            let query = db.collection("prospectos2");
 
             if (filterType === 'name') {
                 // Búsqueda por nombre con relevancia
@@ -3839,7 +3826,7 @@ function setupSearchFunctionality() {
             return;
         }
 
-        let query = db.collection("prospectos");
+        let query = db.collection("prospectos2");
         
         switch (filterType) {
             case 'lugar':
@@ -4125,7 +4112,7 @@ function formatearFecha(timestamp) {
 function resetAndLoadProspectos() {
     elements.prospectosLista.innerHTML = "";
     lastVisible = null;
-    currentQuery = db.collection("prospectos").orderBy("fecha_create", "desc");
+    currentQuery = db.collection("prospectos2").orderBy("fecha_create", "desc");
     cargarProspectos(currentQuery);
 }
 
@@ -4205,7 +4192,7 @@ async function cargarDatosAsesorModal(asesorId) {
 // Funciones auxiliares para obtener estadísticas
 async function obtenerConteoProspectos(asesorId) {
   try {
-      const snapshot = await db.collection("prospectos")
+      const snapshot = await db.collection("prospectos2")
           .where("asesor", "==", asesorId)
           .get();
       return snapshot.size;
