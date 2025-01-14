@@ -1,7 +1,16 @@
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --accent-color: #4895ef;
+    --text-color: #2b2d42;
+    --light-gray: #8d99ae;
+    --background-color: #f8f9fa;
+}
+
 body {
-    font-family: 'Poppins', sans-serif;
-    background-color: #f0f2f5;
-    color: #333;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
     line-height: 1.6;
 }
 
@@ -11,114 +20,200 @@ body {
     padding: 2rem;
 }
 
+/* Estilos para encabezados */
 h1.h2 {
-    color: #2c3e50;
-    font-weight: 700;
+    color: var(--primary-color);
+    font-weight: 600;
     margin-bottom: 2rem;
-    text-align: center;
 }
 
+h2, h3 {
+    color: var(--secondary-color);
+    font-weight: 500;
+    margin: 1.5rem 0;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--accent-color);
+}
+
+/* Estilos para formularios */
 .form-label {
-    font-weight: 600;
-    color: #34495e;
+    font-weight: 500;
+    color: var(--text-color);
     margin-bottom: 0.5rem;
 }
 
 .form-control, .form-select {
-    border: 2px solid #e0e0e0;
-    border-radius: 8px;
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
     padding: 0.75rem 1rem;
     transition: all 0.3s ease;
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: #3498db;
-    box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
 }
 
-.form-select {
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23333' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-size: 12px;
+/* Estilos para botones */
+.btn-primary {
+    background-color: var(--primary-color);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all 0.3s ease;
 }
 
+.btn-primary:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(67, 97, 238, 0.2);
+}
+
+/* Estilos para Select2 */
+.select2-container--bootstrap-5 .select2-selection {
+    border: 2px solid #e9ecef;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.select2-container--bootstrap-5 .select2-selection:focus {
+    border-color: var(--accent-color);
+}
+
+/* Ocultar la vista previa predeterminada del input file */
+input[type="file"]::-webkit-file-upload-button {
+    visibility: hidden;
+}
+
+input[type="file"]::file-selector-button {
+    visibility: hidden;
+}
+
+input[type="file"] {
+    color: transparent;
+}
+
+/* Estilo personalizado para el botón de selección de archivo */
+input[type="file"]::before {
+    content: 'Seleccionar imágenes';
+    display: inline-block;
+    background: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 8px;
+}
+
+/* Contenedor de vista previa mejorado */
+.image-preview-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.preview-container {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.remove-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    z-index: 10;
+}
+
+.preview-hidden {
+    display: none;
+}
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.preview-container {
+    margin-top: 10px;
+}
+
+/* Estilos para campos específicos por categoría */
+[id^="campos"] {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+[id^="campos"]:hover {
+    transform: translateY(-5px);
+}
+
+/* Estilos para checkboxes */
 .form-check-input {
     width: 1.25em;
     height: 1.25em;
     margin-top: 0.25em;
-    vertical-align: top;
-    background-color: #fff;
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    border: 1px solid rgba(0, 0, 0, 0.25);
-    appearance: none;
-    color-adjust: exact;
-    transition: background-color 0.15s ease-in-out, background-position 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    border-radius: 0.25em;
+    transition: all 0.2s ease-in-out;
 }
 
 .form-check-input:checked {
-    background-color: #3498db;
-    border-color: #3498db;
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
 }
 
-.btn-primary {
-    background-color: #3498db;
-    border-color: #3498db;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 8px;
-    transition: all 0.3s ease;
-}
-
-.btn-primary:hover, .btn-primary:focus {
-    background-color: #2980b9;
-    border-color: #2980b9;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(52, 152, 219, 0.3);
-}
-
-#imagePreview {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 1rem;
-}
-
-#imagePreview img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 8px;
-    border: 2px solid #3498db;
-}
-
-.category-fields {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-top: 2rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.form-section {
-    margin-bottom: 2rem;
-}
-
-.form-section h3 {
-    color: #2c3e50;
-    font-size: 1.25rem;
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #3498db;
-}
-
+/* Responsive */
 @media (max-width: 768px) {
     .container-fluid {
         padding: 1rem;
+    }
+    
+    .row > * {
+        margin-bottom: 1rem;
     }
     
     .btn-primary {
@@ -126,30 +221,150 @@ h1.h2 {
     }
 }
 
-/* Animations */
+/* Animaciones */
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.category-fields {
+.form-control, .form-select, .btn-primary {
     animation: fadeIn 0.5s ease-out;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
+
+
+
+
+/* Estilos para contenedores de categorías específicas */
+.categoria-campos {
+    background: white;
+    border-radius: 15px;
+    margin: 2rem 0;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
 }
 
-::-webkit-scrollbar-track {
-    background: #f1f1f1;
+.categoria-container {
+    padding: 2rem;
 }
 
-::-webkit-scrollbar-thumb {
-    background: #3498db;
-    border-radius: 4px;
+.categoria-titulo {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--accent-color);
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #2980b9;
+/* Estilos para los grupos de campos */
+.categoria-campos .row {
+    margin-bottom: 1rem;
+}
+
+.categoria-campos .col-md-6 {
+    margin-bottom: 1.5rem;
+}
+
+/* Estilos para labels dentro de categorías */
+.categoria-campos .form-label {
+    color: var(--text-color);
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+/* Estilos para inputs y selects dentro de categorías */
+.categoria-campos .form-control,
+.categoria-campos .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+.categoria-campos .form-control:focus,
+.categoria-campos .form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.25rem rgba(67, 97, 238, 0.15);
+}
+
+/* Estilos para checkboxes dentro de categorías */
+.categoria-campos .form-check {
+    margin: 1rem 0;
+    padding-left: 2rem;
+}
+
+.categoria-campos .form-check-input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.25rem;
+    border: 2px solid #e9ecef;
+    transition: all 0.2s ease-in-out;
+}
+
+.categoria-campos .form-check-input:checked {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.categoria-campos .form-check-label {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+/* Estilos para inputs de tipo file */
+.categoria-campos input[type="file"] {
+    padding: 0.5rem;
+}
+
+/* Animación al mostrar campos */
+.categoria-campos {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .categoria-container {
+        padding: 1rem;
+    }
+    
+    .categoria-campos .col-md-6 {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Select2 personalizado para categorías */
+.categoria-campos .select2-container--bootstrap-5 .select2-selection {
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    min-height: 45px;
+}
+
+.categoria-campos .select2-container--bootstrap-5 .select2-selection--multiple {
+    padding: 5px;
+}
+
+.categoria-campos .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 15px;
+    padding: 2px 8px;
+    margin: 2px;
+}
+
+.categoria-campos .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+    color: white;
+    margin-right: 5px;
 }

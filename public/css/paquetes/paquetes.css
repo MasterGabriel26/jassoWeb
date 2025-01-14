@@ -242,3 +242,439 @@ body {
     background-color: #075E54;
     border-color: #075E54;
 }
+
+
+
+/* Estilos para el header y botón crear */
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.btn-create {
+    background: linear-gradient(45deg, #4c70af, #456ca0);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-create:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    color: white;
+    text-decoration: none;
+}
+
+.btn-create i {
+    font-size: 16px;
+}
+
+/* Estilos mejorados para el modal */
+.modal {
+    background-color: rgba(0, 0, 0, 0.85);
+}
+
+.modal-content {
+    background-color: white;
+    border-radius: 15px;
+    padding: 0;
+    max-width: 800px;
+    margin: 2% auto;
+    position: relative;
+}
+
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.3s ease;
+}
+
+.modal-close:hover {
+    color: #333;
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+/* Botones de acción en el modal */
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+}
+
+.btn-edit, .btn-delete {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-edit {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+}
+
+.btn-edit:hover {
+    background-color: #1976D2;
+    transform: translateY(-2px);
+}
+
+.btn-delete {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+}
+
+.btn-delete:hover {
+    background-color: #c82333;
+    transform: translateY(-2px);
+}
+
+/* Mejoras en las imágenes del modal */
+.modal-image-container {
+    position: relative;
+    margin: -20px -20px 20px -20px;
+}
+
+.modal-image {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+}
+
+.modal-thumbnails {
+    padding: 10px 0;
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+}
+
+.modal-thumbnail {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.modal-thumbnail:hover {
+    border-color: #2196F3;
+    transform: scale(1.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .header-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btn-create {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .modal-content {
+        margin: 5% 15px;
+        width: auto;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+    }
+
+    .btn-edit, .btn-delete {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+
+
+
+/* Estilos mejorados para el modal */
+.modal {
+    display: none;
+    position: fixed !important;
+    z-index: 1050 !important;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: #fff !important;
+    margin: 3% auto !important;
+    width: 90% !important;
+    max-width: 700px !important;
+    position: relative !important;
+    border-radius: 15px !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2) !important;
+    border: none !important;
+    overflow: hidden !important;
+}
+
+/* Header del modal */
+.modal-header {
+    background: #f8f9fa !important;
+    padding: 1.5rem !important;
+    border-bottom: 1px solid #edf2f7 !important;
+    position: relative !important;
+}
+
+.modal-title {
+    color: #2d3748 !important;
+    font-size: 1.5rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    padding-right: 2rem !important;
+}
+
+.close {
+    position: absolute !important;
+    right: 1.5rem !important;
+    top: 1.5rem !important;
+    background: none !important;
+    border: none !important;
+    font-size: 1.5rem !important;
+    color: #718096 !important;
+    cursor: pointer !important;
+    transition: color 0.2s ease !important;
+}
+
+.close:hover {
+    color: #2d3748 !important;
+}
+
+/* Contenido del modal */
+.modal-body {
+    padding: 1.5rem !important;
+    max-height: 70vh !important;
+    overflow-y: auto !important;
+}
+
+/* Contenedor de imagen principal */
+.modal-image-container {
+    position: relative !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    margin-bottom: 1rem !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.modal-image {
+    width: 100% !important;
+    height: 300px !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+/* Miniaturas */
+.modal-thumbnails {
+    display: flex !important;
+    gap: 0.5rem !important;
+    padding: 0.5rem 0 !important;
+    overflow-x: auto !important;
+    scrollbar-width: thin !important;
+    margin-bottom: 1rem !important;
+}
+
+.modal-thumbnail {
+    width: 60px !important;
+    height: 60px !important;
+    border-radius: 8px !important;
+    object-fit: cover !important;
+    cursor: pointer !important;
+    transition: transform 0.2s ease !important;
+    border: 2px solid transparent !important;
+}
+
+.modal-thumbnail:hover {
+    transform: scale(1.05) !important;
+    border-color: #3182ce !important;
+}
+
+/* Detalles */
+.modal-details {
+    background: #f8fafc !important;
+    padding: 1.25rem !important;
+    border-radius: 10px !important;
+    margin-bottom: 1rem !important;
+}
+
+.modal-details p {
+    margin-bottom: 0.75rem !important;
+    color: #4a5568 !important;
+    font-size: 0.95rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+.modal-details p strong {
+    color: #2d3748 !important;
+    min-width: 100px !important;
+}
+
+.modal-details pre {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+    color: #4a5568 !important;
+    background: #fff !important;
+    padding: 1rem !important;
+    border-radius: 8px !important;
+    border: 1px solid #e2e8f0 !important;
+    margin-top: 1rem !important;
+    white-space: pre-wrap !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+}
+
+/* Footer del modal */
+.modal-footer {
+    background: #f8f9fa !important;
+    padding: 1rem 1.5rem !important;
+    border-top: 1px solid #edf2f7 !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+}
+
+/* Botones de acción */
+.modal-actions {
+    display: flex !important;
+    gap: 0.75rem !important;
+    margin-top: 1rem !important;
+}
+
+.modal-actions button {
+    padding: 0.5rem 1rem !important;
+    border-radius: 6px !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    transition: all 0.2s ease !important;
+    border: none !important;
+}
+
+.btn-edit {
+    background: #3182ce !important;
+    color: white !important;
+}
+
+.btn-edit:hover {
+    background: #2c5282 !important;
+}
+
+.btn-delete {
+    background: #e53e3e !important;
+    color: white !important;
+}
+
+.btn-delete:hover {
+    background: #c53030 !important;
+}
+
+/* Estilos para el botón de WhatsApp */
+.whatsapp-share {
+    margin-top: 1rem !important;
+}
+
+.btn-whatsapp {
+    width: 100% !important;
+    background: #168a40 !important;
+    color: white !important;
+    padding: 0.75rem !important;
+    border-radius: 8px !important;
+    border: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.btn-whatsapp:hover {
+    background: #128C7E !important;
+}
+
+/* Scrollbar personalizado */
+.modal-body::-webkit-scrollbar {
+    width: 6px !important;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f1f1 !important;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #cbd5e0 !important;
+    border-radius: 3px !important;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #718096 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .modal-content {
+        margin: 5% 1rem !important;
+        width: calc(100% - 2rem) !important;
+    }
+
+    .modal-image {
+        height: 250px !important;
+    }
+
+    .modal-actions {
+        flex-direction: column !important;
+    }
+
+    .modal-actions button {
+        width: 100% !important;
+    }
+}

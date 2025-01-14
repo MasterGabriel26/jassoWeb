@@ -712,7 +712,7 @@ if (!ultimoEditorId) {
 
                     const ventasCount = await db.collection("prospectos2")
                         .where("nombreUsuarioModificador", "array-contains", ultimoEditorId)
-                        .where("estado", "==", "vendido")
+                        .where("status", "==", "VENTA_CONFIRMADA")
                         .get()
                         .then(snap => snap.size);
 
@@ -798,7 +798,7 @@ if (modalAsesor) {
 
                     const ventasCount = await db.collection("prospectos2")
                         .where("asesor", "==", prospecto.asesor)
-                        .where("estado", "==", "vendido")
+                        .where("status", "==", "VENTA_CONFIRMADA")
                         .get()
                         .then(snap => snap.size);
 
@@ -3749,6 +3749,9 @@ const elements = {
 // Inicialización cuando el DOM está cargado
 document.addEventListener("DOMContentLoaded", initializeApp);
 
+
+
+
 function initializeApp() {
     actualizarContadorProspectos()
     setupSearchFunctionality();
@@ -4008,8 +4011,13 @@ async function actualizarContadorProspectos() {
 
 // Modificar la función cargarProspectos para manejar el loader
 async function cargarProspectos(query) {
+    if (isLoading) return;
+    
+    isLoading = true;
     showLoader();
+    
     try {
+        console.log('Iniciando carga de prospectos');
         const snapshot = await query.limit(pageSize).get();
         
         if (snapshot.empty) {
@@ -4017,8 +4025,14 @@ async function cargarProspectos(query) {
             return;
         }
 
+        // Limpiar explícitamente la tabla
+        elements.prospectosLista.innerHTML = "";
+        
+        // Log para debugging
+        console.log(`Número de documentos recuperados: ${snapshot.docs.length}`);
+        
         currentQuery = query;
-        await actualizarTabla(snapshot.docs);
+        await actualizarTabla(snapshot.docs, false);
         loaderContainer.classList.add('hidden');
         lastVisible = snapshot.docs[snapshot.docs.length - 1];
        
@@ -4026,6 +4040,7 @@ async function cargarProspectos(query) {
         console.error("Error al cargar prospectos:", error);
         elements.prospectosLista.innerHTML = '<tr><td colspan="7" class="text-center">Error al cargar los datos</td></tr>';
     } finally {
+        isLoading = false;
         hideLoader();
     }
 }
@@ -4056,13 +4071,23 @@ async function cargarMasProspectos() {
 
 // Asegurarse de que actualizarTabla sea async
 async function actualizarTabla(docs, append = false) {
-  if (!append) elements.prospectosLista.innerHTML = "";
-
+  // Asegurarse de limpiar la tabla si no es append
+  if (!append) {
+      elements.prospectosLista.innerHTML = "";
+  }
+  
+  // Crear un Set para trackear IDs únicos
+  const addedIds = new Set();
+  
   for (const doc of docs) {
-      const prospecto = doc.data();
-      const nombreAsesor = await obtenerNombreAsesor(prospecto.asesor);
-      const row = crearFilaProspecto(prospecto, doc.id, nombreAsesor);
-      elements.prospectosLista.appendChild(row);
+      // Verificar si este documento ya fue agregado
+      if (!addedIds.has(doc.id)) {
+          const prospecto = doc.data();
+          const nombreAsesor = await obtenerNombreAsesor(prospecto.asesor);
+          const row = crearFilaProspecto(prospecto, doc.id, nombreAsesor);
+          elements.prospectosLista.appendChild(row);
+          addedIds.add(doc.id);
+      }
   }
 }
 
@@ -4180,9 +4205,25 @@ async function cargarDatosAsesorModal(asesorId) {
           // Obtener estadísticas (ejemplo)
           const prospectosCount = await obtenerConteoProspectos(asesorId);
           const ventasCount = await obtenerConteoVentas(asesorId);
+
+          
           
           profileCard.querySelector('.prospectos-count').textContent = prospectosCount;
-          profileCard.querySelector('.ventas-count').textContent = ventasCount;
+          
+          const ventasElement = profileCard.querySelector('.ventas-count');
+
+          if (ventasElement) {
+            ventasElement.textContent = ventasCount;
+        } else {
+            console.error('No se encontró el elemento .ventas-count');
+        }
+
+// Verificar los datos actualizados
+console.log('Datos actualizados en la UI:', {
+  prospectos: prospectosCount,
+  ventas: ventasCount
+});
+          
       }
   } catch (error) {
       console.error("Error al cargar datos del asesor:", error);
@@ -4203,6 +4244,26 @@ async function obtenerConteoProspectos(asesorId) {
 }
 
 async function obtenerConteoVentas(asesorId) {
-  // Implementar según tu lógica de negocio
-  return 0;
+  try {
+      console.log('Buscando ventas para asesor:', asesorId);
+      
+      const snapshot = await db.collection("prospectos2")
+          .where("asesor", "==", asesorId)
+          .where("status", "==", "VENTA_CONFIRMADA")
+          .get();
+
+      console.log('Snapshot recibido:', snapshot);
+      console.log('Número de documentos:', snapshot.size);
+      
+      // Veamos los documentos individualmente
+      snapshot.forEach(doc => {
+          console.log('Documento encontrado:', doc.id, doc.data());
+      });
+
+      return snapshot.size;
+  } catch (error) {
+      console.error("Error al obtener conteo de ventas:", error);
+      console.error("Error completo:", error.message);
+      return 0;
+  }
 }
