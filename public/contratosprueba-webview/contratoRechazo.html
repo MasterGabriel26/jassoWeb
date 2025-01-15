@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulario de Evento</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <link rel="stylesheet" href="styleContrato.css" />
+
+    <style>
+
+      /* Add these styles to your existing CSS file */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+#okButton {
+  display: block;
+  margin: 20px auto 0;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#okButton:hover {
+  background-color: #0056b3;
+}
+    </style>
+  </head>
+  <body>
+
+    <div> <a id="btn-atras" href=""><button>Volver atras</button></a></div>
+    <form id="eventoForm">
+      <div class="form-group">
+      
+       
+      </div>
+
+      <div class="card">
+        <div class="card-title">Datos del Cliente</div>
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre" required />
+        </div>
+        <div class="form-group">
+          <label for="ciudad">Ciudad</label>
+          <input type="text" id="ciudad" name="ciudad" required />
+        </div>
+        <div class="form-group">
+          <label for="domicilio">Domicilio</label>
+          <input type="text" id="domicilio" name="domicilio" required />
+        </div>
+        <div class="form-group">
+          <label for="cp">Código Postal</label>
+          <input type="text" id="cp" name="cp" required />
+        </div>
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input type="tel" id="telefono" name="telefono" required />
+        </div>
+        <div class="form-group">
+          <label for="celular">Celular</label>
+          <input type="tel" id="celular" name="celular" required />
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Datos del Evento</div>
+        <div class="form-group">
+          <label for="tipoEvento">Tipo de Evento</label>
+          <select id="tipoEvento" name="tipoEvento" required>
+            <option value="">Seleccione un evento</option>
+           
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="fecha">Fecha</label>
+          <input type="date" id="fecha" name="fecha" required />
+        </div>
+        <div class="form-group">
+          <label for="lugarEvento">Lugar</label>
+          <select id="lugarEvento" name="lugarEvento" required>
+              <option value="">Seleccione un lugar</option>
+              <!-- Options will be populated dynamically -->
+          </select>
+      </div>
+        <div class="form-group">
+          <label for="horario">Horario</label>
+          <input type="time" id="horario" name="horario" required />
+        </div>
+      </div>
+
+      <div class="checkbox-group">
+        <input type="checkbox" id="misaCheck" name="misaCheck" />
+        <label for="misaCheck">Misa (Opcional)</label>
+      </div>
+
+      <div id="misaDetails" class="card" style="display: none;">
+        <div class="card-title">Datos de la Misa</div>
+        <div class="form-group">
+            <label for="lugarMisa">Lugar</label>
+            <select id="lugarMisa" name="lugarMisa">
+                <option value="">Seleccione un lugar</option>
+              
+            </select>
+        </div>
+        <div class="form-group">
+          <label for="direccionMisa">Dirección</label>
+          <input type="text" id="direccionMisa" name="direccionMisa" />
+        </div>
+        <div class="form-group">
+          <label for="horarioMisa">Horario</label>
+          <input type="time" id="horarioMisa" name="horarioMisa" />
+        </div>
+        <div class="form-group">
+          <label for="horaCivil">Hora Civil</label>
+          <input type="time" id="horaCivil" name="horaCivil" />
+        </div>
+      </div>
+      <!-- Sección de Productos y/o Servicios Contratados -->
+      <div class="card">
+        <div class="card-title">Productos y/o servicios contratados</div>
+        <table id="productosTable">
+          <thead>
+            <tr>
+              <th>Servicios</th>
+              <th>Cantidad</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input type="text" name="servicio[]" placeholder="Servicio" />
+              </td>
+              <td>
+                <input type="number" name="cantidad[]" placeholder="Cantidad" />
+              </td>
+              <td>
+                <input
+                  type="text"
+                  name="descripcion[]"
+                  placeholder="Descripción"
+                />
+              </td>
+              <td>
+                <input type="number" name="precio[]" placeholder="Precio" />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <button type="button" onclick="agregarFila()">
+          Añadir Servicio/Producto
+        </button>
+      </div>
+
+
+      <div class="card">
+        <div class="card-title">Firmas</div>
+        <button type="button" id="firmaAsesorBtn">Firma del Asesor</button>
+      </div>
+
+      <button type="submit">Enviar a revision</button>
+    </form>
+
+
+    <div id="rejectionModal" class="modal">
+      <div class="modal-content">
+        <h2>Razón del Rechazo</h2>
+        <p id="rejectionReason"></p>
+        <button id="okButton">OK</button>
+      </div>
+    </div>
+    
+
+    <!-- Contenedor para la firma del cliente fuera del modal -->
+    <div id="firmaAsesorContainer" style="display: none">
+      <canvas id="firmaAsesorCanvasClone" width="300" height="150"></canvas>
+    </div>
+
+ 
+
+    <div id="firmaAsesorModal" class="modal">
+      <div class="modal-content">
+          <span class="close">&times;</span>
+          <h2>Firma del Asesor</h2>
+          <canvas id="firmaAsesorCanvas" width="300" height="150"></canvas>
+          <hr>
+          <button id="guardarFirmaAsesor">Guardar Firma</button>
+      </div>
+  </div>
+
+  
+    <script src="contratoRechazo.js"></script>
+  </body>
+</html>

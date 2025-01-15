@@ -1,0 +1,2184 @@
+/* Modal Base Styles */
+.modal-content {
+    border: none;
+    border-radius: 24px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    background: #ffffff;
+}
+
+.modal-header {
+    padding: 24px 32px;
+    border: none;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    position: relative;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    letter-spacing: -0.02em;
+}
+
+.modal-body {
+    padding: 32px;
+    background: linear-gradient(to bottom, #ffffff, #f8fafc);
+}
+
+.modal-footer {
+    padding: 24px 32px;
+    border-top: 1px solid #f1f5f9;
+    background-color: #ffffff;
+    border-bottom-left-radius: 24px;
+    border-bottom-right-radius: 24px;
+}
+
+/* Botones y Acciones */
+.btn-action {
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    background: #0f172a;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-action:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(15, 23, 42, 0.15);
+    background: #1e293b;
+}
+
+.btn-action:active {
+    transform: translateY(0);
+}
+
+/* Navegación por pasos */
+.step-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 16px;
+}
+
+.step-button {
+    padding: 10px 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background-color: white;
+    color: #0f172a;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.step-button:hover:not(:disabled) {
+    background: #0f172a;
+    color: white;
+    border-color: #0f172a;
+}
+
+.step-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.step-progress {
+    padding: 8px 16px;
+    background: #f1f5f9;
+    border-radius: 10px;
+    font-weight: 500;
+    color: #0f172a;
+    font-size: 0.9rem;
+}
+
+/* Efectos y Animaciones */
+.modal {
+    backdrop-filter: blur(8px);
+    background-color: rgba(15, 23, 42, 0.4);
+}
+
+.modal.fade .modal-content {
+    transform: scale(0.95) translateY(-10px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal.show .modal-content {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+}
+
+/* Scrollbar personalizado */
+.modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Efectos de hover y focus */
+.form-control:focus,
+.btn:focus {
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
+    outline: none;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    /* Centrado horizontal para todos los modales */
+    .modal-dialog {
+        margin: 0 auto !important;
+        width: 95% !important; /* Dar un pequeño margen en los lados */
+        max-width: 95% !important;
+    }
+
+    /* Específico para el modal de prospecto */
+    #prospectoModal .modal-dialog {
+        margin: 10px auto !important;
+        width: 90% !important;
+        max-width: 400px !important; /* Mantener el ancho máximo original */
+    }
+
+    /* Específico para el modal de seguimiento */
+    #seguimientoModal .modal-dialog {
+        margin: 10px auto !important;
+        width: 95% !important;
+    }
+
+    /* Específico para el modal de crear prospecto */
+    #crearProspectoModal .modal-dialog {
+        margin: 10px auto !important;
+        width: 95% !important;
+    }
+
+    /* Asegurar que el contenido no toque los bordes */
+    .modal-content {
+        border-radius: 16px; /* Restaurar los bordes redondeados */
+        max-height: 95vh; /* Dar un pequeño margen arriba y abajo */
+        margin: 10px 0; /* Pequeño margen vertical */
+    }
+}
+
+/* Para pantallas muy pequeñas */
+@media (max-width: 576px) {
+    .modal-dialog {
+        width: 92% !important;
+        margin: 8px auto !important;
+    }
+}
+
+/* Glass effect para elementos específicos */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+
+
+
+/*Esto estaba en el html*/
+
+
+.modal-header {
+    background-color: #1a2942 !important;
+    color: white !important;
+}
+.modal-title {
+    color: white !important;
+    font-size: 1.2rem;
+}
+.modal-title small {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+.btn-close-white {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.paso-completado {
+position: relative;
+}
+
+.paso-completado::after {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234CAF50"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>') center/50% no-repeat;
+background-color: rgba(255, 255, 255, 0.9);
+z-index: 1;
+}
+
+.btn-action {
+min-width: 120px;
+border-radius: 20px;
+}
+/* Animaciones */
+@keyframes modalFadeIn {
+from {
+opacity: 0;
+transform: scale(0.95);
+}
+to {
+opacity: 1;
+transform: scale(1);
+}
+}
+
+@keyframes slideInRight {
+from {
+opacity: 0;
+transform: translateX(20px);
+}
+to {
+opacity: 1;
+transform: translateX(0);
+}
+}
+
+#crearProspectoModal .modal-dialog {
+max-width: 850px;
+margin: 2rem auto;
+height: auto;
+animation: modalFadeIn 0.3s ease-out;
+}
+
+#crearProspectoModal .modal-content {
+display: flex;
+flex-direction: row;
+border: none;
+border-radius: 20px;
+overflow: hidden;
+max-height: 80vh;
+box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+#crearProspectoModal .modal-left {
+background-color: rgb(82, 91, 98);
+padding: 30px;
+width: 45%;
+color: white;
+display: flex;
+flex-direction: column;
+gap: 20px;
+}
+
+#crearProspectoModal .modal-right {
+background-color: white;
+padding: 30px;
+width: 55%;
+position: relative;
+animation: slideInRight 0.4s ease-out;
+}
+
+#crearProspectoModal h1 {
+color: white;
+font-size: 2.8rem;
+font-weight: 700;
+margin-bottom: 30px;
+line-height: 1.2;
+}
+
+#crearProspectoModal .form-group {
+margin-bottom: 20px;
+}
+
+#crearProspectoModal label {
+display: block;
+margin-bottom: 8px;
+font-weight: 500;
+font-size: 0.95rem;
+}
+
+#crearProspectoModal .form-control,
+#crearProspectoModal .form-select {
+border-radius: 12px;
+padding: 12px 15px;
+border: 1px solid #e0e0e0;
+width: 100%;
+background-color: transparent;
+font-size: 0.95rem;
+height: auto;
+}
+
+#crearProspectoModal .modal-left .form-control,
+#crearProspectoModal .modal-left .form-select {
+background-color: rgba(255, 255, 255, 0.1);
+border: 2px solid rgba(255, 255, 255, 0.2);
+color: white;
+}
+
+#crearProspectoModal .form-row {
+display: flex;
+gap: 15px;
+margin-bottom: 20px;
+}
+
+#crearProspectoModal .form-row .form-group {
+flex: 1;
+margin-bottom: 0;
+}
+
+#crearProspectoModal textarea {
+min-height: 100px;
+resize: none;
+}
+
+#crearProspectoModal .close-button {
+position: absolute;
+top: 15px;
+right: 15px;
+background: none;
+border: none;
+font-size: 24px;
+cursor: pointer;
+color: #333;
+padding: 5px;
+line-height: 1;
+transition: transform 0.2s ease;
+}
+
+#crearProspectoModal .close-button:hover {
+transform: scale(1.1);
+}
+
+#crearProspectoModal .crear-prospecto-btn {
+width: 100%;
+padding: 12px;
+background-color: #1a2234;
+color: white;
+border: none;
+border-radius: 12px;
+margin-top: 20px;
+cursor: pointer;
+font-weight: 500;
+font-size: 0.95rem;
+transition: all 0.3s ease;
+}
+
+#crearProspectoModal .crear-prospecto-btn:hover {
+background-color: #2d3456;
+transform: translateY(-2px);
+}
+
+/* Placeholders */
+#crearProspectoModal .modal-left input::placeholder {
+color: rgba(255, 255, 255, 0.6);
+}
+
+#crearProspectoModal .modal-right input::placeholder {
+color: #999;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    #crearProspectoModal .modal-dialog {
+        max-width: 90%;
+        margin: 1rem auto;
+        padding: 0 15px; /* Agregar padding para evitar que se pegue a los bordes */
+    }
+}
+
+@media (max-width: 768px) {
+    #crearProspectoModal .modal-dialog {
+        margin: 0;
+        max-width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    #crearProspectoModal .modal-content {
+        flex-direction: column;
+        height: 100vh;
+        border-radius: 0;
+        overflow-y: auto;
+    }
+
+    #crearProspectoModal .modal-left {
+        width: 100%;
+        padding: 20px;
+        padding-top: 50px; /* Espacio para el botón de cerrar */
+        position: relative;
+    }
+
+    #crearProspectoModal .modal-right {
+        width: 100%;
+        padding: 20px;
+        padding-bottom: 30px;
+    }
+
+    #crearProspectoModal h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+    }
+
+    #crearProspectoModal .close-button {
+        position: fixed; /* Fijar el botón */
+        top: 10px;
+        right: 10px;
+        z-index: 1050;
+        background: rgba(255, 255, 255, 0.2);
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 20px;
+    }
+
+    #crearProspectoModal .form-row {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    #crearProspectoModal .form-group {
+        margin-bottom: 15px;
+    }
+
+    #crearProspectoModal .form-control,
+    #crearProspectoModal .form-select {
+        padding: 12px;
+        font-size: 16px; /* Prevenir zoom en iOS */
+    }
+
+    #crearProspectoModal textarea {
+        min-height: 80px;
+    }
+
+    #crearProspectoModal .crear-prospecto-btn {
+        padding: 15px;
+        margin-top: 15px;
+        font-size: 16px;
+    }
+
+    /* Mejorar el scroll */
+    #crearProspectoModal .modal-content {
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* Ajustes para pantallas muy pequeñas */
+    @media (max-height: 600px) {
+        #crearProspectoModal .modal-content {
+            padding-bottom: 20px;
+        }
+
+        #crearProspectoModal .form-group {
+            margin-bottom: 10px;
+        }
+
+        #crearProspectoModal h1 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+    }
+}
+
+/* Asegurar que el modal ocupe toda la pantalla en móvil */
+@media (max-width: 768px) {
+    .modal-open .modal {
+        padding: 0 !important;
+    }
+
+    #crearProspectoModal {
+        padding: 0 !important;
+    }
+}
+
+/* Mejorar la transición del modal en móvil */
+@media (max-width: 768px) {
+    #crearProspectoModal.fade .modal-dialog {
+        transform: translate(0, 100%);
+        transition: transform 0.3s ease-out;
+    }
+
+    #crearProspectoModal.show .modal-dialog {
+        transform: none;
+    }
+}
+
+/* Mejoras visuales */
+#crearProspectoModal .form-control:focus,
+#crearProspectoModal .form-select:focus {
+box-shadow: 0 0 0 3px rgba(26, 34, 52, 0.1);
+border-color: #1a2234;
+outline: none;
+}
+
+#crearProspectoModal .modal-left .form-control:focus,
+#crearProspectoModal .modal-left .form-select:focus {
+border-color: rgba(255, 255, 255, 0.5);
+box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+/* Scrollbar personalizado */
+#crearProspectoModal .modal-content::-webkit-scrollbar {
+width: 8px;
+}
+
+#crearProspectoModal .modal-content::-webkit-scrollbar-track {
+background: #f1f1f1;
+border-radius: 4px;
+}
+
+#crearProspectoModal .modal-content::-webkit-scrollbar-thumb {
+background: #888;
+border-radius: 4px;
+}
+
+#crearProspectoModal .modal-content::-webkit-scrollbar-thumb:hover {
+background: #555;
+}
+
+#crearProspectoModal #referencia {
+color: white;
+background-color: rgba(255, 255, 255, 0.1);
+border: 2px solid rgba(255, 255, 255, 0.2);
+border-radius: 12px;
+padding: 12px 15px;
+width: 100%;
+appearance: none; /* Elimina el estilo por defecto del select */
+cursor: pointer;
+}
+
+#crearProspectoModal #referencia:focus {
+border-color: rgba(255, 255, 255, 0.5);
+box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+outline: none;
+}
+
+/* Estilo para el hover */
+#crearProspectoModal #referencia:hover {
+border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Asegurarse de que el texto del placeholder también sea blanco */
+#crearProspectoModal #referencia:invalid {
+color: rgba(255, 255, 255, 0.6);
+}
+
+/* Estilo para cuando el select está abierto */
+#crearProspectoModal #referencia:focus option {
+color: black;
+background-color: white;
+}
+
+/* Estilo para el hover en las opciones */
+#crearProspectoModal #referencia option:hover {
+background-color: #f8f9fa;
+}
+
+
+
+
+#prospectoModal .modal-dialog {
+max-width: 400px;
+margin: 1.75rem auto;
+}
+
+#prospectoModal .modal-content {
+border: none;
+border-radius: 24px;
+background: white;
+box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+#prospectoModal .modal-header {
+background: #1e2330;
+padding: 20px;
+border: none;
+border-radius: 24px 24px 0 0;
+}
+
+#prospectoModal .modal-title {
+color: white;
+font-size: 20px;
+line-height: 1.2;
+}
+
+#prospectoModal .modal-title small {
+display: block;
+color: #8e95a3;
+font-size: 13px;
+margin-top: 4px;
+}
+
+#prospectoModal .btn-close {
+background: none;
+opacity: 1;
+}
+
+#prospectoModal .modal-body {
+padding: 20px;
+}
+
+#prospectoModal .contact-stats-container {
+margin-bottom: 15px;
+}
+
+#prospectoModal .contact-info {
+font-size: 15px;
+color: #1e2330;
+}
+
+#prospectoModal .stats-inline {
+display: flex;
+gap: 15px;
+margin-top: 8px;
+color: #8e95a3;
+font-size: 14px;
+}
+
+#prospectoModal .stats-inline span {
+display: flex;
+align-items: center;
+gap: 5px;
+}
+
+#prospectoModal .details-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 12px;
+margin: 15px 0;
+font-size: 14px;
+}
+
+#prospectoModal .info-item {
+display: flex;
+flex-direction: column;
+gap: 2px;
+}
+
+#prospectoModal .info-item .label {
+color: #8e95a3;
+}
+
+#prospectoModal .info-item .value {
+color: #1e2330;
+}
+
+#prospectoModal .observations {
+background: #f8f9fa;
+padding: 12px;
+border-radius: 12px;
+margin-top: 15px;
+}
+
+#prospectoModal .observations small {
+color: #8e95a3;
+display: block;
+margin-bottom: 4px;
+}
+
+#prospectoModal .observations p {
+margin: 0;
+font-size: 14px;
+color: #1e2330;
+}
+
+#prospectoModal .modal-footer {
+padding: 15px 20px;
+border-top: 1px solid #edf2f7;
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 10px;
+}
+
+#prospectoModal .modal-footer button {
+padding: 10px;
+border: none;
+border-radius: 12px;
+color: white;
+font-size: 14px;
+cursor: pointer;
+transition: transform 0.2s;
+}
+
+
+/* Resetear todos los hovers */
+#prospectoModal .details-grid .info-item {
+    pointer-events: none;
+}
+
+/* Habilitar solo para asesor y último editor por ID */
+#prospectoModal .info-item:has(#modalAsesor),
+#prospectoModal .info-item:has(#modalUltimoEditor) {
+    pointer-events: auto;
+}
+
+#prospectoModal #modalAsesor,
+#prospectoModal #modalUltimoEditor {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#prospectoModal #modalAsesor:hover,
+#prospectoModal #modalUltimoEditor:hover {
+    background: #f8f9fc;
+    border-radius: 8px;
+    padding: 4px 8px;
+    margin: -4px -8px;
+}
+
+/* Asegurar que los demás elementos permanezcan estáticos */
+#prospectoModal .details-grid .info-item .value:not(#modalAsesor):not(#modalUltimoEditor) {
+    pointer-events: none;
+    cursor: default;
+}
+
+
+#prospectoModal #btnContactar,
+#prospectoModal #btnPaquetes {
+background: #2c3444;
+}
+
+#prospectoModal #btnSeguimiento,
+#prospectoModal #btnPagos {
+background: #404b61;
+}
+
+#prospectoModal .modal-footer button:hover {
+transform: translateY(-1px);
+}
+
+.modal-actions {
+display: flex;
+gap: 8px;
+margin-right: -8px; /* Para compensar el padding del último botón */
+}
+
+.btn-action-icon {
+background: rgba(255, 255, 255, 0.1);
+border: none;
+width: 32px;
+height: 32px;
+border-radius: 8px;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+cursor: pointer;
+transition: all 0.2s ease;
+}
+
+.btn-action-icon:hover {
+background: rgba(255, 255, 255, 0.2);
+transform: translateY(-1px);
+}
+
+.btn-action-icon:active {
+transform: translateY(0);
+}
+
+.btn-action-icon i {
+font-size: 14px;
+}
+
+/* Asegúrate de que el título no se solape con los botones */
+.modal-title {
+padding-right: 80px; /* Espacio para los botones */
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+.modal-actions {
+position: absolute;
+top: 16px;
+right: 16px;
+}
+
+.btn-action-icon {
+width: 28px;
+height: 28px;
+}
+}
+
+
+@keyframes modalFade {
+from {
+opacity: 0;
+transform: translateY(10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+#prospectoModal .modal-content {
+animation: modalFade 0.3s ease-out;
+}
+
+
+
+
+
+#calendarModal .modal-dialog {
+    margin: 2rem auto;
+    max-height: calc(100vh - 100px); /* Resta espacio para la barra de tareas */
+    position: relative;
+    top: -20px; /* Ajusta la posición hacia arriba */
+}
+
+#calendarModal .modal-content {
+    max-height: calc(100vh - 120px); /* Ajusta la altura máxima */
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    overflow: auto;
+}
+
+/* Ajustes para móviles */
+@media (max-width: 768px) {
+    #calendarModal .modal-dialog {
+        margin: 1rem auto;
+        width: 90%;
+        max-width: 400px;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -60%); /* Mueve un poco hacia arriba */
+    }
+
+    #calendarModal .modal-content {
+        max-height: 80vh; /* Reduce la altura máxima en móviles */
+    }
+
+    /* Asegura que el calendario no se corte */
+    .flatpickr-calendar {
+        max-height: calc(80vh - 200px);
+        overflow: auto;
+    }
+}
+
+/* Ajuste específico para pantallas muy pequeñas */
+@media (max-height: 600px) {
+    #calendarModal .modal-dialog {
+        transform: translate(-50%, -55%);
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Contenedor principal del paso 5 */
+.paso5-container {
+    padding: 15px;
+    background: white;
+}
+
+/* Layout de dos columnas */
+.paso5-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 15px;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Columna del textarea */
+.input-column {
+    width: 100%;
+}
+
+.custom-textarea {
+    width: 100%;
+    height: 120px;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    resize: none;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+/* Columna de botones */
+.buttons-column {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    justify-content: start;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f1f5f9;
+    color: #475569;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    transform: translateY(-1px);
+    background: #e2e8f0;
+}
+
+.action-btn.btn-success{
+    background: #3e4b60;
+    color: white;
+    margin-top: auto;
+}
+
+.action-btn.save {
+    background: #1e293b;
+    color: white;
+    margin-top: auto;
+}
+
+.action-btn.save:hover {
+    background: #0f172a;
+}
+
+/* Estado completado */
+.paso5-container.completed {
+    background: #f8fafc;
+    padding: 15px;
+}
+
+.status-badge {
+    color: #10b981;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+}
+
+.description-content {
+    background: white;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .paso5-layout {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .custom-textarea {
+        height: 100px;
+    }
+
+    .buttons-column {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        flex: 1;
+        min-width: calc(50% - 5px);
+    }
+
+    .action-btn.save {
+        width: 100%;
+        margin-top: 5px;
+    }
+}
+
+
+
+
+
+
+/* Estilos para el modal de publicaciones */
+#publicacionesModal .modal-dialog {
+    max-width: 500px;
+}
+
+#publicacionesModal .modal-content {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+}
+
+#publicacionesModal .modal-header {
+    padding: 20px;
+    border: none;
+    background: #f8fafc;
+}
+
+.search-container {
+    position: relative;
+    flex: 1;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #64748b;
+}
+
+.search-input {
+    width: 100%;
+    padding: 12px 12px 12px 40px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
+.close-button {
+    background: none;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    margin-left: 12px;
+    transition: all 0.2s;
+}
+
+.close-button:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.publications-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 20px;
+}
+
+.publication-card {
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.publication-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.publication-image {
+    position: relative;
+    aspect-ratio: 16/9;
+}
+
+.publication-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.selection-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(59,130,246,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.publication-card.selected .selection-overlay {
+    opacity: 1;
+}
+
+.selection-overlay i {
+    color: white;
+    font-size: 24px;
+}
+
+.publication-info {
+    padding: 12px;
+}
+
+.publication-info h3 {
+    font-size: 0.95rem;
+    margin: 0 0 4px 0;
+    color: #1e293b;
+}
+
+.publication-info p {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.modal-footer {
+    padding: 16px 20px;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.selected-count {
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.action-button {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.action-button.save {
+    background: #3b82f6;
+    color: rgb(255, 255, 255);
+}
+
+.action-button.save:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+/* Estados */
+.loading-state,
+.empty-state,
+.error-state {
+    text-align: center;
+    padding: 40px;
+    color: #64748b;
+}
+
+.spinner {
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 12px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+
+
+
+
+
+
+/* Estilos para el proceso de carga */
+.upload-progress {
+    padding: 20px;
+    text-align: center;
+}
+
+.upload-progress-text {
+    color: #64748b;
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 15px 0;
+}
+
+.progress-bar .progress {
+    height: 100%;
+    background: linear-gradient(90deg, #3b82f6, #60a5fa);
+    transition: width 0.3s ease;
+}
+
+.progress-text {
+    color: #3b82f6;
+    font-weight: 500;
+}
+
+.upload-files-preview,
+.files-summary {
+    max-height: 150px;
+    overflow-y: auto;
+    margin-top: 15px;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px;
+    background: #f8fafc;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
+
+.file-item i {
+    color: #64748b;
+}
+
+.file-item.success i {
+    color: #10b981;
+}
+
+.file-item span {
+    font-size: 0.9rem;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Mensajes de éxito y error */
+.success-message,
+.error-message {
+    text-align: center;
+    padding: 20px;
+}
+
+.success-icon,
+.error-icon {
+    font-size: 48px;
+    margin-bottom: 15px;
+}
+
+.success-icon i {
+    color: #10b981;
+}
+
+.error-icon i {
+    color: #ef4444;
+}
+
+.success-text,
+.error-text {
+    color: #1e293b;
+    margin-bottom: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Estilos para el calendario y alertas */
+.scheduling-progress {
+    text-align: center;
+    padding: 20px;
+}
+
+.scheduling-icon {
+    font-size: 48px;
+    color: #3b82f6;
+    margin-bottom: 15px;
+    animation: pulse 1.5s infinite;
+}
+
+.scheduling-text {
+    color: #64748b;
+}
+
+.success-schedule {
+    text-align: center;
+    padding: 20px;
+}
+
+.success-icon {
+    font-size: 48px;
+    color: #10b981;
+    margin-bottom: 15px;
+}
+
+.success-details {
+    color: #1e293b;
+}
+
+.success-details p {
+    margin-bottom: 8px;
+    color: #64748b;
+}
+
+.success-details strong {
+    color: #1e293b;
+    font-size: 1.1em;
+}
+
+/* Animación de pulso */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Estilos para Flatpickr */
+.flatpickr-calendar {
+    background: #1e293b !important;
+    border: none !important;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 12px !important;
+}
+
+.flatpickr-day {
+    color: #e2e8f0 !important;
+    border-radius: 8px !important;
+}
+
+.flatpickr-day.selected {
+    background: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+}
+
+.flatpickr-day:hover {
+    background: #2563eb !important;
+}
+
+.flatpickr-months {
+    color: white !important;
+}
+
+.flatpickr-current-month {
+    color: white !important;
+}
+
+.flatpickr-weekday {
+    color: #94a3b8 !important;
+}
+
+.flatpickr-time {
+    background: #1e293b !important;
+    border-top: 1px solid #334155 !important;
+}
+
+.flatpickr-time input {
+    color: white !important;
+}
+
+.numInputWrapper:hover {
+    background: #334155 !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.file-upload-container {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.file-upload-area {
+    border: 2px dashed #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    background: #f8fafc;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.file-upload-area:hover {
+    border-color: #3b82f6;
+    background: #f0f9ff;
+}
+
+.file-upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+}
+
+.file-upload-content i {
+    font-size: 24px;
+    color: #3b82f6;
+}
+
+.file-upload-content p {
+    margin: 0;
+    font-weight: 500;
+}
+
+.file-upload-content span {
+    font-size: 0.875rem;
+}
+
+.selected-files {
+    margin-top: 1rem;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background: #f8fafc;
+    border-radius: 6px;
+    margin-bottom: 8px;
+    gap: 8px;
+}
+
+.file-item i {
+    color: #64748b;
+}
+
+.file-item .file-name {
+    flex: 1;
+    font-size: 0.875rem;
+    color: #1e293b;
+}
+
+.file-item .remove-file {
+    color: #ef4444;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.file-item .remove-file:hover {
+    background: #fee2e2;
+}
+
+.hidden {
+    display: none;
+}
+
+
+
+
+
+/* Estilos para el proceso de confirmación */
+.confirmation-progress {
+    text-align: center;
+    padding: 20px;
+}
+
+.confirmation-icon {
+    font-size: 48px;
+    color: #25D366; /* Color de WhatsApp */
+    margin-bottom: 15px;
+    animation: pulse 1.5s infinite;
+}
+
+.confirmation-text {
+    color: #64748b;
+}
+
+/* Estilos para el mensaje de éxito */
+.success-confirmation {
+    text-align: center;
+    padding: 20px;
+}
+
+.success-icon {
+    font-size: 48px;
+    color: #10b981;
+    margin-bottom: 15px;
+}
+
+.message-preview {
+    margin-top: 20px;
+    text-align: left;
+}
+
+.preview-label {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+}
+
+.message-content {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    max-height: 150px;
+    overflow-y: auto;
+    white-space: pre-wrap;
+}
+
+/* Animación de pulso */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Scrollbar personalizado para el contenido del mensaje */
+.message-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.message-content::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 3px;
+}
+
+.message-content::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.message-content::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+
+
+
+
+
+
+
+/* Contenedor principal */
+.confirmation-container,
+.confirmation-form {
+    background: white;
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+/* Estilos para el estado completado */
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background: #f0fdf4;
+    border-radius: 8px;
+    color: #10b981;
+}
+
+.status-icon {
+    font-size: 24px;
+}
+
+/* Estilos para el mensaje */
+.message-display {
+    background: #f8fafc;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.message-header {
+    background: #25D366;
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.message-header i {
+    font-size: 20px;
+}
+
+.message-content {
+    padding: 16px;
+}
+
+.message-bubble {
+    background: white;
+    padding: 12px 16px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.message-time {
+    font-size: 0.85rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.message-time i {
+    color: #25D366;
+}
+
+/* Estilos para el formulario */
+.confirmation-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.form-header i {
+    color: #25D366;
+    font-size: 24px;
+}
+
+.message-input-container {
+    margin-bottom: 20px;
+}
+
+.message-input {
+    width: 100%;
+    padding: 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    resize: vertical;
+    transition: all 0.2s ease;
+    background: #f8fafc;
+}
+
+.message-input:focus {
+    border-color: #25D366;
+    background: white;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 211, 102, 0.1);
+}
+
+.input-footer {
+    margin-top: 8px;
+    padding: 0 8px;
+}
+
+.input-hint {
+    font-size: 0.85rem;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.save-button {
+    width: 100%;
+    padding: 12px;
+    background: #25D366;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.save-button:hover {
+    background: #1fa855;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(37, 211, 102, 0.1);
+}
+
+.save-button:active {
+    transform: translateY(0);
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.confirmation-container,
+.confirmation-form {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .confirmation-container,
+    .confirmation-form {
+        padding: 15px;
+    }
+
+    .message-input {
+        padding: 12px;
+    }
+
+    .save-button {
+        padding: 10px;
+    }
+}
+
+
+
+
+
+
+/* Estilos para el paso 10 */
+.contract-status {
+    padding: 20px;
+    border-radius: 12px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.contract-status.success {
+    border-left: 4px solid #10b981;
+}
+
+.contract-status.pending {
+    border-left: 4px solid #f59e0b;
+}
+
+.contract-status .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+.contract-status.success .status-badge {
+    background: #f0fdf4;
+    color: #10b981;
+}
+
+.contract-status.pending .status-badge {
+    background: #fef3c7;
+    color: #f59e0b;
+}
+
+.contract-status .status-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 0.95rem;
+    margin-bottom: 16px;
+}
+
+.contract-upload-container {
+    padding: 20px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.upload-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    color: #1e293b;
+    font-weight: 500;
+}
+
+.upload-header i {
+    color: #3b82f6;
+    font-size: 24px;
+}
+
+.upload-instructions {
+    margin-bottom: 20px;
+    color: #64748b;
+}
+
+.upload-instructions ul {
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.upload-instructions li {
+    margin-bottom: 8px;
+    position: relative;
+}
+
+.upload-instructions li::before {
+    content: '•';
+    color: #3b82f6;
+    position: absolute;
+    left: -15px;
+}
+
+.btn-action {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Estilos para el paso 8 - Citas */
+.appointment-details {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.date-time-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: #1e293b;
+}
+
+.info-item i {
+    color: #3b82f6;
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.appointment-reminder {
+    display: flex;
+    gap: 15px;
+    padding: 15px;
+    background: #eff6ff;
+    border-radius: 12px;
+    margin-top: 15px;
+}
+
+.appointment-reminder i {
+    color: #3b82f6;
+    font-size: 24px;
+    padding-top: 3px;
+}
+
+.reminder-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.reminder-title {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.reminder-content {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+/* Animaciones */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.appointment-details {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Estados hover */
+.info-item:hover {
+    background: #f1f5f9;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+    .date-time-info {
+        gap: 10px;
+    }
+
+    .info-item {
+        font-size: 0.9rem;
+    }
+
+    .appointment-reminder {
+        flex-direction: column;
+        padding: 12px;
+    }
+
+    .appointment-reminder i {
+        font-size: 20px;
+    }
+
+    .reminder-text {
+        gap: 3px;
+    }
+}
+
+/* Mejoras visuales adicionales */
+.btn-action.full-width {
+    margin-top: 20px;
+    padding: 15px;
+    font-size: 1rem;
+    background: #3b82f6;
+    transition: all 0.3s ease;
+}
+
+.btn-action.full-width:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+}
+
+/* Estado completado */
+.contract-status.success .date-time-info {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.credentials-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.credentials-grid {
+    display: grid;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+}
+
+.credential-box {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.credential-box:hover {
+    background: #f1f3f5;
+    transform: translateY(-2px);
+}
+
+.credential-box i {
+    font-size: 1.2rem;
+    color: #6c757d;
+    margin-right: 1rem;
+    width: 24px;
+    text-align: center;
+}
+
+.credential-info {
+    flex: 1;
+}
+
+.credential-info label {
+    display: block;
+    font-size: 0.75rem;
+    color: #6c757d;
+    margin-bottom: 0.2rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.credential-info span {
+    display: block;
+    font-size: 0.95rem;
+    color: #212529;
+    font-weight: 500;
+}
+
+.copy-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background: #2e4263;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.copy-btn:hover {
+    background: #252c36;
+    transform: translateY(-2px);
+}
+
+.generate-btn {
+    width: 100%;
+    padding: 0.8rem 1.5rem;
+    background: #198754;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.generate-btn:hover {
+    background: #157347;
+    transform: translateY(-2px);
+}
+
+/* Animación para el feedback de copia */
+@keyframes copyFeedback {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.copy-feedback {
+    animation: copyFeedback 0.3s ease;
+}

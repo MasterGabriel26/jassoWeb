@@ -57,6 +57,8 @@
     "feather-icons": "4.29.0",
     "flatpickr": "4.6.13",
     "jsvectormap": "1.5.3",
+    "node-cache": "^5.1.2",
+    "punycode": "^2.3.1",
     "simplebar": "5.3.9"
   },
   "devDependencies": {

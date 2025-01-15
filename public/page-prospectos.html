@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Sistema de gestión de prospectos y seguimiento de eventos para JASSO">
+	<meta name="author" content="JASSO">
+	<meta name="keywords" content="jasso, eventos, bodas, xv años, gestión, prospectos, seguimiento, cotizaciones, paquetes, salón de eventos">
+	
+	<title>Prospectos | JASSO</title>
+	
+	<!-- Favicon -->
+	<link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+	
+	
+	<!-- Fonts -->
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+	
+	<!-- Firebase -->
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+	
+	<!-- jQuery -->
+	<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+	
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+
+	
+	<!-- Font Awesome -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+	
+	<!-- Flatpickr -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+	
+	<!-- Image Compression -->
+	<script src="https://cdn.jsdelivr.net/npm/browser-image-compression@2.0.0/dist/browser-image-compression.js"></script>
+	
+	<!-- SweetAlert2 -->
+	<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	
+	<!-- PDF.js -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js"></script>
+	
+	<!-- Lightbox -->
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox.min.js"></script>
+	
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://accounts.google.com/gsi/client"></script>
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+
+	<!-- Custom CSS -->
+	<link rel="stylesheet" href="css/notificaciones.css">
+	<link rel="stylesheet" href="css/loading.css">
+	<link rel="stylesheet" href="css/prospectos/prospectos.css">
+	<link rel="stylesheet" href="css/prospectos/modal.css">
+    <link rel="stylesheet" href="css/userPic.css">
+	<link href="css/app.css" rel="stylesheet">
+	<style>
+
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+
+
+/* Estilos generales del contenido */
+.content {
+    padding: 2rem;
+    background: #f8f9fc;
+}
+
+/* Título principal */
+.h3 {
+    color: #1e2330;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    font-size: 1.75rem;
+}
+
+/* Estilos de la tarjeta */
+.card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
+    background: white;
+    margin-bottom: 2rem;
+}
+
+.card-header {
+    background: white;
+    border-bottom: 1px solid #f1f3f9;
+    padding: 1.5rem;
+    border-radius: 16px 16px 0 0 !important;
+}
+
+/* Formulario de filtros */
+.form-label {
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control, .form-select {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 0.625rem 1rem;
+    font-size: 0.95rem;
+    transition: all 0.2s ease;
+    background-color: #f9fafb;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: #2d3456;
+    box-shadow: 0 0 0 3px rgba(45, 52, 86, 0.1);
+    background-color: white;
+}
+
+/* Botones */
+.btn-primary {
+    background: #1e2330;
+    border: none;
+    border-radius: 12px;
+    padding: 0.625rem 1.25rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+    background: #2d3456;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45, 52, 86, 0.15);
+}
+
+
+/* Estilos base de la tabla */
+.table-responsive {
+    border-radius: 12px;
+    background: white;
+    padding: 0;
+    overflow-x: auto;
+    min-width: 100%;
+}
+
+.table {
+    margin: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+/* Encabezados */
+.table thead th {
+    background: #f8f9fc;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* Celdas del cuerpo */
+.table tbody td {
+    padding: 1rem;
+    color: #2d3748;
+    font-size: 0.95rem;
+    border-bottom: 1px solid #f1f3f9;
+    vertical-align: middle;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 0;
+    background-color: inherit; /* Importante para el hover */
+}
+
+/* Valores por defecto */
+.table tbody td.text-muted {
+    color: #a0aec0 !important;
+    font-weight: 400;
+}
+
+/* Efectos hover en la tabla */
+.table tbody tr {
+    transition: background-color 0.2s ease;
+    position: relative;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fc;
+}
+
+/* Estilo zebra */
+.table tbody tr:nth-child(even) {
+    background-color: #fafbfc;
+}
+
+.table tbody tr:nth-child(even):hover {
+    background-color: #f8f9fc;
+}
+
+/* Manejo específico del hover para la columna de nombre */
+.table tbody td:nth-child(2) {
+    position: relative;
+}
+
+
+
+
+/* Anchos de columnas */
+.table th:nth-child(1), .table td:nth-child(1) { width: 150px; min-width: 150px; }
+.table th:nth-child(2), .table td:nth-child(2) { width: 300px; min-width: 300px; }
+.table th:nth-child(3), .table td:nth-child(3) { width: 200px; min-width: 200px; }
+.table th:nth-child(4), .table td:nth-child(4) { width: 250px; min-width: 250px; }
+.table th:nth-child(5), .table td:nth-child(5) { width: 200px; min-width: 200px; }
+.table th:nth-child(6), .table td:nth-child(6) { width: 250px; min-width: 250px; }
+.table th:nth-child(7), .table td:nth-child(7) { width: 200px; min-width: 200px; }
+
+/* Scrollbar personalizado */
+.table-responsive::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background: #f1f3f9;
+    border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .table thead th,
+    .table tbody td {
+        font-size: 0.875rem;
+        padding: 0.75rem;
+    }
+}
+
+
+.card-header {
+    padding: 1.5rem;
+    background: white;
+    border-bottom: 1px solid #f1f3f9;
+}
+
+.header-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.search-section {
+    flex: 1;
+    max-width: 800px;
+}
+
+.search-container {
+    display: flex;
+    gap: 1rem;
+    width: 100%;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 1rem 0.75rem 2.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: #f9fafb;
+    transition: all 0.2s ease;
+}
+
+.search-input:focus {
+    background: white;
+    border-color: #2d3456;
+    box-shadow: 0 0 0 3px rgba(45, 52, 86, 0.1);
+    outline: none;
+}
+
+.filter-box {
+    width: 140px;
+    min-width: 140px;
+}
+
+.filter-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: #f9fafb;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    border-color: #2d3456;
+    box-shadow: 0 0 0 3px rgba(45, 52, 86, 0.1);
+    outline: none;
+}
+
+.btn-create {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #1e2330;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-create:hover {
+    background: #2d3456;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45, 52, 86, 0.15);
+    color: white;
+}
+
+.btn-create i {
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .search-section {
+        width: 100%;
+        max-width: none;
+    }
+
+    .search-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .filter-box {
+        width: 100%;
+        min-width: 100%;
+    }
+
+    .action-container {
+        width: 100%;
+    }
+
+    .btn-create {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .card-header {
+        padding: 1rem;
+    }
+
+    .search-input,
+    .filter-select {
+        padding: 0.625rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .search-input {
+        padding-left: 2.25rem;
+    }
+
+    .btn-create {
+        padding: 0.625rem 1rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* Ajustes para pantallas medianas */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .search-section {
+        max-width: 600px;
+    }
+
+    .filter-box {
+        width: 120px;
+        min-width: 120px;
+    }
+}
+
+
+
+
+
+
+
+/* Estilos para el tooltip del asesor */
+.asesor-hover {
+    position: relative;
+    cursor: pointer;
+}
+
+.asesor-profile-card {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 280px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    padding: 1.5rem;
+    visibility: hidden;
+    opacity: 0;
+    transition: all 0.3s ease;
+    z-index: 1060;
+}
+
+.asesor-hover:hover .asesor-profile-card {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Flecha del tooltip */
+.asesor-profile-card::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 8px 8px 8px;
+    border-style: solid;
+    border-color: transparent transparent white transparent;
+}
+
+/* Header del perfil */
+.profile-header {
+    position: relative;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+}
+
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: #f1f3f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 600;
+    color: white;
+    background-size: cover;
+    background-position: center;
+    border: 3px solid white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.profile-status {
+    position: absolute;
+    bottom: 0;
+    right: 85px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.profile-status.online {
+    background-color: #10B981;
+}
+
+.profile-status.offline {
+    background-color: #6B7280;
+}
+
+/* Información del perfil */
+.profile-info {
+    text-align: center;
+}
+
+.profile-name {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1F2937;
+}
+
+.profile-phone {
+    margin: 0.25rem 0 1rem;
+    font-size: 0.9rem;
+    color: #6B7280;
+}
+
+/* Estadísticas */
+.profile-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #E5E7EB;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-item i {
+    color: #6B7280;
+    font-size: 1.2rem;
+    margin-bottom: 0.25rem;
+}
+
+.stat-value {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #1F2937;
+}
+
+.stat-label {
+    display: block;
+    font-size: 0.8rem;
+    color: #6B7280;
+}
+
+
+
+.modal-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1060;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-loading.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-loading-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #3b82f6;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    animation: spin 1s linear infinite;
+}
+
+.modal-loading p {
+    color: #1e293b;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+
+/* Contenedor para el botón crear */
+.action-container {
+    margin-bottom: 1rem;
+}
+
+/* Estilos del botón crear */
+.btn-create {
+    background: #1e2330;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-create:hover {
+    background: #2d3456;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(45, 52, 86, 0.15);
+    color: white;
+}
+
+.btn-create i {
+    font-size: 1.1rem;
+}
+
+/* Estilos para móvil */
+@media (max-width: 768px) {
+    .action-container {
+        margin: 0;
+        position: fixed;
+        right: 20px; /* Ajustado para la esquina derecha */
+        bottom: 20px;
+        z-index: 1000;
+        width: auto; /* Asegura que el contenedor no se estire */
+        display: block; /* Cambia el display si es necesario */
+    }
+
+    .btn-create {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        padding: 0;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        background: #1e2330;
+        position: relative; /* Asegura el posicionamiento correcto */
+        display: flex; /* Mantiene el ícono centrado */
+    }
+
+    .btn-create span {
+        display: none;
+    }
+
+    .btn-create i {
+        margin: 0;
+        font-size: 1.5rem;
+    }
+
+    .btn-create:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    /* Efecto de pulso para el botón flotante */
+    @keyframes pulse {
+        0% {
+            box-shadow: 0 0 0 0 rgba(30, 35, 48, 0.7);
+        }
+        70% {
+            box-shadow: 0 0 0 10px rgba(30, 35, 48, 0);
+        }
+        100% {
+            box-shadow: 0 0 0 0 rgba(30, 35, 48, 0);
+        }
+    }
+
+    .btn-create {
+        animation: pulse 2s infinite;
+    }
+
+    /* Ajuste para evitar que el botón tape contenido */
+    body {
+        padding-bottom: 80px;
+    }
+}
+
+/* Tooltip para móvil */
+@media (max-width: 768px) {
+    .btn-create::after {
+        content: 'Crear prospecto';
+        position: absolute;
+        bottom: 100%;
+        right: 0;
+        background: rgba(30, 35, 48, 0.9);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        font-size: 14px;
+        margin-bottom: 8px;
+        white-space: nowrap;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .btn-create:active::after {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+
+
+
+/* Estilos específicos para el modal de paquetes */
+#paquetesModal .modal-dialog {
+  max-width: 800px;
+  margin: 1.75rem auto;
+}
+
+#paquetesModal .modal-content {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.1);
+}
+
+#paquetesModal .modal-header {
+  border-bottom: 1px solid #e9ecef;
+  padding: 0.75rem 1rem;
+  background-color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+#paquetesModal .modal-title {
+  color: #2d3456;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+#paquetesModal .modal-body {
+  padding: 1rem;
+  max-height: 70vh; /* Altura máxima fija */
+  overflow-y: auto; /* Habilita el scroll */
+}
+
+#paquetesContainer .card {
+  transition: transform 0.2s ease-in-out;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+#paquetesContainer .card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+#paquetesContainer .card-img-top {
+  height: 150px;
+  object-fit: cover;
+  border-bottom: 1px solid #e9ecef;
+}
+
+#paquetesContainer .card-body {
+  padding: 0.75rem;
+}
+
+#paquetesContainer .card-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2d3456;
+  margin-bottom: 0.4rem;
+  line-height: 1.3;
+}
+
+#paquetesContainer .card-text {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+#paquetesContainer .text-primary {
+  color: #2d3456 !important;
+  font-size: 1rem;
+}
+
+#paquetesContainer .btn-primary {
+  background-color: #2d3456;
+  border-color: #2d3456;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+#paquetesContainer .btn-primary:hover {
+  background-color: #1e2330;
+  border-color: #1e2330;
+}
+
+/* Grid para 3 tarjetas por fila */
+#paquetesContainer .col-md-6 {
+  flex: 0 0 33.333333%;
+  max-width: 33.333333%;
+  padding: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  #paquetesModal .modal-dialog {
+    max-width: 95%;
+    margin: 1rem auto;
+  }
+  
+  #paquetesModal .modal-body {
+    max-height: 60vh;
+  }
+  
+  #paquetesContainer .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 0.4rem;
+  }
+  
+  #paquetesContainer .card-img-top {
+    height: 130px;
+  }
+}
+
+@media (max-width: 576px) {
+  #paquetesContainer .col-md-6 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+/* Scrollbar customization */
+#paquetesModal .modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+#paquetesModal .modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+#paquetesModal .modal-body::-webkit-scrollbar-thumb {
+  background: #2d3456;
+  border-radius: 3px;
+}
+
+#paquetesModal .modal-body::-webkit-scrollbar-thumb:hover {
+  background: #1e2330;
+}
+
+
+
+
+
+/* Variables globales */
+:root {
+  --primary-color: #2d3456;
+  --secondary-color: #1e2330;
+  --border-color: #e9ecef;
+  --text-color: #2d3456;
+  --background-light: #f8f9fa;
+  --shadow: 0 0 20px rgba(0,0,0,0.1);
+  --transition: all 0.3s ease;
+}
+
+/* Modal principal */
+#pagosModal .modal-dialog {
+  width: 500px !important;
+  max-width: 500px;
+  margin: 1.75rem auto;
+}
+
+#pagosModal .modal-content {
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  position: relative;
+  height: 600px;
+  background: #fff;
+  border: none;
+}
+
+#pagosModal .modal-header {
+  background-color: var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px 12px 0 0;
+}
+
+#pagosModal .modal-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+  margin: 0;
+}
+
+#pagosModal .btn-close {
+  color: #fff;
+  opacity: 1;
+  filter: brightness(0) invert(1);
+}
+
+#pagosModal .modal-body {
+  padding: 1.5rem;
+  position: relative;
+}
+
+/* Contenedor de la tabla */
+#pagosModal .table-container {
+  height: 400px;
+  width: 100%;
+  margin: 0 auto;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Estilos de la tabla */
+#pagosModal .table {
+  margin: 0;
+  width: 100%;
+  background: #fff;
+  font-size: 0.95rem;
+}
+
+#pagosModal .table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--primary-color);
+}
+
+#pagosModal .table th {
+  padding: 1rem;
+  font-weight: 600;
+  color: #020202;
+  border: none;
+}
+
+#pagosModal .table td {
+  padding: 0.875rem 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--border-color);
+}
+
+#pagosModal .table tbody tr:hover {
+  background-color: rgba(45, 52, 86, 0.05);
+}
+
+/* Botones de acción */
+.action-buttons {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-add-payment {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-share {
+  background-color: #25D366;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition);
+  box-shadow: 0 3px 6px rgba(37, 211, 102, 0.2);
+}
+
+.btn-share i {
+  font-size: 1.1rem;
+}
+
+/* Efectos hover */
+.btn-add-payment:hover {
+  transform: scale(1.05);
+  background-color: var(--secondary-color);
+}
+
+.btn-share:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);
+}
+
+/* Mensaje sin pagos */
+.no-payments {
+  padding: 3rem 1.5rem;
+  text-align: center;
+  color: #6c757d;
+}
+
+.no-payments i {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  opacity: 0.5;
+}
+
+/* Scrollbar personalizado */
+#pagosModal .table-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+#pagosModal .table-container::-webkit-scrollbar-track {
+  background: var(--background-light);
+  border-radius: 3px;
+}
+
+#pagosModal .table-container::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 3px;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  #pagosModal .modal-dialog {
+    width: 95% !important;
+    margin: 0.5rem auto;
+  }
+
+  #pagosModal .modal-content {
+    height: 90vh;
+  }
+
+  #pagosModal .table-container {
+    height: calc(90vh - 200px);
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+  }
+}
+
+
+/* Botón flotante de agregar */
+.btn-add-payment {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+  padding: 0; /* Elimina el padding */
+  position: relative; /* Para posicionamiento absoluto del ícono */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex; /* Usar flexbox */
+  align-items: center; /* Centrar verticalmente */
+  justify-content: center; /* Centrar horizontalmente */
+}
+
+/* Estilos específicos para el ícono */
+.btn-add-payment i {
+  font-size: 20px;
+  line-height: 1; /* Resetear line-height */
+  width: auto; /* Eliminar ancho fijo */
+  height: auto; /* Eliminar altura fija */
+  margin: 0; /* Eliminar márgenes */
+  padding: 0; /* Eliminar padding */
+  position: absolute; /* Posicionamiento absoluto */
+  top: 50%; /* Posicionar al centro vertical */
+  left: 50%; /* Posicionar al centro horizontal */
+  transform: translate(-50%, -50%); /* Centrar perfectamente */
+}
+
+/* Efecto hover */
+.btn-add-payment:hover {
+  background-color: var(--secondary-color);
+  transform: scale(1.05);
+}
+
+/* Asegurar que el ícono no se mueva en hover */
+.btn-add-payment:hover i {
+  transform: translate(-50%, -50%); /* Mantener centrado en hover */
+}
+
+
+
+.btn-action-icon {
+    width: 32px;  /* Tamaño fijo del botón */
+    height: 32px; /* Mismo tamaño que el ancho para hacerlo cuadrado */
+    padding: 0;   /* Eliminar padding */
+    border: none; /* Eliminar borde */
+    border-radius: 50%; /* Hacer el botón circular */
+    background-color: transparent; /* Fondo transparente */
+    cursor: pointer;
+    position: relative; /* Para posicionamiento del ícono */
+    display: inline-flex; /* Usar flexbox */
+    align-items: center; /* Centrar verticalmente */
+    justify-content: center; /* Centrar horizontalmente */
+    transition: all 0.2s ease; /* Transición suave para efectos */
+}
+
+.btn-action-icon i {
+    font-size: 14px; /* Tamaño del ícono */
+    line-height: 1; /* Resetear line-height */
+    display: block; /* Asegurar que el ícono sea un bloque */
+    margin: 0; /* Eliminar márgenes */
+}
+
+/* Efectos hover */
+.btn-action-icon:hover {
+    background-color: rgba(0, 0, 0, 0.05); /* Fondo sutil al hover */
+}
+
+/* Estilos específicos para cada tipo de botón si es necesario */
+#btnEditar {
+    color: #4a5568; /* Color para el ícono de editar */
+}
+
+#btnEditar:hover {
+    color: #2d3748; /* Color más oscuro al hover */
+}
+
+/* Para el botón de cerrar */
+.btn-action-icon[aria-label="Close"] {
+    color: #718096; /* Color para el ícono de cerrar */
+}
+
+.btn-action-icon[aria-label="Close"]:hover {
+    color: #4a5568; /* Color más oscuro al hover */
+}
+
+
+/* Contenedor principal de búsqueda */
+.search-container {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor de la caja de búsqueda */
+.search-box {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+}
+
+/* Estilos compartidos para input y select */
+.search-input,
+.filter-select {
+    height: 45px;
+    border: 1.5px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1e2330;
+    transition: all 0.2s ease;
+    background: #f9fafb;
+}
+
+/* Estilos específicos para el select de filtro */
+#filter-type {
+    width: 180px;
+    padding: 0 1rem;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236B7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-color: #ffffff;
+}
+
+/* Contenedor del input de búsqueda */
+.search-input-container {
+    position: relative;
+    flex: 1;
+}
+
+/* Input de búsqueda */
+#search-input {
+    width: 100%;
+    padding: 0 1rem 0 2.5rem;
+}
+
+/* Select para valores */
+#select-value {
+    flex: 1;
+    padding: 0 1rem;
+    background-color: #ffffff;
+}
+
+/* Icono de búsqueda */
+.search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 0.9rem;
+    pointer-events: none;
+}
+
+/* Estados hover */
+.search-input:hover,
+.filter-select:hover {
+    border-color: #cbd5e0;
+    background-color: #ffffff;
+}
+
+/* Estados focus */
+.search-input:focus,
+.filter-select:focus {
+    border-color: #2d3456;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(45, 52, 86, 0.1);
+    outline: none;
+}
+
+/* Estilos para las opciones del select */
+.filter-select option {
+    padding: 8px;
+    font-size: 0.95rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .search-box {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    #filter-type {
+        width: 100%;
+    }
+
+    .search-input-container,
+    #select-value {
+        width: 100%;
+    }
+}
+
+/* Ajustes para pantallas muy pequeñas */
+@media (max-width: 480px) {
+    .search-container {
+        padding: 0.75rem;
+    }
+
+    .search-input,
+    .filter-select {
+        height: 40px;
+        font-size: 0.9rem;
+    }
+
+    .search-icon {
+        font-size: 0.85rem;
+    }
+}
+
+/* Animaciones suaves */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.search-input-container,
+#select-value {
+    animation: fadeIn 0.3s ease-out;
+}
+
+/* Mejoras visuales adicionales */
+.search-container {
+    background: linear-gradient(to right, #ffffff, #f9fafb);
+}
+
+.filter-select {
+    cursor: pointer;
+}
+
+/* Estilo para placeholder */
+.search-input::placeholder {
+    color: #9ca3af;
+    opacity: 0.8;
+}
+
+/* Efecto de transición suave para cambios */
+.search-box > * {
+    transition: all 0.3s ease;
+}
+
+
+
+/* Estilo para el contador */
+.counter-badge {
+    background: linear-gradient(135deg, #2d3456 0%, #1e2330 100%);
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    margin-left: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.counter-badge:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.counter-badge i {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
+#total-prospectos {
+    font-weight: 600;
+}
+
+/* Animación para el contador */
+@keyframes fadeInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.counter-badge {
+    animation: fadeInRight 0.5s ease-out;
+}
+
+
+
+	</style>
+</head>
+
+<body>
+    <div id="loader" class="loader-container">
+        <div class="loader-content">
+            <div class="loader"></div>
+        </div>
+    </div>
+    
+    <div class="wrapper">
+        <nav id="sidebar" class="sidebar js-sidebar">
+        </nav>
+
+        <div class="main">
+            <nav class="navbar navbar-expand navbar-light navbar-bg">
+                <a class="sidebar-toggle js-sidebar-toggle">
+                  <i class="hamburger align-self-center"></i>
+                </a>
+      
+                <div class="navbar-collapse collapse">
+                  <ul class="navbar-nav navbar-align">
+                    <li class="nav-item dropdown">
+                      <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+                        <div class="position-relative">
+                          <i class="align-middle" data-feather="bell"></i>
+                          <span class="indicator" id="notificationCount">0</span>
+                        </div>
+                      </a>
+                     <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
+                      <div class="dropdown-menu-header" id="notificationHeader">0 Nuevas Notificaciones</div>
+                      <div class="list-group" id="notificationList">
+                        <!-- Notifications will be inserted here -->
+                      </div>
+                      <div class="dropdown-menu-footer">
+                        <a href="all-notifications.html" class="text-muted">Ver todas las notificaciones</a>
+                      </div>
+                    </div>
+                    </li>
+                
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <span id="imgPerfil" class="avatar-container"></span>
+                            <span class="text-dark" id="nombreUsuario"></span>
+                        </a>
+      
+                        <div class="dropdown-menu dropdown-menu-end">
+                          <a class="dropdown-item" href="pages-profile.html"
+                            ><i class="align-middle me-1" data-feather="user"></i>
+                            Profile</a
+                          >
+                          <a class="dropdown-item" href="#"
+                            ><i
+                              class="align-middle me-1"
+                              data-feather="pie-chart"
+                            ></i>
+                            Analytics</a
+                          >
+                          <div class="dropdown-divider"></div>
+                          <a class="dropdown-item" href="index.html"
+                            ><i class="align-middle me-1" data-feather="settings"></i>
+                            Settings & Privacy</a
+                          >
+                          <a class="dropdown-item" href="#"
+                            ><i
+                              class="align-middle me-1"
+                              data-feather="help-circle"
+                            ></i>
+                            Help Center</a
+                          >
+                          <div class="dropdown-divider"></div>
+                          <a id="logOut" class="dropdown-item" href="#"
+                            >Cerrar sesion</a
+                          >
+                        </div>
+                    </li>
+                  </ul>
+                </div>
+            </nav>
+
+            <main class="content">
+                <div class="container-fluid p-0">
+                <div class="d-flex align-items-center mb-3">
+                    <h1 class="h3 mb-0">Prospectos</h1>
+                    <div class="counter-badge" id="counter-badge">
+                        <i class="fas fa-users"></i>
+                        <span id="total-prospectos">0</span>
+                    </div>
+                </div>
+                    <div class="row">
+                        <div class="col-12">
+                          <div class="card">
+                            <div class="card-header">
+                                <div class="header-content">
+                                    <div class="search-section">
+                                        <div class="search-container">
+                                            <div class="search-box">
+                                                <select id="filter-type" class="filter-select">
+                                                    <option value="name">Nombre</option>
+                                                    <option value="telefono_prospecto">Teléfono</option>
+                                                    <option value="lugar">Lugar</option>
+                                                    <option value="tipo_evento">Tipo de Evento</option>
+                                                    <option value="asesor">Asesor</option>
+                                                </select>
+                                                
+                                                <!-- Input para búsqueda por texto -->
+                                                <div id="text-search" class="search-input-container">
+                                                    <i class="fas fa-search search-icon"></i>
+                                                    <input type="text" id="search-input" class="search-input" placeholder="Buscar...">
+                                                </div>
+                                                
+                                                <!-- Select para búsqueda por lista -->
+                                                <select id="select-value" class="filter-select" style="display: none;">
+                                                    <!-- Se llenará dinámicamente -->
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="action-container">
+                                        <a href="formularioProspecto/formulario-prospecto.html" class="btn-create">
+                                            <i class="fas fa-plus"></i>
+                                            <span>Crear prospecto</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive" style="max-height: 350px; overflow-y: auto;">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Folio</th>
+                                                <th>Nombre</th>
+                                                <th>Teléfono</th>
+                                                <th>Lugar</th>
+                                                <th>Evento</th>
+                                                <th>Asesor</th>
+                                                <th>Fecha</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="prospectos-lista">
+                                            <!-- Los prospectos se insertarán aquí -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div class="modal fade" id="prospectoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="prospectoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Header -->
+                <div class="modal-header">
+                    <div class="modal-title" id="prospectoModalLabel">
+                        <span id="modalNombre"></span>
+                        <small>
+                            <span id="modalFolio"></span> • 
+                            <span id="modalFecha"></span>
+                        </small>
+                    </div>
+                    <div class="modal-actions">
+                        <button type="button" class="btn-action-icon" id="btnEditar">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button type="button" class="btn-action-icon" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+    
+                <!-- Body -->
+                <div class="modal-body">
+                    <!-- Información de contacto y stats -->
+                    <div class="contact-stats-container">
+                        <div class="contact-info">
+                            <div id="modalTelefono"></div>
+                            <div class="stats-inline">
+                                <span><i class="fas fa-phone"></i> <span id="modalLlamadas">0</span></span>
+                                <span><i class="fas fa-users"></i> <span id="modalInvitados">0</span></span>
+                                <span><i class="fas fa-calendar"></i> <span id="modalFechaEvento">Sin Fecha</span></span>
+                            </div>
+                        </div>
+                    </div>
+    
+                    <!-- Información detallada -->
+                    <div class="details-grid">
+                        <div class="info-item">
+                            <span class="label">Asesor:</span>
+                            <div class="value asesor-hover" id="modalAsesor">
+                                <span class="asesor-name"></span>
+                                <div class="asesor-profile-card">
+                                    <div class="profile-header">
+                                        <div class="profile-avatar"></div>
+                                        <div class="profile-status"></div>
+                                    </div>
+                                    <div class="profile-info">
+                                        <h4 class="profile-name"></h4>
+                                        <p class="profile-phone"></p>
+                                        <div class="profile-stats">
+                                            <div class="stat-item">
+                                                <i class="fas fa-users"></i>
+                                                <span class="stat-value prospectos-count">0</span>
+                                                <span class="stat-label">Prospectos</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span class="stat-value ventas-count">0</span>
+                                                <span class="stat-label">Ventas</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-item">
+                            <span class="label">Ultimo editor:</span>
+                            <div class="value asesor-hover" id="modalUltimoEditor">
+                                <span class="asesor-name"></span>
+                                <div class="asesor-profile-card">
+                                    <div class="profile-header">
+                                        <div class="profile-avatar"></div>
+                                        <div class="profile-status"></div>
+                                    </div>
+                                    <div class="profile-info">
+                                        <h4 class="profile-name"></h4>
+                                        <p class="profile-phone"></p>
+                                        <div class="profile-stats">
+                                            <div class="stat-item">
+                                                <i class="fas fa-users"></i>
+                                                <span class="stat-value prospectos-count">0</span>
+                                                <span class="stat-label">Prospectos</span>
+                                            </div>
+                                            <div class="stat-item">
+                                                <i class="fas fa-check-circle"></i>
+                                                <span class="stat-value ventas-count">0</span>
+                                                <span class="stat-label">Ventas</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Referencia:</span>
+                            <span class="value" id="modalReferencia"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Preguntó por:</span>
+                            <span class="value" id="modalPreguntoPor"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Tipo evento:</span>
+                            <span class="value" id="modalTipoEvento"></span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Cita:</span>
+                            <span class="value" id="modalCita"></span>
+                        </div>
+                    </div>
+    
+                    <!-- Observaciones -->
+                    <div class="observations">
+                        <small>Observaciones:</small>
+                        <p id="modalObservaciones"></p>
+                    </div>
+                </div>
+    
+                <!-- Footer -->
+                <div class="modal-footer">
+                    <button type="button" id="btnContactar">Contactar</button>
+                    <button type="button" id="btnPaquetes">Paquetes</button>
+                    <button type="button" id="btnSeguimiento">Seguimiento</button>
+                    <button type="button" id="btnPagos">Pagos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modalLoading" class="modal-loading">
+        <div class="modal-loading-content">
+            <div class="spinner"></div>
+            <p>Cargando información...</p>
+        </div>
+    </div>
+
+    <div class="modal fade" id="seguimientoModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="seguimientoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <h5 class="modal-title" id="seguimientoModalLabel">
+                            <span id="pasoTitulo"></span>
+                        </h5>
+                        <div class="d-flex gap-2">
+                            <button type="button" class="btn btn-outline-light" onclick="abrirModalMasInformacion()">
+                                <i class="fas fa-bars"></i>
+                            </button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div id="pasoContenido" class="mb-4"></div>
+                    <div id="accionesRecomendadas" class="mb-4"></div>
+                    
+                    <!-- Botones de acción específicos del paso -->
+                    <div id="botonesAccion" class="d-flex justify-content-center gap-3 mb-4">
+                        <!-- Los botones se agregarán dinámicamente -->
+                    </div>
+
+                    <!-- Navegación entre pasos -->
+                    <div class="d-flex justify-content-between align-items-center">
+                        <button class="btn btn-outline-secondary" id="pasoAnterior">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <span id="numeroPaso">Paso 1 de 13</span>
+                        <button class="btn btn-outline-secondary" id="pasoSiguiente">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="calendarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Agendar Cita</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="citaForm">
+                        <div class="mb-3">
+                            <label for="titulo" class="form-label required">Título</label>
+                            <input type="text" class="form-control" id="titulo" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="descripcion" class="form-label">Descripción</label>
+                            <textarea class="form-control" id="descripcion" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lugarCita" class="form-label required">Lugar de cita</label>
+                            <input type="text" class="form-control" id="lugarCita" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="nombreCliente" class="form-label required">Nombre Cliente</label>
+                            <input type="text" class="form-control" id="nombreCliente" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="categoria" class="form-label required">Categoría</label>
+                            <select class="form-control" id="categoria" required>
+                                <option value="CASA_ANTIGUA">Casa Antigua</option>
+                                <option value="CAMPANARIO">Campanario</option>
+                                <option value="GENERAL">General</option>
+                                <option value="EVENTOS_ESPECIALES">Eventos especiales</option>
+                                <option value="CITAS">Citas</option>
+                                <option value="DEGUSTACION">Degustación</option>
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="fecha" class="form-label required">Fecha</label>
+                                <input type="date" class="form-control" id="fecha" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="hora" class="form-label required">Hora</label>
+                                <input type="time" class="form-control" id="hora" required>
+                            </div>
+                        </div>
+                    </form>
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-primary w-100" onclick="window.open('page-calendario.html', '_blank')">
+                            Consultar Citas
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="guardarCita">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalMasInformacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalMasInformacionLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-dark text-white">
+                    <h5 class="modal-title" id="modalMasInformacionLabel">Más Información</h5>
+                    <button type="button" class="btn-close btn-close-white" onclick="cerrarModalMasInformacion()" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Aquí se mostrarán los archivos adjuntos -->
+                    <div id="archivosAdjuntos" class="mb-4">
+                        <!-- Los archivos se cargan dinámicamente -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="cerrarModalMasInformacion()">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="crearProspectoModal" tabindex="-1" aria-labelledby="crearProspectoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <!-- Lado izquierdo (fondo gris) -->
+                <div class="modal-left">
+                    <h1>Crear nuevo prospecto</h1>
+                    <div class="left-form">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" class="form-control" id="nombre" >
+                        </div>
+                        <div class="form-group">
+                            <label>Celular (Con prefijo)</label>
+                            <input type="tel" class="form-control" id="celular" >
+                        </div>
+                        <div class="form-group">
+                            <label>Referencia (Página de Facebook)</label>
+                            <select class="form-select" id="referencia">
+                                <option>Seleccione una página</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Lado derecho (fondo blanco) -->
+                <div class="modal-right">
+                    <button type="button" class="close-button" data-bs-dismiss="modal" aria-label="Close">×</button>
+                    <div class="right-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Tipo de evento</label>
+                                <select class="form-select" id="tipoEvento" >
+                                    <option>Seleccione un...</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Fecha</label>
+                                <input type="date" class="form-control" id="fecha">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Invitados</label>
+                                <input type="number" class="form-control" id="invitados" placeholder="Número de invitado">
+                            </div>
+                            <div class="form-group">
+                                <label>Pregunta por</label>
+                                <select class="form-select" id="lugarEvento">
+                                    <option>Seleccione un...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Observación</label>
+                            <textarea class="form-control" id="observacion" placeholder="Agregue sus observaciones"></textarea>
+                        </div>
+                        <button type="button" class="crear-prospecto-btn" id="crearProspectoBtn">Crear prospecto</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+	<script src="js/app.js"></script>
+	<script src="js/sesion-checked.js"></script>
+	<script src="js/prospectos/listarProspectos.js"></script>
+	<script src="js/menu.js"></script>
+	<script src="js/prospectos/crearProspecto.js"></script>
+
+
+
+</body>
+
+</html>
