@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Evento</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/evento.css">
+
+    <script src="https://code.jquery.com/jquery-3.7.0.js"
+        integrity="sha256-JlqSTELeR4TLqP0OG9dxM7yDPqX1ox/HfgiSLBj8+kM=" crossorigin="anonymous"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <!-- Alertify CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css" />
+    <!-- Alertify JS -->
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bodymovin/5.7.6/lottie.min.js"></script>
+
+</head>
+
+<body>
+    <div id="floatingContainer">
+        <div id="circleProgress"></div>
+        <div id="progressText">0%</div>
+    </div>
+    <div class="container">
+        <form id="eventForm">
+            <div class="form-section">
+                <div class="container-logo">
+                    <img src="./img/MoveEventos.png" class="logo" alt="">
+                </div>
+                <h2>Información del Evento</h2>
+                <div class="form-group">
+                    <label for="fechaEvento">Fecha del Evento</label>
+                    <input type="text" id="fechaEvento" name="fechaEvento" placeholder="Escribe aquí" required>
+                </div>
+                <div class="form-group">
+                    <label for="nombrePareja">Nombres de los Novios</label>
+                    <input type="text" id="nombrePareja" name="nombrePareja" placeholder="Escribe aquí" required>
+                </div>
+                <div class="form-group">
+                    <label for="lugarEvento">Lugar del Evento</label>
+                    <input type="text" id="lugarEvento" name="lugarEvento" placeholder="Escribe aquí" required>
+                </div>
+                <div class="form-group">
+                    <label for="horaLlegadaNovios">Hora de Llegada de los Novios</label>
+                    <input type="time" id="horaLlegadaNovios" name="horaLlegadaNovios" required>
+                </div>
+                <div class="form-group">
+                    <label for="horaCivil">Hora Civil</label>
+                    <input type="time" id="horaCivil" name="horaCivil" required>
+                </div>
+                <div class="form-group">
+                    <label for="horaMisa">Hora de la Misa</label>
+                    <input type="time" id="horaMisa" name="horaMisa" required>
+                </div>
+                <div class="form-group">
+                    <label for="horaRecepcion">Hora de la Recepción</label>
+                    <input type="time" id="horaRecepcion" name="horaRecepcion" required>
+                </div>
+                <div class="form-group">
+                    <label for="horaCena">Hora de la Cena</label>
+                    <input type="time" id="horaCena" name="horaCena" required>
+                </div>
+                <div class="form-group">
+                    <label for="horaFinEvento">Fin del Evento</label>
+                    <input type="time" id="horaFinEvento" name="horaFinEvento" required>
+                </div>
+                <div class="form-group">
+                    <label for="numeroInvitados">Número de Invitados</label>
+                    <input type="number" id="numeroInvitados" name="numeroInvitados" placeholder="Escribe aquí"
+                        required>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Menú</h2>
+                <div class="form-group">
+                    <label for="entremes">Entremés</label>
+                    <textarea id="entremes" name="entremes" rows="2" placeholder="Escribe aquí" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="entrada">Entrada</label>
+                    <textarea id="entrada" name="entrada" rows="2" placeholder="Escribe aquí" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="platoFuerte">Plato Fuerte</label>
+                    <textarea id="platoFuerte" name="platoFuerte" rows="2" placeholder="Escribe aquí"
+                        required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="postre">Postre</label>
+                    <textarea id="postre" name="postre" rows="2" placeholder="Escribe aquí" required></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Decoración</h2>
+                <!-- Concepto de decoración (textarea) -->
+                <div class="form-group">
+                    <label for="conceptoDecoracion">Concepto de Decoración</label>
+                    <textarea id="conceptoDecoracion" name="conceptoDecoracion" rows="3" placeholder="Escribe aquí"
+                        required></textarea>
+                </div>
+        
+                <!-- Selección de imagen para la decoración -->
+                <div class="form-group">
+                    <label for="imagenDecoracion">Seleccionar Imagen de Decoración</label>
+                    <input type="file" id="imagenDecoracion" name="imagenDecoracion" accept="image/*" required>
+                </div>
+        
+                <!-- Previsualización de la imagen -->
+                <div class="form-group">
+                    <img id="previewImagenDecoracion" src="#" alt="Previsualización de la Imagen" style="display:none; width: 300px; height: auto;">
+                </div>
+        
+                <!-- Otros campos existentes en la sección de decoración -->
+                <div class="form-group">
+                    <label for="basesDecoracion">Bases de Decoración</label>
+                    <input type="text" id="basesDecoracion" name="basesDecoracion" placeholder="Escribe aquí" required>
+                </div>
+                <div class="form-group">
+                    <label for="guiasDecoracion">Guías de Decoración</label>
+                    <input type="text" id="guiasDecoracion" name="guiasDecoracion" placeholder="Escribe aquí" required>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Ramos</h2>
+                <div class="form-group">
+                    <label for="ramoPrincipal">Ramo Principal</label>
+                    <input type="text" id="ramoPrincipal" name="ramoPrincipal" placeholder="Escribe aquí" required>
+                </div>
+                <div class="form-group">
+                    <label for="ramoAventar">Ramo para Aventar</label>
+                    <input type="text" id="ramoAventar" name="ramoAventar" placeholder="Escribe aquí" required>
+                </div>
+                <div class="form-group">
+                    <label for="botoniers">Botoniers</label>
+                    <input type="number" id="botoniers" name="botoniers" placeholder="Escribe aquí" required>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Montaje</h2>
+                <div class="form-group">
+                    <label for="mesasImperiales">Mesas Imperiales</label>
+                    <input type="number" id="mesasImperiales" name="mesasImperiales" placeholder="Escribe aquí"
+                        required>
+                </div>
+                <div class="form-group">
+                    <label for="mesasRedondas">Mesas Redondas</label>
+                    <input type="number" id="mesasRedondas" name="mesasRedondas" placeholder="Escribe aquí" required>
+                </div>
+                <div class="form-group">
+                    <label for="mesasCuadradas">Mesas Cuadradas</label>
+                    <input type="number" id="mesasCuadradas" name="mesasCuadradas" placeholder="Escribe aquí" required>
+                </div>
+                <div class="form-group">
+                    <label for="sillas">Sillas Crossback</label>
+                    <input type="number" id="sillas" name="sillas" placeholder="Escribe aquí" required>
+                    <textarea id="sillasAdicionales" name="sillasAdicionales" rows="2" placeholder="Escribe aquí"
+                        required></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Mantel</h2>
+                <div class="form-group">
+                    <label for="coloresMantel">Colores del Mantel</label>
+                    <input type="text" id="coloresMantel" name="coloresMantel" placeholder="Escribe aquí" required>
+                </div>
+                <div class="form-group">
+                    <label for="servilletas">Servilletas</label>
+                    <input type="text" id="servilletas" name="servilletas" placeholder="Escribe aquí" required>
+                </div>
+                <div class="form-group">
+                    <label for="platoBase">Plato Base</label>
+                    <select id="platoBase" name="platoBase" required>
+                        <option value="doradoCraquelado">Dorado Craquelado</option>
+                        <option value="doradoHoja">Dorado Hoja</option>
+                        <option value="doradoBrillosoPuntos">Dorado Brilloso Puntos</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Detalles Especiales</h2>
+                <div class="form-group">
+                    <label for="detalleEspecial">Detalle Especial</label>
+                    <textarea id="detalleEspecial" name="detalleEspecial" rows="2" placeholder="Escribe aquí"
+                        required></textarea>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Adicional</h2>
+                <div class="form-group">
+                    <label for="adicional">Seleccione Opción Adicional</label>
+                    <select id="adicional" name="adicional" required>
+                        <option value="mixologia">Mixología (Menú)</option>
+                        <option value="juegoRamos">Juego de Ramos</option>
+                        <option value="decoracionArcos">Decoración Arcos</option>
+                        <option value="estructura">Estructura</option>
+                        <option value="hospedaje">Hospedaje (¿Qué habitaciones?)</option>
+                        <option value="menuTrasnochador">Menú Trasnochador</option>
+                        <option value="desayuno">Desayuno</option>
+                    </select>
+                </div>
+            </div>
+        
+
+            <div class="form-actions">
+                <button type="submit">Enviar</button>
+            </div>
+        </form>
+        <div id="loadingDialog" class="loading-dialog">
+            <div class="loading-content">
+                <div id="loadingAnimation"></div>
+                <p>Espere...</p>
+            </div>
+            <style>
+                .loading-dialog {
+                    display: none;
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    justify-content: center;
+                    align-items: center;
+                    background: rgba(0, 0, 0, 0.5);
+                }
+
+                .loading-content {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    background: white;
+                    padding: 20px;
+                    border-radius: 10px;
+                }
+
+                textarea {
+                    width: 100%;
+                    overflow: hidden;
+                    resize: none;
+                    /* Evita el redimensionamiento manual del textarea */
+                    min-height: 3em;
+                    /* Altura mínima inicial */
+                }
+
+                /* Estilo para el contenedor flotante redondo */
+                /* Estilo para el contenedor flotante redondo */
+            </style>
+        </div>
+
+    </div>
+    <script src="./jsProject/evento.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.rawgit.com/kottenator/jquery-circle-progress/1.2.2/dist/circle-progress.js"></script>
+
+</body>
+
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta
+      name="description"
+      content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5"
+    />
+    <meta name="author" content="AdminKit" />
+    <meta
+      name="keywords"
+      content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web"
+    />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+
+    <link
+      rel="canonical"
+      href="https://demo-basic.adminkit.io/pages-blank.html"
+    />
+
+    <title>Calendario | JASSO</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <link href="css/app.css" rel="stylesheet" />
+    <link rel="stylesheet" href="css/calendario/calendario.css" />
+    <link rel="stylesheet" href="css/loading.css">
+    <link rel="stylesheet" href="css/userPic.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap"
+      rel="stylesheet"
+    />
+    
+    <!-- En el head de tu HTML -->
+<link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <link rel="stylesheet" href="css/notificaciones.css">
+	
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+   
+  </head>
+
+  <body>
+    <div id="loader" class="loader-container">
+      <div class="loader-content">
+        <div class="loader"></div>
+      </div>
+    </div>
+    <div class="wrapper">
+      <nav id="sidebar" class="sidebar js-sidebar">
+        
+      </nav>
+
+      <div class="main">
+        <nav class="navbar navbar-expand navbar-light navbar-bg">
+          <a class="sidebar-toggle js-sidebar-toggle">
+            <i class="hamburger align-self-center"></i>
+          </a>
+
+          <div class="navbar-collapse collapse">
+            <ul class="navbar-nav navbar-align">
+              <li class="nav-item dropdown">
+                <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+                  <div class="position-relative">
+                    <i class="align-middle" data-feather="bell"></i>
+                    <span class="indicator" id="notificationCount">0</span>
+                  </div>
+                </a>
+               <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
+                <div class="dropdown-menu-header" id="notificationHeader">0 Nuevas Notificaciones</div>
+                <div class="list-group" id="notificationList">
+                  <!-- Notifications will be inserted here -->
+                </div>
+                <div class="dropdown-menu-footer">
+                  <a href="all-notifications.html" class="text-muted">Ver todas las notificaciones</a>
+                </div>
+               </div>
+              </li>
+          
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-icon dropdown-toggle d-inline-block d-sm-none"
+                  href="#"
+                  data-bs-toggle="dropdown"
+                >
+                  <i class="align-middle" data-feather="settings"></i>
+                </a>
+
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                  <span id="imgPerfil" class="avatar-container"></span>
+                  <span class="text-dark" id="nombreUsuario"></span>
+              </a>
+                  <div class="dropdown-menu dropdown-menu-end">
+                    <a class="dropdown-item" href="pages-profile.html"
+                      ><i class="align-middle me-1" data-feather="user"></i>
+                      Profile</a
+                    >
+                    <a class="dropdown-item" href="#"
+                      ><i
+                        class="align-middle me-1"
+                        data-feather="pie-chart"
+                      ></i>
+                      Analytics</a
+                    >
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="index.html"
+                      ><i class="align-middle me-1" data-feather="settings"></i>
+                      Settings & Privacy</a
+                    >
+                    <a class="dropdown-item" href="#"
+                      ><i
+                        class="align-middle me-1"
+                        data-feather="help-circle"
+                      ></i>
+                      Help Center</a
+                    >
+                    <div class="dropdown-divider"></div>
+                    <a id="logOut" class="dropdown-item" href="#"
+                      >Cerrar sesion</a
+                    >
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+
+        <main class="content">
+          <div class="container-fluid p-0">
+            <h1 class="h3 mb-3">Calendario</h1>
+
+            <div class="row">
+              <!-- Tarjeta de conexión con Google -->
+              <div class="col-lg-3 mb-4">
+                  <div class="card google-auth-card">
+                      <div class="card-header">
+                          <h5 class="card-title mb-0">
+                              <i class="fab fa-google text-primary me-2"></i>
+                              Google Calendar
+                          </h5>
+                      </div>
+                      <div class="card-body">
+                          <div class="auth-container text-center">
+                              <div class="calendar-icon mb-4">
+                                  <i class="far fa-calendar-alt"></i>
+                              </div>
+                              <button id="authorizeButton" class="btn btn-connect mb-2">
+                                  <i class="fab fa-google me-2"></i>Conectar Calendar
+                              </button>
+                              <button id="signoutButton" class="btn btn-disconnect" style="display: none">
+                                  <i class="fas fa-unlink me-2"></i>Desconectar
+                              </button>
+                              <div class="connection-status mt-3">
+                                  <small class="text-muted">
+                                      <i class="fas fa-info-circle me-1"></i>
+                                      Sincroniza tus eventos con Google Calendar
+                                  </small>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          
+              <!-- Calendario Principal -->
+              <div class="col-lg-9">
+                  <div class="card calendar-card">
+                      <div class="card-body">
+                          <div class="calendar-container">
+                              <div id="errorMessage" class="error-message"></div>
+                              <div class="calendar-header">
+                                  <h2 class="calendar-title" id="currentMonth"></h2>
+                                  <div class="calendar-nav">
+                                      <button class="nav-button" id="prevMonth">
+                                          <i class="fas fa-chevron-left me-1"></i>
+                                          Anterior
+                                      </button>
+                                      <button class="nav-button" id="nextMonth">
+                                          Siguiente
+                                          <i class="fas fa-chevron-right ms-1"></i>
+                                      </button>
+                                  </div>
+                              </div>
+                              <div class="weekdays">
+                                  <div>Dom</div>
+                                  <div>Lun</div>
+                                  <div>Mar</div>
+                                  <div>Mié</div>
+                                  <div>Jue</div>
+                                  <div>Vie</div>
+                                  <div>Sáb</div>
+                              </div>
+                              <div class="days" id="calendarDays"></div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          </div>
+        </main>
+      </div>
+    </div>
+<!-- In the eventFormModal, update the form to include category and other improvements -->
+<div id="eventFormModal" class="modal">
+  <div class="modal-content">
+      <div class="modal-header">
+          <h3>Detalles del Evento</h3>
+          <button class="close">&times;</button>
+      </div>
+      <div class="modal-body">
+          <form id="eventForm">
+              <input type="hidden" id="eventId">
+              <div class="form-group">
+                  <label for="eventTitle">Título</label>
+                  <input type="text" id="eventTitle" required class="form-control">
+              </div>
+
+              <div class="form-group">
+                <label for="eventClient">Cliente</label>
+                <input type="text" id="eventClient" required class="form-control">
+            </div>
+
+
+            <div class="form-group">
+              <label for="eventPlace">Lugar de la cita</label>
+              <input type="text" id="eventPlace" required class="form-control">
+          </div>
+            
+              <div class="form-group">
+                  <label for="eventCategory">Categoría</label>
+                  <select id="eventCategory" class="form-control">
+                      <option value="CASA_ANTIGUA">Casa Antigua</option>
+                      <option value="CAMPANARIO">Campanario</option>
+                      <option value="GENERAL">General</option>
+                      <option value="EVENTOS_ESPECIALES">Eventos especiales</option>
+                      <option value="CITAS">Citas</option>
+                      <option value="DEGUSTACION">Degustación</option>
+                  </select>
+              </div>
+              <div class="form-group">
+                  <label for="eventDescription">Descripción</label>
+                  <textarea id="eventDescription" class="form-control"></textarea>
+              </div>
+
+
+              <div class="form-group">
+                  <label for="eventTime">Hora</label>
+                  <input type="time" id="eventTime" required class="form-control">
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save"></i> Guardar Evento
+                  </button>
+              </div>
+          </form>
+      </div>
+  </div>
+</div>
+
+<!-- Update the day modal to match the new event management approach -->
+<div id="dayModal" class="modal">
+  <div class="modal-content">
+      <div class="modal-header">
+          <h3 id="modalDate"></h3>
+          <button class="close">&times;</button>
+      </div>
+      <div class="modal-body">
+          <div id="eventList" class="event-list"></div>
+          <button id="addEventBtn" class="btn btn-primary mt-3">
+              <i class="fas fa-plus"></i> Agregar Evento
+          </button>
+      </div>
+  </div>
+</div>
+
+<div id="eventDetailsModal" class="modal">
+  <div class="modal-content">
+      <div class="modal-header">
+          <h2>Detalles del Evento</h2>
+          <span class="close">&times;</span>
+      </div>
+      <div id="eventDetailsContent" class="modal-body">
+          <!-- El contenido se insertará dinámicamente aquí -->
+      </div>
+  
+  </div>
+</div>
+
+    <script src="js/app.js"></script>
+    <script src="js/sesion-checked.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="js/calendario/calendario.js"></script>
+    <script src="js/menu.js"></script>
+
+  </body>
+</html>

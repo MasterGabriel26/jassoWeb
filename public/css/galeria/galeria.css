@@ -1,0 +1,753 @@
+/* Variables de color */
+:root {
+    --primary-color: #0056b3;
+    --hover-color: #007bff;
+    --background-color: #f0f2f5;
+    --card-background: #ffffff;
+    --text-color: #1a1a1a;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos generales */
+body {
+    background-color: var(--background-color);
+}
+
+.card {
+    background: var(--card-background);
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 2px 20px var(--shadow-color);
+}
+
+/* Contenedor principal de la galería */
+.gallery-container {
+    padding: 20px;
+    background-color: var(--card-background);
+    border-radius: 16px;
+}
+
+/* Estilo Pinterest */
+#galeria-todo, [id^="galeria-"] {
+    columns: 5 250px;
+    column-gap: 20px;
+    padding: 20px;
+}
+
+.pin-container {
+    break-inside: avoid;
+    padding: 8px;
+}
+
+.pin {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    background: var(--card-background);
+    box-shadow: 0 4px 15px var(--shadow-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.pin:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.pin img {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.pin:hover img {
+    transform: scale(1.05);
+}
+
+/* Overlay y efectos */
+.pin-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, 
+        rgba(0, 0, 0, 0.2), 
+        rgba(0, 0, 0, 0.6));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: all 0.3s ease;
+}
+
+.pin:hover .pin-overlay {
+    opacity: 1;
+}
+
+/* Botones y acciones */
+.pin-actions {
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.pin:hover .pin-actions {
+    transform: translateY(0);
+}
+
+.pin-button {
+    background: var(--card-background);
+    color: var(--text-color);
+    border: none;
+    border-radius: 25px;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.pin-button:hover {
+    background: var(--hover-color);
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Navegación y pestañas */
+.nav-tabs {
+    border: none;
+    gap: 10px;
+    padding: 15px;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: var(--text-color);
+    font-weight: 500;
+    padding: 12px 24px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    background: transparent;
+}
+
+.nav-tabs .nav-link:hover {
+    background: rgba(0, 123, 255, 0.1);
+}
+
+.nav-tabs .nav-link.active {
+    background: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 86, 179, 0.3);
+}
+
+/* Botón de agregar imagen */
+#addImageBtn {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 86, 179, 0.3);
+}
+
+#addImageBtn:hover {
+    background: var(--hover-color);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 86, 179, 0.4);
+}
+
+/* Modal mejorado */
+.modal-content {
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border: none;
+    padding: 20px;
+    background: var(--card-background);
+}
+
+.modal-body {
+    padding: 0;
+}
+
+.modal-image {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* Formulario de agregar imagen */
+.form-control, .form-select {
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    padding: 12px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 86, 179, 0.1);
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.pin-container {
+    animation: fadeInUp 0.5s ease-out forwards;
+}
+
+/* Responsive */
+@media (max-width: 1400px) {
+    #galeria-todo, [id^="galeria-"] {
+        columns: 4 240px;
+    }
+}
+
+@media (max-width: 1200px) {
+    #galeria-todo, [id^="galeria-"] {
+        columns: 3 230px;
+    }
+}
+
+@media (max-width: 992px) {
+    #galeria-todo, [id^="galeria-"] {
+        columns: 2 220px;
+    }
+}
+
+@media (max-width: 768px) {
+    #galeria-todo, [id^="galeria-"] {
+        columns: 2 200px;
+    }
+    
+    .nav-tabs .nav-link {
+        padding: 8px 16px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 576px) {
+    #galeria-todo, [id^="galeria-"] {
+        columns: 1 auto;
+    }
+}
+
+
+/* Fondo del modal con blur */
+.modal-backdrop.show {
+opacity: 1;
+background: rgba(0, 0, 0, 0.8);
+backdrop-filter: blur(10px);
+}
+
+/* Contenedor del modal */
+#imageModal .modal-dialog {
+width: 100%;
+max-width: none;
+height: 100vh;
+margin: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+/* Contenido del modal */
+#imageModal .modal-content {
+background: transparent;
+border: none;
+box-shadow: none;
+position: relative;
+width: auto;
+max-width: 90vw;
+}
+
+/* Botón de cerrar (X) */
+#imageModal .btn-close {
+position: fixed;
+top: 20px;
+right: 20px;
+background: rgba(255, 255, 255, 0.2);
+backdrop-filter: blur(5px);
+width: 40px;
+height: 40px;
+border-radius: 50%;
+z-index: 1060;
+opacity: 0.8;
+transition: all 0.3s ease;
+}
+
+#imageModal .btn-close:hover {
+opacity: 1;
+transform: scale(1.1);
+}
+
+/* Contenedor de la imagen */
+#imageModal .modal-body {
+padding: 0;
+position: relative;
+}
+
+/* Imagen */
+#imageModal .modal-image {
+max-height: 85vh;
+max-width: 85vw;
+object-fit: contain;
+display: block;
+}
+
+/* Botones de navegación */
+.modal-nav-buttons {
+position: fixed;
+top: 50%;
+left: 0;
+right: 0;
+transform: translateY(-50%);
+display: flex;
+justify-content: space-between;
+padding: 0 20px;
+z-index: 1050;
+}
+
+
+
+
+.modal-nav-button {
+background: rgba(255, 255, 255, 0.2);
+backdrop-filter: blur(5px);
+border: none;
+border-radius: 50%;
+width: 45px;
+height: 45px;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-size: 20px;
+cursor: pointer;
+transition: all 0.3s ease;
+opacity: 0.8;
+}
+
+.modal-nav-button:hover {
+opacity: 1;
+transform: scale(1.1);
+background: rgba(255, 255, 255, 0.3);
+}
+
+.modal-nav-button:disabled {
+opacity: 0.3;
+cursor: not-allowed;
+transform: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+.modal-nav-button {
+width: 35px;
+height: 35px;
+font-size: 16px;
+}
+
+#imageModal .modal-image {
+max-width: 95vw;
+}
+
+#imageModal .btn-close {
+top: 10px;
+right: 10px;
+width: 35px;
+height: 35px;
+}
+}
+
+
+/* Botones de navegación */
+.modal-nav-buttons {
+position: fixed;
+top: 50%;
+left: 0;
+right: 0;
+transform: translateY(-50%);
+display: flex;
+justify-content: space-between;
+padding: 0 30px;
+z-index: 1050;
+}
+
+.modal-nav-button {
+background: rgba(255, 255, 255, 0.15);
+backdrop-filter: blur(10px);
+border: 1px solid rgba(255, 255, 255, 0.2);
+border-radius: 50%;
+width: 50px;
+height: 50px;
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-size: 22px;
+cursor: pointer;
+transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+opacity: 0.8;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.modal-nav-button:hover {
+opacity: 1;
+transform: scale(1.1);
+background: rgba(255, 255, 255, 0.25);
+border-color: rgba(255, 255, 255, 0.3);
+box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.modal-nav-button:active {
+transform: scale(0.95);
+}
+
+.modal-nav-button:disabled {
+opacity: 0.3;
+cursor: not-allowed;
+transform: none;
+box-shadow: none;
+}
+
+/* Efecto hover específico para los íconos */
+.modal-nav-button i {
+transition: transform 0.3s ease;
+}
+
+.modal-nav-button.prev:hover i {
+transform: translateX(-3px);
+}
+
+.modal-nav-button.next:hover i {
+transform: translateX(3px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+.modal-nav-buttons {
+padding: 0 15px;
+}
+
+.modal-nav-button {
+width: 40px;
+height: 40px;
+font-size: 18px;
+}
+}
+
+
+/* Botón de cerrar (X) */
+#imageModal .modal-header {
+position: fixed;
+top: 20px;
+right: 20px;
+border: none;
+padding: 0;
+z-index: 1060;
+background: transparent;
+}
+
+#imageModal .btn-close {
+background: rgba(255, 255, 255, 0.15);
+backdrop-filter: blur(10px);
+width: 40px;
+height: 40px;
+border-radius: 50%;
+opacity: 0.8;
+transition: all 0.3s ease;
+position: relative;
+padding: 0;
+margin: 0;
+border: 1px solid rgba(255, 255, 255, 0.2);
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#imageModal .btn-close:hover {
+opacity: 1;
+transform: rotate(90deg);
+background: rgba(255, 255, 255, 0.25);
+border-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Crear el ícono X con pseudo-elementos */
+#imageModal .btn-close::before,
+#imageModal .btn-close::after {
+content: '';
+position: absolute;
+width: 20px;
+height: 2px;
+background: white;
+top: 50%;
+left: 50%;
+transition: all 0.3s ease;
+}
+
+#imageModal .btn-close::before {
+transform: translate(-50%, -50%) rotate(45deg);
+}
+
+#imageModal .btn-close::after {
+transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+#imageModal .modal-header {
+top: 15px;
+right: 15px;
+}
+
+#imageModal .btn-close {
+width: 35px;
+height: 35px;
+}
+
+#imageModal .btn-close::before,
+#imageModal .btn-close::after {
+width: 16px;
+}
+}
+
+
+
+
+/* Estilos para el modal de agregar imagen */
+#addImageModal .modal-dialog {
+max-width: 500px;
+}
+
+#addImageModal .modal-content {
+background: rgba(255, 255, 255, 0.95);
+backdrop-filter: blur(10px);
+border: none;
+border-radius: 20px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+#addImageModal .modal-header {
+border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+padding: 20px 25px;
+background: transparent;
+}
+
+#addImageModal .modal-title {
+font-size: 1.4rem;
+font-weight: 600;
+color: #2c3e50;
+}
+
+#addImageModal .modal-body {
+padding: 25px;
+}
+
+/* Estilos para el formulario */
+#addImageForm .form-label {
+font-weight: 500;
+color: #2c3e50;
+margin-bottom: 8px;
+font-size: 0.95rem;
+}
+
+#addImageForm .form-control,
+#addImageForm .form-select {
+border: 2px solid rgba(0, 0, 0, 0.08);
+border-radius: 12px;
+padding: 12px 15px;
+transition: all 0.3s ease;
+background: rgba(255, 255, 255, 0.9);
+}
+
+#addImageForm .form-control:focus,
+#addImageForm .form-select:focus {
+border-color: var(--primary-color);
+box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.1);
+background: white;
+}
+
+/* Estilo específico para input file */
+#addImageForm input[type="file"] {
+padding: 10px;
+background: rgba(255, 255, 255, 0.9);
+cursor: pointer;
+}
+
+#addImageForm input[type="file"]::-webkit-file-upload-button {
+background: var(--primary-color);
+color: white;
+padding: 8px 16px;
+border: none;
+border-radius: 8px;
+margin-right: 10px;
+transition: all 0.3s ease;
+cursor: pointer;
+}
+
+#addImageForm input[type="file"]::-webkit-file-upload-button:hover {
+background: var(--primary-color);
+}
+
+/* Botón de submit */
+#addImageForm button[type="submit"] {
+background: var(--primary-color);
+color: white;
+border: none;
+border-radius: 12px;
+padding: 12px 25px;
+font-weight: 500;
+transition: all 0.3s ease;
+width: 100%;
+margin-top: 10px;
+}
+
+#addImageForm button[type="submit"]:hover {
+background: var(--primary-color);
+transform: translateY(-2px);
+box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+}
+
+#addImageForm button[type="submit"]:active {
+transform: translateY(0);
+}
+
+/* Animación de entrada para el campo de nueva categoría */
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+#newCategoryInput.show {
+display: block !important;
+animation: slideDown 0.3s ease forwards;
+}
+
+/* Botón de cerrar */
+#addImageModal .btn-close {
+background: rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(5px);
+width: 32px;
+height: 32px;
+border-radius: 50%;
+opacity: 0.7;
+transition: all 0.3s ease;
+}
+
+#addImageModal .btn-close:hover {
+opacity: 1;
+transform: rotate(90deg);
+background: rgba(0, 0, 0, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+#addImageModal .modal-dialog {
+margin: 1rem;
+}
+
+#addImageModal .modal-content {
+border-radius: 15px;
+}
+
+#addImageModal .modal-body {
+padding: 20px;
+}
+
+#addImageForm .form-control,
+#addImageForm .form-select {
+padding: 10px;
+}
+}
+
+
+/* CSS actualizado */
+/* Botón de cerrar del modal */
+.modal-close-btn {
+width: 32px;
+height: 32px;
+position: relative;
+background: rgba(0, 0, 0, 0.1);
+border: none;
+border-radius: 50%;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.modal-close-btn:hover {
+background: rgba(0, 0, 0, 0.2);
+transform: rotate(90deg);
+}
+
+.modal-close-btn span {
+position: absolute;
+width: 16px;
+height: 2px;
+background: #333;
+top: 50%;
+left: 50%;
+}
+
+.modal-close-btn span:first-child {
+transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.modal-close-btn span:last-child {
+transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* Contenedor del input file */
+.file-input-container {
+position: relative;
+display: flex;
+align-items: center;
+}
+
+.file-input-container .form-control {
+padding-right: 40px; /* Espacio para el botón de limpiar */
+}
+
+/* Botón para limpiar el archivo */
+.clear-file-btn {
+position: absolute;
+right: 10px;
+background: none;
+border: none;
+color: #666;
+cursor: pointer;
+padding: 5px;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 50%;
+width: 24px;
+height: 24px;
+transition: all 0.3s ease;
+}
+
+.clear-file-btn:hover {
+background: rgba(0, 0, 0, 0.1);
+color: #333;
+}

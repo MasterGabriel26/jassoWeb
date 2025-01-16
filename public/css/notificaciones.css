@@ -1,0 +1,34 @@
+.notification-unread {
+    background-color: #e6f3ff;
+}
+
+.notification-read {
+    background-color: #ffffff;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.notification-icon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.notification-title {
+    font-weight: bold;
+}
+
+.notification-SEGUIMIENTO { color: #CD6E06; }
+.notification-FELICITACIONES { color: #0239C6; }
+.notification-CITA_AGENDADA { color: #117846; }
+.notification-MENSAJE { color: #3E06CD; }
+.notification-VIDEO { color: #CB1158; }
+.notification-APROBACION { color: #345C21; }
+.notification-RECHAZADO { color: #F35858; }
+.notification-CAMBIO_ROL { color: #CD0677; }

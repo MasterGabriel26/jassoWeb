@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <title>Nuestra boda</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;600&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+    <link href="lib/lightbox/css/lightbox.min.css" rel="stylesheet">
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+
+     <!-- Metaetiquetas Open Graph -->
+     <!-- <meta property="og:title" content="Jasso!">
+     <meta property="og:description" content="Tarjeta de Invitación">
+     <meta property="og:image" content="https://jassocompany.com/IM/img/matri.jpg">
+     <meta property="og:url" content="https://jassocompany.com/IM/"> -->
+
+     <meta property="og:title" content="Mi Página Web 3">
+     <meta property="og:description" content="Descripción de mi página 3">
+     <meta property="og:url" content="https://jassocompany.com/">
+     <meta property="og:image" content="">
+
+  <!-- Alertify CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+  <!-- Alertify JS -->
+  <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+     
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+
+</head>
+
+<body data-spy="scroll" data-target=".navbar" data-offset="51">
+    <!-- Navbar Start -->
+
+    <nav class="navbar fixed-top shadow-sm navbar-expand-lg bg-dark navbar-dark py-3 py-lg-0 px-lg-5">
+        <a href="index.html" class="navbar-brand d-block d-lg-none">
+            <h1 id="navbarBrand" class="font-secondary text-white mb-n2">none <span class="text-primary">&</span> none
+            </h1>
+        </a>
+        <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+            <div class="navbar-nav ml-auto py-0">
+                <a href="#home" class="nav-item nav-link active">Inicio</a>
+                <a id="miQR" class="nav-item nav-link" data-toggle="modal" data-target="#qrModal">Mi QR</a>              
+                <a class="nav-item nav-link" href="#rsvp">Confirmación</a>
+                <a class="nav-item nav-link" href="../vestidos/index.html">Vestidos</a>               
+                <a id="ubicacionBoda" class="nav-item nav-link" data-toggle="modal" data-target="#locationModal">¿Dónde
+                    será?</a>
+              
+            </div>
+            <a href="index.html" class="navbar-brand mx-5 d-none d-lg-block">
+                <h1 id="navbarBrand" class="font-secondary text-white mb-n2">Jorge <span class="text-primary">&</span>
+                    Rosa</h1>
+            </a>
+        </div>
+    </nav>
+    <!-- Navbar End -->
+
+    <!-- Carousel Start -->
+    <div class="container-fluid p-0 mb-5 pb-5" id="home">
+        <div id="header-carousel" class="carousel slide carousel-fade" data-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item position-relative active" style="height: 100vh; min-height: 400px;">
+                    <img id="fotoPortada1" class="position-absolute w-100 h-100" src="" style="object-fit: cover;">
+                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                        <div class="p-3" style="max-width: 900px;">
+                            <h1 class="novios display-1 font-secondary text-white mt-n3 mb-md-4"></h1>
+                            <div class="d-inline-block border-top border-bottom border-light py-3 px-4">
+                                <h3 class="text-uppercase font-weight-normal text-white m-0"
+                                    style="letter-spacing: 2px;">Nos casamos!!</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item position-relative" style="height: 100vh; min-height: 400px;">
+                    <img id="fotoPortada2" class="position-absolute w-100 h-100" src="" style="object-fit: cover;">
+                    <div class="carousel-caption d-flex flex-column align-items-center justify-content-center">
+                        <div class="p-3" style="max-width: 900px;">
+                            <h1 class="novios display-1 font-secondary text-white mt-n3 mb-md-4"></h1>
+                            <div class="d-inline-block border-top border-bottom border-light py-3 px-4">
+                                <h3 class="text-uppercase font-weight-normal text-white m-0"
+                                    style="letter-spacing: 2px;">Nos casamos</h3>
+                            </div>
+                            <button type="button" class="btn-play mx-auto" data-toggle="modal" data-src=""
+                                data-target="#videoModal">
+                                <span></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <a class="carousel-control-prev justify-content-start" href="#header-carousel" data-slide="prev">
+                <div class="btn btn-primary px-0" style="width: 68px; height: 68px;">
+                    <span class="carousel-control-prev-icon mt-3"></span>
+                </div>
+            </a>
+            <a class="carousel-control-next justify-content-end" href="#header-carousel" data-slide="next">
+                <div class="btn btn-primary px-0" style="width: 68px; height: 68px;">
+                    <span class="carousel-control-next-icon mt-3"></span>
+                </div>
+            </a>
+        </div>
+    </div>
+    <!-- Carousel End -->
+
+    <!-- Video Modal Start -->
+    <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <!-- 16:9 aspect ratio -->
+                    <div class="embed-responsive embed-responsive-16by9">
+                        <!-- <iframe class="embed-responsive-item" src="" id="video"  allowscriptaccess="always" allow="autoplay"></iframe> -->
+                        <iframe width="560" height="315"
+                            src="https://www.youtube.com/embed/zhcBigxoG3M?si=GmGmVkUeYcj-4Co0"
+                            title="YouTube video player" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Video Modal End -->
+    <audio id="soundBack" src="assets/soundBack.mp3" autoplay loop></audio>
+
+    <!-- About Start -->
+    <div class="container-fluid py-3" id="about">
+        <div class="container py-5">
+            <div class="section-title position-relative text-center">
+                <h6 class="text-uppercase text-primary mb-3" style="letter-spacing: 3px;">Sobre Nosotros</h6>
+                <h1 id="novioNovia" class="font-secondary display-4">Novio & Novia</h1>
+                <i class="far fa-heart text-dark"></i>
+            </div>
+            <div class="row m-0 mb-4 mb-md-0 pb-2 pb-md-0">
+                <div class="col-md-6 p-0 text-center text-md-right">
+                    <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-3">
+                        <h3 id="novio" class="mb-3 nombreMarido">El Novio</h3>
+                        <p id="descripcionMarido">Jorge es un hombre amable y carismático, conocido por su pasión por la
+                            música y su amor por la naturaleza. Desde pequeño, siempre soñó con encontrar a alguien con
+                            quien compartir sus aventuras y su corazón.</p>
+                        <h3 class="nombreMarido font-secondary font-weight-normal text-muted mb-3"><i
+                                class="fa fa-male text-primary pr-3"></i>Jorge</h3>
+                        <div class="position-relative">
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-linkedin-in"></i></a>
+                            <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 p-0" style="min-height: 400px;">
+                    <img class="position-absolute w-100 h-100" id="fotoMarido" style="object-fit: cover;">
+                </div>
+            </div>
+            <div class="row m-0">
+                <div class="col-md-6 p-0" style="min-height: 400px;">
+                    <img class="position-absolute w-100 h-100" id="fotoMujer" style="object-fit: cover;">
+                </div>
+                <div class="col-md-6 p-0 text-center text-md-left">
+                    <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-3">
+                        <h3 id="novia" class="mb-3 nombreMujer">La Novia</h3>
+                        <p id="descripcionMujer">Rosa es una mujer brillante y compasiva, con un profundo amor por la
+                            literatura y los viajes. Su sonrisa ilumina cualquier habitación y su espíritu aventurero la
+                            ha llevado a vivir experiencias únicas alrededor del mundo.</p>
+                        <h3 class="nombreMujer font-secondary font-weight-normal text-muted mb-3"><i
+                                class="fa fa-female text-primary pr-3"></i>Rosa2</h3>
+                        <div class="position-relative">
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-instagram"></i></a>
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-primary btn-square mr-1" href="#"><i
+                                    class="fab fa-linkedin-in"></i></a>
+                            <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- About End -->
+
+    <!-- Story Start -->
+    <div class="container-fluid py-3" id="story">
+        <div class="container pt-5 pb-3">
+            <div class="section-title position-relative text-center">
+                <h6 class="text-uppercase text-primary mb-3" style="letter-spacing: 3px;">Nuestra Historia</h6>
+                <h1 class="font-secondary display-4">Nuestra Historia de Amor</h1>
+                <i class="far fa-heart text-dark"></i>
+            </div>
+            <div class="container timeline position-relative p-0">
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-right">
+                        <img class="img-fluid mr-md-3" id="fotoPrimerEncuentro" alt="">
+                    </div>
+                    <div class="col-md-6 text-center text-md-left">
+                        <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-4 ml-md-3">
+                            <h4 class="mb-2">Primer Encuentro</h4>
+                            <p id="fechaPrimerEncuentro" class="text-uppercase mb-2">01 Ene 2020</p>
+                            <p id="descripcionPrimerEncuentro" class="m-0">Jorge y Rosa se conocieron en una cafetería
+                                local donde ambos solían pasar sus tardes leyendo y disfrutando de una buena taza de
+                                café. Sus miradas se cruzaron y desde ese momento supieron que había algo especial entre
+                                ellos.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-right">
+                        <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-4 mr-md-3">
+                            <h4 class="mb-2">Primera Cita</h4>
+                            <p id="fechaPrimeraCita" class="text-uppercase mb-2">14 Feb 2020</p>
+                            <p id="descripcionPrimeraCita" class="m-0">Su primera cita fue un paseo por el parque
+                                seguido de una cena romántica bajo las estrellas. Conversaron durante horas,
+                                descubriendo sus intereses comunes y soñando con aventuras futuras.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-center text-md-left">
+                        <img class="img-fluid ml-md-3" id="fotoPrimeraCita" alt="">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-right">
+                        <img class="img-fluid mr-md-3" id="fotoPropuesta" alt="">
+                    </div>
+                    <div class="col-md-6 text-center text-md-left">
+                        <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-4 ml-md-3">
+                            <h4 class="mb-2">Propuesta</h4>
+                            <p id="fechaPropuesta" class="text-uppercase mb-2">25 Dic 2020</p>
+                            <p id="descripcionPropuesta" class="m-0">En la víspera de Navidad, Jorge llevó a Rosa a su
+                                lugar favorito en la ciudad y, bajo las luces festivas, se arrodilló y le pidió que
+                                fuera su compañera de vida. Rosa, con lágrimas de alegría, dijo que sí.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 text-center text-md-right">
+                        <div class="h-100 d-flex flex-column justify-content-center bg-secondary p-4 mr-md-3">
+                            <h4 class="mb-2">Compromiso</h4>
+                            <p id="fechaCompromiso" class="text-uppercase mb-2">01 Ene 2021</p>
+                            <p id="descripcionCompromiso" class="m-0">El compromiso fue un evento íntimo con sus
+                                familiares y amigos más cercanos, celebrando el amor y la unión de Jorge y Rosa. Fue una
+                                noche llena de risas, lágrimas y promesas para el futuro.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 text-center text-md-left">
+                        <img class="img-fluid ml-md-3" id="fotoCompromiso" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Story End -->
+
+    <!-- Gallery Start -->
+    <!-- <div class="container-fluid bg-gallery" id="gallery" style="padding: 120px 0; margin: 90px 0;">
+        <div class="section-title position-relative text-center" style="margin-bottom: 120px;">
+            <h6 class="text-uppercase text-primary mb-3" style="letter-spacing: 3px;">Galería</h6>
+            <h1 class="font-secondary display-4 text-white">Nuestra Galería de Fotos</h1>
+            <i class="far fa-heart text-white"></i>
+        </div>
+        <div class="owl-carousel gallery-carousel"></div>
+    </div> -->
+    <div class="container-fluid bg-gallery" id="gallery" style="padding: 120px 0; margin: 90px 0;">
+        <div class="section-title position-relative text-center" style="margin-bottom: 120px;">
+            <h6 class="text-uppercase text-primary mb-3" style="letter-spacing: 3px;">Galería</h6>
+            <h1 class="font-secondary display-4 text-white">Nuestra Galería de Fotos</h1>
+            <i class="far fa-heart text-white"></i>
+        </div>
+        <div class="owl-carousel gallery-carousel"></div>
+        <div class="gradient-overlay"></div>
+        <!-- <img id="galleryImage" class="gallery-background" src="" alt="Galería de fotos"> -->
+    </div>
+
+    <!-- Gallery End -->
+
+    <!-- Event Start -->
+    <div class="container-fluid py-3" id="event">
+        <div class="container py-5">
+            <div class="section-title position-relative text-center">
+                <h6 class="text-uppercase text-primary mb-3" style="letter-spacing: 3px;">Evento</h6>
+                <h1 class="font-secondary display-4">Nuestra Boda</h1>
+                <i class="far fa-heart text-dark"></i>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center">
+                    <h5 class="font-weight-normal text-muted mb-3 pb-3" id="descripcionFelicidad">La boda de Jorge y
+                        Rosa será un evento lleno de amor y felicidad, donde celebraremos nuestra unión con familiares y
+                        amigos queridos. Estamos emocionados de compartir este día especial con ustedes.</h5>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 border-right border-primary">
+                    <div class="text-center text-md-right mr-md-3 mb-4 mb-md-0">
+                        <img class="img-fluid mb-4" id="fotoLugar" alt="">
+                        <h4 class="mb-3">La Recepción</h4>
+                        <p class="mb-2" id="lugarEvento">123 Calle, Torreon, MEX.</p>
+                        <p class="mb-2" id="direccion" style="font-size: 12px;"></p>
+                        <p class="mb-3" id="horaRecepcion" style="font-weight: bold;">13:00PM - 14:00PM</p>
+                        <p class="mb-0" id="descripcionEvento">La recepción será un evento inolvidable.</p>
+                    </div>
+                </div>
+                <!-- <div class="col-md-6">
+                    <div class="text-center text-md-left ml-md-3">
+                        <img class="img-fluid mb-4" id="fotoPortada2" src="img/event-2.jpg" alt="">
+                        <h4 class="mb-3">Fiesta de Boda</h4>
+                        <p class="mb-2">123 Calle, Torreon, MEX.</p>
+                        <p class="mb-0">13:00PM - 14:00PM</p>
+                    </div>
+                </div> -->
+            </div>
+        </div>
+    </div>
+    <!-- Event End -->
+
+    <!-- Friends & Family Start -->
+    <div class="container-fluid py-3" id="family">
+        <div class="container pt-5 pb-3">
+            <div class="section-title position-relative text-center">
+                <h6 class="text-uppercase text-primary mb-3" style="letter-spacing: 3px;">Amigos & Familia</h6>
+                <h1 id="padrinosYmadrinas" class="font-secondary display-4">Padrinos & Madrinas</h1>
+                <i class="far fa-heart text-dark"></i>
+            </div>
+            <div class="row">
+                <div class="col-12 text-center mb-2">
+                    <ul class="list-inline mb-4" id="portfolio-flters">
+                        <li id="padrinoLi" class="btn btn-outline-primary font-weight-bold m-1 py-2 px-4"
+                            data-filter=".first">Padrinos</li>
+                        <li id="madrinaLi" class="btn btn-outline-primary font-weight-bold m-1 py-2 px-4"
+                            data-filter=".second">Madrinas</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="row" id="padrinosContainer">
+                <!-- Aquí se insertarán los elementos de padrinos -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Friends & Family End -->
+
+    <!-- RSVP Start -->
+    <div class="container-fluid py-3" id="rsvp">
+        <div class="container py-5">
+            <div class="section-title position-relative text-center">
+                <h6 class="text-uppercase text-primary mb-3" style="letter-spacing: 3px;">Confirmación</h6>
+                <h1 class="font-secondary display-4">Únete a Nuestra Fiesta</h1>
+                <i class="far fa-heart text-dark"></i>
+            </div>
+            <div id="bloqueinvitacion" class="text-center mt-4">
+                <button id="botonConfirmar" class="btn btn-primary btn-lg btn-block-custom font-weight-bold py-3 mx-2"
+                    type="button" style="width: 280px;" data-toggle="modal" data-target="#accompanyingGuestsModal">Confirmo asistencia
+                    😊</button>
+                <button id="botonNoAsistire"
+                    class="btn btn-secondary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button"
+                    style="width: 280px; margin-top: 8px; margin-bottom: 8px;">No puedo asistir 😢</button>
+                <button class="btn btn-outline-primary btn-lg btn-block-custom font-weight-bold py-3 mx-2" type="button"
+                    style="width: 280px;">¿Tienes preguntas? ❓</button>
+            </div>
+            <!-- Modal for RSVP Form -->
+            <div class="modal fade" id="rsvpModal" tabindex="-1" role="dialog" aria-labelledby="rsvpModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content bg-secondary">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="rsvpModalLabel" style="color: #000;">Confirmación de Asistencia
+                            </h5>
+                            <button type="button" class="close text-black" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <h6 style="color: #000;">Recomendaciones</h6>
+                            <ul class="list-unstyled" style="color: #000;">
+                                <li><strong>Vestido hombre:</strong> <span class="vestido-hombre"></span></li>
+                                <li><strong>Vestido mujer:</strong> <span class="vestido-mujer"></span></li>
+                                
+                                <!-- Enlace de recomendaciones con margen -->
+                                <li style="margin-top: 10px; margin-bottom: 10px;"><a href="../vestidos/index.html" style="color: blue;">Recomendaciones de vestidos.</a></li>
+                                
+                                <li id="li-mesaAsignada"><strong>Mesa asignada:</strong> <span class="mesaAsignada"></span></li>
+                                <li><strong>Acompañantes:</strong> <span id="listaAcompanantes"></span></li>
+                                <li><strong>Dirección:</strong> <span class="direccion" style="font-size: 13px;"></span></li>
+                                <li><strong>Hora:</strong> <span class="hora-evento"></span></li>
+                            </ul>
+                        
+                            <div>
+                                <button id="confirmarAsistencia" class="btn btn-primary font-weight-bold py-3 px-5" type="submit">Confirmar</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <!-- RSVP End -->
+<!-- acompañantes -->
+<!-- Modal for Listing Accompanying Guests -->
+<div class="modal fade" id="accompanyingGuestsModal" tabindex="-1" role="dialog" aria-labelledby="accompanyingGuestsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content bg-secondary">
+            <div class="modal-header">
+                <h5 class="modal-title" id="accompanyingGuestsModalLabel" style="color: #000;">Listado de Acompañantes</h5>
+                <button type="button" class="close text-black" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="numeroInvitadosSelect">Número de acompañantes:</label>
+                    <select id="numeroInvitadosSelect" class="custom-select" onchange="updateAccompanyingGuests(this.value)">
+                        <!-- Las opciones se generarán dinámicamente en JavaScript -->
+                    </select>
+                </div>
+                <form id="acompanantesInputsContainer">
+                    
+                    <!-- Los campos de input se generan dinámicamente aquí -->
+                </form>
+            </div>
+            <div class="modal-footer">               
+                <button id="guardarAcompanantes" class="btn btn-primary" >Guardar Listado de Acompañantes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Footer Start -->
+    <div class="container-fluid bg-dark text-white py-5" id="contact" style="margin-top: 90px;">
+        <div class="container text-center py-5">
+            <div class="section-title position-relative text-center">
+                <h1 class="font-secondary display-3 text-white">Gracias</h1>
+                <i class="far fa-heart text-white"></i>
+            </div>
+            <div class="d-flex justify-content-center mb-4">
+                <a class="btn btn-lg btn-outline-light btn-lg-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
+                <a class="btn btn-lg btn-outline-light btn-lg-square mr-2" href="#"><i
+                        class="fab fa-facebook-f"></i></a>
+                <a class="btn btn-lg btn-outline-light btn-lg-square mr-2" href="#"><i la="fab fa-linkedin-in"></i></a>
+                <a class="btn btn-lg btn-outline-light btn-lg-square" href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+            <div class="d-flex justify-content-center py-2">
+                <p class="text-white" href="#">info@example.com</p>
+                <span class="px-3">|</span>
+                <p class="text-white" href="#">+012 345 6789</p>
+            </div>
+            <p class="m-0">&copy; <a class="text-primary" href="#">Jasso Eventos</a>.</p>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Scroll to Bottom -->
+    <i class="fa fa-2x fa-angle-down text-white scroll-to-bottom"></i>
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-outline-primary btn-lg-square back-to-top"><i
+            class="fa fa-angle-double-up"></i></a>
+
+    <!-- Modal QR -->
+    <div class="modal fade" id="qrModal" tabindex="-1" role="dialog" aria-labelledby="qrModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content bg-secondary text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="qrModalLabel">Invitación</h5>
+                    <button type="button" class="btn btn-link text-black" id="downloadQR" aria-label="Download">
+                        <i class="fa fa-download"></i>
+                    </button>
+                    <button type="button" class="close text-black" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center" style="color: #000;">
+                    <h6 id="invitationName">Nombre del invitado y acompañante(s)</h6>
+                    <p id="assignedTable">Mesa asignada: </p>
+                    <a href="#" style="color: blue;">Recomendaciones de vestidos.</a>
+                    <p id="status">Estado: </p>
+                    <div class="qr-container">
+                        <div id="qrcode"></div>
+                        <div class="scanner-line"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal for Location -->
+    <div class="modal fade" id="locationModal" tabindex="-1" role="dialog" aria-labelledby="locationModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content bg-secondary text-white">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="locationModalLabel">Ubicación de la Boda</h5>
+                    <button type="button" class="close text-black" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body text-center mapa">
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+    #numeroInvitadosSelect{
+    width: fit-content; /* Ajusta el ancho al contenido del select */
+    display: inline-block;
+}
+.is-invalid {
+    border-color: #dc3545; /* Rojo para errores */
+    background-color: #ffe5e9; /* Fondo suavemente rojo */
+}
+
+        .mapa iframe {
+            width: 100%;
+            max-width: 100%;
+            height: 450px;
+            border: 0;
+            /* color: #7010ee; */
+        }
+
+        .qr-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto;
+            width: 300px;
+            height: 300px;
+        }
+
+
+
+        .modal-header .btn-link .fa-download {
+            font-size: 1.2rem;
+            /* Tamaño del ícono de descarga */
+            margin-left: 30px;
+        }
+
+        #qrcode {
+            width: 100%;
+            height: 100%;
+        }
+
+        .scanner-line {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            height: 2px;
+            background-color: rgba(247, 5, 5, 0.75);
+            animation: scan 3s infinite, flash 1s infinite;
+
+        }
+
+
+
+        .qr-container {
+            position: relative;
+        }
+
+        @keyframes scan {
+            0% {
+                top: 0;
+            }
+
+            100% {
+                top: 100%;
+            }
+        }
+
+        @keyframes flash {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px rgba(255, 255, 255, 0.75);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(255, 255, 255, 1);
+            }
+        }
+
+        .modal-lg {
+            max-width: 600px;
+        }
+    </style>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/easing/easing.min.js"></script>
+    <script src="lib/waypoints/waypoints.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="lib/isotope/isotope.pkgd.min.js"></script>
+    <script src="lib/lightbox/js/lightbox.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/loadInvitacion.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/constantes.js"></script>
+</body>
+
+</html>

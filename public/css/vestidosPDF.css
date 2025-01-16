@@ -1,0 +1,540 @@
+body {
+    background-color: rgba(0, 0, 0, 0.8);
+    font-family: "Urbanist", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+}
+
+@keyframes backgroundMove {
+    0% {
+        background-position: 50% 40%;
+    }
+
+    15% {
+        background-position: 40% 40%;
+    }
+
+    30% {
+        background-position: 60% 40%;
+    }
+
+    60% {
+        background-position: 30% 50%;
+    }
+
+    75% {
+        background-position: 20% 20%;
+    }
+
+    90% {
+        background-position: 80% 40%;
+    }
+
+    100% {
+        background-position: 50% 40%;
+    }
+}
+
+.titles {
+    text-align: center;
+    margin-top: 6vh;
+    margin-bottom: 10vh;
+}
+
+.imagenes {
+    width: 31%;
+    height: 60vh;
+    object-fit: cover;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    margin-right: 0%;
+    margin-left: 1.7%;
+}
+
+#detalles-vestido {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    /* Cambiado de space-between a center para centrar las imágenes */
+    gap: 2%;
+    padding: 0 0px;
+}
+#detalles-vestido div {
+    padding: 0;
+}
+
+#info {
+    text-align: center;
+}
+
+#info h2 {
+    font-weight: bold;
+    margin-top: 4vh;
+    margin-bottom: 0;
+}
+
+#info p {
+    margin-top: 0vh;
+}
+
+#info p:nth-of-type(2) {
+    margin-top: 4vh;
+    margin-bottom: 0;
+    font-size: 8vh;
+    padding: 0;
+}
+
+#info p:nth-of-type(3) {
+    margin-top: 0vh;
+    margin-bottom: 6vh;
+}
+
+
+/* CONTAINER */
+.container {
+    position: relative;
+    color: white;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.container:nth-of-type(1) h1 {
+    margin-bottom: 0;
+
+}
+
+.container:nth-of-type(1) p {
+    margin-bottom: 0;
+    font-size: 12px;
+}
+
+.container:nth-of-type(2) {
+    background-color: #111111d2;
+    padding: 4vh 3vh 8vh 3vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container h2 {
+    text-align: center;
+}
+
+.container #citaForm {
+    margin-top: 4vh;
+    width: 60%;
+   
+}
+
+.container #citaForm .fechasInicio {
+    display: flex;
+    flex-direction: row;
+}
+
+.container #citaForm .fechasInicio .containerInput {
+    width: 100%;
+}
+
+.container #citaForm .fechasInicio .containerInput:nth-of-type(2) {
+    width: 100%;
+    margin-left: 1vh;
+}
+
+.container #citaForm .fechasInicio .containerInput:nth-of-type(3) {
+    width: 100%;
+    margin-left: 1vh;
+}
+
+.container button {
+    width: 100%;
+    padding: 1vh 1vh;
+    background-color: #7f7f7f;
+    border: none;
+    color: black;
+    font-weight: bold;
+}
+
+.container input {
+    width: 100%;
+    padding: 1vh 1vh;
+    border: none;
+}
+
+.container select {
+    width: 100%;
+    padding: 1vh 1vh;
+    border: none;
+}
+
+body {
+    animation: scroll 1500s linear infinite;
+    background: url("/img/bg_galeria.jpg"),
+        #111111;
+
+    perspective: 1000px;
+    perspective-origin: 50% 50%;
+}
+
+@media (max-width: 1200px) {
+    body {
+        background-color: rgba(0, 0, 0, 0.8);
+        font-family: "Urbanist", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 100;
+        font-style: normal;
+    }
+
+    @keyframes backgroundMove {
+        0% {
+            background-position: 50% 40%;
+        }
+
+        15% {
+            background-position: 40% 40%;
+        }
+
+        30% {
+            background-position: 60% 40%;
+        }
+
+        60% {
+            background-position: 30% 50%;
+        }
+
+        75% {
+            background-position: 20% 20%;
+        }
+
+        90% {
+            background-position: 80% 40%;
+        }
+
+        100% {
+            background-position: 50% 40%;
+        }
+    }
+
+    .titles {
+        text-align: center;
+        margin-top: 6vh;
+        margin-bottom: 10vh;
+    }
+
+    .imagenes {
+        width: 48%;
+        height: 60vh;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        margin-right: 1%;
+        margin-left: 1%;
+    }
+
+    #detalles-vestido {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        /* Cambiado de space-between a center para centrar las imágenes */
+        gap: 2%;
+        padding: 0 0px;
+    }
+
+    #info {
+        text-align: center;
+    }
+
+    #info h2 {
+        font-weight: bold;
+        margin-top: 4vh;
+        margin-bottom: 0;
+    }
+
+    #info p {
+        margin-top: 0vh;
+    }
+
+    #info p:nth-of-type(2) {
+        margin-top: 4vh;
+        margin-bottom: 0;
+        font-size: 8vh;
+        padding: 0;
+    }
+
+    #info p:nth-of-type(3) {
+        margin-top: 0vh;
+        margin-bottom: 6vh;
+    }
+
+
+    /* CONTAINER */
+    .container {
+        position: relative;
+        color: white;
+        padding: 0;
+        margin: 0 auto;
+        max-width: 100%;
+    }
+
+    .container:nth-of-type(1) h1 {
+        margin-bottom: 0;
+
+    }
+
+    .container:nth-of-type(1) p {
+        margin-bottom: 0;
+        font-size: 12px;
+    }
+
+    .container:nth-of-type(2) {
+        background-color: #111111d2;
+        padding: 4vh 3vh 8vh 3vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container h2 {
+        text-align: center;
+    }
+
+    .container #citaForm {
+        margin-top: 4vh;
+        width: 80%;
+    }
+
+    .container #citaForm .fechasInicio {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .container #citaForm .fechasInicio .containerInput {
+        width: 100%;
+    }
+
+    .container #citaForm .fechasInicio .containerInput:nth-of-type(2) {
+        width: 100%;
+        margin-left: 1vh;
+    }
+
+    .container #citaForm .fechasInicio .containerInput:nth-of-type(3) {
+        width: 100%;
+        margin-left: 1vh;
+    }
+
+    .container button {
+        width: 100%;
+        padding: 1vh 1vh;
+        background-color: #7f7f7f;
+        border: none;
+        color: black;
+        font-weight: bold;
+    }
+
+    .container input {
+        width: 100%;
+        padding: 1vh 1vh;
+        border: none;
+    }
+
+    .container select {
+        width: 100%;
+        padding: 1vh 1vh;
+        border: none;
+    }
+
+    body {
+        animation: scroll 1500s linear infinite;
+        background: url("/img/bg_galeria.jpg"),
+            #111111;
+
+        perspective: 1000px;
+        perspective-origin: 50% 50%;
+    }
+}
+
+@media (max-width: 700px) {
+    body {
+        background-color: rgba(0, 0, 0, 0.8);
+        font-family: "Urbanist", sans-serif;
+        font-optical-sizing: auto;
+        font-weight: 100;
+        font-style: normal;
+    }
+
+    @keyframes backgroundMove {
+        0% {
+            background-position: 50% 40%;
+        }
+
+        15% {
+            background-position: 40% 40%;
+        }
+
+        30% {
+            background-position: 60% 40%;
+        }
+
+        60% {
+            background-position: 30% 50%;
+        }
+
+        75% {
+            background-position: 20% 20%;
+        }
+
+        90% {
+            background-position: 80% 40%;
+        }
+
+        100% {
+            background-position: 50% 40%;
+        }
+    }
+
+    .titles {
+        text-align: center;
+        margin-top: 6vh;
+        margin-bottom: 10vh;
+    }
+
+    .imagenes {
+        width: 98%;
+        height: 60vh;
+        object-fit: cover;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        margin-right: 1%;
+        margin-left: 1%;
+    }
+
+    #detalles-vestido {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        /* Cambiado de space-between a center para centrar las imágenes */
+        gap: 2%;
+        padding: 0 0px;
+    }
+
+    #info {
+        text-align: center;
+    }
+
+    #info h2 {
+        font-weight: bold;
+        margin-top: 4vh;
+        margin-bottom: 0;
+    }
+
+    #info p {
+        margin-top: 0vh;
+    }
+
+    #info p:nth-of-type(2) {
+        margin-top: 4vh;
+        margin-bottom: 0;
+        font-size: 8vh;
+        padding: 0;
+    }
+
+    #info p:nth-of-type(3) {
+        margin-top: 0vh;
+        margin-bottom: 6vh;
+    }
+
+
+    /* CONTAINER */
+    .container {
+        position: relative;
+        color: white;
+        padding: 0;
+        margin: 0 auto;
+        max-width: 100%;
+    }
+
+    .container:nth-of-type(1) h1 {
+        margin-bottom: 0;
+
+    }
+
+    .container:nth-of-type(1) p {
+        margin-bottom: 0;
+        font-size: 12px;
+    }
+
+    .container:nth-of-type(2) {
+        background-color: #111111d2;
+        padding: 4vh 3vh 8vh 3vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container h2 {
+        text-align: center;
+    }
+
+    .container #citaForm {
+        margin-top: 4vh;
+        width: 100%;
+    }
+
+    .container #citaForm .fechasInicio {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .container #citaForm .fechasInicio .containerInput {
+        width: 100%;
+    }
+
+    .container #citaForm .fechasInicio .containerInput:nth-of-type(2) {
+        width: 100%;
+        margin-left: 1vh;
+    }
+
+    .container #citaForm .fechasInicio .containerInput:nth-of-type(3) {
+        width: 100%;
+        margin-left: 1vh;
+    }
+
+    .container button {
+        width: 100%;
+        padding: 1vh 1vh;
+        background-color: #7f7f7f;
+        border: none;
+        color: black;
+        font-weight: bold;
+    }
+
+    .container input {
+        width: 100%;
+        padding: 1vh 1vh;
+        border: none;
+    }
+
+    .container select {
+        width: 100%;
+        padding: 1vh 1vh;
+        border: none;
+    }
+
+    body {
+        animation: scroll 1500s linear infinite;
+        background: url("/img/bg_galeria.jpg"),
+            #111111;
+
+        perspective: 1000px;
+        perspective-origin: 50% 50%;
+    }
+
+}

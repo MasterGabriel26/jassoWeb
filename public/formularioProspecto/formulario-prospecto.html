@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Formulario de prospecto</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.0.0-rc.7/dist/html2canvas.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <link rel="stylesheet" href="styleProspecto.css" />
+  </head>
+  <body>
+
+    <div> <a href="../page-prospectos.html"><button>Volver atras</button></a></div>
+    <form id="eventoForm">
+      <div class="form-group">
+      
+        
+      </div>
+
+      <div class="card">
+        <div class="card-title">Informacion personal</div>
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" id="nombre" name="nombre"  />
+        </div>
+      
+        <div class="form-group">
+          <label for="celular">Celular</label>
+          <input type="tel" id="celular" name="celular"  />
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Contacto  de interes</div>
+        <div class="form-group">
+          <label for="referencia">Referencia(Pagina de Facebook)</label>
+          <select id="referencia" name="referencia" >
+            <option value="">Seleccione una pagina</option>
+           
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="lugarEvento">Pregunta por</label>
+          <select id="lugarEvento" name="lugarEvento" >
+              <option value="">Seleccione un lugar</option>
+              <!-- Options will be populated dynamically -->
+          </select>
+      </div>
+     </div>
+      
+      
+
+      
+      <div class="card">
+        <div class="card-title">Informacion del evento</div>
+        
+        <div class="form-group">
+          <label for="invitados">Invitados</label>
+          <input type="number" id="invitados" name="invitados"  />
+        </div>
+        
+        <div class="form-group">
+          <label for="observacion">Observacion</label>
+          <input type="text" id="observacion" name="observacion"  />
+        </div>
+
+        <div class="form-group">
+          <label for="tipoEvento">Tipo de evento</label>
+          <select id="tipoEvento" name="tipoEvento" >
+            <option value="">Seleccione un evento</option>
+           
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="fecha">Fecha</label>
+          <input type="date" id="fecha" name="fecha"  />
+        </div>
+
+        <div style="display: flex; justify-content: center;margin-top: 40px;">
+          <button type="submit" style="width: 50%;">Crear prospecto</button>
+        </div>
+    </form>
+
+
+
+  
+
+
+
+    <script src="formularioProspecto.js"></script>
+  </body>
+</html>
