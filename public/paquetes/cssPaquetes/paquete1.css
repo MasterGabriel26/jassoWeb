@@ -10,6 +10,54 @@ body {
     /* filter: brightness(0.5); */
 }
 
+/* responsive */
+@media only screen and (max-width: 600px) {
+    .presentacion .logo{
+        position: absolute;
+        top: 5vh;
+        left: 5vh;
+    }    
+    .presentacion .logo img{
+       width: 7vh;
+    }    
+    .presentacion .logo p{
+       font-size: 20px;
+    }    
+    .presentacionLista{
+        position: absolute;
+        top: 15vh;
+        left: 5vh;
+        font-size: 18px;
+    }
+    .imagenDelLugar{
+        width: 70%;
+    }
+}
+
+@media only screen and (max-width: 1024px) {
+    .presentacion .logo{
+        position: absolute;
+        top: 5vh;
+        left: 5vh;
+    }    
+    .presentacion .logo img{
+       width: 7vh;
+    }    
+    .presentacion .logo p{
+       font-size: 20px;
+    }    
+    .presentacionLista{
+        position: absolute;
+        top: 20vh;
+        left: 5vh;
+        font-size: 24px;
+    }
+    .imagenDelLugar{
+        width: 50%;
+    }
+}
+
+/* animaciones */
 @keyframes animate {
     0%{
         transform: translateY(0) rotate(0deg);
