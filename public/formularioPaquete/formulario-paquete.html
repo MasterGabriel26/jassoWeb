@@ -77,8 +77,10 @@
         </style>
 </head>
 <body>
-    <div class="container-fluid">
+    
+    <div class="container-fluid py-4">
         <div> <a href="../vista-admin/page-paquetes.html" ><button class="btn-primary">Volver atras</button></a></div>
+        
         <div class="row">
            
             <main >
@@ -110,7 +112,12 @@
                             </select>
                         </div>
 
-                        <h2>Material adicional</h2>
+                        <div class="col-12 mb-3">
+                            <button type="button" class="btn btn-primary" id="btnMaterialAdicional">
+                                <i class="fas fa-plus-circle me-2"></i>Material Adicional
+                            </button>
+                        </div>
+
                         <div class="col-md-6">
                             <label for="cantidadDePersonas" class="form-label">Cantidad de Personas</label>
                             <select class="form-select" id="cantidadDePersonas" required>
@@ -505,7 +512,43 @@
                 </form>
             </main>
         </div>
+        
     </div>
+
+<!-- Añade esto al final del body pero antes de los scripts -->
+<div class="modal fade" id="materialAdicionalModal" tabindex="-1" aria-labelledby="materialAdicionalModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body p-4">
+                <h4 class="modal-title text-center mb-3">Selecciona el material de apoyo</h4>
+                <p class="text-muted text-center mb-4">Por favor, selecciona todo el material de apoyo que será muy importante para poder tener una venta exitosa.</p>
+                
+                <div class="d-flex justify-content-between gap-2 mb-4">
+                    <button class="btn btn-material btn-images">
+                        <i class="fas fa-images mb-2"></i>
+                        Imágenes (0)
+                    </button>
+                    <button class="btn btn-material btn-videos">
+                        <i class="fas fa-video mb-2"></i>
+                        Videos (0)
+                    </button>
+                    <button class="btn btn-material btn-pdf">
+                        <i class="fas fa-file-pdf mb-2"></i>
+                        PDF (0)
+                    </button>
+                </div>
+
+                <div class="form-group mb-4">
+                    <textarea class="form-control" rows="4" placeholder="Descripción"></textarea>
+                </div>
+
+                <button class="btn btn-primary w-100" id="btnGuardarMaterial">
+                    Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 

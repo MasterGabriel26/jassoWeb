@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Sistema de gestión de prospectos y seguimiento de eventos para JASSO">
+	<meta name="author" content="JASSO">
+	<meta name="keywords" content="jasso, eventos, bodas, xv años, gestión, prospectos, seguimiento, cotizaciones, paquetes, salón de eventos">
+	
+
+    <title>Administrar | JASSO</title>
+    <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../css/app.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/loading.css">
+    <link rel="stylesheet" href="../css/inicio/inicio.css">
+    <link rel="stylesheet" href="../css/notificaciones.css">
+    <link rel="stylesheet" href="../css/userPic.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+ 
+  <!-- TinyMCE -->
+  <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+  <script src="https://cdn.tiny.cloud/1/3cr5qahx0audqf42u7ekozi3ui571xflupyptmxfh4dapaou/tinymce/7/tinymce.min.js"
+    referrerpolicy="origin"></script>
+
+<!-- En el head de tu HTML -->
+<link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+      <!-- Open Graph Meta Tags for WhatsApp Preview -->
+      <meta property="og:title" content="Paquetes JASSO">
+      <meta property="og:description" content="Descubre nuestros increíbles paquetes para eventos">
+      <meta property="og:image" content="https://jassocompany.com/img/logo.jpg">
+      <meta property="og:url" content="https://jassocompany.com/paquete-detalle.html">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="JASSO">
+  
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+      
+      <!-- WhatsApp specific meta -->
+      <meta property="og:image:width" content="600">
+      <meta property="og:image:height" content="315">
+
+      
+      <style>/* Variables globales */
+        :root {
+            --primary: #2794d3;
+            --primary-light: #2a6aaa;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-500: #64748b;
+            --gray-700: #334155;
+            --gray-900: #1e293b;
+        }
+        
+        /* Estilos base */
+        .content {
+            padding: 2rem;
+            background-color: var(--gray-50);
+        }
+        
+        /* Header */
+        .list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .list-header h1 {
+            font-size: 1.5rem;
+            color: var(--gray-900);
+            font-weight: 500;
+        }
+        
+        .btn-new {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 0.5rem;
+            border: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+        
+        .btn-new:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+        }
+        
+        /* Contenedor de tabla */
+        .table-container {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        /* DataTables personalización */
+        .dataTables_wrapper {
+            padding: 1.5rem;
+        }
+        
+        /* Controles superiores */
+        .dataTables_length select,
+        .dataTables_filter input {
+            border: 1px solid var(--gray-200);
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .dataTables_length select:focus,
+        .dataTables_filter input:focus {
+            border-color: var(--primary);
+        }
+        
+        /* Tabla */
+        .dataTable {
+            width: 100% !important;
+            margin: 1rem 0 !important;
+        }
+        
+        .dataTable thead th {
+            background: var(--gray-50);
+            padding: 1rem;
+            color: var(--gray-700);
+            font-weight: 500;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid var(--gray-200);
+        }
+        
+        .dataTable tbody td {
+            padding: 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--gray-100);
+        }
+        
+        /* Imagen en tabla */
+        .table-image {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 0.5rem;
+            object-fit: cover;
+        }
+        
+        .no-image {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: var(--gray-100);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-500);
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Botones de acción */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-action {
+            width: 2rem;
+            height: 2rem;
+            border-radius: 0.375rem;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.2s;
+        }
+        
+        .btn-view { background: var(--info); }
+        .btn-edit { background: var(--warning); }
+        .btn-delete { background: var(--danger); }
+        
+        .btn-action:hover {
+            transform: translateY(-1px);
+            filter: brightness(110%);
+        }
+        
+        /* Paginación */
+        .dataTables_paginate {
+            margin-top: 1rem;
+            display: flex;
+            gap: 0.25rem;
+        }
+        
+        .paginate_button {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--gray-200);
+            border-radius: 0.375rem;
+            color: var(--gray-500);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .paginate_button.current {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .content {
+                padding: 1rem;
+            }
+        
+            .list-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        
+            .btn-new {
+                width: 100%;
+                justify-content: center;
+            }
+        
+            .dataTables_wrapper {
+                padding: 1rem;
+            }
+        
+            .dataTables_filter input {
+                width: 100%;
+            }
+        }
+        
+
+        /* Mejoras para los controles de búsqueda y paginación */
+.dataTables_wrapper {
+    padding: 1.5rem;
+}
+
+/* Control de entradas por página */
+.dataTables_length {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dataTables_length label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--gray-700);
+    font-size: 0.875rem;
+}
+
+.dataTables_length select {
+    padding: 0.375rem 2rem 0.375rem 0.75rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.5rem;
+    background-color: white;
+    font-size: 0.875rem;
+    color: var(--gray-900);
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,..."); /* Agregar ícono de flecha */
+}
+
+/* Buscador */
+.dataTables_filter {
+    display: flex;
+    align-items: center;
+}
+
+.dataTables_filter label {
+    position: relative;
+    width: 100%;
+    max-width: 250px;
+    margin: 0;
+}
+
+.dataTables_filter input {
+    width: 100%;
+    padding: 0.375rem 1rem 0.375rem 2rem;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    background-color: white;
+}
+
+.dataTables_filter label::before {
+    content: '\f002'; /* Ícono de búsqueda de Font Awesome */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--gray-500);
+    font-size: 0.875rem;
+}
+
+/* Paginación mejorada */
+.dataTables_paginate {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.paginate_button {
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--gray-200);
+    border-radius: 0.375rem;
+    color: var(--gray-700);
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.paginate_button.current {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.paginate_button:hover:not(.current):not(.disabled) {
+    background-color: var(--gray-50);
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.paginate_button.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Modal mejorado */
+.publication-detail {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.detail-image {
+    width: 100%;
+    max-height: 300px;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.detail-info {
+    background-color: var(--gray-50);
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.detail-info p {
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+    color: var(--gray-700);
+}
+
+.detail-info strong {
+    color: var(--gray-900);
+}
+
+.detail-content {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: var(--gray-700);
+}
+        
+          </style>
+
+</head>
+<body>
+    
+    <div class="wrapper">
+        <nav id="sidebar" class="sidebar js-sidebar">
+            <!-- Sidebar content -->
+        </nav>
+
+
+        <div class="main">
+        <nav class="navbar navbar-expand navbar-light navbar-bg">
+          <a class="sidebar-toggle js-sidebar-toggle">
+            <i class="hamburger align-self-center"></i>
+          </a>
+
+          <div class="navbar-collapse collapse">
+            <ul class="navbar-nav navbar-align">
+              <li class="nav-item dropdown">
+                <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+                  <div class="position-relative">
+                    <i class="align-middle" data-feather="bell"></i>
+                    <span class="indicator" id="notificationCount">0</span>
+                  </div>
+                </a>
+               <!-- Update the notification list container in your HTML -->
+<div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
+<div class="dropdown-menu-header" id="notificationHeader">0 Nuevas Notificaciones</div>
+<div class="list-group" id="notificationList">
+  <!-- Notifications will be inserted here -->
+</div>
+<div class="dropdown-menu-footer">
+  <a href="all-notifications.html" class="text-muted">Ver todas las notificaciones</a>
+</div>
+</div>
+              </li>
+          
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-icon dropdown-toggle d-inline-block d-sm-none"
+                  href="#"
+                  data-bs-toggle="dropdown"
+                >
+                  <i class="align-middle" data-feather="settings"></i>
+                </a>
+
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                  <span id="imgPerfil" class="avatar-container"></span>
+                  <span class="text-dark" id="nombreUsuario"></span>
+              </a>
+                  <div class="dropdown-menu dropdown-menu-end">
+                    <a class="dropdown-item" href="pages-profile.html"
+                      ><i class="align-middle me-1" data-feather="user"></i>
+                      Profile</a
+                    >
+                    <a class="dropdown-item" href="#"
+                      ><i
+                        class="align-middle me-1"
+                        data-feather="pie-chart"
+                      ></i>
+                      Analytics</a
+                    >
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="index.html"
+                      ><i class="align-middle me-1" data-feather="settings"></i>
+                      Settings & Privacy</a
+                    >
+                    <a class="dropdown-item" href="#"
+                      ><i
+                        class="align-middle me-1"
+                        data-feather="help-circle"
+                      ></i>
+                      Help Center</a
+                    >
+                    <div class="dropdown-divider"></div>
+                    <a id="logOut" class="dropdown-item" href="#"
+                      >Cerrar sesion</a
+                    >
+                  </div>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        
+
+        <div class="content">
+          <div class="list-header">
+              <h1>Lista de Posts</h1>
+              <button class="btn-new">
+                  <i class="fas fa-plus"></i>
+                  Nueva Publicación
+              </button>
+          </div>
+      
+          <div class="table-container">
+              <table id="postsTable" class="table">
+                  <thead>
+                      <tr>
+                          <th>ID</th>
+                          <th>Imagen</th>
+                          <th>Título</th>
+                          <th>Lugar</th>
+                          <th>Categoría</th>
+                          <th>Fecha Creación</th>
+                          <th>Acciones</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <!-- El contenido se cargará dinámicamente -->
+                  </tbody>
+              </table>
+          </div>
+      </div>
+    </div>
+
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modal-content"></div>
+        </div>
+    </div>
+
+    
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/sesion-checked.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="js/funciones.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    
+    <script>;
+
+let docid;
+
+
+$(document).ready(function() {
+    // Configuración de DataTables
+    const dataTableConfig = {
+        language: {
+            decimal: "",
+            emptyTable: "No hay publicaciones disponibles",
+            info: "_START_ - _END_ de _TOTAL_ publicaciones",
+            infoEmpty: "0 publicaciones",
+            infoFiltered: "(filtrado de _MAX_ total)",
+            lengthMenu: "_MENU_ por página",
+            loadingRecords: `
+                <div class="loading-state">
+                    <i class="fas fa-circle-notch fa-spin"></i>
+                    <span>Cargando...</span>
+                </div>`,
+            search: "",
+            searchPlaceholder: "Buscar por título, lugar o categoría...",
+            zeroRecords: "No se encontraron coincidencias",
+            paginate: {
+                first: '<i class="fas fa-angle-double-left"></i>',
+                last: '<i class="fas fa-angle-double-right"></i>',
+                next: '<i class="fas fa-angle-right"></i>',
+                previous: '<i class="fas fa-angle-left"></i>'
+            }
+        },
+        order: [[5, 'desc']],
+        pageLength: 10,
+        responsive: true,
+        searching: true,
+        search: {
+            return: true,
+            smart: true
+        },
+        columnDefs: [
+            {
+                targets: [1], // Columna de imagen
+                className: 'text-center',
+                width: '60px',
+                searchable: false
+            },
+            {
+                targets: [6], // Columna de acciones
+                className: 'text-right',
+                width: '120px',
+                orderable: false,
+                searchable: false
+            },
+            {
+                targets: [2, 3, 4], // Título, Lugar, Categoría
+                searchable: true
+            }
+        ],
+        dom: `<"table-top"
+                <"table-actions"
+          
+                    <"table-search"f>
+                  
+                >
+            >
+            rt
+            <"table-bottom"ip>`,
+        drawCallback: function() {
+            $('.dataTables_paginate > .pagination').addClass('custom-pagination');
+        },
+        initComplete: function() {
+            // Agregar botón de limpiar filtros
+            $('.table-filters').html(`
+                <button class="btn btn-outline-secondary btn-sm clear-filters">
+                    <i class="fas fa-times"></i> Limpiar filtros
+                </button>
+            `);
+
+            // Agregar filtros por columna
+            this.api().columns([3, 4]).every(function(index) { // Lugar y Categoría
+                const column = this;
+                const title = $(column.header()).text();
+              
+                  
+
+                // Obtener valores únicos para el filtro
+                const values = new Set();
+                column.data().each(function(d) {
+                    if (d && d !== '<span class="text-muted">No especificado</span>') {
+                        values.add(d.replace(/<[^>]+>/g, ''));
+                    }
+                });
+
+                // Agregar opciones al select
+                Array.from(values).sort().forEach(function(d) {
+                    select.append(`<option value="${d}">${d}</option>`);
+                });
+            });
+
+            // Mejorar la búsqueda
+            const searchInput = $('.dataTables_filter input')
+                .off()
+                .on('input', function() {
+                    table
+                        .search(this.value)
+                        .draw();
+                });
+
+            // Manejar limpieza de filtros
+            $('.clear-filters').on('click', function() {
+                table
+                    .search('')
+                    .columns().search('')
+                    .draw();
+                $('.dataTables_filter input').val('');
+                $('.table-filters select').val('');
+            });
+        }
+    };
+
+    // Inicializar DataTable
+    const table = $('#postsTable').DataTable(dataTableConfig);
+
+    // Agregar estilos
+    $('<style>')
+        .text(`
+            .table-top {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 1rem;
+            }
+            .table-actions {
+                display: flex;
+                gap: 1rem;
+                align-items: center;
+            }
+            .table-filters {
+                display: flex;
+                gap: 0.5rem;
+            }
+            .table-search {
+                position: relative;
+            }
+            .table-search input {
+                padding-left: 2.5rem;
+                min-width: 300px;
+            }
+            .form-select {
+                padding: 0.375rem 2rem 0.375rem 0.75rem;
+                font-size: 0.875rem;
+                border: 1px solid var(--gray-200);
+                border-radius: 0.5rem;
+                background-color: white;
+                cursor: pointer;
+            }
+            .clear-filters {
+                white-space: nowrap;
+            }
+        `)
+        .appendTo('head');
+    // Función para formatear fecha
+    function formatearFecha(timestamp) {
+        if (!timestamp) return 'Fecha no disponible';
+        const fecha = new Date(timestamp.seconds * 1000);
+        return fecha.toLocaleDateString('es-ES', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    }
+
+    // Función para crear botones de acción
+    function crearBotonesAccion(docId) {
+        return `
+            <div class="action-buttons">
+                <button class="btn-action btn-view" data-id="${docId}" title="Ver">
+                    <i class="fas fa-eye"></i>
+                </button>
+                <button class="btn-action btn-edit" data-id="${docId}" title="Editar">
+                    <i class="fas fa-pencil"></i>
+                </button>
+                <button class="btn-action btn-delete" data-id="${docId}" title="Eliminar">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>`;
+    }
+
+    // Función para cargar publicaciones
+    async function loadPosts() {
+        try {
+            // Mostrar loading
+            Swal.fire({
+                title: 'Cargando publicaciones',
+                text: 'Por favor espere...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Limpiar tabla
+            table.clear();
+
+            // Obtener publicaciones
+            const querySnapshot = await db.collection('publicaciones2')
+                .orderBy('fecha_creacion', 'desc')
+                .get();
+
+            // Procesar cada publicación
+            // Procesar cada publicación
+querySnapshot.forEach((doc) => {
+    const pub = doc.data();
+    
+    docid=doc.id
+    table.row.add([
+        `<span class="id-badge">${doc.id.slice(0, 8)}...</span>`,
+        pub.imagen_destacada ? 
+            `<img src="${pub.imagen_destacada}" alt="${pub.titulo}" class="table-image">` : 
+            '<div class="no-image"><i class="fas fa-image"></i></div>',
+        `<div class="publication-title">${pub.titulo}</div>`,
+        pub.lugar || '<span class="text-muted">No especificado</span>', // Cambiado el orden
+        pub.categoria, // Cambiado el orden
+        formatearFecha(pub.fecha_creacion),
+        crearBotonesAccion(doc.id)
+    ]).draw(false);
+});
+
+            Swal.close();
+        } catch (error) {
+            console.error("Error:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudieron cargar las publicaciones'
+            });
+        }
+    }
+
+   /* // Manejador para ver contenido
+   // Manejador para ver contenido
+$(document).on('click', '.btn-view', async function() {
+    const docId = $(this).data('id');
+    
+    try {
+        const doc = await db.collection('publicaciones2').doc(docId).get();
+        
+        if (doc.exists) {
+            const pub = doc.data();
+            
+            Swal.fire({
+                title: pub.titulo,
+                html: `
+                    <div class="publication-detail">
+                        ${pub.imagen_destacada ? 
+                            `<div class="detail-image-container">
+                                <img src="${pub.imagen_destacada}" class="detail-image" alt="${pub.titulo}">
+                            </div>` : ''
+                        }
+                        <div class="detail-info">
+                            <p><strong>Categoría:</strong> ${pub.categoria}</p>
+                            <p><strong>Lugar:</strong> ${pub.lugar || 'No especificado'}</p>
+                            <p><strong>Fecha:</strong> ${formatearFecha(pub.fecha_creacion)}</p>
+                        </div>
+                        <div class="detail-content">
+                            ${pub.contenido}
+                        </div>
+                    </div>
+                `,
+                width: '600px',
+                showCloseButton: true,
+                showConfirmButton: false,
+                customClass: {
+                    container: 'detail-modal-container',
+                    popup: 'detail-modal-popup',
+                    content: 'detail-modal-content'
+                }
+            });
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo cargar el contenido'
+        });
+    }
+});*/
+
+const userType= localStorage.getItem("userType")
+
+$(document).on('click', '.btn-view', function() {
+        const docId = $(this).data('id');
+        window.location.href = `detalleArteaga.html?id=${docId}&tipo=${userType}`;
+    });
+    // Manejador para eliminar
+    $(document).on('click', '.btn-delete', function() {
+        const docId = $(this).data('id');
+        
+        Swal.fire({
+            title: '¿Eliminar publicación?',
+            text: "Esta acción no se puede deshacer",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            customClass: {
+                confirmButton: 'btn-delete-confirm',
+                cancelButton: 'btn-delete-cancel'
+            }
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await db.collection('publicaciones2').doc(docId).delete();
+                    await loadPosts();
+                    
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Eliminado',
+                        text: 'La publicación ha sido eliminada',
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+                } catch (error) {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo eliminar la publicación'
+                    });
+                }
+            }
+        });
+    });
+
+    // Manejadores de navegación
+    $('.btn-new').click(() => window.location.href = 'crearPublicacion.html');
+    $(document).on('click', '.btn-edit', function() {
+        const docId = $(this).data('id');
+        window.location.href = `crearPublicacion.html?id=${docId}`;
+    });
+
+    // Iniciar carga de posts
+    loadPosts();
+});
+</script>
+
+</body>
+</html>

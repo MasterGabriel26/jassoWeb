@@ -43,6 +43,8 @@ function generateMenu() {
                     <span class="align-middle">Usuarios</span>
                 </a>
             </li>
+
+         
         `;
     }
 

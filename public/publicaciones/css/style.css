@@ -1,0 +1,163 @@
+body {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    height: 100vh;
+    /* Altura completa de la ventana */
+    font-family: Arial, sans-serif;
+  }
+
+  .editor-container {
+    flex: 1;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Altura completa */
+  }
+
+  .sidebar {
+    width: 300px;
+    /* Ancho fijo para el sidebar */
+    padding: 20px;
+    background-color: #f4f4f4;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    height: 100%;
+    /* Altura completa */
+    overflow-y: auto;
+    /* Permite el desplazamiento si el contenido es demasiado largo */
+  }
+
+
+  @media (max-width: 768px) {
+    body {
+      flex-direction: column;
+      /* Cambia a columna en pantallas pequeñas */
+    }
+
+    .sidebar {
+      width: 100%;
+      /* Sidebar ocupa todo el ancho en pantallas pequeñas */
+      box-shadow: none;
+      /* Elimina la sombra en pantallas pequeñas */
+    }
+  }
+  .editable-div {
+    min-height: 60px;
+    max-height: 150px;
+    overflow-y: auto;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.editable-div:empty:before {
+    content: attr(data-placeholder);
+    color: #6c757d;
+    opacity: 0.8;
+}
+
+.editable-div:focus {
+    outline: none;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+}
+/*izquierdo*/
+ /* Estilos para el nuevo sidebar izquierdo */
+ #left-sidebar {
+  width: 250px;
+  background: #343a40;
+  color: #fff;
+  transition: all 0.3s;
+  height: 100vh;
+}
+
+#left-sidebar.collapsed {
+  width: 60px;
+}
+
+#left-sidebar .sidebar-header {
+  padding: 15px;
+  background: #2c3136;
+  text-align: center;
+}
+
+#left-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#left-sidebar ul li a {
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  text-decoration: none;
+  transition: all 0.3s;
+}
+
+#left-sidebar ul li a:hover {
+  background: #2c3136;
+}
+
+#left-sidebar .menu-text {
+  margin-left: 10px;
+}
+
+#left-sidebar.collapsed .menu-text {
+  display: none;
+}
+
+/* Contenedor principal modificado */
+.main-content {
+  display: flex;
+  flex: 1;
+}
+
+/* Mantén los estilos de tu editor y sidebar derecho */
+.editor-container {
+  flex: 1;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sidebar {
+  width: 300px;
+  padding: 20px;
+  background-color: #f4f4f4;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  #left-sidebar {
+      position: fixed;
+      z-index: 1000;
+      left: -250px;
+  }
+
+  #left-sidebar.active {
+      left: 0;
+  }
+
+  .main-content {
+      margin-left: 0;
+  }
+}
+
+/* Botón toggle */
+#sidebarToggle {
+  background: none;
+  border: none;
+  color: #fff;
+  padding: 10px;
+  width: 100%;
+  text-align: right;
+  cursor: pointer;
+}

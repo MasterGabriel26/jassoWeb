@@ -1,0 +1,113 @@
+/* sideber css style */
+/*======================== manhood WIDGET CSS =========================*/
+/* sidebar css */
+/* serch widget */
+
+.sidebar-single-category ul li a {
+	background-color: #F3F6F9;
+	padding: 16px 15px 14px 17px;
+	margin-bottom: 5px;
+	display: block;
+	width: 100%;
+}
+.sidebar-single-category ul li a {
+	color: #232323;
+	font-weight: 600;
+	transition: .5s;
+	display: inline-block;
+	font-size: 17px;
+}
+.sidebar-single-category ul li a i {
+	position: absolute;
+	right: 30px;
+	display: inline-block;
+}
+.sidebar-single-category ul li a:hover {
+	background: #0A1B35;
+	color: #fff;
+}
+.sidebar-single-category ul li a:hover {
+	color: #fff;
+} 
+.dreamit-house-cleaning-area.style-two .appoinment-form {
+	box-shadow: 0 2px 4px 0 rgba(0,0,0,0.12);
+	background: #fff;
+	padding: 45px 49px 70px;
+	text-align: center;
+	margin-right: 55px;
+	border-radius: 7px;
+	width: 100%;
+}
+
+.clean-thumb img {
+	width: 100%;
+}
+.house-service-title h3 {
+	margin: 27px 0 26px;
+}
+.house-content-inner-text p {
+	color: #13287D;
+	font-weight: 500;
+}
+.house-cleaning-thumb img {
+	width: 100%;
+}
+.house-cleaning-icon i {
+	font-size: 52px;
+	color: #0A1B35;
+	display: inline-block;
+	margin-right: 18px;
+}
+.title h2 {
+	font-size: 20px;
+	margin: 0 0 15px;
+	font-weight: 700;
+	margin-bottom: 24px;
+}
+
+.house-content-inner.two .house-cleaning-icon i {
+	font-size: 22px;
+	color: #0A1B35;
+	display: inline-block;
+	margin-right: 18px;
+}
+.cleaning-title h3 {
+	font-size: 28px;
+	margin: 27px 0 25px;
+}
+
+
+.error-content {
+	text-align: center;
+}
+.error-content h1 {
+	font-size: 100px;
+	font-weight: 900;
+	margin: 0 0 35px;
+}
+.error-content p {
+	width: 78%;
+	margin: 15px auto;
+}
+.error-content a:hover {
+	color: #fff;
+	animation-name: pulse;
+	animation-duration: .5s;
+	animation-timing-function: linear;
+	animation-iteration-count: 1;
+}
+.error-content a {
+	background: #0A1B35;
+	padding: 13px 40px 13px;
+	font-size: 24px;
+	color: #fff;
+	display: inline-block;
+	margin-top: 21px;
+}
+.row.box {
+	box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+	padding: 30px 0 110px;
+}
+.sidebar-single-category ul li a.active {
+	background: #0A1B35;
+}

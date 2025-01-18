@@ -18,6 +18,36 @@ const storage = firebase.storage();
 let selectedFiles = new Map();
 
 
+
+// Añade este JavaScript
+document.getElementById('btnMaterialAdicional').addEventListener('click', function() {
+  const modal = new bootstrap.Modal(document.getElementById('materialAdicionalModal'));
+  modal.show();
+});
+
+// Para manejar los botones de material
+document.querySelectorAll('.btn-material').forEach(btn => {
+  btn.addEventListener('click', function() {
+      this.classList.toggle('active');
+      updateCounter(this);
+  });
+});
+
+function updateCounter(button) {
+  const type = button.classList.contains('btn-images') ? 'Imágenes' :
+               button.classList.contains('btn-videos') ? 'Videos' : 'PDF';
+  const count = button.classList.contains('active') ? '1' : '0';
+  button.innerHTML = `
+      <i class="fas fa-${button.classList.contains('btn-images') ? 'images' : 
+                        button.classList.contains('btn-videos') ? 'video' : 'file-pdf'} mb-2"></i>
+      ${type} (${count})
+  `;
+}
+
+
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
   // Inicializar Select2 en todos los select múltiples
   $('.select2').select2({
@@ -240,6 +270,7 @@ document.addEventListener("DOMContentLoaded", function () {
         cantidadDePersonas: document.getElementById('cantidadDePersonas').value,
         fechaVigencia: new Date(document.getElementById('fechaVigencia').value).getTime(),
         active: true,
+        id_materiañ:""
 
       };
 
@@ -321,7 +352,7 @@ document.addEventListener("DOMContentLoaded", function () {
         case "Renta de Mobiliario":
           publicacionData.costoDia = formData.get("costoDia");
           publicacionData.costoFleteMoviliario = formData.get("costoFleteMoviliario");
-          publicacionData.id_material = formData.get("id_material"); // Agregado este campo
+
           break;
       }
 
