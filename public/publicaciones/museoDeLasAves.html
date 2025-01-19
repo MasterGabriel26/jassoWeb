@@ -1,0 +1,213 @@
+<!DOCTYPE HTML>
+<html lang="es-ES">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<title>DreamIT- Cleaning Service HTML5 Template</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" sizes="56x56" href="assets/images/fav-icon/icon.png">
+	<!-- bootstrap CSS -->
+	<link rel="stylesheet" href="assets/css/bootstrap.min.css" type="text/css" media="all" />
+	<!-- carousel CSS -->
+	<link rel="stylesheet" href="assets/css/owl.carousel.min.css" type="text/css" media="all" />
+	<!-- responsive CSS -->
+	<link rel="stylesheet" href="assets/css/responsive.css" type="text/css" media="all" />
+	<!-- nivo-slider CSS -->
+	<link rel="stylesheet" href="assets/css/nivo-slider.css" type="text/css" media="all" />
+	<!-- animate CSS -->
+	<link rel="stylesheet" href="assets/css/animate.css" type="text/css" media="all" />
+	<!-- animated-text CSS -->
+	<link rel="stylesheet" href="assets/css/animated-text.css" type="text/css" media="all" />
+	<!-- font-awesome CSS -->
+	<link rel="stylesheet" href="assets/css/all.min.css" type="text/css" media="all" />
+	<!-- font-flaticon CSS -->
+	<link rel="stylesheet" href="assets/css/flaticon.css" type="text/css" media="all" />
+	<!-- theme-default CSS -->
+	<link rel="stylesheet" href="assets/css/theme-default.css" type="text/css" media="all" />
+	<!-- meanmenu CSS -->
+	<link rel="stylesheet" href="assets/css/meanmenu.min.css" type="text/css" media="all" />
+
+	<!-- transitions CSS -->
+	<link rel="stylesheet" href="assets/css/owl.transitions.css" type="text/css" media="all" />
+	<!-- venobox CSS -->
+	<link rel="stylesheet" href="venobox/venobox.css" type="text/css" media="all" />
+	<!-- widget CSS -->
+	<link rel="stylesheet" href="assets/css/widget.css" type="text/css" media="all" />
+	<!-- Jquery UI CSS -->
+	<link rel="stylesheet" href="assets/css/jquery-ui.min.css" type="text/css" media="all" />
+	<!-- modernizr js -->
+	<!-- Main Style CSS -->
+	<link rel="stylesheet" href="style.css" type="text/css" media="all" />
+	<script src="assets/js/vendor/modernizr-3.5.0.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.7.1.js"
+		integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+
+	<!-- Estilos base de Prism -->
+	<!-- Scripts -->
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+	<!-- Agrega esta línea junto con los otros scripts de Firebase -->
+	<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/toolbar/prism-toolbar.min.css"
+		rel="stylesheet" />
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+	<!-- CSS -->
+	<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.14.0/build/css/alertify.min.css" />
+	
+	
+</head>
+
+<body>
+
+	<!--==================================================-->
+	<!--Start dreamit testimonial Area-->
+	<!--==================================================-->
+<style>
+body {
+    background-image: url('./assets/img/background1.jpg'); /* Cambia esta ruta a la ubicación de tu imagen */
+    background-repeat: no-repeat;
+    background-position: center center; /* Centra la imagen */
+    background-size: cover; /* Hace que la imagen cubra toda la pantalla */
+    background-attachment: fixed; /* Hace que la imagen de fondo esté fija */
+    margin: 0; /* Elimina cualquier margen por defecto del body */
+    overflow-x: hidden; /* Evita el desplazamiento horizontal */
+}
+		.sidebar-commissions {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f8f6f6;
+    border-radius: 5px;
+}
+
+.commission-item {
+    margin-bottom: 10px;
+}
+
+.commission-item h3 {
+    margin: 0;
+    font-size: 26px;
+}
+
+.commission-item p {
+    margin: 5px 0 0;
+    font-size: 14px;
+    color: #666;
+}
+</style>
+	<div class="blog-area2 style-four pt-90 pb-85">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-8 col-md-6">
+					<div class="row">
+						<div class="col-lg-12 detalle-post">
+							<div class="dreamit-blog-single-box"></div>
+						</div>
+					</div>
+
+					<div class="comentarios"></div>
+				</div>
+				<div class="col-lg-4 col-md-6" >
+					
+					<div class="sidebar-box">
+						<div class="sidebar-title">
+							<h2>Categoria</h2>
+							<br>
+							<p id="categoria-sidebar"></p>
+						</div>
+						<div class="dreamit-section-bar mb-20"></div>
+						<div class="sidebar-category">
+							<ul>
+								<!-- Aquí puedes añadir elementos de lista si es necesario -->
+							</ul>
+						</div>
+						<!-- Nuevo contenedor para las comisiones -->
+						
+					</div>
+					<div class="sidebar-box" id="sidebar-commissions" style="display: none;">
+						<div class="row">
+							<div class="resent-post-iteam">
+								<div class="col-lg-12">
+									<div class="sidebar-title">
+										<h2>Comisiones</h2>
+										<br>
+										<div  >
+											<div class="commission-item">
+												<p>Comisión Llamada</p>
+												<h3 id="comision-llamada">$1500</h3>
+											</div>
+											<div class="commission-item">
+												<p>Comisión Líder</p>
+												<h3 id="comision-lider">$500</h3>
+											</div>
+											<div class="commission-item">
+												<p>Comisión de Venta</p>
+												<h3 id="comision-venta">$2500</h3>
+											</div>
+										</div>
+									</div>
+									<div class="dreamit-section-bar mb-20"></div>
+								</div>
+							</div>
+						</div>
+						<div class="row post-list-recent"></div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<style>
+	
+	</style>
+	
+	<!--==================================================-->
+	<!-- Start Search Popup Area -->
+	<!--==================================================-->
+	<!-- jquery js -->
+	<script src="assets/js/vendor/jquery-3.2.1.min.js"></script>
+	<!-- bootstrap js -->
+	<script src="assets/js/bootstrap.min.js"></script>
+	<!-- carousel js -->
+	<script src="assets/js/owl.carousel.min.js"></script>
+	<!-- counterup js -->
+	<script src="assets/js/jquery.counterup.min.js"></script>
+	<!-- waypoints js -->
+	<script src="assets/js/waypoints.min.js"></script>
+	<!-- wow js -->
+	<script src="assets/js/wow.js"></script>
+	<!-- imagesloaded js -->
+	<script src="assets/js/imagesloaded.pkgd.min.js"></script>
+	<!-- venobox js -->
+	<script src="venobox/venobox.js"></script>
+	<!-- ajax mail js -->
+	<script src="assets/js/tilt.jquery.min.js"></script>
+	<script src="assets/js/ajax-mail.js"></script>
+	<!--  animated-text js -->
+	<script src="assets/js/animated-text.js"></script>
+	<!-- venobox min js -->
+	<script src="venobox/venobox.min.js"></script>
+	<!-- isotope js -->
+	<script src="assets/js/isotope.pkgd.min.js"></script>
+	<!-- jquery nivo slider pack js -->
+	<script src="assets/js/jquery.nivo.slider.pack.js"></script>
+	<!-- jquery meanmenu js -->
+	<script src="assets/js/jquery.meanmenu.js"></script>
+	<script src="assets/js/popper.min.js"></script>
+	<!-- jquery scrollup js -->
+	<script src="assets/js/jquery.scrollUp.js"></script>
+	<!-- theme js -->
+	<script src="assets/js/jquery.scrollUp.js"></script>
+	<!-- Jquery UI js -->
+	<script src="assets/js/jquery-ui.min.js"></script>
+	<!-- jquery js -->
+	<script src="assets/js/main.js"></script>
+	<script src="./js/detalle-blog.js"></script>
+</body>
+
+</html>
