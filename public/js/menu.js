@@ -37,6 +37,7 @@ function generateMenu() {
                     <span class="align-middle">Contratos</span>
                 </a>
             </li>
+            
             <li class="sidebar-item">
                 <a class="sidebar-link" href="/vista-admin/page-usuarios.html">
                     <i class="align-middle" data-feather="users"></i>
@@ -44,7 +45,12 @@ function generateMenu() {
                 </a>
             </li>
 
-         
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="/publicaciones/administrarPublicacion.html">
+                    <i class="align-middle" data-feather="edit"></i>
+                    <span class="align-middle">Publicaciones</span>
+                </a>
+            </li>
         `;
     }
 

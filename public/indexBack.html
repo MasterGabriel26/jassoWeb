@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="css/app.css" rel="stylesheet">
     <link rel="stylesheet" href="css/loading.css">
-
+    <link rel="stylesheet" href="css/inicio/inicio.css">
     <link rel="stylesheet" href="css/notificaciones.css">
     <link rel="stylesheet" href="css/userPic.css">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
@@ -37,215 +37,6 @@
       <!-- WhatsApp specific meta -->
       <meta property="og:image:width" content="600">
       <meta property="og:image:height" content="315">
-
-      <style>
-        .publication-card {
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            background: white;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-        
-        .publication-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .publication-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        
-        .publication-content {
-            padding: 20px;
-        }
-        
-        .publication-category {
-            background: #e9ecef;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            color: #495057;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        
-        .publication-title {
-            font-size: 1.5em;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: #212529;
-        }
-        
-        .publication-location {
-            color: #6c757d;
-            font-size: 0.9em;
-            margin-bottom: 10px;
-        }
-        
-        .publication-date {
-            color: #adb5bd;
-            font-size: 0.8em;
-        }
-        
-        .publication-status {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #28a745;
-            color: white;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-        }
-        </style>
-
-
-<style>
-  .post-card {
-    background: #ffffff !important;
-    border-radius: 16px !important;
-    overflow: hidden !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
-    transition: all 0.3s ease !important;
-    cursor: pointer !important;
-    position: relative !important;
-    border: 1px solid rgba(0, 0, 0, 0.03) !important;
-    width: 100% !important;
-    max-width: 280px !important;
-    margin: 0 auto !important;
-  }
-
-  .post-card:hover {
-    transform: translateY(-5px) !important;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1) !important;
-  }
-
-  .card-image-container {
-    position: relative !important;
-    height: 180px !important;
-    overflow: hidden !important;
-    width: 100% !important;
-  }
-
-  .card-image {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    transition: transform 0.5s ease !important;
-  }
-
-  .post-card:hover .card-image {
-    transform: scale(1.05) !important;
-  }
-
-  .card-category {
-    position: absolute !important;
-    top: 15px !important;
-    right: 15px !important;
-    padding: 6px 12px !important;
-    border-radius: 20px !important;
-    background: rgba(255, 255, 255, 0.9) !important;
-    color: #2c3e50 !important;
-    font-size: 0.8rem !important;
-    font-weight: 500 !important;
-    backdrop-filter: blur(4px) !important;
-  }
-
-  .card-content {
-    padding: 20px !important;
-    width: 100% !important;
-  }
-
-  .card-title {
-    font-size: 1.1rem !important;
-    font-weight: 600 !important;
-    color: #2c3e50 !important;
-    margin: 0 0 12px 0 !important;
-    line-height: 1.4 !important;
-  }
-
-  .card-info {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 6px !important;
-  }
-
-  .card-location, .card-date {
-    display: flex !important;
-    align-items: center !important;
-    gap: 6px !important;
-    color: #666 !important;
-    font-size: 0.85rem !important;
-  }
-
-  .carousel-card {
-    width: 280px !important;
-    flex: 0 0 auto !important;
-    margin-right: 20px !important;
-  }
-
-  .posts-carousel {
-    display: flex !important;
-    overflow-x: auto !important;
-    gap: 20px !important;
-    padding: 10px 5px !important;
-    scroll-behavior: smooth !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-  }
-
-  .posts-carousel::-webkit-scrollbar {
-    display: none !important;
-  }
-
-  @media (max-width: 768px) {
-    .post-card {
-      max-width: 250px !important;
-    }
-
-    .carousel-card {
-      width: 250px !important;
-    }
-
-    .card-image-container {
-      height: 150px !important;
-    }
-
-    .card-content {
-      padding: 15px !important;
-    }
-
-    .card-title {
-      font-size: 1rem !important;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .post-card {
-      max-width: 200px !important;
-    }
-
-    .carousel-card {
-      width: 200px !important;
-    }
-
-    .card-image-container {
-      height: 120px !important;
-    }
-
-    .card-content {
-      padding: 12px !important;
-    }
-
-    .card-category {
-      padding: 4px 8px !important;
-      font-size: 0.7rem !important;
-    }
-  }
-</style>
 </head>
 <body>
     <div id="loader" class="loader-container">
@@ -333,26 +124,43 @@
             </div>
           </nav>
 
-          <main class="content">
-            <div class="container-fluid p-0">
-             
-                <!-- Carrusel tipo Netflix para populares -->
-                <div class="featured-carousel">
-                    <div class="featured-slides" id="featured-container"></div>
-                    <div class="featured-controls">
-                        <button class="featured-prev"><i class="fas fa-chevron-left"></i></button>
-                        <button class="featured-next"><i class="fas fa-chevron-right"></i></button>
+            <main class="content">
+                <div class="container-fluid p-0">
+                    <h1 class="h3 mb-3">Publicaciones</h1>
+                   
+                    <!-- Sección de publicaciones populares -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Publicaciones Populares</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="container">
+                                        <div class="posts" id="popular-posts-container"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="featured-indicators" id="featured-indicators"></div>
+
+                    <!-- Sección de todas las publicaciones -->
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title mb-0">Todas las Publicaciones</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="container">
+                                        <div class="posts" id="posts-container"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-        
-                <!-- Carrusel horizontal para publicaciones recientes -->
-                <div class="carousel-container">
-                    <h2>Publicaciones Recientes</h2>
-                    <div class="posts-carousel" id="popular-posts-container"></div>
-                </div>
-            </div>
-        </main>
+            </main>
         </div>
     </div>
 
@@ -372,6 +180,6 @@
     <script src="js/app.js"></script>
     <script src="js/sesion-checked.js"></script>
     <script src="js/menu.js"></script>
-    <script src="js/inicio/inicioPrueba.js"></script>
+    <script src="js/inicio/inicio.js"></script>
 </body>
 </html>

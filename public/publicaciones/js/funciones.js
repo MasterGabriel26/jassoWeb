@@ -98,13 +98,7 @@ function iniciarTiny() {
                 const imagenComprimida = await comprimirImagen(blobInfo.blob());
                 const resultado = await subirArchivo(imagenComprimida, 'imagenes');
                 
-                await guardarReferenciaMedia({
-                    tipo: 'imagen',
-                    url: resultado.url,
-                    nombre: resultado.nombre,
-                    timestamp: resultado.timestamp
-                });
-
+              
                 return resultado.url;
             } catch (error) {
                 console.error('Error al subir imagen:', error);
@@ -138,12 +132,7 @@ function iniciarTiny() {
                         resultado = await subirArchivo(file, meta.filetype === 'media' ? 'videos' : 'documentos');
                     }
                     
-                    await guardarReferenciaMedia({
-                        tipo: meta.filetype,
-                        url: resultado.url,
-                        nombre: resultado.nombre,
-                        timestamp: resultado.timestamp
-                    });
+                 
 
                     callback(resultado.url, {
                         title: file.name,
@@ -270,7 +259,245 @@ $(document).ready(function() {
 
 // Añade estos estilos CSS
 
+// Inicializar el manejo de medios
+document.addEventListener('DOMContentLoaded', function() {
+    const mediaInput = document.getElementById('media-upload');
+    const mediaPreviewGrid = document.getElementById('media-preview-grid');
+    const mediaCounter = document.getElementById('media-count');
+    let selectedFiles = new Map();
 
+    mediaInput.addEventListener('change', handleMediaSelect);
+
+    async function handleMediaSelect(e) {
+        const files = Array.from(e.target.files);
+        
+        for (const file of files) {
+            try {
+                // Validar el archivo
+                const isValid = await validateFile(file);
+                if (!isValid) continue;
+    
+                const fileId = `file-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                
+                // Procesar el archivo según su tipo
+                let processedFile;
+                if (isImageFile(file)) {
+                    processedFile = await comprimirImagen(file);
+                    await createPreviewItem(file, fileId, processedFile);
+                } else if (isVideoFile(file)) {
+                    processedFile = file; // Los videos no se comprimen
+                    await createPreviewItem(file, fileId, processedFile);
+                }
+    
+                // Guardar el archivo procesado
+                selectedFiles.set(fileId, {
+                    file: processedFile,
+                    type: isImageFile(file) ? 'image' : 'video'
+                });
+    
+                // Subir archivo y guardar referencia
+                const resultado = await subirArchivo(processedFile, isImageFile(file) ? 'imagenes' : 'videos');
+                
+                await guardarReferenciaMedia({
+                    tipo: isImageFile(file) ? 'imagen' : 'video',
+                    url: resultado.url,
+                    nombre: resultado.nombre,
+                    timestamp: resultado.timestamp
+                });
+    
+                updateMediaCounter();
+            } catch (error) {
+                console.error('Error al procesar archivo:', error);
+                showError('Error al procesar el archivo: ' + error.message);
+            }
+        }
+        
+        mediaInput.value = '';
+    }
+
+    async function createPreviewItem(file, fileId, processedFile) {
+        const preview = document.createElement('div');
+        preview.className = 'media-preview-item';
+        preview.id = fileId;
+
+        if (file.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(processedFile);
+            preview.appendChild(img);
+        } else if (file.type.startsWith('video/')) {
+            const video = document.createElement('video');
+            video.src = URL.createObjectURL(processedFile);
+            video.controls = true;
+            preview.appendChild(video);
+        }
+
+        // Agregar badge de tipo y tamaño
+        const typeBadge = document.createElement('span');
+        typeBadge.className = 'media-type-badge';
+        const fileSize = (processedFile.size / (1024 * 1024)).toFixed(2);
+        typeBadge.textContent = `${file.type.startsWith('image/') ? 'Imagen' : 'Video'} (${fileSize}MB)`;
+        preview.appendChild(typeBadge);
+
+        // Agregar botón de eliminar
+        const removeBtn = document.createElement('div');
+        removeBtn.className = 'remove-media';
+        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        removeBtn.onclick = () => removeMedia(fileId);
+        preview.appendChild(removeBtn);
+
+        mediaPreviewGrid.appendChild(preview);
+
+        // Agregar botón de vista previa
+        const previewBtn = document.createElement('div');
+        previewBtn.className = 'preview-media';
+        previewBtn.innerHTML = '<i class="fas fa-eye"></i>';
+        previewBtn.onclick = () => showMediaPreview(processedFile, file.type);
+        preview.appendChild(previewBtn);
+    }
+
+    function showMediaPreview(file, type) {
+        const url = URL.createObjectURL(file);
+        
+        if (type.startsWith('image/')) {
+            Swal.fire({
+                imageUrl: url,
+                imageAlt: 'Vista previa',
+                width: '80%',
+                padding: '3em',
+                showConfirmButton: false,
+                showCloseButton: true
+            });
+        } else if (type.startsWith('video/')) {
+            Swal.fire({
+                html: `<video src="${url}" controls style="max-width: 100%; max-height: 80vh;"></video>`,
+                width: '80%',
+                padding: '3em',
+                showConfirmButton: false,
+                showCloseButton: true
+            });
+        }
+    }
+
+    function removeMedia(fileId) {
+        const element = document.getElementById(fileId);
+        if (element) {
+            element.remove();
+            selectedFiles.delete(fileId);
+            updateMediaCounter();
+        }
+    }
+
+    function updateMediaCounter() {
+        const count = selectedFiles.size;
+        mediaCounter.textContent = `${count} archivo${count !== 1 ? 's' : ''} seleccionado${count !== 1 ? 's' : ''}`;
+    }
+
+    function showError(message) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: message
+        });
+    }
+});
+
+
+function validateFile(file) {
+    // Definir tipos de archivo permitidos
+    const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+    const allowedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
+    const allowedTypes = [...allowedImageTypes, ...allowedVideoTypes];
+
+    // Tamaños máximos (en bytes)
+    const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB para imágenes
+    const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB para videos
+
+    // Validar tipo de archivo
+    if (!allowedTypes.includes(file.type)) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Tipo de archivo no permitido',
+            text: 'Solo se permiten imágenes (JPG, PNG, GIF, WEBP) y videos (MP4, WEBM, MOV)'
+        });
+        return false;
+    }
+
+    // Validar tamaño según el tipo
+    const isImage = allowedImageTypes.includes(file.type);
+    const maxSize = isImage ? MAX_IMAGE_SIZE : MAX_VIDEO_SIZE;
+    const fileTypeName = isImage ? 'imagen' : 'video';
+
+    if (file.size > maxSize) {
+        const maxSizeMB = maxSize / (1024 * 1024);
+        Swal.fire({
+            icon: 'error',
+            title: 'Archivo demasiado grande',
+            text: `El ${fileTypeName} no debe superar los ${maxSizeMB}MB`
+        });
+        return false;
+    }
+
+    // Validar dimensiones para imágenes
+    if (isImage) {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = function() {
+                const MAX_DIMENSION = 5000; // 5000px máximo en cualquier dimensión
+                if (img.width > MAX_DIMENSION || img.height > MAX_DIMENSION) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Dimensiones no permitidas',
+                        text: `La imagen no debe superar los ${MAX_DIMENSION}px en ninguna dimensión`
+                    });
+                    resolve(false);
+                }
+                resolve(true);
+            };
+            img.onerror = function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al procesar la imagen',
+                    text: 'No se pudo validar la imagen'
+                });
+                resolve(false);
+            };
+            img.src = URL.createObjectURL(file);
+        });
+    }
+
+    return true;
+}
+
+// También puedes agregar estas funciones auxiliares para mejor manejo de archivos
+
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function getFileExtension(filename) {
+    return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
+}
+
+function generateUniqueFileName(originalName) {
+    const extension = getFileExtension(originalName);
+    const timestamp = Date.now();
+    const randomString = Math.random().toString(36).substring(2, 8);
+    return `${timestamp}-${randomString}.${extension}`;
+}
+
+// Función para verificar si un archivo es una imagen
+function isImageFile(file) {
+    return file.type.startsWith('image/');
+}
+
+// Función para verificar si un archivo es un video
+function isVideoFile(file) {
+    return file.type.startsWith('video/');
+}
 
 // Función para guardar referencia de medios en Firestore
 async function guardarReferenciaMedia(mediaData) {
@@ -322,12 +549,9 @@ async function cargarItemParaEditar(id) {
             document.getElementById('lugar').value = data.lugar;
 
 
-            // Llenar los nuevos campos
-            if (data.comisiones) {
-                document.getElementById('comision-llamada').value = data.comisiones.llamada || '';
-                document.getElementById('comision-lider').value = data.comisiones.lider || '';
-                document.getElementById('comision-venta').value = data.comisiones.venta || '';
-            }
+            document.getElementById('comision-llamada').value = data.comision_llamada || '';
+            document.getElementById('comision-lider').value = data.comision_lider || '';
+            document.getElementById('comision-venta').value = data.comision_venta || '';
             document.getElementById('precio').value = data.precio || '';
 
             // Establecer el contenido en el editor
