@@ -97,8 +97,6 @@ function iniciarTiny() {
             try {
                 const imagenComprimida = await comprimirImagen(blobInfo.blob());
                 const resultado = await subirArchivo(imagenComprimida, 'imagenes');
-                
-              
                 return resultado.url;
             } catch (error) {
                 console.error('Error al subir imagen:', error);
@@ -111,7 +109,6 @@ function iniciarTiny() {
             var input = document.createElement('input');
             input.setAttribute('type', 'file');
             
-            // Configurar tipos de archivo permitidos
             if (meta.filetype === 'image') {
                 input.setAttribute('accept', 'image/*');
             } else if (meta.filetype === 'media') {
@@ -131,8 +128,6 @@ function iniciarTiny() {
                     } else {
                         resultado = await subirArchivo(file, meta.filetype === 'media' ? 'videos' : 'documentos');
                     }
-                    
-                 
 
                     callback(resultado.url, {
                         title: file.name,
@@ -155,10 +150,10 @@ function iniciarTiny() {
         // Configuraciones adicionales
         automatic_uploads: true,
         file_picker_types: 'file image media',
-        images_upload_url: '/upload-handler',
+        images_upload_url: null,
         images_upload_credentials: true,
         images_reuse_filename: true,
-        media_upload_url: '/upload-handler',
+        media_upload_url: null,
         media_upload_credentials: true,
         paste_data_images: true,
         paste_as_text: false,
@@ -236,7 +231,7 @@ function iniciarTiny() {
 
             // Manejar cambios
             editor.on('change', function() {
-                editor.save(); // Guardar cambios al textarea
+                editor.save();
             });
 
             // Manejar pegado de contenido
@@ -273,6 +268,16 @@ document.addEventListener('DOMContentLoaded', function() {
         
         for (const file of files) {
             try {
+                // Mostrar loading
+                Swal.fire({
+                    title: 'Procesando archivo...',
+                    text: 'Esto puede tomar unos momentos',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+    
                 // Validar el archivo
                 const isValid = await validateFile(file);
                 if (!isValid) continue;
@@ -283,11 +288,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 let processedFile;
                 if (isImageFile(file)) {
                     processedFile = await comprimirImagen(file);
-                    await createPreviewItem(file, fileId, processedFile);
                 } else if (isVideoFile(file)) {
-                    processedFile = file; // Los videos no se comprimen
-                    await createPreviewItem(file, fileId, processedFile);
+                    processedFile = await comprimirVideo(file);
                 }
+    
+                // Crear preview
+                await createPreviewItem(file, fileId, processedFile);
     
                 // Guardar el archivo procesado
                 selectedFiles.set(fileId, {
@@ -302,10 +308,26 @@ document.addEventListener('DOMContentLoaded', function() {
                     tipo: isImageFile(file) ? 'imagen' : 'video',
                     url: resultado.url,
                     nombre: resultado.nombre,
-                    timestamp: resultado.timestamp
+                    timestamp: resultado.timestamp,
+                    tamanioOriginal: formatFileSize(file.size),
+                    tamanioComprimido: formatFileSize(processedFile.size)
                 });
     
                 updateMediaCounter();
+                
+                // Cerrar loading
+                Swal.close();
+    
+                // Mostrar mensaje de éxito
+                const compressionRate = ((file.size - processedFile.size) / file.size * 100).toFixed(1);
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Archivo procesado',
+                    text: `Compresión: ${compressionRate}% (${formatFileSize(file.size)} → ${formatFileSize(processedFile.size)})`,
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+    
             } catch (error) {
                 console.error('Error al procesar archivo:', error);
                 showError('Error al procesar el archivo: ' + error.message);
@@ -314,7 +336,101 @@ document.addEventListener('DOMContentLoaded', function() {
         
         mediaInput.value = '';
     }
+    
+    // Función para comprimir video
+    async function comprimirVideo(file) {
+        return new Promise((resolve, reject) => {
+            // Crear un elemento de video temporal
+            const video = document.createElement('video');
+            video.preload = 'metadata';
+            video.src = URL.createObjectURL(file);
+    
+            video.onloadedmetadata = async function() {
+                try {
+                    // Configuración de compresión
+                    const MAX_WIDTH = 1280;
+                    const MAX_HEIGHT = 720;
+                    const TARGET_SIZE_MB = 10; // Tamaño objetivo en MB
+    
+                    // Calcular dimensiones manteniendo aspecto
+                    let width = video.videoWidth;
+                    let height = video.videoHeight;
+                    
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+    
+                    // Crear canvas y contexto
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+    
+                    // Crear MediaRecorder
+                    const stream = canvas.captureStream();
+                    const mediaRecorder = new MediaRecorder(stream, {
+                        mimeType: 'video/webm;codecs=vp9',
+                        videoBitsPerSecond: TARGET_SIZE_MB * 1024 * 1024 * 8 / (video.duration)
+                    });
+    
+                    const chunks = [];
+                    mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
+                    mediaRecorder.onstop = () => {
+                        const blob = new Blob(chunks, { type: 'video/webm' });
+                        resolve(blob);
+                    };
+    
+                    // Iniciar grabación
+                    mediaRecorder.start();
+    
+                    // Procesar frames
+                    const processFrame = () => {
+                        if (video.currentTime < video.duration) {
+                            ctx.drawImage(video, 0, 0, width, height);
+                            video.currentTime += 1/30; // 30 FPS
+                            requestAnimationFrame(processFrame);
+                        } else {
+                            mediaRecorder.stop();
+                        }
+                    };
+    
+                    video.currentTime = 0;
+                    processFrame();
+    
+                } catch (error) {
+                    reject(error);
+                }
+            };
+    
+            video.onerror = reject;
+        });
+    }
+    
+    // Función mejorada para mostrar errores
+    function showError(message) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: message,
+            showConfirmButton: true
+        });
+    }
+    
+    // Función para formatear tamaños de archivo
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
 
+    
     async function createPreviewItem(file, fileId, processedFile) {
         const preview = document.createElement('div');
         preview.className = 'media-preview-item';
@@ -570,6 +686,51 @@ async function cargarItemParaEditar(id) {
                 guardarBtn.setAttribute('data-id', id);
             }
 
+              // Cargar medios existentes
+              if (data.medios && data.medios.length > 0) {
+                const mediaPreviewGrid = document.getElementById('media-preview-grid');
+                mediaPreviewGrid.innerHTML = ''; // Limpiar grid existente
+
+                data.medios.forEach((medio, index) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'media-preview-item';
+                    previewItem.id = `media-${index}`;
+
+                    if (medio.tipo === 'imagen' || medio.tipo === 'image') {
+                        previewItem.innerHTML = `
+                            <img src="${medio.url}" alt="${medio.nombre}">
+                            <span class="media-type-badge">Imagen</span>
+                            <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="preview-media" onclick="previsualizarMedio('${medio.url}', '${medio.tipo}')">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        `;
+                    } else if (medio.tipo === 'video') {
+                        previewItem.innerHTML = `
+                            <video src="${medio.url}" controls></video>
+                            <span class="media-type-badge">Video</span>
+                            <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="preview-media" onclick="previsualizarMedio('${medio.url}', '${medio.tipo}')">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        `;
+                    }
+
+                    mediaPreviewGrid.appendChild(previewItem);
+                });
+
+                // Actualizar contador
+                const mediaCounter = document.getElementById('media-count');
+                if (mediaCounter) {
+                    mediaCounter.textContent = `${data.medios.length} archivo${data.medios.length !== 1 ? 's' : ''} cargado${data.medios.length !== 1 ? 's' : ''}`;
+                }
+            }
+
+        
             // Cerrar el loading
             Swal.close();
         } else {
@@ -581,6 +742,95 @@ async function cargarItemParaEditar(id) {
             icon: 'error',
             title: 'Error',
             text: 'Error al cargar el contenido para editar: ' + error.message
+        });
+    }
+}
+
+
+// Función para eliminar un medio
+async function eliminarMedio(publicacionId, index, mediaUrl) {
+    try {
+        // Confirmar eliminación
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: "No podrás revertir esta acción",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed) {
+            // Mostrar loading
+            Swal.fire({
+                title: 'Eliminando...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Obtener referencia del documento
+            const docRef = db.collection('publicaciones2').doc(publicacionId);
+            const doc = await docRef.get();
+            const data = doc.data();
+
+            // Eliminar el archivo de Storage
+            const storageRef = firebase.storage().refFromURL(mediaUrl);
+            await storageRef.delete();
+
+            // Eliminar la referencia de Firestore
+            const mediosActualizados = data.medios.filter((_, i) => i !== index);
+            await docRef.update({
+                medios: mediosActualizados
+            });
+
+            // Eliminar el elemento del DOM
+            document.getElementById(`media-${index}`).remove();
+
+            // Actualizar contador
+            const mediaCounter = document.getElementById('media-count');
+            if (mediaCounter) {
+                const count = mediosActualizados.length;
+                mediaCounter.textContent = `${count} archivo${count !== 1 ? 's' : ''} cargado${count !== 1 ? 's' : ''}`;
+            }
+
+            Swal.fire(
+                '¡Eliminado!',
+                'El archivo ha sido eliminado.',
+                'success'
+            );
+        }
+    } catch (error) {
+        console.error('Error al eliminar medio:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al eliminar el archivo: ' + error.message
+        });
+    }
+}
+
+// Función para previsualizar un medio
+function previsualizarMedio(url, tipo) {
+    if (tipo === 'imagen' || tipo === 'image') {
+        Swal.fire({
+            imageUrl: url,
+            imageAlt: 'Vista previa',
+            width: '80%',
+            padding: '3em',
+            showConfirmButton: false,
+            showCloseButton: true
+        });
+    } else if (tipo === 'video') {
+        Swal.fire({
+            html: `<video src="${url}" controls style="max-width: 100%; max-height: 80vh;"></video>`,
+            width: '80%',
+            padding: '3em',
+            showConfirmButton: false,
+            showCloseButton: true
         });
     }
 }
@@ -741,57 +991,51 @@ tinymce.init({
     // File picker callback
     file_picker_types: 'image media',
      // Modificar esta parte
-     file_picker_callback: async function (callback, value, meta) {
-        var input = document.createElement('input');
-        input.setAttribute('type', 'file');
+     // File picker callback
+file_picker_callback: async function (callback, value, meta) {
+    var input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    
+    if (meta.filetype === 'image') {
+        input.setAttribute('accept', 'image/*');
+    } else if (meta.filetype === 'media') {
+        input.setAttribute('accept', 'video/*');
+    }
+
+    input.onchange = async function () {
+        var file = this.files[0];
         
-        if (meta.filetype === 'image') {
-            input.setAttribute('accept', 'image/*');
-        } else if (meta.filetype === 'media') {
-            input.setAttribute('accept', 'video/*');
-        }
-
-        input.onchange = async function () {
-            var file = this.files[0];
+        try {
+            let resultado;
             
-            try {
-                let resultado;
-                
-                if (meta.filetype === 'image') {
-                    // Comprimir y subir imagen
-                    const imagenComprimida = await comprimirImagen(file);
-                    resultado = await subirArchivo(imagenComprimida, 'imagenes');
-                } else if (meta.filetype === 'media') {
-                    // Subir video directamente
-                    resultado = await subirArchivo(file, 'videos');
-                }
-
-                // Guardar referencia en Firestore
-                await guardarReferenciaMedia({
-                    tipo: meta.filetype,
-                    url: resultado.url,
-                    nombre: resultado.nombre,
-                    timestamp: resultado.timestamp
-                });
-
-                // Callback con la URL del archivo
-                callback(resultado.url, {
-                    title: file.name,
-                    width: meta.filetype === 'media' ? '100%' : '',
-                    height: meta.filetype === 'media' ? 'auto' : ''
-                });
-
-            } catch (error) {
-                console.error('Error al subir archivo:', error);
-                tinymce.activeEditor.notificationManager.open({
-                    text: 'Error al subir el archivo: ' + error.message,
-                    type: 'error',
-                    timeout: 3000
-                });
+            if (meta.filetype === 'image') {
+                // Comprimir y subir imagen
+                const imagenComprimida = await comprimirImagen(file);
+                resultado = await subirArchivo(imagenComprimida, 'imagenes');
+            } else if (meta.filetype === 'media') {
+                // Subir video directamente
+                resultado = await subirArchivo(file, 'videos');
             }
-        };
 
-        input.click();
+            // Callback con la URL del archivo (sin guardar referencia)
+            callback(resultado.url, {
+                title: file.name,
+                width: meta.filetype === 'media' ? '100%' : '',
+                height: meta.filetype === 'media' ? 'auto' : ''
+            });
+
+        } catch (error) {
+            console.error('Error al subir archivo:', error);
+            tinymce.activeEditor.notificationManager.open({
+                text: 'Error al subir el archivo: ' + error.message,
+                type: 'error',
+                timeout: 3000
+            });
+        }
+    };
+
+    input.click();
+
     },
 
     // También agregar estas configuraciones
