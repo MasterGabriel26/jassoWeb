@@ -253,7 +253,9 @@ $(document).ready(function() {
 });
 
 // Añade estos estilos CSS
-
+function isPDFFile(file) {
+    return file.type === 'application/pdf';
+}
 // Inicializar el manejo de medios
 document.addEventListener('DOMContentLoaded', function() {
     const mediaInput = document.getElementById('media-upload');
@@ -290,40 +292,56 @@ document.addEventListener('DOMContentLoaded', function() {
                     processedFile = await comprimirImagen(file);
                 } else if (isVideoFile(file)) {
                     processedFile = await comprimirVideo(file);
+                } else if (file.type === 'application/pdf') {
+                    processedFile = file; // Para PDFs, usar el archivo original
                 }
     
                 // Crear preview
-                await createPreviewItem(file, fileId, processedFile);
+                await createPreviewItem(file, fileId, processedFile || file);
     
-                // Guardar el archivo procesado
-                selectedFiles.set(fileId, {
-                    file: processedFile,
-                    type: isImageFile(file) ? 'image' : 'video'
-                });
+                // Determinar el tipo de carpeta para almacenamiento
+                let storageFolder;
+                if (isImageFile(file)) {
+                    storageFolder = 'imagenes';
+                } else if (isVideoFile(file)) {
+                    storageFolder = 'videos';
+                } else if (file.type === 'application/pdf') {
+                    storageFolder = 'documentos';
+                }
     
                 // Subir archivo y guardar referencia
-                const resultado = await subirArchivo(processedFile, isImageFile(file) ? 'imagenes' : 'videos');
+                const resultado = await subirArchivo(processedFile || file, storageFolder);
                 
                 await guardarReferenciaMedia({
-                    tipo: isImageFile(file) ? 'imagen' : 'video',
+                    tipo: isImageFile(file) ? 'imagen' : 
+                          isVideoFile(file) ? 'video' : 'pdf',
                     url: resultado.url,
                     nombre: resultado.nombre,
                     timestamp: resultado.timestamp,
                     tamanioOriginal: formatFileSize(file.size),
-                    tamanioComprimido: formatFileSize(processedFile.size)
+                    tamanioComprimido: formatFileSize((processedFile || file).size)
                 });
     
+                // Actualizar contador
+                selectedFiles.set(fileId, {
+                    file: processedFile || file,
+                    type: file.type
+                });
                 updateMediaCounter();
                 
                 // Cerrar loading
                 Swal.close();
     
                 // Mostrar mensaje de éxito
-                const compressionRate = ((file.size - processedFile.size) / file.size * 100).toFixed(1);
+                const compressionRate = processedFile ? 
+                    ((file.size - processedFile.size) / file.size * 100).toFixed(1) : 0;
+                
                 Swal.fire({
                     icon: 'success',
                     title: 'Archivo procesado',
-                    text: `Compresión: ${compressionRate}% (${formatFileSize(file.size)} → ${formatFileSize(processedFile.size)})`,
+                    text: processedFile !== file ? 
+                        `Compresión: ${compressionRate}% (${formatFileSize(file.size)} → ${formatFileSize(processedFile.size)})` :
+                        `Archivo subido: ${formatFileSize(file.size)}`,
                     timer: 2000,
                     showConfirmButton: false
                 });
@@ -435,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const preview = document.createElement('div');
         preview.className = 'media-preview-item';
         preview.id = fileId;
-
+    
         if (file.type.startsWith('image/')) {
             const img = document.createElement('img');
             img.src = URL.createObjectURL(processedFile);
@@ -445,30 +463,39 @@ document.addEventListener('DOMContentLoaded', function() {
             video.src = URL.createObjectURL(processedFile);
             video.controls = true;
             preview.appendChild(video);
+        } else if (file.type === 'application/pdf') {
+            const pdfPreview = document.createElement('div');
+            pdfPreview.className = 'pdf-preview';
+            pdfPreview.innerHTML = `
+                <i class="fas fa-file-pdf"></i>
+                <span>${file.name}</span>
+            `;
+            preview.appendChild(pdfPreview);
         }
-
+    
         // Agregar badge de tipo y tamaño
         const typeBadge = document.createElement('span');
         typeBadge.className = 'media-type-badge';
         const fileSize = (processedFile.size / (1024 * 1024)).toFixed(2);
-        typeBadge.textContent = `${file.type.startsWith('image/') ? 'Imagen' : 'Video'} (${fileSize}MB)`;
+        const fileType = file.type.startsWith('image/') ? 'Imagen' : 
+                        file.type.startsWith('video/') ? 'Video' : 'PDF';
+        typeBadge.textContent = `${fileType} (${fileSize}MB)`;
         preview.appendChild(typeBadge);
-
-        // Agregar botón de eliminar
+    
+        // Agregar botones de control
         const removeBtn = document.createElement('div');
         removeBtn.className = 'remove-media';
         removeBtn.innerHTML = '<i class="fas fa-times"></i>';
         removeBtn.onclick = () => removeMedia(fileId);
         preview.appendChild(removeBtn);
-
-        mediaPreviewGrid.appendChild(preview);
-
-        // Agregar botón de vista previa
+    
         const previewBtn = document.createElement('div');
         previewBtn.className = 'preview-media';
         previewBtn.innerHTML = '<i class="fas fa-eye"></i>';
         previewBtn.onclick = () => showMediaPreview(processedFile, file.type);
         preview.appendChild(previewBtn);
+    
+        mediaPreviewGrid.appendChild(preview);
     }
 
     function showMediaPreview(file, type) {
@@ -486,6 +513,14 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (type.startsWith('video/')) {
             Swal.fire({
                 html: `<video src="${url}" controls style="max-width: 100%; max-height: 80vh;"></video>`,
+                width: '80%',
+                padding: '3em',
+                showConfirmButton: false,
+                showCloseButton: true
+            });
+        } else if (type === 'application/pdf') {
+            Swal.fire({
+                html: `<iframe src="${url}" style="width: 100%; height: 80vh;"></iframe>`,
                 width: '80%',
                 padding: '3em',
                 showConfirmButton: false,
@@ -522,26 +557,37 @@ function validateFile(file) {
     // Definir tipos de archivo permitidos
     const allowedImageTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
     const allowedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
-    const allowedTypes = [...allowedImageTypes, ...allowedVideoTypes];
+    const allowedPDFTypes = ['application/pdf'];
+    const allowedTypes = [...allowedImageTypes, ...allowedVideoTypes, ...allowedPDFTypes];
 
     // Tamaños máximos (en bytes)
     const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB para imágenes
     const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB para videos
+    const MAX_PDF_SIZE = 20 * 1024 * 1024;   // 20MB para PDFs
 
     // Validar tipo de archivo
     if (!allowedTypes.includes(file.type)) {
         Swal.fire({
             icon: 'error',
             title: 'Tipo de archivo no permitido',
-            text: 'Solo se permiten imágenes (JPG, PNG, GIF, WEBP) y videos (MP4, WEBM, MOV)'
+            text: 'Solo se permiten imágenes (JPG, PNG, GIF, WEBP), videos (MP4, WEBM, MOV) y PDFs'
         });
         return false;
     }
 
-    // Validar tamaño según el tipo
-    const isImage = allowedImageTypes.includes(file.type);
-    const maxSize = isImage ? MAX_IMAGE_SIZE : MAX_VIDEO_SIZE;
-    const fileTypeName = isImage ? 'imagen' : 'video';
+    // Determinar el tipo y tamaño máximo
+    let maxSize;
+    let fileTypeName;
+    if (allowedImageTypes.includes(file.type)) {
+        maxSize = MAX_IMAGE_SIZE;
+        fileTypeName = 'imagen';
+    } else if (allowedVideoTypes.includes(file.type)) {
+        maxSize = MAX_VIDEO_SIZE;
+        fileTypeName = 'video';
+    } else {
+        maxSize = MAX_PDF_SIZE;
+        fileTypeName = 'PDF';
+    }
 
     if (file.size > maxSize) {
         const maxSizeMB = maxSize / (1024 * 1024);
@@ -551,34 +597,6 @@ function validateFile(file) {
             text: `El ${fileTypeName} no debe superar los ${maxSizeMB}MB`
         });
         return false;
-    }
-
-    // Validar dimensiones para imágenes
-    if (isImage) {
-        return new Promise((resolve) => {
-            const img = new Image();
-            img.onload = function() {
-                const MAX_DIMENSION = 5000; // 5000px máximo en cualquier dimensión
-                if (img.width > MAX_DIMENSION || img.height > MAX_DIMENSION) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Dimensiones no permitidas',
-                        text: `La imagen no debe superar los ${MAX_DIMENSION}px en ninguna dimensión`
-                    });
-                    resolve(false);
-                }
-                resolve(true);
-            };
-            img.onerror = function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error al procesar la imagen',
-                    text: 'No se pudo validar la imagen'
-                });
-                resolve(false);
-            };
-            img.src = URL.createObjectURL(file);
-        });
     }
 
     return true;
@@ -618,6 +636,8 @@ function isVideoFile(file) {
 // Función para guardar referencia de medios en Firestore
 async function guardarReferenciaMedia(mediaData) {
     try {
+    
+
         // Si no hay ID de publicación, crear un array temporal
         if (!window.publicacionActualId) {
             if (!window.mediosTemporales) {
@@ -635,6 +655,9 @@ async function guardarReferenciaMedia(mediaData) {
         await publicacionRef.update({
             medios: firebase.firestore.FieldValue.arrayUnion(mediaData)
         });
+
+      
+
     } catch (error) {
         console.error('Error al guardar referencia de medio:', error);
     }
@@ -670,6 +693,9 @@ async function cargarItemParaEditar(id) {
             document.getElementById('comision-venta').value = data.comision_venta || '';
             document.getElementById('precio').value = data.precio || '';
 
+              // Limpiar el campo de descripción después de guardar
+            document.getElementById('descripcion_material').value = data.descripcion_material||''
+
             // Establecer el contenido en el editor
             tinymce.get('editor').setContent(data.contenido);
 
@@ -686,48 +712,63 @@ async function cargarItemParaEditar(id) {
                 guardarBtn.setAttribute('data-id', id);
             }
 
-              // Cargar medios existentes
-              if (data.medios && data.medios.length > 0) {
-                const mediaPreviewGrid = document.getElementById('media-preview-grid');
-                mediaPreviewGrid.innerHTML = ''; // Limpiar grid existente
+              // Dentro de la función cargarItemParaEditar, en la parte donde manejas los medios
+if (data.medios && data.medios.length > 0) {
+    const mediaPreviewGrid = document.getElementById('media-preview-grid');
+    mediaPreviewGrid.innerHTML = ''; // Limpiar grid existente
 
-                data.medios.forEach((medio, index) => {
-                    const previewItem = document.createElement('div');
-                    previewItem.className = 'media-preview-item';
-                    previewItem.id = `media-${index}`;
+    data.medios.forEach((medio, index) => {
+        const previewItem = document.createElement('div');
+        previewItem.className = 'media-preview-item';
+        previewItem.id = `media-${index}`;
 
-                    if (medio.tipo === 'imagen' || medio.tipo === 'image') {
-                        previewItem.innerHTML = `
-                            <img src="${medio.url}" alt="${medio.nombre}">
-                            <span class="media-type-badge">Imagen</span>
-                            <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
-                                <i class="fas fa-times"></i>
-                            </div>
-                            <div class="preview-media" onclick="previsualizarMedio('${medio.url}', '${medio.tipo}')">
-                                <i class="fas fa-eye"></i>
-                            </div>
-                        `;
-                    } else if (medio.tipo === 'video') {
-                        previewItem.innerHTML = `
-                            <video src="${medio.url}" controls></video>
-                            <span class="media-type-badge">Video</span>
-                            <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
-                                <i class="fas fa-times"></i>
-                            </div>
-                            <div class="preview-media" onclick="previsualizarMedio('${medio.url}', '${medio.tipo}')">
-                                <i class="fas fa-eye"></i>
-                            </div>
-                        `;
-                    }
+        if (medio.tipo === 'imagen' || medio.tipo === 'image') {
+            previewItem.innerHTML = `
+                <img src="${medio.url}" alt="${medio.nombre}">
+                <span class="media-type-badge">Imagen</span>
+                <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
+                    <i class="fas fa-times"></i>
+                </div>
+                <div class="preview-media" onclick="previsualizarMedio('${medio.url}', '${medio.tipo}')">
+                    <i class="fas fa-eye"></i>
+                </div>
+            `;
+        } else if (medio.tipo === 'video') {
+            previewItem.innerHTML = `
+                <video src="${medio.url}" controls></video>
+                <span class="media-type-badge">Video</span>
+                <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
+                    <i class="fas fa-times"></i>
+                </div>
+                <div class="preview-media" onclick="previsualizarMedio('${medio.url}', '${medio.tipo}')">
+                    <i class="fas fa-eye"></i>
+                </div>
+            `;
+        } else if (medio.tipo === 'pdf' || medio.tipo === 'application/pdf') {
+            previewItem.innerHTML = `
+                <div class="pdf-preview">
+                    <i class="fas fa-file-pdf pdf-icon"></i>
+                    <span class="pdf-name">${medio.nombre || "Documento PDF"}</span>
+                </div>
+                <span class="media-type-badge">PDF</span>
+                <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
+                    <i class="fas fa-times"></i>
+                </div>
+                <div class="preview-media" onclick="window.open('${medio.url}', '_blank')">
+                    <i class="fas fa-eye"></i>
+                </div>
+            `;
+        }
 
-                    mediaPreviewGrid.appendChild(previewItem);
-                });
+        mediaPreviewGrid.appendChild(previewItem);
+    });
 
-                // Actualizar contador
-                const mediaCounter = document.getElementById('media-count');
-                if (mediaCounter) {
-                    mediaCounter.textContent = `${data.medios.length} archivo${data.medios.length !== 1 ? 's' : ''} cargado${data.medios.length !== 1 ? 's' : ''}`;
-                }
+    // Actualizar contador
+    const mediaCounter = document.getElementById('media-count');
+    if (mediaCounter) {
+        mediaCounter.textContent = `${data.medios.length} archivo${data.medios.length !== 1 ? 's' : ''} cargado${data.medios.length !== 1 ? 's' : ''}`;
+    }
+
             }
 
         
@@ -856,6 +897,11 @@ async function handleGuardarContenido() {
         const comision_venta = parseFloat(document.getElementById('comision-venta').value) || 0;
         const precio = parseFloat(document.getElementById('precio').value) || 0;
 
+            // Obtener la descripción del material
+      const descripcion_material = document.getElementById('descripcion_material').value||"";
+        
+           
+
         // Validar campos requeridos
         if (!titulo || !contenido || !categoria || !lugar) {
             Swal.fire({
@@ -907,7 +953,9 @@ async function handleGuardarContenido() {
                 uid: user.uid,
                 nombre: user.displayName || 'Usuario',
                 email: user.email
-            }
+            },
+            descripcion_material
+
         };
 
         // Si hay una nueva imagen, actualizar el campo imagen_destacada

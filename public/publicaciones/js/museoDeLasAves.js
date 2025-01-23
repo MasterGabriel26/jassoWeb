@@ -37,11 +37,6 @@
 				throw new Error("Publicación no encontrada");
 			}
 			const data = doc.data();
-           alert(data.lugar);
-     
-
-
-
 
 			const comisionesCard = document.getElementById("sidebar-commissions");
 		

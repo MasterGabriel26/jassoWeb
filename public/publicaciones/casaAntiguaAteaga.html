@@ -1,442 +1,200 @@
 <!DOCTYPE html>
 <html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle de Evento | JASSO</title>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Detalle de Evento | JASSO</title>
+    <!-- Estilos -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
 
-  <!-- Estilos -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
-    rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <link rel="stylesheet" href="css/arteaga.css">
- 
-</head>
+    <link rel="stylesheet" href="css/arteaga.css" />
+  </head>
 
-<body>
-  <div class="hero-section" id="hero-image">
-
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-      <h1 class="publication-title" id="titulo"></h1>
-      <div class="meta-tags">
-        <span class="meta-tag">
-          <i class="fas fa-calendar"></i>
-          <span id="fecha"></span>
-        </span>
-        <span class="meta-tag">
-          <i class="fas fa-tag"></i>
-          <span id="categoria"></span>
-        </span>
-        <span class="meta-tag">
-          <i class="fas fa-map-marker-alt"></i>
-          <span id="lugar"></span>
-        </span>
+  <body>
+    <div class="hero-section" id="hero-image">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 class="publication-title" id="titulo"></h1>
+        <div class="meta-tags">
+          <span class="meta-tag">
+            <i class="fas fa-calendar"></i>
+            <span id="fecha"></span>
+          </span>
+          <span class="meta-tag">
+            <i class="fas fa-tag"></i>
+            <span id="categoria"></span>
+          </span>
+          <span class="meta-tag">
+            <i class="fas fa-map-marker-alt"></i>
+            <span id="lugar"></span>
+          </span>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="publication-detail">
-    <div class="content-wrapper">
-      <div class="main-content">
-        <div class="publication-content" id="contenido"></div>
-      </div>
-
-      <div class="sidebar">
-        <div class="info-card">
-          <h3 class="info-title">Información del Evento</h3>
-          <div class="info-item">
-            <i class="fas fa-map-marker-alt"></i>
-            <div>
-              <strong>Ubicación</strong><br />
-              <span id="lugar-sidebar"></span>
-            </div>
+    <div class="publication-detail">
+      <div class="content-wrapper">
+        <div class="left-column">
+          <div class="main-content">
+            <div class="publication-content" id="contenido"></div>
           </div>
-          <div class="info-item">
-            <i class="fas fa-calendar-alt"></i>
-            <div>
-              <strong>Fecha</strong><br />
-              <span id="fecha-sidebar"></span>
+          <div class="comments-section">
+            <h3 class="comments-title">Comentarios</h3>
+            <div class="comment-form">
+              <div class="comment-input-wrapper">
+                <div class="user-avatar" id="currentUserAvatar"></div>
+                <textarea
+                  id="commentText"
+                  placeholder="Escribe tu comentario..."
+                ></textarea>
+              </div>
+              <button id="submitComment" class="comment-btn">
+                Publicar comentario
+              </button>
             </div>
+            <div class="comments-list" id="commentsList"></div>
           </div>
-          <div class="info-item">
-            <i class="fas fa-tag"></i>
-            <div>
-              <strong>Categoría</strong><br />
-              <span id="categoria-sidebar"></span>
-            </div>
-          </div>
-       <!--  <a href="#contacto" class="cta-button"> Solicitar Información </a>-->
         </div>
+      
+   
 
-        <!-- Agregar después del primer info-card y antes de la galería -->
-        <div class="info-card" id="comisiones-card" style="display: none;">
-          <h3 class="info-title">Información Financiera</h3>
-          <div class="comisiones-container">
+        <div class="sidebar">
+          <div class="info-card">
+            <h3 class="info-title">Información del Evento</h3>
             <div class="info-item">
-              <i class="fas fa-phone"></i>
+              <i class="fas fa-map-marker-alt"></i>
               <div>
-                <strong>Comisión por Llamada</strong><br />
-                <span class="precio-texto" id="comision-llamada">$0</span>
+                <strong>Ubicación</strong><br />
+                <span id="lugar-sidebar"></span>
               </div>
             </div>
-
             <div class="info-item">
-              <i class="fas fa-user-tie"></i>
+              <i class="fas fa-calendar-alt"></i>
               <div>
-                <strong>Comisión de Líder</strong><br />
-                <span class="precio-texto" id="comision-lider">$0</span>
+                <strong>Fecha</strong><br />
+                <span id="fecha-sidebar"></span>
               </div>
             </div>
-
             <div class="info-item">
-              <i class="fas fa-handshake"></i>
-              <div>
-                <strong>Comisión de Venta</strong><br />
-                <span class="precio-texto" id="comision-venta">$0</span>
-              </div>
-            </div>
-
-            <div class="info-item precio-total">
               <i class="fas fa-tag"></i>
               <div>
-                <strong>Precio del paquete</strong><br />
-                <span class="precio-texto destacado" id="precio-total">$0</span>
+                <strong>Categoría</strong><br />
+                <span id="categoria-sidebar"></span>
+              </div>
+            </div>
+            <!--  <a href="#contacto" class="cta-button"> Solicitar Información </a>-->
+          </div>
+
+          <!-- Agregar después del primer info-card y antes de la galería -->
+          <div class="info-card" id="comisiones-card" style="display: none">
+            <h3 class="info-title">Información Financiera</h3>
+            <div class="comisiones-container">
+              <div class="info-item">
+                <i class="fas fa-phone"></i>
+                <div>
+                  <strong>Comisión por Llamada</strong><br />
+                  <span class="precio-texto" id="comision-llamada">$0</span>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <i class="fas fa-user-tie"></i>
+                <div>
+                  <strong>Comisión de Líder</strong><br />
+                  <span class="precio-texto" id="comision-lider">$0</span>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <i class="fas fa-handshake"></i>
+                <div>
+                  <strong>Comisión de Venta</strong><br />
+                  <span class="precio-texto" id="comision-venta">$0</span>
+                </div>
+              </div>
+
+              <div class="info-item precio-total">
+                <i class="fas fa-tag"></i>
+                <div>
+                  <strong>Precio del paquete</strong><br />
+                  <span class="precio-texto destacado" id="precio-total"
+                    >$0</span
+                  >
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="info-card">
-          <h3 class="info-title">Galería</h3>
-          <div class="gallery" id="galeria">
-            <!-- Las imágenes se cargarán dinámicamente -->
-          </div>
+          <div class="info-card">
+            <h3 class="info-title">Material de apoyo</h3>
+            <p id="descripcion-material" class="material-description"></p>
+            <div class="gallery" id="galeria">
+                <!-- Las imágenes se cargarán dinámicamente -->
+            </div>
+        </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Scripts -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-  <!-- Agrega esta línea junto con los otros scripts de Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 
-  <div class="whatsapp-float" id="whatsapp-float" style="display: none;">
-    <i class="fab fa-whatsapp"></i>
-</div>
-
-<style>
-.whatsapp-float {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    background-color: #25D366;
-    color: white;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    text-align: center;
-    font-size: 30px;
-    box-shadow: 2px 2px 3px rgba(0,0,0,0.2);
-    z-index: 100;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.whatsapp-float:hover {
-    transform: scale(1.1);
-    box-shadow: 2px 2px 13px rgba(0,0,0,0.3);
-}
-
-.whatsapp-float i {
-    margin-top: 2px;
-}
-
-@media screen and (max-width: 768px) {
-    .whatsapp-float {
-        width: 50px;
-        height: 50px;
-        font-size: 25px;
-        bottom: 20px;
-        right: 20px;
-    }
-}
-
-
-</style>
-
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-      const urlParams = new URLSearchParams(window.location.search);
-      const publicacionId = urlParams.get("id");
-      const tipoUsuario = urlParams.get("tipo");
-      const whatsappFloat = document.getElementById('whatsapp-float');
+    <div class="whatsapp-float" id="whatsapp-float" style="display: none">
+      <i class="fab fa-whatsapp"></i>
+    </div>
+ 
+ 
+    
+    
   
-      // Mostrar el botón solo si el usuario es asesor o admin
-      if (tipoUsuario && (tipoUsuario.toLowerCase() === 'asesor' || tipoUsuario.toLowerCase() === 'admin')) {
-          whatsappFloat.style.display = 'flex';
-      }
-  
-      whatsappFloat.addEventListener('click', function() {
-          const titulo = document.getElementById('titulo').textContent;
-          const asesor = localStorage.getItem('userName');
-          console.log(asesor);
-  
-          const mensaje = encodeURIComponent(`Hola, tu asesor(a): ${asesor} te invita a ver más información de ${titulo} en https://jassocompany.com/publicaciones/casaAntiguaAteaga.html?id=${publicacionId}&tipo=cliente`);
-          
-          // Abre WhatsApp en una nueva ventana
-          window.open(`https://wa.me/?text=${mensaje}`, '_blank');
-      });
-  });
-  </script>
-  
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAOvefpvlXLtbTx1T2hYg2Ds56eiKI3eAk",
-      authDomain: "jassodb-4b8e4.firebaseapp.com",
-      databaseURL: "https://jassodb-4b8e4-default-rtdb.firebaseio.com",
-      projectId: "jassodb-4b8e4",
-      storageBucket: "jassodb-4b8e4.appspot.com",
-      messagingSenderId: "851107842246",
-      appId: "1:851107842246:web:aa155261b9acdda47e6fc7",
-      measurementId: "G-N18F7GL2NG",
-    };
-
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    // Función auxiliar para formatear moneda
-    function formatearMoneda(valor) {
-      if (valor === undefined || valor === null) return '$0';
-      return `$${valor.toLocaleString('es-MX', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      })}`;
-    }
-
-    document.addEventListener("DOMContentLoaded", async function () {
-      try {
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
         const urlParams = new URLSearchParams(window.location.search);
         const publicacionId = urlParams.get("id");
-        const tipoUsuario = urlParams.get("tipo"); // Obtener el tipo de usuario
+        const tipoUsuario = urlParams.get("tipo");
+        const whatsappFloat = document.getElementById("whatsapp-float");
 
-        // Mostrar/ocultar sección de comisiones según el tipo de usuario
-        const comisionesCard = document.getElementById("comisiones-card");
-        if (tipoUsuario && tipoUsuario.toLowerCase() === 'asesor') {
-          comisionesCard.style.display = 'block';
+        // Mostrar el botón solo si el usuario es asesor o admin
+        if (
+          tipoUsuario &&
+          (tipoUsuario.toLowerCase() === "asesor" ||
+            tipoUsuario.toLowerCase() === "admin")
+        ) {
+          whatsappFloat.style.display = "flex";
         }
 
-        if (tipoUsuario && tipoUsuario.toLowerCase() === 'admin') {
-          comisionesCard.style.display = 'block';
-        }
-        
+        whatsappFloat.addEventListener("click", function () {
+          const titulo = document.getElementById("titulo").textContent;
+          const asesor = localStorage.getItem("userName");
+          console.log(asesor);
 
-        if (!publicacionId) {
-          throw new Error("ID de publicación no proporcionado");
-        }
+          const mensaje = encodeURIComponent(
+            `Hola, tu asesor(a): ${asesor} te invita a ver más información de ${titulo} en https://jassocompany.com/publicaciones/casaAntiguaAteaga.html?id=${publicacionId}&tipo=cliente`
+          );
 
-        const doc = await firebase
-          .firestore()
-          .collection("publicaciones2")
-          .doc(publicacionId)
-          .get();
-
-        if (!doc.exists) {
-          throw new Error("Publicación no encontrada");
-        }
-
-        const data = doc.data();
-
-        // Establecer imagen de fondo
-        if (data.imagen_destacada) {
-          document.getElementById("hero-image").style.backgroundImage = `url('${data.imagen_destacada}')`;
-        }
-
-        // Llenar datos principales
-        document.getElementById("titulo").textContent = data.titulo;
-        document.getElementById("categoria").textContent = data.categoria;
-        document.getElementById("lugar").textContent = data.lugar;
-        document.getElementById("contenido").innerHTML = data.contenido;
-
-        // Cargar información de comisiones si el usuario es asesor
-        if (tipoUsuario && tipoUsuario.toLowerCase() === 'asesor') {
-          // Verificar si los campos existen y tienen valores
-          if (data.comision_llamada !== undefined) {
-            document.getElementById("comision-llamada").textContent =
-              formatearMoneda(data.comision_llamada);
-          }
-
-          if (data.comision_lider !== undefined) {
-            document.getElementById("comision-lider").textContent =
-              formatearMoneda(data.comision_lider);
-          }
-
-          if (data.comision_venta !== undefined) {
-            document.getElementById("comision-venta").textContent =
-              formatearMoneda(data.comision_venta);
-          }
-
-          if (data.precio !== undefined) {
-            document.getElementById("precio-total").textContent =
-              formatearMoneda(data.precio);
-          }
-        }
-
-        // Después de insertar el contenido, procesa los elementos
-        const contenidoDiv = document.getElementById("contenido");
-
-        // Procesar imágenes
-        contenidoDiv.querySelectorAll("img").forEach((img) => {
-          const originalStyle = img.getAttribute("style") || "";
-          img.setAttribute("data-mce-style", originalStyle);
-          img.style.maxWidth = "100%";
-          img.style.height = "auto";
+          // Abre WhatsApp en una nueva ventana
+          window.open(`https://wa.me/?text=${mensaje}`, "_blank");
         });
-
-        // Procesar tablas
-        contenidoDiv.querySelectorAll("table").forEach((table) => {
-          const originalStyle = table.getAttribute("style") || "";
-          table.setAttribute("data-mce-style", originalStyle);
-          table.classList.add("mce-table");
-        });
-
-        // Procesar elementos con alineación
-        contenidoDiv.querySelectorAll('[style*="text-align"]').forEach((el) => {
-          const originalStyle = el.getAttribute("style");
-          el.setAttribute("data-mce-style", originalStyle);
-        });
-
-        // Procesar elementos con color
-        contenidoDiv.querySelectorAll('[style*="color"]').forEach((el) => {
-          const originalStyle = el.getAttribute("style");
-          el.setAttribute("data-mce-style", originalStyle);
-        });
-
-        // Agregar clase para mantener estilos del editor
-        contenidoDiv.classList.add("mce-content-body");
-
-        // Llenar sidebar
-        document.getElementById("lugar-sidebar").textContent = data.lugar;
-        document.getElementById("categoria-sidebar").textContent = data.categoria;
-
-        // Formatear y mostrar fechas
-        const fecha = data.fecha_creacion.toDate();
-        const fechaFormateada = fecha.toLocaleDateString("es-ES", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        });
-        document.getElementById("fecha").textContent = fechaFormateada;
-        document.getElementById("fecha-sidebar").textContent = fechaFormateada;
-
-        // Cargar galería si existe
-if (data.medios && data.medios.length > 0) {
-    const galeriaContainer = document.getElementById("galeria");
-    galeriaContainer.innerHTML = "";
-
-    // Crear lightbox para imágenes
-    const lightbox = document.createElement("div");
-    lightbox.className = "lightbox";
-    lightbox.innerHTML = `
-        <span class="lightbox-close">&times;</span>
-        <div class="lightbox-content"></div>
-    `;
-    document.body.appendChild(lightbox);
-
-    // Manejar cierre de lightbox
-    lightbox.querySelector(".lightbox-close").onclick = () => {
-        lightbox.classList.remove("active");
-        lightbox.querySelector(".lightbox-content").innerHTML = '';
-    };
-    lightbox.onclick = (e) => {
-        if (e.target === lightbox) {
-            lightbox.classList.remove("active");
-            lightbox.querySelector(".lightbox-content").innerHTML = '';
-        }
-    };
-
-    // Iterar sobre los medios
-    data.medios.forEach((medio) => {
-        const div = document.createElement("div");
-        div.className = "gallery-item";
-
-        // Verificar si es imagen (considerando ambas variantes: "image" e "imagen")
-        if (medio.tipo === "image" || medio.tipo === "imagen") {
-            const img = document.createElement("img");
-            img.src = medio.url;
-            img.alt = medio.nombre || "Imagen de galería";
-            img.loading = "lazy";
-
-            // Abrir lightbox al hacer click
-            div.onclick = () => {
-                const lightboxContent = lightbox.querySelector(".lightbox-content");
-                lightboxContent.innerHTML = `<img src="${medio.url}" alt="${medio.nombre || 'Imagen ampliada'}">`;
-                lightbox.classList.add("active");
-            };
-
-            div.appendChild(img);
-        } 
-        // Verificar si es video
-        else if (medio.tipo === "video") {
-            const video = document.createElement("video");
-            video.src = medio.url;
-            video.controls = true;
-            video.muted = true;
-            video.loading = "lazy";
-
-            // Miniatura del video
-            const thumbnail = document.createElement("div");
-            thumbnail.className = "video-thumbnail";
-            thumbnail.appendChild(video);
-            
-            // Icono de play
-            const playIcon = document.createElement("div");
-            playIcon.className = "play-icon";
-            playIcon.innerHTML = '<i class="fas fa-play"></i>';
-            thumbnail.appendChild(playIcon);
-
-            // Abrir lightbox con video al hacer click
-            div.onclick = () => {
-                const lightboxContent = lightbox.querySelector(".lightbox-content");
-                lightboxContent.innerHTML = `
-                    <video src="${medio.url}" controls autoplay>
-                        Tu navegador no soporta el elemento de video.
-                    </video>
-                `;
-                lightbox.classList.add("active");
-            };
-
-            div.appendChild(thumbnail);
-        }
-
-        galeriaContainer.appendChild(div);
-    });
-
-    if (galeriaContainer.children.length === 0) {
-        galeriaContainer.innerHTML = "<p>No hay medios disponibles</p>";
-    }
-} else {
-    const galeriaSection = document.querySelector(".info-card:last-child");
-    if (galeriaSection) {
-        galeriaSection.style.display = "none";
-    }
-}
-      } catch (error) {
-        console.error("Error:", error);
-        alert("Error al cargar la publicación: " + error.message);
-      }
-    });
+      });
     </script>
-</body>
 
+    <script src="js/arteaga.js"></script>
+
+
+  </body>
 </html>

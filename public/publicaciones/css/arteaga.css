@@ -67,6 +67,89 @@ body {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
+
+body {
+  overflow-x: hidden !important;
+  width: 100% !important;
+}
+
+/* Hero content */
+.hero-content {
+  position: relative !important;
+  color: white !important;
+  padding: 20px !important;
+  width: 100% !important; /* Cambiado de 120% a 100% */
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+}
+
+
+
+/* Grid */
+.content-wrapper {
+  display: grid !important;
+  grid-template-columns: 3fr 1fr !important;
+  gap: 40px !important;
+  margin-top: -80px !important;
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Contenido principal */
+.main-content {
+  background: white !important;
+  border-radius: 20px !important;
+  padding: 10px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Sidebar */
+.sidebar {
+  position: sticky !important;
+  top: 20px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+/* Media queries */
+@media (max-width: 992px) {
+  .content-wrapper {
+    grid-template-columns: 1fr !important;
+    padding: 0 !important;
+  }
+
+  .publication-detail {
+    padding: 0 15px !important;
+  }
+
+  .main-content,
+  .sidebar {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-content {
+    padding: 15px !important;
+  }
+
+  .content-wrapper {
+    margin-top: -40px !important;
+  }
+
+  .main-content,
+  .info-card {
+    padding: 15px !important;
+  }
+}
+
+
+
+
 .sidebar {
   position: sticky;
   top: 20px;
@@ -715,3 +798,349 @@ body {
   background-color: #e8f4ff;
   color: var(--primary);
 }
+
+
+
+
+
+/* Contenedor principal de comentarios */
+.comments-section {
+margin-top: 40px;
+padding: 30px;
+background: white;
+border-radius: 20px;
+box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+width: 100%;
+box-sizing: border-box;
+overflow: hidden;
+}
+
+/* Título de la sección */
+.comments-title {
+font-family: "Playfair Display", serif;
+font-size: 1.8rem;
+margin-bottom: 25px;
+color: var(--text-dark);
+width: 100%;
+}
+
+/* Formulario de comentarios */
+.comment-form {
+margin-bottom: 30px;
+width: 100%;
+box-sizing: border-box;
+}
+
+.comment-input-wrapper {
+display: flex;
+gap: 15px;
+margin-bottom: 15px;
+width: 100%;
+box-sizing: border-box;
+}
+
+.comment-form textarea {
+flex: 1;
+padding: 15px;
+border: 1px solid #e0e0e0;
+border-radius: 10px;
+resize: vertical;
+min-height: 60px;
+font-family: "Poppins", sans-serif;
+transition: border-color 0.3s ease;
+width: 100%;
+box-sizing: border-box;
+max-width: 100%;
+}
+
+.comment-form textarea:focus {
+outline: none;
+border-color: var(--primary);
+}
+
+/* Botón de comentar */
+.comment-btn {
+background: var(--primary);
+color: white;
+border: none;
+padding: 12px 25px;
+border-radius: 25px;
+cursor: pointer;
+font-weight: 500;
+transition: all 0.3s ease;
+margin-left: auto;
+display: block;
+}
+
+.comment-btn:hover {
+background: var(--secondary);
+transform: translateY(-2px);
+}
+
+/* Avatar de usuario */
+.user-avatar {
+width: 40px;
+height: 40px;
+min-width: 40px; /* Evita que el avatar se encoja */
+border-radius: 50%;
+background: var(--primary);
+display: flex;
+align-items: center;
+justify-content: center;
+color: white;
+font-weight: 500;
+font-size: 16px;
+flex-shrink: 0;
+background-position: center;
+background-size: cover;
+}
+
+/* Lista de comentarios */
+.comments-list {
+width: 100%;
+box-sizing: border-box;
+}
+
+/* Item de comentario */
+.comment-item {
+display: flex;
+gap: 15px;
+padding: 20px 0;
+border-bottom: 1px solid #eee;
+width: 100%;
+box-sizing: border-box;
+}
+
+.comment-content-wrapper {
+flex: 1;
+min-width: 0; /* Permite que el contenido se ajuste */
+word-wrap: break-word;
+}
+
+.comment-header {
+margin-bottom: 5px;
+}
+
+.comment-author {
+font-weight: 600;
+color: var(--text-dark);
+margin-right: 10px;
+}
+
+.comment-text {
+color: var(--text-dark);
+line-height: 1.6;
+margin-bottom: 5px;
+word-wrap: break-word;
+overflow-wrap: break-word;
+}
+
+.comment-metadata {
+font-size: 0.8em;
+color: var(--text-light);
+}
+
+.no-comments {
+text-align: center;
+color: var(--text-light);
+padding: 20px;
+width: 100%;
+box-sizing: border-box;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 768px) {
+.comments-section {
+padding: 20px;
+margin-top: 30px;
+}
+
+.comments-title {
+font-size: 1.5rem;
+}
+
+.comment-input-wrapper {
+flex-direction: column;
+gap: 10px;
+}
+
+.user-avatar {
+margin: 0;
+}
+
+.comment-form textarea {
+width: 100%;
+}
+
+.comment-btn {
+width: 100%;
+margin-top: 10px;
+}
+}
+
+/* Estilos para modo solo lectura */
+.comments-section.readonly-comments .comment-form {
+display: none;
+}
+
+.comments-section.readonly-comments .comments-title {
+margin-bottom: 15px;
+font-size: 1.5rem;
+color: #666;
+}
+
+/* Ajustes adicionales para prevenir desbordamiento */
+* {
+max-width: 100%;
+box-sizing: border-box;
+}
+
+.comment-text img,
+.comment-text iframe,
+.comment-text video {
+max-width: 100%;
+height: auto;
+}
+
+.material-description {
+margin: 10px 0 20px 0;
+padding: 10px;
+background-color: #f8f9fa;
+border-radius: 8px;
+color: #495057;
+font-size: 0.9rem;
+line-height: 1.5;
+border-left: 3px solid #4a90e2;
+}
+
+/* Si no hay descripción, ocultar el elemento */
+.material-description:empty {
+display: none;
+}
+
+/* Estilos actualizados para PDFs */
+.gallery-item.pdf-item {
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+padding: 15px;
+background: #f8f9fa;
+text-align: center;
+aspect-ratio: 1;
+}
+
+.pdf-icon {
+color: #dc3545;
+font-size: 2.5rem;
+margin-bottom: 10px;
+}
+
+.pdf-name {
+font-size: 0.8rem;
+color: #333;
+word-break: break-word;
+overflow: hidden;
+text-overflow: ellipsis;
+display: -webkit-box;
+-webkit-line-clamp: 2;
+-webkit-box-orient: vertical;
+width: 100%;
+max-height: 2.4em;
+line-height: 1.2;
+}
+/* Estilos para el visor de PDF en el lightbox */
+.lightbox-content iframe {
+width: 100%;
+height: 90vh;
+border: none;
+}
+
+/* Estilo para cuando el body tiene scroll bloqueado */
+body.no-scroll {
+overflow: hidden;
+padding-right: 17px; /* Compensar el ancho de la scrollbar para evitar saltos */
+}
+
+/* Mejorar estilos del lightbox */
+.lightbox {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: rgba(0, 0, 0, 0.9);
+display: none;
+justify-content: center;
+align-items: center;
+z-index: 1000;
+overflow-y: auto; /* Permitir scroll dentro del lightbox si es necesario */
+}
+
+.lightbox.active {
+display: flex;
+}
+
+.lightbox-content {
+position: relative;
+max-width: 90%;
+max-height: 90vh;
+margin: auto;
+}
+
+
+  .whatsapp-float {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #25d366;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 30px;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.2);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  .whatsapp-float:hover {
+    transform: scale(1.1);
+    box-shadow: 2px 2px 13px rgba(0, 0, 0, 0.3);
+  }
+
+  .whatsapp-float i {
+    margin-top: 2px;
+  }
+
+  @media screen and (max-width: 768px) {
+    .whatsapp-float {
+      width: 50px;
+      height: 50px;
+      font-size: 25px;
+      bottom: 20px;
+      right: 20px;
+    }
+  }
+
+  /* Ocultar elementos de comentarios cuando es solo lectura */
+  .comments-section.readonly-comments .comment-form {
+    display: none;
+  }
+
+  /* Opcional: Ajustar espaciado cuando no hay formulario */
+  .comments-section.readonly-comments .comments-title {
+    margin-bottom: 15px;
+  }
+
+  /* Opcional: Cambiar el título cuando es solo lectura */
+  .comments-section.readonly-comments .comments-title {
+    font-size: 1.5rem;
+    color: #666;
+  }
+

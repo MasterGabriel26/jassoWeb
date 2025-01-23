@@ -19,9 +19,9 @@ const db = firebase.firestore();
 document.addEventListener("DOMContentLoaded", async function () {
     // try {
     const urlParams = new URLSearchParams(window.location.search);
-    //const publicacionId = urlParams.get("id");
+    const publicacionId = urlParams.get("id");
     const tipoUsuario = urlParams.get("tipo"); // Obtener el tipo de usuario
-    const publicacionId  = "enZ5sPeAxLN6Z5OXUg9J";
+  
 
     if (!publicacionId) {
         throw new Error("ID de publicación no proporcionado");
@@ -42,10 +42,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 if (data.lugar === "Museo de las Aves") {
     window.location.href = "museoDeLasAves.html?id="+id; // Redirige a arteaga.html
 } else if (data.lugar === "V. Carranza") {
-    window.location.href = "sabinas.html"; // Redirige a sabinas.html
+    window.location.href =  "casaAntiguaAteaga.html?id="+id;; // Redirige a sabinas.html
 } else if (data.lugar === "Casa Antigua Arteaga") {
-    window.location.href = "detalleArteaga.html?id="+id; // Redirige a monclova.html
-} else {
+    window.location.href = "casaAntiguaAteaga.html?id="+id; // Redirige a monclova.html
+} else if (data.lugar === "MOVE Eventos Saltillo") {
+    window.location.href = "casaAntiguaAteaga.html?id="+id+"&tipo=asesor"; // Redirige a monclova.html
+}else {
     console.error("Lugar no reconocido");
     // Puedes manejar el caso de un lugar no reconocido aquí
 }
