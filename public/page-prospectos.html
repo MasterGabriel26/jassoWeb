@@ -1397,7 +1397,130 @@ html, body {
 }
 
 
+.publications-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
 
+.publication-card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 1px solid #eee;
+}
+
+.publication-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.publication-card.selected {
+    border: 2px solid #4CAF50;
+}
+
+.publication-image {
+    position: relative;
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+}
+
+.publication-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.selection-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255,255,255,0.9);
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+.publication-card.selected .selection-overlay {
+    opacity: 1;
+    background: #4CAF50;
+    color: white;
+}
+
+.publication-info {
+    padding: 12px;
+}
+
+.publication-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: #333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.publication-details {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.publication-details span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.publication-details i {
+    font-size: 0.75rem;
+    width: 14px;
+}
+
+.category, .location {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+
+
+/* Estilos específicos para el modal de anticipo */
+.anticipo-modal .anticipo-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.anticipo-modal .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.anticipo-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+/* Mantén el resto de tus estilos existentes para contract-status, status-badge, etc. */
 	</style>
 </head>
 
@@ -1879,12 +2002,17 @@ html, body {
 
 	<script src="js/app.js"></script>
 	<script src="js/sesion-checked.js"></script>
-	<script src="js/prospectos/listarProspectos.js"></script>
+
 	<script src="js/menu.js"></script>
 	<script src="js/prospectos/crearProspecto.js"></script>
-
-
-
+    <script src="js/prospectos/llamadasPagos.js"></script>
+    <script src="js/prospectos/tablaProspectos.js"></script>
+    <script src="js/prospectos/generarCredenciales.js"></script>
+    <script src="js/prospectos/mostrarPaso.js"></script>
+   <script src="js/prospectos/asesorModal.js"></script>
+   <script src="js/prospectos/paso5.js"></script>
+    <script src="js/prospectos/paso7.js"></script>
+	<script src="js/prospectos/listarProspectos.js"></script>
 </body>
 
 </html>
