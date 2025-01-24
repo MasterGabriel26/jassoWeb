@@ -252,6 +252,158 @@ $(document).ready(function() {
     });
 });
 
+
+
+// Variables globales para la galería
+window.galeriaTemporales = [];
+
+document.addEventListener('DOMContentLoaded', function() {
+    const galeriaInput = document.getElementById('galeria-upload');
+    const galeriaPreviewGrid = document.getElementById('galeria-preview-grid');
+    const galeriaCounter = document.getElementById('galeria-count');
+    let selectedGaleriaFiles = new Map();
+
+    galeriaInput.addEventListener('change', handleGaleriaSelect);
+
+    async function handleGaleriaSelect(e) {
+        const files = Array.from(e.target.files);
+        
+        for (const file of files) {
+            try {
+                // Validar que solo sean imágenes o videos
+                if (!isImageFile(file) && !isVideoFile(file)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Tipo de archivo no permitido',
+                        text: 'Solo se permiten imágenes y videos en la galería'
+                    });
+                    continue;
+                }
+
+                // Mostrar loading
+                Swal.fire({
+                    title: 'Procesando archivo...',
+                    text: 'Esto puede tomar unos momentos',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                const fileId = `galeria-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+                
+                // Procesar el archivo según su tipo
+                let processedFile;
+                if (isImageFile(file)) {
+                    processedFile = await comprimirImagen(file);
+                } else if (isVideoFile(file)) {
+                    processedFile = await comprimirVideo(file);
+                }
+
+                // Crear preview
+                await createGaleriaPreviewItem(file, fileId, processedFile || file);
+
+                // Subir archivo y guardar referencia
+                const resultado = await subirArchivo(
+                    processedFile || file, 
+                    isImageFile(file) ? 'imagenes' : 'videos'
+                );
+                
+                await guardarReferenciaGaleria({
+                    tipo: isImageFile(file) ? 'imagen' : 'video',
+                    url: resultado.url,
+                    nombre: resultado.nombre,
+                    timestamp: resultado.timestamp
+                });
+
+                // Actualizar contador
+                selectedGaleriaFiles.set(fileId, {
+                    file: processedFile || file,
+                    type: file.type
+                });
+                updateGaleriaCounter();
+                
+                Swal.close();
+
+            } catch (error) {
+                console.error('Error al procesar archivo:', error);
+                showError('Error al procesar el archivo: ' + error.message);
+            }
+        }
+        
+        galeriaInput.value = '';
+    }
+
+    // Función para crear preview de galería
+    async function createGaleriaPreviewItem(file, fileId, processedFile) {
+        const preview = document.createElement('div');
+        preview.className = 'media-preview-item';
+        preview.id = fileId;
+
+        if (isImageFile(file)) {
+            const img = document.createElement('img');
+            img.src = URL.createObjectURL(processedFile);
+            preview.appendChild(img);
+        } else if (isVideoFile(file)) {
+            const video = document.createElement('video');
+            video.src = URL.createObjectURL(processedFile);
+            video.controls = true;
+            preview.appendChild(video);
+        }
+
+        // Agregar controles
+        const removeBtn = document.createElement('div');
+        removeBtn.className = 'remove-media';
+        removeBtn.innerHTML = '<i class="fas fa-times"></i>';
+        removeBtn.onclick = () => removeGaleriaItem(fileId);
+        preview.appendChild(removeBtn);
+
+        galeriaPreviewGrid.appendChild(preview);
+    }
+
+    // Función para actualizar contador de galería
+    function updateGaleriaCounter() {
+        const count = selectedGaleriaFiles.size;
+        galeriaCounter.textContent = `${count} archivo${count !== 1 ? 's' : ''} en galería`;
+    }
+
+    // Función para eliminar item de galería
+    function removeGaleriaItem(fileId) {
+        const element = document.getElementById(fileId);
+        if (element) {
+            element.remove();
+            selectedGaleriaFiles.delete(fileId);
+            updateGaleriaCounter();
+        }
+    }
+});
+
+// Función para guardar referencia de galería
+async function guardarReferenciaGaleria(mediaData) {
+    try {
+        if (!window.publicacionActualId) {
+            if (!window.galeriaTemporales) {
+                window.galeriaTemporales = [];
+            }
+            window.galeriaTemporales.push(mediaData);
+            return;
+        }
+
+        const publicacionRef = firebase.firestore()
+            .collection('publicaciones2')
+            .doc(window.publicacionActualId);
+        
+        await publicacionRef.update({
+            galeria: firebase.firestore.FieldValue.arrayUnion(mediaData)
+        });
+
+    } catch (error) {
+        console.error('Error al guardar referencia de galería:', error);
+    }
+}
+
+
+
 // Añade estos estilos CSS
 function isPDFFile(file) {
     return file.type === 'application/pdf';
@@ -712,6 +864,54 @@ async function cargarItemParaEditar(id) {
                 guardarBtn.setAttribute('data-id', id);
             }
 
+
+
+            // Cargar galería si existe
+            if (data.galeria && data.galeria.length > 0) {
+                const galeriaPreviewGrid = document.getElementById('galeria-preview-grid');
+                galeriaPreviewGrid.innerHTML = ''; // Limpiar grid existente
+
+                data.galeria.forEach((item, index) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'media-preview-item';
+                    previewItem.id = `galeria-${index}`;
+
+                    if (item.tipo === 'imagen' || item.tipo === 'image') {
+                        previewItem.innerHTML = `
+                            <img src="${item.url}" alt="${item.nombre}">
+                            <span class="media-type-badge">Imagen</span>
+                            <div class="remove-media" onclick="eliminarGaleria('${id}', ${index}, '${item.url}')">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="preview-media" onclick="previsualizarMedio('${item.url}', '${item.tipo}')">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        `;
+                    } else if (item.tipo === 'video') {
+                        previewItem.innerHTML = `
+                            <video src="${item.url}" controls></video>
+                            <span class="media-type-badge">Video</span>
+                            <div class="remove-media" onclick="eliminarGaleria('${id}', ${index}, '${item.url}')">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="preview-media" onclick="previsualizarMedio('${item.url}', '${item.tipo}')">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        `;
+                    }
+
+                    galeriaPreviewGrid.appendChild(previewItem);
+                });
+
+                // Actualizar contador de galería
+                const galeriaCounter = document.getElementById('galeria-count');
+                if (galeriaCounter) {
+                    const count = data.galeria.length;
+                    galeriaCounter.textContent = `${count} archivo${count !== 1 ? 's' : ''} en galería`;
+                }
+            }
+        
+
               // Dentro de la función cargarItemParaEditar, en la parte donde manejas los medios
 if (data.medios && data.medios.length > 0) {
     const mediaPreviewGrid = document.getElementById('media-preview-grid');
@@ -967,6 +1167,11 @@ async function handleGuardarContenido() {
         if (window.mediosTemporales && window.mediosTemporales.length > 0) {
             publicacionData.medios = window.mediosTemporales;
         }
+
+            // Si hay archivos de galería temporales, agregarlos
+            if (window.galeriaTemporales && window.galeriaTemporales.length > 0) {
+                publicacionData.galeria = window.galeriaTemporales;
+            }
 
         let docRef;
         // Obtener el ID de la publicación si estamos editando

@@ -259,6 +259,14 @@ if (!tipoUsuario ||
    tipoUsuario.toLowerCase() !== "asesor")) {
   commentsSection.style.display = "none";
 }
+
+const material_apoyo = document.getElementById("material-card");
+if (!tipoUsuario || 
+  (tipoUsuario.toLowerCase() !== "admin" && 
+   tipoUsuario.toLowerCase() !== "asesor")) {
+    material_apoyo.style.display = "none";
+}
+
 });
 
 document.addEventListener("DOMContentLoaded", async function () {
@@ -382,117 +390,113 @@ document.addEventListener("DOMContentLoaded", async function () {
       fechaFormateada;
 
   // En la sección donde se cargan los medios
-if (data.medios && data.medios.length > 0) {
-const galeriaContainer = document.getElementById("galeria");
-galeriaContainer.innerHTML = "";
+// En la sección donde se cargan los medios
+if (data.material_ || data.galeria) {
+    const materialContainer = document.getElementById("material-apoyo");
+    const galeriaContainer = document.getElementById("galeria-imagenes");
+    materialContainer.innerHTML = "";
+    galeriaContainer.innerHTML = "";
 
+    // Mostrar descripción del material si existe
+    if (data.descripcion_material) {
+        const descripcionElement = document.getElementById('descripcion-material');
+        descripcionElement.textContent = data.descripcion_material;
+        descripcionElement.style.display = 'block';
+    } else {
+        document.getElementById('descripcion-material').style.display = 'none';
+    }
 
-if (data.descripcion_material) {
-const descripcionElement = document.getElementById('descripcion-material');
-descripcionElement.textContent = data.descripcion_material;
-descripcionElement.style.display = 'block';
-} else {
-document.getElementById('descripcion-material').style.display = 'none';
-}
-// Crear lightbox (en la sección donde se crea el lightbox)
-const lightbox = document.createElement("div");
-lightbox.className = "lightbox";
-lightbox.innerHTML = `
-<span class="lightbox-close">&times;</span>
-<div class="lightbox-content"></div>
-`;
-document.body.appendChild(lightbox);
+    // Crear lightbox común
+    const lightbox = document.createElement("div");
+    lightbox.className = "lightbox";
+    lightbox.innerHTML = `
+        <span class="lightbox-close">&times;</span>
+        <div class="lightbox-content"></div>
+    `;
+    document.body.appendChild(lightbox);
 
-// Función para manejar la apertura del lightbox
-const openLightbox = (content) => {
-const lightboxContent = lightbox.querySelector(".lightbox-content");
-lightboxContent.innerHTML = content;
-lightbox.classList.add("active");
-document.body.classList.add("no-scroll");
-};
+    // Funciones del lightbox
+    const openLightbox = (content) => {
+        const lightboxContent = lightbox.querySelector(".lightbox-content");
+        lightboxContent.innerHTML = content;
+        lightbox.classList.add("active");
+        document.body.classList.add("no-scroll");
+    };
 
-// Función para manejar el cierre del lightbox
-const closeLightbox = () => {
-lightbox.classList.remove("active");
-lightbox.querySelector(".lightbox-content").innerHTML = "";
-document.body.classList.remove("no-scroll");
-};
+    const closeLightbox = () => {
+        lightbox.classList.remove("active");
+        lightbox.querySelector(".lightbox-content").innerHTML = "";
+        document.body.classList.remove("no-scroll");
+    };
 
-// Manejadores de eventos para cerrar el lightbox
-lightbox.querySelector(".lightbox-close").onclick = closeLightbox;
-lightbox.onclick = (e) => {
-if (e.target === lightbox) closeLightbox();
-};
+    // Configurar eventos del lightbox
+    lightbox.querySelector(".lightbox-close").onclick = closeLightbox;
+    lightbox.onclick = (e) => {
+        if (e.target === lightbox) closeLightbox();
+    };
 
-// Prevenir que la tecla Escape cierre el lightbox cuando se está viendo un PDF
-document.addEventListener('keydown', (e) => {
-if (e.key === 'Escape' && lightbox.classList.contains('active')) {
-  const lightboxContent = lightbox.querySelector('.lightbox-content');
-  if (!lightboxContent.querySelector('iframe')) {
-      closeLightbox();
-  }
-}
-});
+    // Función para crear elementos de galería
+    const createGalleryItem = (medio, container) => {
+        const div = document.createElement("div");
+        div.className = "gallery-item";
 
-// Modificar los manejadores de click para cada tipo de medio
-data.medios.forEach((medio) => {
-const div = document.createElement("div");
-div.className = "gallery-item";
+        if (medio.tipo === "image" || medio.tipo === "imagen") {
+            const img = document.createElement("img");
+            img.src = medio.url;
+            img.alt = medio.nombre || "Imagen de galería";
+            img.loading = "lazy";
 
-if (medio.tipo === "image" || medio.tipo === "imagen") {
-  // Para imágenes
-  const img = document.createElement("img");
-  img.src = medio.url;
-  img.alt = medio.nombre || "Imagen de galería";
-  img.loading = "lazy";
+            div.onclick = () => {
+                openLightbox(`<img src="${medio.url}" alt="${medio.nombre || "Imagen ampliada"}">`);
+            };
 
-  div.onclick = () => {
-      openLightbox(`<img src="${medio.url}" alt="${medio.nombre || "Imagen ampliada"}">`);
-  };
+            div.appendChild(img);
+        } 
+        else if (medio.tipo === "video") {
+            const thumbnail = document.createElement("div");
+            thumbnail.className = "video-thumbnail";
+            thumbnail.innerHTML = '<i class="fas fa-play"></i>';
 
-  div.appendChild(img);
-} 
-else if (medio.tipo === "video") {
-  // Para videos
-  const thumbnail = document.createElement("div");
-  thumbnail.className = "video-thumbnail";
-  // ... (resto del código para videos)
+            div.onclick = () => {
+                openLightbox(`
+                    <video src="${medio.url}" controls autoplay>
+                        Tu navegador no soporta el elemento de video.
+                    </video>
+                `);
+            };
 
-  div.onclick = () => {
-      openLightbox(`
-          <video src="${medio.url}" controls autoplay>
-              Tu navegador no soporta el elemento de video.
-          </video>
-      `);
-  };
+            div.appendChild(thumbnail);
+        }
+        else if (medio.tipo === "pdf" || medio.tipo === "application/pdf") {
+            div.className = "gallery-item pdf-item";
+            div.innerHTML = `
+                <div class="pdf-content">
+                    <i class="fas fa-file-pdf pdf-icon"></i>
+                    <span class="pdf-name">${medio.nombre || "Documento PDF"}</span>
+                </div>
+            `;
 
-  div.appendChild(thumbnail);
-}
-else if (medio.tipo === "pdf" || medio.tipo === "application/pdf") {
-div.className = "gallery-item pdf-item";
-div.innerHTML = `
-  <div class="pdf-content">
-      <i class="fas fa-file-pdf pdf-icon"></i>
-      <span class="pdf-name">${medio.nombre || "Documento PDF"}</span>
-  </div>
-`;
+            div.onclick = () => {
+                window.open(medio.url, '_blank');
+            };
+        }
 
-div.onclick = () => {
-  window.open(medio.url, '_blank');
-};
-}
+        container.appendChild(div);
+    };
 
-galeriaContainer.appendChild(div);
-});
+    // Cargar material de apoyo
+    if (data.medios && data.medios.length > 0) {
+        data.medios.forEach(medio => createGalleryItem(medio, materialContainer));
+    } else {
+        materialContainer.innerHTML = "<p>No hay material de apoyo disponible</p>";
+    }
 
-if (galeriaContainer.children.length === 0) {
-  galeriaContainer.innerHTML = "<p>No hay medios disponibles</p>";
-}
-} else {
-const galeriaSection = document.querySelector(".info-card:last-child");
-if (galeriaSection) {
-  galeriaSection.style.display = "none";
-}
+    // Cargar galería
+    if (data.galeria && data.galeria.length > 0) {
+        data.galeria.forEach(medio => createGalleryItem(medio, galeriaContainer));
+    } else {
+        galeriaContainer.innerHTML = "<p>No hay imágenes en la galería</p>";
+    }
 }
 
     // Cargar comentarios al inicio
@@ -502,3 +506,5 @@ if (galeriaSection) {
     alert("Error al cargar la publicación: " + error.message);
   }
 });
+
+  
