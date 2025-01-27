@@ -1,0 +1,955 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Sistema de gestión de prospectos y seguimiento de eventos para JASSO">
+	<meta name="author" content="JASSO">
+	<meta name="keywords" content="jasso, eventos, bodas, xv años, gestión, prospectos, seguimiento, cotizaciones, paquetes, salón de eventos">
+	
+
+    <title>Inicio | JASSO</title>
+    <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../css/app.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/loading.css">
+
+    <link rel="stylesheet" href="../css/notificaciones.css">
+    <link rel="stylesheet" href="../css/userPic.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+ 
+<!-- En el head de tu HTML -->
+<link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+      <!-- Open Graph Meta Tags for WhatsApp Preview -->
+      <meta property="og:title" content="Paquetes JASSO">
+      <meta property="og:description" content="Descubre nuestros increíbles paquetes para eventos">
+      <meta property="og:image" content="https://jassocompany.com/img/logo.jpg">
+      <meta property="og:url" content="https://jassocompany.com/paquete-detalle.html">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="JASSO">
+  
+      <!-- WhatsApp specific meta -->
+      <meta property="og:image:width" content="600">
+      <meta property="og:image:height" content="315">
+
+
+      <style>
+:root {
+  --primary-color: #285aa4;
+  --text-primary: #1F2937;
+  --text-secondary: #424242;
+  --bg-white: #FFFFFF;
+  --bg-gray: #F9FAFB;
+  --border-color: #E5E7EB;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+body {
+  background-color: #F3F4F6;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
+}
+
+.chat-container {
+  display: flex;
+  max-width: 1440px;
+  height: 100vh;
+  margin: 0 auto;
+  background-color: var(--bg-white);
+  box-shadow: var(--shadow-md);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+/* Sidebar Styles */
+.chat-sidebar {
+  width: 350px;
+  border-right: 1px solid var(--border-color);
+  background-color: var(--bg-white);
+}
+
+.chat-header {
+  padding: 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.chat-header h1 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.new-chat-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.new-chat-btn:hover {
+  transform: scale(1.05);
+}
+
+.search-container {
+  position: relative;
+  margin-top: 16px;
+}
+
+.search-container input {
+  width: 100%;
+  padding: 12px 16px 12px 40px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-gray);
+}
+
+.search-container i {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+}
+
+/* Chat List Styles */
+.chat-list {
+  overflow-y: auto;
+}
+
+.chat-item {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.chat-item:hover {
+  background-color: var(--bg-gray);
+}
+
+.chat-item.active {
+  background-color: #EEF2FF;
+}
+
+.avatar-container {
+  position: relative;
+  margin-right: 12px;
+}
+
+.avatar-container img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.status-dot {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.status-dot.online {
+  background-color: #10B981;
+}
+
+.chat-info {
+  flex: 1;
+}
+
+.chat-info h2 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.chat-info p {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 4px 0 0;
+}
+
+.chat-meta {
+  text-align: right;
+}
+
+.time {
+  font-size: 12px;
+  color: var(--bg-white);
+}
+
+.unread-count {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: white;
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-top: 4px;
+}
+
+/* Main Chat Area Styles */
+.chat-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-white);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-info img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.user-info h2 {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.status {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.action-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-white);
+  margin-left: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.action-btn:hover {
+  background-color: var(--bg-gray);
+}
+
+/* Messages Container */
+.messages-container {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  background-color: var(--bg-gray);
+}
+
+.message {
+  display: flex;
+  margin-bottom: 24px;
+}
+
+.message.received {
+  padding-right: 20%;
+}
+
+.message.sent {
+  padding-left: 20%;
+  justify-content: flex-end;
+}
+
+.message img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 12px;
+}
+
+.message-content {
+  background-color: var(--bg-white);
+  padding: 12px 16px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.message.sent .message-content {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.message-info {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.sender {
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+/* Message Input */
+.message-input-container {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: var(--bg-white);
+  border-top: 1px solid var(--border-color);
+}
+
+.message-input-container input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin: 0 12px;
+  background-color: var(--bg-gray);
+}
+
+.attachment-btn,
+.send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.attachment-btn {
+  background-color: var(--bg-gray);
+  color: var(--text-secondary);
+}
+
+.send-btn {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.attachment-btn:hover,
+.send-btn:hover {
+  transform: scale(1.05);
+}
+
+/* Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+
+/* Estilos para la lista de usuarios en el modal */
+.users-list {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.user-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.user-item:hover {
+  background-color: var(--bg-gray);
+}
+
+.user-item img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-info h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.user-info p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.user-role {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.role-admin {
+  color: #1ca53a;
+}
+
+.role-user {
+
+  color: #4F46E5;
+}
+
+.role-asesor {
+  
+  color: #2278ce;
+}
+
+
+/* Ajustes específicos para la vista móvil */
+.content {
+    padding: 1.5rem;
+    height: calc(100vh - 56px);
+}
+
+@media (max-width: 768px) {
+    .content {
+        padding: 0;
+    }
+}
+
+.chat-container {
+    display: flex;
+    height: 100%;
+    background-color: var(--bg-white);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+}
+
+@media (max-width: 768px) {
+    .chat-container {
+        border-radius: 0;
+    }
+}
+@media (max-width: 768px) {
+    .chat-sidebar {
+        position: fixed;
+        left: 0; /* Cambiado de -100% a 0 */
+        top: 56px;
+        width: 100%;
+        height: calc(100vh - 56px);
+        z-index: 1000;
+        background-color: var(--bg-white);
+    }
+
+    .chat-main {
+        display: none; /* Ocultar el área principal inicialmente en móvil */
+    }
+
+    /* Cuando hay un chat activo */
+    .chat-active .chat-sidebar {
+        left: -100%;
+    }
+
+    .chat-active .chat-main {
+        display: flex;
+    }
+}
+
+
+
+/* Ajustes para el contenedor principal */
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+.main {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.content {
+    flex: 1;
+    padding: 1.5rem;
+    transition: all 0.3s;
+}
+
+/* Ajustes para móvil */
+@media (max-width: 768px) {
+    .content {
+        padding: 0;
+    }
+
+    .sidebar {
+        margin-left: -260px;
+    }
+
+    .sidebar.active {
+        margin-left: 0;
+    }
+
+    .sidebar.active + .main {
+        margin-left: 250px;
+    }
+
+    /* Ajuste específico para el chat cuando el sidebar está activo */
+    .sidebar.active + .main .chat-container {
+        transform: translateX(250px);
+        transition: transform 0.3s ease;
+    }
+
+    .chat-container {
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .chat-sidebar {
+        position: fixed;
+        left: 0;
+        top: 56px;
+        width: 100%;
+        height: calc(100vh - 56px);
+        z-index: 1050;
+        background-color: var(--bg-white);
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .chat-active .chat-sidebar {
+        transform: translateX(-100%);
+    }
+}
+
+/* Ajustes específicos para el chat dentro del content */
+.content .chat-container {
+    height: calc(100vh - 56px);
+    margin: 0;
+    border-radius: 0;
+}
+
+@media (max-width: 768px) {
+    .chat-item {
+        padding: 12px 16px;
+    }
+
+    .message.received {
+        padding-right: 10%;
+    }
+
+    .message.sent {
+        padding-left: 10%;
+    }
+
+    .message-content {
+        max-width: 85%;
+    }
+
+    .chat-header h1 {
+        font-size: 20px;
+    }
+
+    .search-container input {
+        padding: 8px 16px 8px 36px;
+    }
+
+    .avatar-container img,
+    .initials-avatar {
+        width: 40px;
+        height: 40px;
+    }
+}
+
+
+/* Estilos de mensajes mejorados */
+.messages-container {
+    padding: 20px;
+    background-color: var(--bg-gray);
+    overflow-y: auto;
+}
+
+.message {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 16px;
+    position: relative;
+}
+
+.message-avatar {
+    width: 36px;
+    height: 36px;
+    margin-right: 8px;
+    flex-shrink: 0;
+}
+
+.message-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.message-wrapper {
+    display: flex;
+    flex-direction: column;
+    max-width: 65%;
+}
+
+.message.received .message-wrapper {
+    align-items: flex-start;
+}
+
+.message.sent .message-wrapper {
+    align-items: flex-end;
+    margin-left: auto;
+}
+
+.sender {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.message-content {
+    background-color: var(--bg-white);
+    padding: 12px 16px;
+    border-radius: 16px;
+    position: relative;
+    box-shadow: var(--shadow-sm);
+}
+
+.message.sent .message-content {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.message-content p {
+    margin: 0;
+    line-height: 1.4;
+ 
+}
+
+.message-time {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.message.sent .message-time {
+    color: var(--text-secondary);
+}
+
+/* Ajustes para imágenes y archivos en mensajes */
+.message-content img {
+    max-width: 100%;
+    border-radius: 8px;
+    margin: 4px 0;
+}
+
+.message-content a {
+    color: inherit;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.message-content a:hover {
+    text-decoration: underline;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+    .message-wrapper {
+        max-width: 80%;
+    }
+
+    .messages-container {
+        padding: 16px;
+    }
+
+    .message-content {
+        padding: 10px 14px;
+    }
+}
+
+/* Animación de entrada para mensajes */
+.message {
+    animation: messageSlide 0.3s ease;
+    transform-origin: top;
+}
+
+@keyframes messageSlide {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos para mensajes consecutivos del mismo remitente */
+.message + .message {
+    margin-top: 4px;
+}
+
+.message.sent + .message.sent,
+.message.received + .message.received {
+    margin-top: 2px;
+}
+
+.message.sent + .message.sent .sender,
+.message.received + .message.received .sender {
+    display: none;
+}
+
+/* Estilos para el avatar de iniciales en mensajes */
+.message .initials-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+}
+
+
+/* Estilos para el botón de volver */
+.back-to-list-btn {
+    background: none;
+    border: none;
+    padding: 8px;
+    margin-right: 12px;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.back-to-list-btn:hover {
+    color: var(--primary-color);
+    transform: translateX(-2px);
+}
+
+.back-to-list-btn i {
+    font-size: 20px;
+}
+
+@media (min-width: 769px) {
+    .back-to-list-btn {
+        display: none;
+    }
+}
+      </style>
+</head>
+<body>
+    <!-- <div id="loader" class="loader-container">
+        <div class="loader-content">
+            <div class="loader"></div>
+        </div>
+    </div> -->
+    <div class="wrapper">
+        <nav id="sidebar" class="sidebar js-sidebar">
+            <!-- Sidebar content -->
+        </nav>
+
+        <div class="main">
+          <nav class="navbar navbar-expand navbar-light navbar-bg">
+            <a class="sidebar-toggle js-sidebar-toggle">
+              <i class="hamburger align-self-center"></i>
+            </a>
+  
+            <div class="navbar-collapse collapse">
+              <ul class="navbar-nav navbar-align">
+                <li class="nav-item dropdown">
+                  <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+                    <div class="position-relative">
+                      <i class="align-middle" data-feather="bell"></i>
+                      <span class="indicator" id="notificationCount">0</span>
+                    </div>
+                  </a>
+                 <!-- Update the notification list container in your HTML -->
+<div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
+  <div class="dropdown-menu-header" id="notificationHeader">0 Nuevas Notificaciones</div>
+  <div class="list-group" id="notificationList">
+    <!-- Notifications will be inserted here -->
+  </div>
+  <div class="dropdown-menu-footer">
+    <a href="all-notifications.html" class="text-muted">Ver todas las notificaciones</a>
+  </div>
+</div>
+                </li>
+            
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-icon dropdown-toggle d-inline-block d-sm-none"
+                    href="#"
+                    data-bs-toggle="dropdown"
+                  >
+                    <i class="align-middle" data-feather="settings"></i>
+                  </a>
+  
+                  <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                    <span id="imgPerfil" class="avatar-container"></span>
+                    <span class="text-dark" id="nombreUsuario"></span>
+                </a>
+                    <div class="dropdown-menu dropdown-menu-end">
+                      <a class="dropdown-item" href="pages-profile.html"
+                        ><i class="align-middle me-1" data-feather="user"></i>
+                        Profile</a
+                      >
+                      <a class="dropdown-item" href="#"
+                        ><i
+                          class="align-middle me-1"
+                          data-feather="pie-chart"
+                        ></i>
+                        Analytics</a
+                      >
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="index.html"
+                        ><i class="align-middle me-1" data-feather="settings"></i>
+                        Settings & Privacy</a
+                      >
+                      <a class="dropdown-item" href="#"
+                        ><i
+                          class="align-middle me-1"
+                          data-feather="help-circle"
+                        ></i>
+                        Help Center</a
+                      >
+                      <div class="dropdown-divider"></div>
+                      <a id="logOut" class="dropdown-item" href="#"
+                        >Cerrar sesion</a
+                      >
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+
+          <main class="content">
+            <div class="chat-container">
+              <!-- Sidebar de chats -->
+              <div class="chat-sidebar">
+                <div class="chat-header">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h1>Chats</h1>
+                    <button class="new-chat-btn">
+                      <i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+                  <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar chats...">
+                  </div>
+                </div>
+                <div class="chat-list">
+                  <!-- Los chats se cargarán aquí -->
+                </div>
+              </div>
+          
+              <!-- Área principal del chat -->
+              <div class="chat-main">
+                <div class="chat-main-header">
+                  <button class="mobile-toggle-chat d-md-none">
+                    <i class="fas fa-bars"></i>
+                  </button>
+                  <div class="chat-header-content">
+                    <!-- El contenido del header se cargará aquí -->
+                  </div>
+                </div>
+                <div class="messages-container">
+                  <!-- Los mensajes se cargarán aquí -->
+                </div>
+                <div class="message-input-container">
+                  <button class="attachment-btn">
+                    <i class="fas fa-paperclip"></i>
+                  </button>
+                  <input type="text" placeholder="Escribe un mensaje...">
+                  <button class="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Overlay para móvil -->
+            <div class="chat-overlay"></div>
+          </main>
+        </div>
+    </div>
+
+   <!-- Modal de Usuarios -->
+<div class="modal fade" id="usersModal" tabindex="-1" aria-labelledby="usersModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="usersModalLabel">Nuevo Chat</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Buscador de usuarios -->
+        <div class="user-search mb-3">
+          <input type="text" class="form-control" id="userSearchInput" placeholder="Buscar usuario...">
+        </div>
+        <!-- Lista de usuarios -->
+        <div class="users-list">
+          <!-- Los usuarios se cargarán aquí dinámicamente -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/sesion-checked.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="chat.js"></script>
+   
+</body>
+</html>
