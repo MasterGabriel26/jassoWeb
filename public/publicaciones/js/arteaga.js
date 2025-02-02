@@ -289,6 +289,8 @@ document.addEventListener("DOMContentLoaded", async function () {
       throw new Error("ID de publicación no proporcionado");
     }
 
+   
+
     const doc = await firebase
       .firestore()
       .collection("publicaciones2")
@@ -308,6 +310,26 @@ document.addEventListener("DOMContentLoaded", async function () {
       ).style.backgroundImage = `url('${data.imagen_destacada}')`;
     }
 
+    // Dentro de la función cargarItemParaEditar, después de cargar los datos de la publicación
+// Dentro de la función cargarItemParaEditar, después de cargar los datos de la publicación
+const promocionBadge = document.getElementById("promocion-badge");
+
+if (data.isPromocion) {
+  promocionBadge.style.display = "block"; // Mostrar la etiqueta de promoción
+} else {
+  promocionBadge.style.display = "none"; // Ocultar la etiqueta si no hay promoción
+}
+
+    const promocionCard = document.getElementById("promocion-card");
+const descripcionPromocionSidebar = document.getElementById("descripcion-promocion-sidebar");
+
+if (data.isPromocion && data.descripcion_promocion) {
+  promocionCard.style.display = "block";
+  descripcionPromocionSidebar.textContent = data.descripcion_promocion;
+} else {
+  promocionCard.style.display = "none";
+  descripcionPromocionSidebar.textContent = "";
+}
     // Llenar datos principales
     document.getElementById("titulo").textContent = data.titulo;
     document.getElementById("categoria").textContent = data.categoria;

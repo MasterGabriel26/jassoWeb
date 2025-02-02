@@ -299,6 +299,7 @@ function createCarouselCard(post) {
     <div class="post-card">
       <div class="card-image-container">
         <img src="${defaultPost.imagen_destacada}" alt="${defaultPost.titulo}" class="card-image">
+        ${defaultPost.isPromocion ? '<div class="promo-badge"><span>Promo</span></div>' : ''}
         <span class="card-category">${defaultPost.categoria}</span>
       </div>
       <div class="card-content">
@@ -330,6 +331,7 @@ function createFeaturedSlide(post) {
   slide.classList.add('featured-slide-link');
   slide.innerHTML = `
       <div class="featured-slide">
+          ${post.isPromocion ? '<div class="promo-badge"><span>Promo</span></div>' : ''}
           <img src="${post.imagen_destacada}" alt="${post.titulo}" class="featured-image">
           <div class="featured-content">
               <h2 class="featured-title">${post.titulo}</h2>
@@ -413,35 +415,41 @@ function initializeFeaturedCarousel(posts) {
 
 // Actualiza la función updatePostsDisplay
 function updatePostsDisplay() {
-    popularPostsContainer.innerHTML = '';
-    
-    db.collection("publicaciones2")
-        .orderBy("fecha_creacion", "desc")
-        .get()
-        .then((querySnapshot) => {
-            const posts = [];
-            querySnapshot.forEach((doc) => {
-                const post = { ...doc.data(), id: doc.id };
-                posts.push(post);
-            });
+  popularPostsContainer.innerHTML = '';
+  
+  db.collection("publicaciones2")
+      .orderBy("fecha_creacion", "desc")
+      .get()
+      .then((querySnapshot) => {
+          const posts = [];
+          querySnapshot.forEach((doc) => {
+              const post = { ...doc.data(), id: doc.id };
+              posts.push(post);
+          });
 
-            // Inicializar carrusel destacado con las 4 publicaciones más populares
-            const popularPosts = [...posts]
-                .sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0))
-                .slice(0, 4);
-            initializeFeaturedCarousel(popularPosts);
+          // Filtrar publicaciones en promoción
+          const promoPosts = posts.filter(post => post.isPromocion);
 
-            // Carrusel de publicaciones recientes
-            posts.forEach(post => {
-                popularPostsContainer.appendChild(createCarouselCard(post));
-            });
+          // Si no hay suficientes publicaciones en promoción, agregar publicaciones al azar
+          const featuredPosts = promoPosts.length >= 4 ? promoPosts : [
+              ...promoPosts,
+              ...posts.filter(post => !post.isPromocion).sort(() => 0.5 - Math.random()).slice(0, 4 - promoPosts.length)
+          ];
 
-            if (loaderContainer) loaderContainer.classList.add("hidden");
-        })
-        .catch((error) => {
-            console.error("Error getting documents: ", error);
-            if (loaderContainer) loaderContainer.classList.add("hidden");
-        });
+          // Inicializar carrusel destacado
+          initializeFeaturedCarousel(featuredPosts);
+
+          // Carrusel de publicaciones recientes
+          posts.forEach(post => {
+              popularPostsContainer.appendChild(createCarouselCard(post));
+          });
+
+          if (loaderContainer) loaderContainer.classList.add("hidden");
+      })
+      .catch((error) => {
+          console.error("Error getting documents: ", error);
+          if (loaderContainer) loaderContainer.classList.add("hidden");
+      });
 }
 
 

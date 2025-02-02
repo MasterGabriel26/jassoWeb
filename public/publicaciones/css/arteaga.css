@@ -470,6 +470,10 @@ body {
   .info-card {
     padding: 20px;
   }
+
+  .main-content{
+    margin-top: 20px;
+  }
 }
 
 .publication-content {

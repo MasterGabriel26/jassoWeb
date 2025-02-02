@@ -26,12 +26,17 @@
     <div class="hero-section" id="hero-image">
       <div class="hero-overlay"></div>
       <div class="hero-content">
+       
         <h1 class="publication-title" id="titulo"></h1>
         <div class="meta-tags">
           <span class="meta-tag">
             <i class="fas fa-calendar"></i>
             <span id="fecha"></span>
           </span>
+         <!-- Etiqueta de promoción flotante -->
+<div class="promocion-badge" id="promocion-badge" style="display: none;">
+  <a href="#promocion-card" class="promocion-link">¡Promoción!</a>
+</div>
           <span class="meta-tag">
             <i class="fas fa-tag"></i>
             <span id="categoria"></span>
@@ -98,44 +103,59 @@
           </div>
 
           <!-- Agregar después del primer info-card y antes de la galería -->
-          <div class="info-card" id="comisiones-card" style="display: none">
-            <h3 class="info-title">Información Financiera</h3>
-            <div class="comisiones-container">
-              <div class="info-item">
-                <i class="fas fa-phone"></i>
-                <div>
-                  <strong>Comisión por Llamada</strong><br />
-                  <span class="precio-texto" id="comision-llamada">$0</span>
-                </div>
-              </div>
+         <!-- Primero, vamos a separar el HTML en dos cards diferentes -->
+<div class="info-card" id="precio-card">
+  <h3 class="info-title">Precio</h3>
+  <div class="info-item precio-total">
+      <i class="fas fa-tag"></i>
+      <div>
+          <strong>Precio del paquete</strong><br />
+          <span class="precio-texto destacado" id="precio-total">$0</span>
+      </div>
+  </div>
+</div>
 
-              <div class="info-item">
-                <i class="fas fa-user-tie"></i>
-                <div>
-                  <strong>Comisión de Líder</strong><br />
-                  <span class="precio-texto" id="comision-lider">$0</span>
-                </div>
-              </div>
-
-              <div class="info-item">
-                <i class="fas fa-handshake"></i>
-                <div>
-                  <strong>Comisión de Venta</strong><br />
-                  <span class="precio-texto" id="comision-venta">$0</span>
-                </div>
-              </div>
-
-              <div class="info-item precio-total">
-                <i class="fas fa-tag"></i>
-                <div>
-                  <strong>Precio del paquete</strong><br />
-                  <span class="precio-texto destacado" id="precio-total"
-                    >$0</span
-                  >
-                </div>
-              </div>
-            </div>
+<div class="info-card" id="comisiones-card" style="display: none">
+  <h3 class="info-title">Comisiones</h3>
+  <div class="comisiones-container">
+      <div class="info-item">
+          <i class="fas fa-phone"></i>
+          <div>
+              <strong>Comisión por Llamada</strong><br />
+              <span class="precio-texto" id="comision-llamada">$0</span>
           </div>
+      </div>
+
+      <div class="info-item">
+          <i class="fas fa-user-tie"></i>
+          <div>
+              <strong>Comisión de Líder</strong><br />
+              <span class="precio-texto" id="comision-lider">$0</span>
+          </div>
+      </div>
+
+      <div class="info-item">
+          <i class="fas fa-handshake"></i>
+          <div>
+              <strong>Comisión de Venta</strong><br />
+              <span class="precio-texto" id="comision-venta">$0</span>
+          </div>
+      </div>
+  </div>
+</div>
+
+
+          <!-- Dentro del div con class="sidebar", después de la sección de Material de Apoyo -->
+<div class="info-card" id="promocion-card" style="display: none;">
+  <h3 class="info-title">Promoción</h3>
+  <div class="promocion-indicator">
+    <i class="fas fa-tag"></i>
+    <span>¡Este evento está en promoción!</span>
+  </div>
+  <div class="promocion-descripcion" id="descripcion-promocion-sidebar">
+    <!-- La descripción de la promoción se cargará aquí -->
+  </div>
+</div>
 
          <!-- Sección de Galería -->
 <div class="info-card" >
@@ -153,6 +173,8 @@
       <!-- El material de apoyo se cargará dinámicamente -->
   </div>
 </div>
+
+
         </div>
       </div>
     </div>
@@ -169,7 +191,92 @@
  
  
     
-    
+    <style>
+/* Estilos para la etiqueta de promoción flotante */
+.promocion-badge {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  background-color: #e74c3c; /* Rojo llamativo */
+  color: white;
+  padding: 15px 25px;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3); /* Sombra para resaltar */
+  animation: pulse 1.5s infinite; /* Animación de pulso */
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.promocion-badge:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
+}
+
+.promocion-link {
+  color: white;
+  text-decoration: none;
+}
+
+/* Animación de pulso */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Ajustes para dispositivos móviles */
+@media (max-width: 768px) {
+  .promocion-badge {
+    bottom: 80px;
+    right: 10px;
+    font-size: 0.9rem;
+    padding: 10px 20px;
+  }
+}
+      /* Estilos para el indicador de promoción */
+.promocion-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #e8f4ff;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.promocion-indicator i {
+  font-size: 1.2rem;
+  color: var(--primary);
+}
+
+/* Estilos para la descripción de la promoción */
+.promocion-descripcion {
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  color: #495057;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  border-left: 3px solid #4a90e2;
+}
+
+/* Ocultar la sección si no hay descripción */
+.promocion-descripcion:empty {
+  display: none;
+}
+    </style>
   
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -201,6 +308,42 @@
         });
       });
     </script>
+
+<script>
+
+  // Scroll suave al hacer clic en la etiqueta de promoción
+document.addEventListener("DOMContentLoaded", function () {
+  const promocionBadge = document.getElementById("promocion-badge");
+  const promocionLink = document.querySelector(".promocion-link");
+
+  if (promocionLink) {
+    promocionLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute("href"));
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  }
+});
+</script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tipoUsuario = urlParams.get("tipo");
+      const comisionesCard = document.getElementById("comisiones-card");
+      
+      // Las comisiones solo se muestran para asesores y admins
+      if (tipoUsuario && (tipoUsuario.toLowerCase() === "asesor" || tipoUsuario.toLowerCase() === "admin")) {
+          comisionesCard.style.display = "block";
+      } else {
+          comisionesCard.style.display = "none";
+      }
+  });
+  </script>
+
 
     <script src="js/arteaga.js"></script>
 

@@ -371,7 +371,26 @@ body {
   background: #94A3B8;
 }
 
+@media (max-width: 768px) {
+    .chat-container {
+        padding-bottom: 60px; /* Ajusta este valor según la altura de la barra de navegación */
+    }
 
+    .message-input-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background-color: var(--bg-white);
+        z-index: 1000;
+        padding: 8px 16px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .messages-container {
+        padding-bottom: 80px; /* Asegura que los mensajes no queden detrás del input */
+    }
+}
 /* Estilos para la lista de usuarios en el modal */
 .users-list {
   max-height: 60vh;
@@ -460,6 +479,7 @@ body {
 
 @media (max-width: 768px) {
     .chat-container {
+        padding-bottom:60px ;
         border-radius: 0;
     }
 }
@@ -778,6 +798,207 @@ body {
         display: none;
     }
 }
+
+
+/* Estilos para la creación de grupos */
+.group-image-container {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.group-image-preview {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin: 0 auto 1rem;
+    overflow: hidden;
+    border: 2px solid var(--border-color);
+}
+
+.group-image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.selected-users-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    min-height: 50px;
+}
+
+.selected-user-chip {
+    display: inline-flex;
+    align-items: center;
+    background: var(--primary-color);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+}
+
+.selected-user-chip .remove-user {
+    margin-left: 0.5rem;
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+.selected-user-chip .remove-user:hover {
+    opacity: 1;
+}
+
+.users-list-group {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+}
+
+.user-item-group {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.user-item-group:hover {
+    background-color: var(--bg-gray);
+}
+
+.user-item-group.selected {
+    background-color: var(--bg-gray);
+}
+
+
+
+                .group-image-container {
+                    width: 150px;
+                    height: 150px;
+                    margin-bottom: 1rem;
+                }
+
+                .image-preview-wrapper {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    cursor: pointer;
+                    overflow: hidden;
+                    border-radius: 50%;
+                    border: 2px solid #e0e0e0;
+                    transition: all 0.3s ease;
+                }
+
+                .image-preview-wrapper:hover {
+                    border-color: var(--primary-color);
+                }
+
+                .preview-image {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                }
+
+                .image-overlay {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: rgba(0, 0, 0, 0.5);
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    color: white;
+                    opacity: 0;
+                    transition: opacity 0.3s ease;
+                }
+
+                .image-overlay i {
+                    font-size: 24px;
+                    margin-bottom: 8px;
+                }
+
+                .image-overlay span {
+                    font-size: 14px;
+                }
+
+                .image-preview-wrapper:hover .image-overlay {
+                    opacity: 1;
+                }
+          
+     
+
+        /* Estilos para el visor de imágenes */
+.swal2-full-image {
+    max-width: 100% !important;
+    max-height: 90vh !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+}
+
+.swal2-close-button {
+    position: fixed !important;
+    right: 20px !important;
+    top: 20px !important;
+    color: white !important;
+    font-size: 28px !important;
+}
+
+/* Estilos para mensajes multimedia */
+.message-media {
+    max-width: 300px;
+    margin: 0;
+    line-height: 0;
+}
+
+.message-media img,
+.message-media video {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.message-media img {
+    cursor: pointer;
+}
+
+/* Sobrescribir estilos de mensaje para multimedia */
+.message-content .message-media {
+    margin: -12px -16px;
+}
+
+.message-content .message-file {
+    margin: -12px -16px;
+    padding: 12px 16px;
+}
+
+
+/* Evitar scroll horizontal */
+body, html {
+    overflow-x: hidden;
+}
+
+.chat-container {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.messages-container {
+    overflow-x: hidden;
+}
+
+/* Asegurarse de que los mensajes no excedan el ancho */
+.message-content {
+    max-width: 100%;
+    word-wrap: break-word;
+}
+
+
       </style>
 </head>
 <body>
@@ -919,6 +1140,7 @@ body {
     </div>
 
    <!-- Modal de Usuarios -->
+<!-- Modal de Usuarios y Grupos -->
 <div class="modal fade" id="usersModal" tabindex="-1" aria-labelledby="usersModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable">
     <div class="modal-content">
@@ -927,14 +1149,117 @@ body {
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <!-- Buscador de usuarios -->
+        <!-- Tabs para elegir entre chat individual y grupo -->
+        <ul class="nav nav-tabs mb-3" id="chatTypeTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="individual-tab" data-bs-toggle="tab" data-bs-target="#individual" type="button" role="tab">
+              Chat Individual
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="group-tab" data-bs-toggle="tab" data-bs-target="#group" type="button" role="tab">
+              Grupo Nuevo
+            </button>
+          </li>
+        </ul>
+
+        <!-- Contenido de los tabs -->
+        <div class="tab-content" id="chatTypeContent">
+          <!-- Tab de chat individual -->
+          <div class="tab-pane fade show active" id="individual" role="tabpanel">
+            <div class="user-search mb-3">
+              <input type="text" class="form-control" id="userSearchInput" placeholder="Buscar usuario...">
+            </div>
+            <div class="users-list">
+              <!-- Los usuarios se cargarán aquí dinámicamente -->
+            </div>
+          </div>
+
+          <!-- Tab de grupo nuevo -->
+          <div class="tab-pane fade" id="group" role="tabpanel">
+            <form id="groupForm" class="group-form">
+              <div class="mb-3">
+                <label class="form-label">Foto del Grupo</label>
+                <div class="group-image-container position-relative mx-auto">
+                  <div class="image-preview-wrapper">
+                      <img src="${chatData.imageUrl || '../img/default-group.png'}" 
+                           class="rounded-circle preview-image" 
+                           id="groupImagePreview">
+                      <div class="image-overlay">
+                          <i class="fas fa-camera"></i>
+                          <span>Cambiar imagen</span>
+                      </div>
+                  </div>
+                  <input type="file" hidden id="groupImageInput" accept="image/*">
+              </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nombre del Grupo</label>
+                <input type="text" class="form-control" id="groupName" required placeholder="Escribe un nombre para el grupo">
+              </div>
+             <!-- Reemplaza la sección de participantes en el formulario del grupo -->
+<div class="mb-3">
+  <label class="form-label">Participantes</label>
+  <div class="selected-users-container mb-2" id="selectedUsers">
+    <!-- Aquí se mostrarán los usuarios seleccionados -->
+  </div>
+  <button type="button" class="btn btn-outline-primary w-100" id="addParticipantsBtn">
+    <i class="fas fa-user-plus"></i> Añadir Participantes
+  </button>
+</div>
+              <button type="submit" class="btn btn-primary w-100">Crear Grupo</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal para seleccionar participantes de nuevo grupo -->
+<div class="modal fade" id="newGroupParticipantsModal" tabindex="-1" aria-labelledby="newGroupParticipantsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Seleccionar Participantes</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
         <div class="user-search mb-3">
-          <input type="text" class="form-control" id="userSearchInput" placeholder="Buscar usuario...">
+          <input type="text" class="form-control" id="newGroupSearchInput" placeholder="Buscar usuarios...">
         </div>
-        <!-- Lista de usuarios -->
-        <div class="users-list">
-          <!-- Los usuarios se cargarán aquí dinámicamente -->
+        <div class="participants-list" id="newGroupParticipantsList">
+          <!-- Los usuarios se cargarán aquí -->
         </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="confirmNewGroupParticipants">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para añadir participantes a grupo existente -->
+<div class="modal fade" id="addParticipantsModal" tabindex="-1" aria-labelledby="addParticipantsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Añadir Participantes</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="user-search mb-3">
+          <input type="text" class="form-control" id="addParticipantSearchInput" placeholder="Buscar usuarios...">
+        </div>
+        <div class="participants-list" id="addParticipantsList">
+          <!-- Los usuarios se cargarán aquí -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="confirmAddParticipants">Confirmar</button>
       </div>
     </div>
   </div>

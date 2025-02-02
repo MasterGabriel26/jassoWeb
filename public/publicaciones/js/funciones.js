@@ -57,47 +57,62 @@ function iniciarTiny() {
             'wordcount', 'help', 'charmap', 'quickbars', 'emoticons'
         ],
         toolbar: [
-            'undo redo | styles | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify |',
-            'bullist numlist | outdent indent | link image media | forecolor backcolor emoticons |',
-            'removeformat code fullscreen help'
+            'undo redo | styles | bold italic fullscreen image underline strikethrough | alignleft aligncenter alignright alignjustify |',
+            'bullist numlist | outdent indent | link  media | forecolor backcolor emoticons |',
+            'removeformat code  help'
         ].join(' '),
+
+        // Activar quickbars
+        quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote',
+        quickbars_insert_toolbar: 'image media quicktable',
+        quickbars_image_toolbar: 'alignleft aligncenter alignright | editimage imageoptions',
+
+        // Configuración de imágenes
+        image_dimensions: true,
+        image_advtab: true,
+        image_title: true,
+
+        // Configuración específica para dispositivos móviles
+        mobile: {
+            theme: 'mobile',
+            menubar: true,
+            plugins: ['autosave', 'lists', 'autolink', 'image', 'link', 'media', 'quickbars'],
+            toolbar: ['undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | image'],
+            quickbars_insert_toolbar: 'image media quicktable',
+            quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote',
+        },
 
         // Configuración de menús
         menubar: 'file edit view insert format tools table help',
         menu: {
-            file: { title: 'File', items: 'newdocument restoredraft | print' },
-            edit: { title: 'Edit', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
-            view: { title: 'View', items: 'code | visualaid visualchars visualblocks | spellchecker | fullscreen' },
-            insert: { title: 'Insert', items: 'image link media | codesample inserttable | charmap emoticons hr | pagebreak nonbreaking anchor | insertdatetime' },
-            format: { title: 'Format', items: 'bold italic underline strikethrough superscript subscript | formats blockformats fontformats fontsizes align lineheight | forecolor backcolor | removeformat' },
-            tools: { title: 'Tools', items: 'spellchecker code wordcount' },
-            table: { title: 'Table', items: 'inserttable | cell row column | advtablesort | tableprops deletetable' }
+            file: { title: 'Archivo', items: 'newdocument restoredraft | print' },
+            edit: { title: 'Editar', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
+            view: { title: 'Ver', items: 'code | visualaid visualchars visualblocks | spellchecker | fullscreen' },
+            insert: { title: 'Insertar', items: 'image link media | codesample inserttable | charmap emoticons hr | pagebreak nonbreaking anchor | insertdatetime' },
+            format: { title: 'Formato', items: 'bold italic underline strikethrough superscript subscript | formats blockformats fontformats fontsizes align lineheight | forecolor backcolor | removeformat' },
+            tools: { title: 'Herramientas', items: 'spellchecker code wordcount' },
+            table: { title: 'Tabla', items: 'inserttable | cell row column | advtablesort | tableprops deletetable' },
+            help: { title: 'Ayuda', items: 'help' }
         },
 
-        // Configuración de imágenes
-        image_title: true,
-        image_caption: true,
-        image_description: true,
-        image_dimensions: true,
-        image_advtab: true,
-        image_uploadtab: true,
+        // Configuración de subida de archivos
+        automatic_uploads: true,
+        images_upload_url: '/your-image-upload-handler',
         images_upload_base_path: '/uploads',
         images_upload_credentials: true,
         images_reuse_filename: true,
+        paste_data_images: true,
 
-        // Configuración de medios
-        media_poster: true,
-        media_alt_source: true,
-        media_dimensions: true,
-        media_live_embeds: true,
-        media_upload_tab: true,
-
-        // Manejador de subida de imágenes
-        images_upload_handler: async function(blobInfo, progress) {
+        // Manejo de subida de imágenes
+        images_upload_handler: async function (blobInfo, progress) {
             try {
                 const imagenComprimida = await comprimirImagen(blobInfo.blob());
                 const resultado = await subirArchivo(imagenComprimida, 'imagenes');
-                return resultado.url;
+                return {
+                    url: resultado.url,
+                    width: '500px', // Tamaño mediano predeterminado
+                    height: 'auto'
+                };
             } catch (error) {
                 console.error('Error al subir imagen:', error);
                 throw new Error('Error al subir la imagen: ' + error.message);
@@ -105,10 +120,11 @@ function iniciarTiny() {
         },
 
         // Selector de archivos
-        file_picker_callback: function(callback, value, meta) {
+        file_picker_types: 'file image media',
+        file_picker_callback: async function (callback, value, meta) {
             var input = document.createElement('input');
             input.setAttribute('type', 'file');
-            
+
             if (meta.filetype === 'image') {
                 input.setAttribute('accept', 'image/*');
             } else if (meta.filetype === 'media') {
@@ -117,9 +133,9 @@ function iniciarTiny() {
                 input.setAttribute('accept', '.pdf,.doc,.docx,.xls,.xlsx');
             }
 
-            input.onchange = async function() {
+            input.onchange = async function () {
                 var file = this.files[0];
-                
+
                 try {
                     let resultado;
                     if (meta.filetype === 'image') {
@@ -131,9 +147,10 @@ function iniciarTiny() {
 
                     callback(resultado.url, {
                         title: file.name,
-                        width: meta.filetype === 'media' ? '100%' : '',
-                        height: meta.filetype === 'media' ? 'auto' : ''
+                        width: meta.filetype === 'image' ? '500px' : '100%',
+                        height: 'auto'
                     });
+
                 } catch (error) {
                     console.error('Error al subir archivo:', error);
                     tinymce.activeEditor.notificationManager.open({
@@ -143,105 +160,23 @@ function iniciarTiny() {
                     });
                 }
             };
-            
+
             input.click();
         },
 
-        // Configuraciones adicionales
-        automatic_uploads: true,
-        file_picker_types: 'file image media',
-        images_upload_url: null,
-        images_upload_credentials: true,
-        images_reuse_filename: true,
-        media_upload_url: null,
-        media_upload_credentials: true,
-        paste_data_images: true,
-        paste_as_text: false,
-        branding: false,
-        promotion: false,
-        
         // Configuración de autosave
         autosave_ask_before_unload: true,
         autosave_interval: '30s',
         autosave_prefix: 'tinymce-autosave-{path}{query}-{id}-',
-        autosave_restore_when_empty: false,
         autosave_retention: '30m',
-
-        // Estilos del contenido
-        content_style: `
-            body {
-                font-family: 'Poppins', sans-serif;
-                margin: 20px auto;
-                max-width: 800px;
-                line-height: 1.6;
-                font-size: 16px;
-                color: #333;
-            }
-            img {
-                max-width: 100%;
-                height: auto;
-                border-radius: 8px;
-                margin: 10px 0;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            }
-            video {
-                max-width: 100%;
-                border-radius: 8px;
-                margin: 10px 0;
-            }
-            p {
-                margin: 0 0 1em;
-            }
-            table {
-                border-collapse: collapse;
-                width: 100%;
-                margin: 1em 0;
-            }
-            table td, table th {
-                border: 1px solid #ddd;
-                padding: 8px;
-            }
-        `,
-
-        // Configuración visual
-        skin: 'oxide',
-        content_css: 'default',
-
-        // Setup del editor
-        setup: function(editor) {
-            editor.on('init', function() {
-                editor.notificationManager.open({
-                    text: 'Editor listo para usar',
-                    type: 'success',
-                    timeout: 2000
-                });
-
-                // Botón de pantalla completa
-                document.getElementById('fullscreen-toggle')?.addEventListener('click', function() {
-                    const editorContainer = document.querySelector('.editor-container');
-                    if (!document.fullscreenElement) {
-                        editorContainer.requestFullscreen();
-                        this.innerHTML = '<i class="fas fa-compress"></i>';
-                    } else {
-                        document.exitFullscreen();
-                        this.innerHTML = '<i class="fas fa-expand"></i>';
-                    }
-                });
-            });
-
-            // Manejar cambios
-            editor.on('change', function() {
-                editor.save();
-            });
-
-            // Manejar pegado de contenido
-            editor.on('paste', function(e) {
-                // Puedes agregar lógica personalizada para el pegado
-            });
-        }
+     
+        // Configuración adicional
+        branding: false,
+        promotion: false,
+        browser_spellcheck: true,
+        contextmenu: false
     });
 }
-
 
 // Asegúrate de que esta función se llame después de que el DOM esté listo
 $(document).ready(function() {
@@ -507,79 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
         mediaInput.value = '';
     }
     
-    // Función para comprimir video
-    async function comprimirVideo(file) {
-        return new Promise((resolve, reject) => {
-            // Crear un elemento de video temporal
-            const video = document.createElement('video');
-            video.preload = 'metadata';
-            video.src = URL.createObjectURL(file);
-    
-            video.onloadedmetadata = async function() {
-                try {
-                    // Configuración de compresión
-                    const MAX_WIDTH = 1280;
-                    const MAX_HEIGHT = 720;
-                    const TARGET_SIZE_MB = 10; // Tamaño objetivo en MB
-    
-                    // Calcular dimensiones manteniendo aspecto
-                    let width = video.videoWidth;
-                    let height = video.videoHeight;
-                    
-                    if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    }
-                    if (height > MAX_HEIGHT) {
-                        width *= MAX_HEIGHT / height;
-                        height = MAX_HEIGHT;
-                    }
-    
-                    // Crear canvas y contexto
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-    
-                    // Crear MediaRecorder
-                    const stream = canvas.captureStream();
-                    const mediaRecorder = new MediaRecorder(stream, {
-                        mimeType: 'video/webm;codecs=vp9',
-                        videoBitsPerSecond: TARGET_SIZE_MB * 1024 * 1024 * 8 / (video.duration)
-                    });
-    
-                    const chunks = [];
-                    mediaRecorder.ondataavailable = (e) => chunks.push(e.data);
-                    mediaRecorder.onstop = () => {
-                        const blob = new Blob(chunks, { type: 'video/webm' });
-                        resolve(blob);
-                    };
-    
-                    // Iniciar grabación
-                    mediaRecorder.start();
-    
-                    // Procesar frames
-                    const processFrame = () => {
-                        if (video.currentTime < video.duration) {
-                            ctx.drawImage(video, 0, 0, width, height);
-                            video.currentTime += 1/30; // 30 FPS
-                            requestAnimationFrame(processFrame);
-                        } else {
-                            mediaRecorder.stop();
-                        }
-                    };
-    
-                    video.currentTime = 0;
-                    processFrame();
-    
-                } catch (error) {
-                    reject(error);
-                }
-            };
-    
-            video.onerror = reject;
-        });
-    }
+
     
     // Función mejorada para mostrar errores
     function showError(message) {
@@ -754,6 +617,72 @@ function validateFile(file) {
     return true;
 }
 
+
+// Función para eliminar item de galería
+async function eliminarGaleria(publicacionId, index, mediaUrl) {
+    try {
+        // Confirmar eliminación
+        const result = await Swal.fire({
+            title: '¿Estás seguro?',
+            text: "No podrás revertir esta acción",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (result.isConfirmed) {
+            // Mostrar loading
+            Swal.fire({
+                title: 'Eliminando...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Obtener referencia del documento
+            const docRef = db.collection('publicaciones2').doc(publicacionId);
+            const doc = await docRef.get();
+            const data = doc.data();
+
+            // Eliminar el archivo de Storage
+            const storageRef = firebase.storage().refFromURL(mediaUrl);
+            await storageRef.delete();
+
+            // Eliminar la referencia de Firestore
+            const galeriaActualizada = data.galeria.filter((_, i) => i !== index);
+            await docRef.update({
+                galeria: galeriaActualizada
+            });
+
+            // Eliminar el elemento del DOM
+            document.getElementById(`galeria-${index}`).remove();
+
+            // Actualizar contador
+            const galeriaCounter = document.getElementById('galeria-count');
+            if (galeriaCounter) {
+                const count = galeriaActualizada.length;
+                galeriaCounter.textContent = `${count} archivo${count !== 1 ? 's' : ''} en galería`;
+            }
+
+            Swal.fire(
+                '¡Eliminado!',
+                'El archivo ha sido eliminado de la galería.',
+                'success'
+            );
+        }
+    } catch (error) {
+        console.error('Error al eliminar archivo de galería:', error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al eliminar el archivo: ' + error.message
+        });
+    }
+}
 // También puedes agregar estas funciones auxiliares para mejor manejo de archivos
 
 function formatFileSize(bytes) {
@@ -816,6 +745,29 @@ async function guardarReferenciaMedia(mediaData) {
 }
 
 
+// Función para comprimir video
+async function comprimirVideo(file) {
+    return new Promise((resolve, reject) => {
+        try {
+            // Por ahora, retornamos el archivo original
+            // La compresión de video es compleja y requiere recursos significativos del navegador
+            resolve(file);
+        } catch (error) {
+            reject(error);
+        }
+    });
+}
+
+// Función para mostrar errores
+function showError(message) {
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: message,
+        showConfirmButton: true
+    });
+}
+
 async function cargarItemParaEditar(id) {
     try {
         // Mostrar loading
@@ -839,14 +791,13 @@ async function cargarItemParaEditar(id) {
             document.getElementById('categoria').value = data.categoria;
             document.getElementById('lugar').value = data.lugar;
 
-
             document.getElementById('comision-llamada').value = data.comision_llamada || '';
             document.getElementById('comision-lider').value = data.comision_lider || '';
             document.getElementById('comision-venta').value = data.comision_venta || '';
             document.getElementById('precio').value = data.precio || '';
 
-              // Limpiar el campo de descripción después de guardar
-            document.getElementById('descripcion_material').value = data.descripcion_material||''
+            // Limpiar el campo de descripción después de guardar
+            document.getElementById('descripcion_material').value = data.descripcion_material || '';
 
             // Establecer el contenido en el editor
             tinymce.get('editor').setContent(data.contenido);
@@ -863,8 +814,6 @@ async function cargarItemParaEditar(id) {
                 guardarBtn.textContent = 'Actualizar';
                 guardarBtn.setAttribute('data-id', id);
             }
-
-
 
             // Cargar galería si existe
             if (data.galeria && data.galeria.length > 0) {
@@ -910,68 +859,93 @@ async function cargarItemParaEditar(id) {
                     galeriaCounter.textContent = `${count} archivo${count !== 1 ? 's' : ''} en galería`;
                 }
             }
-        
 
-              // Dentro de la función cargarItemParaEditar, en la parte donde manejas los medios
-if (data.medios && data.medios.length > 0) {
-    const mediaPreviewGrid = document.getElementById('media-preview-grid');
-    mediaPreviewGrid.innerHTML = ''; // Limpiar grid existente
+            // Cargar medios de apoyo si existen
+            if (data.medios && data.medios.length > 0) {
+                const mediaPreviewGrid = document.getElementById('media-preview-grid');
+                mediaPreviewGrid.innerHTML = ''; // Limpiar grid existente
 
-    data.medios.forEach((medio, index) => {
-        const previewItem = document.createElement('div');
-        previewItem.className = 'media-preview-item';
-        previewItem.id = `media-${index}`;
+                data.medios.forEach((medio, index) => {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'media-preview-item';
+                    previewItem.id = `media-${index}`;
 
-        if (medio.tipo === 'imagen' || medio.tipo === 'image') {
-            previewItem.innerHTML = `
-                <img src="${medio.url}" alt="${medio.nombre}">
-                <span class="media-type-badge">Imagen</span>
-                <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
-                    <i class="fas fa-times"></i>
-                </div>
-                <div class="preview-media" onclick="previsualizarMedio('${medio.url}', '${medio.tipo}')">
-                    <i class="fas fa-eye"></i>
-                </div>
-            `;
-        } else if (medio.tipo === 'video') {
-            previewItem.innerHTML = `
-                <video src="${medio.url}" controls></video>
-                <span class="media-type-badge">Video</span>
-                <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
-                    <i class="fas fa-times"></i>
-                </div>
-                <div class="preview-media" onclick="previsualizarMedio('${medio.url}', '${medio.tipo}')">
-                    <i class="fas fa-eye"></i>
-                </div>
-            `;
-        } else if (medio.tipo === 'pdf' || medio.tipo === 'application/pdf') {
-            previewItem.innerHTML = `
-                <div class="pdf-preview">
-                    <i class="fas fa-file-pdf pdf-icon"></i>
-                    <span class="pdf-name">${medio.nombre || "Documento PDF"}</span>
-                </div>
-                <span class="media-type-badge">PDF</span>
-                <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
-                    <i class="fas fa-times"></i>
-                </div>
-                <div class="preview-media" onclick="window.open('${medio.url}', '_blank')">
-                    <i class="fas fa-eye"></i>
-                </div>
-            `;
-        }
+                    if (medio.tipo === 'imagen' || medio.tipo === 'image') {
+                        previewItem.innerHTML = `
+                            <img src="${medio.url}" alt="${medio.nombre}">
+                            <span class="media-type-badge">Imagen</span>
+                            <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="preview-media" onclick="previsualizarMedio('${medio.url}', '${medio.tipo}')">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        `;
+                    } else if (medio.tipo === 'video') {
+                        previewItem.innerHTML = `
+                            <video src="${medio.url}" controls></video>
+                            <span class="media-type-badge">Video</span>
+                            <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="preview-media" onclick="previsualizarMedio('${medio.url}', '${medio.tipo}')">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        `;
+                    } else if (medio.tipo === 'pdf' || medio.tipo === 'application/pdf') {
+                        previewItem.innerHTML = `
+                            <div class="pdf-preview">
+                                <i class="fas fa-file-pdf pdf-icon"></i>
+                                <span class="pdf-name">${medio.nombre || "Documento PDF"}</span>
+                            </div>
+                            <span class="media-type-badge">PDF</span>
+                            <div class="remove-media" onclick="eliminarMedio('${id}', ${index}, '${medio.url}')">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="preview-media" onclick="window.open('${medio.url}', '_blank')">
+                                <i class="fas fa-eye"></i>
+                            </div>
+                        `;
+                    }
 
-        mediaPreviewGrid.appendChild(previewItem);
-    });
+                    mediaPreviewGrid.appendChild(previewItem);
+                });
 
-    // Actualizar contador
-    const mediaCounter = document.getElementById('media-count');
-    if (mediaCounter) {
-        mediaCounter.textContent = `${data.medios.length} archivo${data.medios.length !== 1 ? 's' : ''} cargado${data.medios.length !== 1 ? 's' : ''}`;
-    }
-
+                // Actualizar contador
+                const mediaCounter = document.getElementById('media-count');
+                if (mediaCounter) {
+                    mediaCounter.textContent = `${data.medios.length} archivo${data.medios.length !== 1 ? 's' : ''} cargado${data.medios.length !== 1 ? 's' : ''}`;
+                }
             }
 
-        
+            // Cargar datos de promoción (si existen)
+            const isPromocion = data.isPromocion || false; // Si no existe, se asume false
+            const descripcionPromocion = data.descripcion_promocion || ''; // Si no existe, se asume cadena vacía
+
+            // Establecer el estado del checkbox de promoción
+            const checkboxPromocion = document.getElementById('es-promocion');
+            checkboxPromocion.checked = isPromocion;
+
+            // Mostrar u ocultar el textarea de la descripción de la promoción
+            const descripcionPromocionContainer = document.getElementById('descripcion-promocion-container');
+            if (isPromocion) {
+                descripcionPromocionContainer.style.display = 'block';
+                document.getElementById('descripcion-promocion').value = descripcionPromocion;
+            } else {
+                descripcionPromocionContainer.style.display = 'none';
+                document.getElementById('descripcion-promocion').value = ''; // Limpiar el campo
+            }
+
+            // Escuchar cambios en el checkbox de promoción
+            checkboxPromocion.addEventListener('change', function () {
+                if (this.checked) {
+                    descripcionPromocionContainer.style.display = 'block';
+                } else {
+                    descripcionPromocionContainer.style.display = 'none';
+                    document.getElementById('descripcion-promocion').value = ''; // Limpiar el campo
+                }
+            });
+
             // Cerrar el loading
             Swal.close();
         } else {
@@ -1100,7 +1074,11 @@ async function handleGuardarContenido() {
             // Obtener la descripción del material
       const descripcion_material = document.getElementById('descripcion_material').value||"";
         
-           
+             // Obtener el estado del checkbox de promoción
+        const isPromocion = document.getElementById('es-promocion').checked;
+
+        // Obtener la descripción de la promoción (si existe)
+        const descripcion_promocion = isPromocion ? document.getElementById('descripcion-promocion').value : "";
 
         // Validar campos requeridos
         if (!titulo || !contenido || !categoria || !lugar) {
@@ -1154,7 +1132,10 @@ async function handleGuardarContenido() {
                 nombre: user.displayName || 'Usuario',
                 email: user.email
             },
-            descripcion_material
+            descripcion_material,
+            isPromocion,
+            descripcion_promocion
+
 
         };
 
@@ -1221,95 +1202,96 @@ async function handleGuardarContenido() {
 
 
 
-tinymce.init({
-    selector: '#editor',
-    height: '100%',
-    plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons',
-    menubar: 'file edit view insert format tools table help',
-    toolbar: 'undo redo | fullscreen|bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat  |pagebreak | charmap emoticons | fullscreen save print | insertfile image media template link anchor codesample | ltr rtl',
-    toolbar_sticky: true,
-    autosave_ask_before_unload: true,
-    autosave_interval: '30s',
-    autosave_prefix: '{path}{query}-{id}-',
-    autosave_restore_when_empty: false,
-    autosave_retention: '2m',
-    image_advtab: true,
+// tinymce.init({
+//     selector: '#editor',
+//     height: '100%',
+//     plugins: 'preview importcss searchreplace autolink autosave save directionality code visualblocks visualchars fullscreen image link media template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons',
+//     menubar: 'file edit view insert format tools table help',
+//     toolbar: 'undo redo | fullscreen|bold italic underline strikethrough | fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat  |pagebreak | charmap emoticons | fullscreen save print | insertfile image media template link anchor codesample | ltr rtl',
+//     toolbar_sticky: true,
+//     autosave_ask_before_unload: true,
+//     autosave_interval: '30s',
+//     autosave_prefix: '{path}{query}-{id}-',
+//     autosave_restore_when_empty: false,
+//     autosave_retention: '2m',
+//     image_advtab: true,
     
-    // Enable file uploads
-    automatic_uploads: true,
-    images_upload_url: '/your-image-upload-handler',
-    images_upload_base_path: '/some/basepath',
-    images_upload_credentials: true,
+//     // Enable file uploads
+//     automatic_uploads: true,
+//     images_upload_url: '/your-image-upload-handler',
+//     images_upload_base_path: '/some/basepath',
+//     images_upload_credentials: true,
     
-    // File picker callback
-    file_picker_types: 'image media',
-     // Modificar esta parte
-     // File picker callback
-file_picker_callback: async function (callback, value, meta) {
-    var input = document.createElement('input');
-    input.setAttribute('type', 'file');
     
-    if (meta.filetype === 'image') {
-        input.setAttribute('accept', 'image/*');
-    } else if (meta.filetype === 'media') {
-        input.setAttribute('accept', 'video/*');
-    }
+//     // File picker callback
+//     file_picker_types: 'image media',
+//      // Modificar esta parte
+//      // File picker callback
+// file_picker_callback: async function (callback, value, meta) {
+//     var input = document.createElement('input');
+//     input.setAttribute('type', 'file');
+    
+//     if (meta.filetype === 'image') {
+//         input.setAttribute('accept', 'image/*');
+//     } else if (meta.filetype === 'media') {
+//         input.setAttribute('accept', 'video/*');
+//     }
 
-    input.onchange = async function () {
-        var file = this.files[0];
+//     input.onchange = async function () {
+//         var file = this.files[0];
         
-        try {
-            let resultado;
+//         try {
+//             let resultado;
             
-            if (meta.filetype === 'image') {
-                // Comprimir y subir imagen
-                const imagenComprimida = await comprimirImagen(file);
-                resultado = await subirArchivo(imagenComprimida, 'imagenes');
-            } else if (meta.filetype === 'media') {
-                // Subir video directamente
-                resultado = await subirArchivo(file, 'videos');
-            }
+//             if (meta.filetype === 'image') {
+//                 // Comprimir y subir imagen
+//                 const imagenComprimida = await comprimirImagen(file);
+//                 resultado = await subirArchivo(imagenComprimida, 'imagenes');
+//             } else if (meta.filetype === 'media') {
+//                 // Subir video directamente
+//                 resultado = await subirArchivo(file, 'videos');
+//             }
 
-            // Callback con la URL del archivo (sin guardar referencia)
-            callback(resultado.url, {
-                title: file.name,
-                width: meta.filetype === 'media' ? '100%' : '',
-                height: meta.filetype === 'media' ? 'auto' : ''
-            });
+//             // Callback con la URL del archivo (sin guardar referencia)
+//             callback(resultado.url, {
+//                 title: file.name,
+//                 width: meta.filetype === 'media' ? '100%' : '',
+//                 height: meta.filetype === 'media' ? 'auto' : ''
+//             });
 
-        } catch (error) {
-            console.error('Error al subir archivo:', error);
-            tinymce.activeEditor.notificationManager.open({
-                text: 'Error al subir el archivo: ' + error.message,
-                type: 'error',
-                timeout: 3000
-            });
-        }
-    };
+//         } catch (error) {
+//             console.error('Error al subir archivo:', error);
+//             tinymce.activeEditor.notificationManager.open({
+//                 text: 'Error al subir el archivo: ' + error.message,
+//                 type: 'error',
+//                 timeout: 3000
+//             });
+//         }
+//     };
 
-    input.click();
+//     input.click();
 
-    },
+//     },
 
-    // También agregar estas configuraciones
-    automatic_uploads: true,
-    images_upload_url: null, // Desactivar la subida automática
-    images_reuse_filename: true,
-    images_upload_credentials: true,
-    media_upload_credentials: true,
+//     // También agregar estas configuraciones
+//     automatic_uploads: true,
+//     images_upload_url: null, // Desactivar la subida automática
+//     images_reuse_filename: true,
+//     images_upload_credentials: true,
+//     media_upload_credentials: true,
     
-    skin: 'oxide',
-    content_css: 'default',
-    content_style: `
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-    `,
+//     skin: 'oxide',
+//     content_css: 'default',
+//     content_style: `
+//         body {
+//             font-family: 'Poppins', sans-serif;
+//             margin: 20px;
+//             max-width: 800px;
+//             margin: 0 auto;
+//         }
+//     `,
     
-});
+// });
 
 
 
