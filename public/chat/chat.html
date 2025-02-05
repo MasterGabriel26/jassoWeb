@@ -999,6 +999,256 @@ body, html {
 }
 
 
+
+/* Estilos para los modales de participantes */
+.modal-dialog {
+    max-width: 500px;
+}
+
+/* Contenedor de búsqueda */
+.user-search {
+    position: sticky;
+    top: 0;
+    background: white;
+    padding: 10px 0;
+    z-index: 1;
+}
+
+/* Lista de participantes */
+.participants-list {
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 0;
+}
+
+/* Elemento individual de participante */
+.participant-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.participant-item:hover {
+    background-color: #f8f9fa;
+}
+
+.participant-item.selected {
+    background-color: #e3f2fd;
+}
+
+/* Contenedor de avatar */
+.avatar-container {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.avatar-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* Información del usuario */
+.user-info h3 {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.user-info p {
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin: 0;
+}
+
+/* Indicador de selección */
+.selection-indicator {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.selection-indicator i {
+    font-size: 1.25rem;
+    color: #dee2e6;
+}
+
+.participant-item.selected .selection-indicator i {
+    color: #007bff;
+}
+
+/* Vista previa de usuarios seleccionados */
+.selected-users-container {
+    min-height: 50px;
+    border: 1px dashed #dee2e6;
+    border-radius: 0.25rem;
+    padding: 10px;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.selected-user-chip {
+    background-color: #4b7fb3;
+    border-radius: 20px;
+    padding: 5px 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+}
+
+.selected-user-chip img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.selected-user-chip .remove-user {
+    cursor: pointer;
+    color: #fefefe;
+    font-size: 1.25rem;
+    line-height: 1;
+    padding: 0 4px;
+}
+
+.selected-user-chip .remove-user:hover {
+    color: #dc3545;
+}
+
+/* Scrollbar personalizado */
+.participants-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.participants-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.participants-list::-webkit-scrollbar-thumb {
+    background: #3380d3;
+    border-radius: 3px;
+}
+
+.participants-list::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Estructura base del chat */
+.chat-container {
+    display: flex;
+    height: 100%;
+    position: relative;
+}
+
+/* Sidebar de chats */
+.chat-sidebar {
+    width: 300px; /* o el ancho que prefieras */
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #e0e0e0;
+    background: #fff;
+}
+
+/* Header fijo del chat sidebar */
+.chat-header {
+    padding: 15px;
+    border-bottom: 1px solid #e0e0e0;
+    background: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* Lista de chats con scroll */
+.chat-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px;
+    height: calc(100vh - 130px); /* Ajusta este valor según el alto de tu header */
+}
+
+/* Estilizar el scrollbar */
+.chat-list::-webkit-scrollbar {
+    width: 5px;
+}
+
+.chat-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.chat-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.chat-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+/* Para Firefox */
+.chat-list {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) rgba(0, 0, 0, 0.1);
+}
+
+/* Área principal del chat */
+.chat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .chat-sidebar {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        z-index: 2;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .chat-sidebar.active {
+        transform: translateX(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .chat-sidebar {
+        position: fixed;
+        left: 0;
+        top: 56px;
+        width: 100%;
+        height: calc(100vh - 56px);
+        z-index: 1000;
+        background-color: var(--bg-white);
+        transform: translateX(0);
+        transition: transform 0.3s ease;
+    }
+
+    .chat-main {
+        display: none; /* Ocultar el área principal inicialmente en móvil */
+    }
+
+    /* Cuando hay un chat activo */
+    .chat-active .chat-sidebar {
+        transform: translateX(-100%);
+    }
+
+    .chat-active .chat-main {
+        display: flex;
+    }
+}
+
+
+
+
       </style>
 </head>
 <body>

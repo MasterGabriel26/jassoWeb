@@ -34,7 +34,10 @@ class ChatApp {
         this.typingTimeout = null;
 
         this.selectedGroupUsers = new Set();
-        this.participantsModal = null;
+
+          // Set para mantener los usuarios seleccionados en la edición
+    this.selectedEditUsers = new Set();
+       
         this.usersCache = new Map(); // Asegurarnos de que esto está aquí
 
         this.setupGroupCreation();
@@ -45,14 +48,14 @@ class ChatApp {
 
         this.initializeApp();
 
-         this.newGroupParticipantsModalEl = document.getElementById('newGroupParticipantsModal');
+        this.newGroupParticipantsModalEl = document.getElementById('newGroupParticipantsModal');
         this.addParticipantsModalEl = document.getElementById('addParticipantsModal');
-
-        if (newGroupParticipantsModalEl) {
-            this.newGroupParticipantsModal = new bootstrap.Modal(newGroupParticipantsModalEl);
+        
+        if (this.newGroupParticipantsModalEl) {
+            this.newGroupParticipantsModal = new bootstrap.Modal(this.newGroupParticipantsModalEl);
         }
-        if (addParticipantsModalEl) {
-            this.addParticipantsModal = new bootstrap.Modal(addParticipantsModalEl);
+        if (this.addParticipantsModalEl) {
+            this.addParticipantsModal = new bootstrap.Modal(this.addParticipantsModalEl);
         }
 
     }
@@ -64,6 +67,8 @@ class ChatApp {
                 this.currentUser = user;
                 this.setupEventListeners();
                 this.loadChats();
+                this.setupMobileUI();
+                
             } else {
                 window.location.href = 'login.html';
             }
@@ -297,8 +302,7 @@ class ChatApp {
         }
 
 
-        // Inicializar modal de participantes
-        this.participantsModal = new bootstrap.Modal(document.getElementById('selectParticipantsModal'));
+  
         
         // Evento para abrir modal de participantes
         addParticipantsBtn.addEventListener('click', () => {
@@ -306,12 +310,12 @@ class ChatApp {
         });
 
         // Evento para confirmar participantes seleccionados
-        document.getElementById('confirmParticipants').addEventListener('click', () => {
+        document.getElementById('confirmNewGroupParticipants').addEventListener('click', () => {
             this.confirmParticipantSelection();
         });
 
         // Evento para buscar participantes
-        document.getElementById('participantSearchInput').addEventListener('input', (e) => {
+        document.getElementById('newGroupSearchInput').addEventListener('input', (e) => {
             this.filterParticipants(e.target.value);
         });
         
@@ -434,14 +438,43 @@ class ChatApp {
 
     async showNewGroupParticipantsModal() {
         try {
-            // Obtener referencias a los elementos del modal
-            const modal = new bootstrap.Modal(document.getElementById('newGroupParticipantsModal'));
-            const participantsList = document.getElementById('newGroupParticipantsList');
+            const modalContent = `
+                <div class="modal fade" id="newGroupParticipantsModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Añadir Participantes</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="user-search mb-3">
+                                    <input type="text" class="form-control" id="newGroupSearchInput" 
+                                           placeholder="Buscar usuarios...">
+                                </div>
+                                <div class="participants-list" id="newGroupParticipantsList">
+                                    <!-- Lista de usuarios -->
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <button type="button" class="btn btn-primary" id="confirmNewGroupParticipants">
+                                    Confirmar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+    
+            // Eliminar modal anterior si existe
+            const existingModal = document.getElementById('newGroupParticipantsModal');
+            if (existingModal) existingModal.remove();
+    
+            document.body.insertAdjacentHTML('beforeend', modalContent);
             
-            // Mostrar loading
+            const participantsList = document.getElementById('newGroupParticipantsList');
             participantsList.innerHTML = '<div class="text-center p-3"><div class="spinner-border text-primary" role="status"></div></div>';
     
-            // Cargar usuarios
             const usersSnapshot = await this.db
                 .collection('usuarios')
                 .where('uid', '!=', this.currentUser.uid)
@@ -462,7 +495,7 @@ class ChatApp {
     
             // Configurar eventos
             document.getElementById('newGroupSearchInput').addEventListener('input', (e) => {
-                this.filterParticipants(e.target.value, 'newGroupParticipantsList');
+                this.filterParticipants(e.target.value);
             });
     
             document.querySelectorAll('#newGroupParticipantsList .participant-item').forEach(item => {
@@ -477,104 +510,204 @@ class ChatApp {
                     Swal.fire('Aviso', 'Selecciona al menos un participante', 'warning');
                     return;
                 }
+                const modal = bootstrap.Modal.getInstance(document.getElementById('newGroupParticipantsModal'));
                 modal.hide();
                 this.updateSelectedUsersUI();
             });
     
+            const modal = new bootstrap.Modal(document.getElementById('newGroupParticipantsModal'));
             modal.show();
     
         } catch (error) {
-            console.error('Error al mostrar selector de participantes:', error);
+            console.error('Error:', error);
             Swal.fire('Error', 'No se pudieron cargar los usuarios', 'error');
         }
     }
     
-    async showAddParticipantsModal(chatId) {
-        try {
-            // Obtener participantes actuales
-            const chatDoc = await this.db.collection('chats').doc(chatId).get();
-            const chatData = chatDoc.data();
-            const currentParticipants = Object.keys(chatData.participants || {});
-    
-            // Obtener referencias a los elementos del modal
-            const modal = new bootstrap.Modal(document.getElementById('addParticipantsModal'));
-            const participantsList = document.getElementById('addParticipantsList');
-    
-            // Mostrar loading
-            participantsList.innerHTML = '<div class="text-center p-3"><div class="spinner-border text-primary" role="status"></div></div>';
-    
-            // Cargar usuarios no participantes
-            const usersSnapshot = await this.db
-                .collection('usuarios')
-                .where('uid', 'not-in', [...currentParticipants])
-                .get();
-    
-            if (usersSnapshot.empty) {
-                participantsList.innerHTML = '<div class="text-center p-3">No hay usuarios disponibles para añadir</div>';
-            } else {
-                participantsList.innerHTML = '';
-                usersSnapshot.forEach(doc => {
-                    const userData = doc.data();
-                    if (userData && userData.uid) {
-                        const participantHTML = this.renderParticipantItem(userData);
-                        participantsList.insertAdjacentHTML('beforeend', participantHTML);
-                    }
-                });
-            }
-    
-            // Configurar eventos
-            document.getElementById('addParticipantSearchInput').addEventListener('input', (e) => {
-                this.filterParticipants(e.target.value, 'addParticipantsList');
+
+
+async showEditParticipantsModal(chatId) {
+    try {
+        const chatDoc = await this.db.collection('chats').doc(chatId).get();
+        const chatData = chatDoc.data();
+        const currentParticipants = Object.keys(chatData.participants || {});
+
+        const modalContent = `
+            <div class="modal fade" id="editParticipantsModal" tabindex="-1">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Añadir Participantes</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="user-search mb-3">
+                                <input type="text" class="form-control" id="editParticipantSearchInput" 
+                                       placeholder="Buscar usuarios...">
+                            </div>
+                            
+                            <div class="participants-list" id="editParticipantsList">
+                                <!-- Lista de usuarios -->
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" id="confirmEditParticipants">
+                                Confirmar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Eliminar modal anterior si existe
+        const existingModal = document.getElementById('editParticipantsModal');
+        if (existingModal) existingModal.remove();
+
+        document.body.insertAdjacentHTML('beforeend', modalContent);
+        
+        const participantsList = document.getElementById('editParticipantsList');
+        participantsList.innerHTML = '<div class="text-center p-3"><div class="spinner-border text-primary" role="status"></div></div>';
+
+        const usersSnapshot = await this.db
+            .collection('usuarios')
+            .where('uid', 'not-in', [...currentParticipants])
+            .get();
+
+        if (usersSnapshot.empty) {
+            participantsList.innerHTML = '<div class="text-center p-3">No hay usuarios disponibles para añadir</div>';
+        } else {
+            participantsList.innerHTML = '';
+            usersSnapshot.forEach(doc => {
+                const userData = doc.data();
+                if (userData && userData.uid) {
+                    const participantHTML = this.renderEditParticipantItem(userData);
+                    participantsList.insertAdjacentHTML('beforeend', participantHTML);
+                }
             });
-    
-            document.querySelectorAll('#addParticipantsList .participant-item').forEach(item => {
-                item.addEventListener('click', () => {
-                    this.toggleParticipant(item);
-                });
+        }
+
+        // Configurar eventos
+        document.getElementById('editParticipantSearchInput').addEventListener('input', (e) => {
+            this.filterEditParticipants(e.target.value);
+        });
+
+        document.querySelectorAll('#editParticipantsList .participant-item').forEach(item => {
+            item.addEventListener('click', () => {
+                this.toggleEditParticipant(item);
             });
-    
-            document.getElementById('confirmAddParticipants').addEventListener('click', async () => {
-                await this.addParticipantsToGroup(chatId);
+        });
+
+        document.getElementById('confirmEditParticipants').addEventListener('click', () => {
+            if (this.confirmEditParticipantSelection()) {
+                // Solo actualizar la vista previa y cerrar el modal
+                this.updateEditSelectedUsersUI();
+                const modal = bootstrap.Modal.getInstance(document.getElementById('editParticipantsModal'));
                 modal.hide();
-            });
-    
-            modal.show();
-    
-        } catch (error) {
-            console.error('Error al mostrar selector de participantes:', error);
-            Swal.fire('Error', 'No se pudieron cargar los usuarios', 'error');
-        }
-    }
-    
-    // Función auxiliar para actualizar la UI de usuarios seleccionados
-    updateSelectedUsersUI() {
-        const container = document.getElementById('selectedUsers');
-        if (!container) return;
-    
-        container.innerHTML = '';
-        this.selectedGroupUsers.forEach(userId => {
-            const userData = this.usersCache.get(userId);
-            if (userData) {
-                const chip = document.createElement('div');
-                chip.className = 'selected-user-chip';
-                chip.innerHTML = `
-                    <span>${userData.name || userData.email}</span>
-                    <span class="remove-user" data-user-id="${userId}">×</span>
-                `;
-                container.appendChild(chip);
             }
         });
+
+        const modal = new bootstrap.Modal(document.getElementById('editParticipantsModal'));
+        modal.show();
+
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire('Error', 'No se pudieron cargar los usuarios', 'error');
+    }
+}
+
+renderEditParticipantItem(userData) {
+    const isSelected = this.selectedEditUsers.has(userData.uid);
+    return `
+        <div class="participant-item ${isSelected ? 'selected' : ''}" data-user-id="${userData.uid}" data-user-name="${userData.name}">
+            <div class="d-flex align-items-center p-2">
+                <div class="avatar-container me-2">
+                    ${userData.imageProfile 
+                        ? `<img src="${userData.imageProfile}" alt="${userData.name}">`
+                        : this.createInitialsAvatar(userData.name)}
+                </div>
+                <div class="user-info flex-grow-1">
+                    <h3 class="mb-0">${userData.name || 'Usuario'}</h3>
+                    
+                </div>
+                <div class="selection-indicator">
+                    <i class="fas ${isSelected ? 'fa-check-circle text-primary' : 'fa-circle'}"></i>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+toggleEditParticipant(participantElement) {
+    const userId = participantElement.dataset.userId;
     
-        // Añadir eventos para remover usuarios
-        container.querySelectorAll('.remove-user').forEach(removeBtn => {
-            removeBtn.addEventListener('click', (e) => {
-                const userId = e.target.dataset.userId;
-                this.selectedGroupUsers.delete(userId);
-                this.updateSelectedUsersUI();
-            });
-        });
+    if (this.selectedEditUsers.has(userId)) {
+        this.selectedEditUsers.delete(userId);
+        participantElement.classList.remove('selected');
+        participantElement.querySelector('.fas').className = 'fas fa-circle';
+    } else {
+        this.selectedEditUsers.add(userId);
+        participantElement.classList.add('selected');
+        participantElement.querySelector('.fas').className = 'fas fa-check-circle text-primary';
     }
     
+    this.updateEditSelectedUsersUI();
+}
+
+updateEditSelectedUsersUI() {
+    const container = document.getElementById('editSelectedUsersPreview');
+    if (!container) return;
+
+    container.innerHTML = '';
+    this.selectedEditUsers.forEach(userId => {
+        const participantElement = document.querySelector(`.participant-item[data-user-id="${userId}"]`);
+        const userName = participantElement?.dataset.userName || 'Usuario';
+        
+        const chip = document.createElement('div');
+        chip.className = 'selected-user-chip';
+        chip.innerHTML = `
+            <span>${userName}</span>
+            <span class="remove-user" data-user-id="${userId}">×</span>
+        `;
+        container.appendChild(chip);
+    });
+
+    container.querySelectorAll('.remove-user').forEach(removeBtn => {
+        removeBtn.addEventListener('click', (e) => {
+            const userId = e.target.dataset.userId;
+            this.selectedEditUsers.delete(userId);
+            const participantElement = document.querySelector(`.participant-item[data-user-id="${userId}"]`);
+            if (participantElement) {
+                participantElement.classList.remove('selected');
+                participantElement.querySelector('.fas').className = 'fas fa-circle';
+            }
+            this.updateEditSelectedUsersUI();
+        });
+    });
+}
+
+filterEditParticipants(query) {
+    const searchTerm = query.toLowerCase();
+    document.querySelectorAll('#editParticipantsList .participant-item').forEach(item => {
+        const name = item.querySelector('h3').textContent.toLowerCase();
+        const email = item.querySelector('p').textContent.toLowerCase();
+        item.style.display = 
+            name.includes(searchTerm) || email.includes(searchTerm) 
+                ? 'block' 
+                : 'none';
+    });
+}
+
+confirmEditParticipantSelection() {
+    if (this.selectedEditUsers.size === 0) {
+        Swal.fire('Error', 'Selecciona al menos un participante', 'warning');
+        return false;
+    }
+    return true;
+}
+    
+
     renderParticipantItem(userData) {
         const isSelected = this.selectedGroupUsers.has(userData.uid);
         return `
@@ -619,7 +752,7 @@ class ChatApp {
         }
 
         this.updateSelectedUsersUI();
-        this.participantsModal.hide();
+     
     }
 
     updateSelectedUsersUI() {
@@ -890,12 +1023,7 @@ class ChatApp {
                     </div>
                     <div class="chat-actions">
                         ${!isGroup ? `
-                            <button class="action-btn d-none d-md-inline-block">
-                                <i class="fas fa-phone"></i>
-                            </button>
-                            <button class="action-btn d-none d-md-inline-block">
-                                <i class="fas fa-video"></i>
-                            </button>
+                           
                         ` : ''}
                         <div class="dropdown">
                             <button class="action-btn" data-bs-toggle="dropdown">
@@ -1106,12 +1234,16 @@ async showEditGroupDialog(chatId) {
                                     <label class="form-label">Nombre del grupo</label>
                                     <input type="text" class="form-control" id="editGroupName" value="${chatData.name}" required>
                                 </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Participantes</label>
-                                    <button type="button" class="btn btn-outline-primary btn-sm w-100" id="editAddParticipantsBtn">
-                                        <i class="fas fa-user-plus"></i> Añadir participantes
-                                    </button>
-                                </div>
+                              
+<div class="mb-3">
+    <label class="form-label">Participantes</label>
+    <div class="selected-users-container mb-2" id="editSelectedUsersPreview">
+        <!-- Aquí se mostrarán los usuarios seleccionados -->
+    </div>
+    <button type="button" class="btn btn-outline-primary btn-sm w-100" id="editAddParticipantsBtn">
+        <i class="fas fa-user-plus"></i> Añadir participantes
+    </button>
+</div>
                             </form>
                         </div>
                         <div class="modal-footer">
@@ -1182,7 +1314,7 @@ async showEditGroupDialog(chatId) {
         });
 
         document.getElementById('editAddParticipantsBtn').addEventListener('click', () => {
-            this.showAddParticipantsModal(chatId);
+            this.showEditParticipantsModal(chatId);
         });
 
     } catch (error) {
@@ -1194,57 +1326,68 @@ async showEditGroupDialog(chatId) {
 // Función para guardar los cambios del grupo
 async saveGroupChanges(chatId) {
     try {
-        const groupName = document.getElementById('editGroupName').value.trim();
-        if (!groupName) {
-            throw new Error('El nombre del grupo es requerido');
+        const newName = document.getElementById('editGroupName').value.trim();
+        const imageInput = document.getElementById('editGroupImageInput');
+        const file = imageInput.files[0];
+
+        if (!newName) {
+            Swal.fire('Error', 'El nombre del grupo no puede estar vacío', 'error');
+            return;
         }
 
+        // Mostrar loading
+        Swal.fire({
+            title: 'Guardando cambios...',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
         const updates = {
-            name: groupName,
+            name: newName,
             updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
 
-        // Subir nueva imagen si se seleccionó una
-        const groupImageInput = document.getElementById('editGroupImageInput');
-        if (groupImageInput.files[0]) {
-            const imageRef = this.storage.ref(`groups/${chatId}/${Date.now()}_${groupImageInput.files[0].name}`);
-            await imageRef.put(groupImageInput.files[0]);
-            updates.imageUrl = await imageRef.getDownloadURL();
+        // Si hay una nueva imagen, subirla
+        if (file) {
+            const imageUrl = await this.uploadGroupImage(file, chatId);
+            updates.imageUrl = imageUrl;
         }
 
+        // Agregar nuevos participantes si hay alguno seleccionado
+        if (this.selectedEditUsers.size > 0) {
+            const batch = this.db.batch();
+            const chatRef = this.db.collection('chats').doc(chatId);
+            
+            for (const uid of this.selectedEditUsers) {
+                const participantElement = document.querySelector(`.participant-item[data-user-id="${uid}"]`);
+                const userName = participantElement?.dataset.userName || 'Usuario';
+                
+                updates[`participants.${uid}`] = {
+                    uid: uid,
+                    name: userName,
+                    role: 'member',
+                    joined: firebase.firestore.FieldValue.serverTimestamp()
+                };
+            }
+        }
+
+        // Actualizar el documento
         await this.db.collection('chats').doc(chatId).update(updates);
 
-        // Cerrar modal y mostrar mensaje de éxito
+        // Limpiar selección después de guardar
+        this.selectedEditUsers.clear();
+        
+        // Cerrar el modal y mostrar mensaje de éxito
         const modal = bootstrap.Modal.getInstance(document.getElementById('editGroupModal'));
         modal.hide();
         
-        await Swal.fire({
-            icon: 'success',
-            title: '¡Éxito!',
-            text: 'Grupo actualizado correctamente',
-            showConfirmButton: false,
-            timer: 1500
-        });
-
-        // Recargar el chat con los cambios actualizados
-        const chatDoc = await this.db.collection('chats').doc(chatId).get();
-        const chatData = chatDoc.data();
-        
-        // Actualizar la UI con los nuevos datos
-        await this.openChat(chatId, {
-            type: 'group',
-            name: chatData.name,
-            photoURL: chatData.imageUrl,
-            participantsCount: Object.keys(chatData.participants).length,
-            isAdmin: chatData.participants[this.currentUser.uid]?.role === 'admin'
-        });
-
-        // Actualizar la lista de chats
-        this.loadChats();
+        Swal.fire('¡Éxito!', 'Los cambios se guardaron correctamente', 'success');
 
     } catch (error) {
         console.error('Error al guardar cambios:', error);
-        Swal.fire('Error', error.message, 'error');
+        Swal.fire('Error', 'No se pudieron guardar los cambios', 'error');
     }
 }
 
@@ -1357,45 +1500,49 @@ async removeParticipant(chatId, participantId) {
     }
 }
 
-        setupMobileUI() {
-            // Asegurarse de que los elementos existen
-            this.mobileToggle = document.querySelector('.mobile-toggle-chat');
-            this.chatSidebar = document.querySelector('.chat-sidebar');
-            this.chatOverlay = document.querySelector('.chat-overlay');
-        
-            if (this.mobileToggle) {
-                this.mobileToggle.addEventListener('click', () => {
-                    this.toggleSidebar();
-                });
-            }
-        
-            if (this.chatOverlay) {
-                this.chatOverlay.addEventListener('click', () => {
-                    this.hideSidebar();
-                });
-            }
-        
-            // Manejar clicks en los chats para móvil
-            this.chatList.addEventListener('click', (e) => {
-                const chatItem = e.target.closest('.chat-item');
-                if (chatItem && window.innerWidth <= 768) {
-                    this.hideSidebar();
-                }
-            });
+setupMobileUI() {
+    // Asegurarse de que los elementos existen
+    this.mobileToggle = document.querySelector('.mobile-toggle-chat');
+    this.chatSidebar = document.querySelector('.chat-sidebar');
+    this.chatOverlay = document.querySelector('.chat-overlay');
 
-            if (window.innerWidth <= 768) {
-                document.querySelector('.chat-container').classList.remove('chat-active');
-            }
-        
-            // Manejar cambios de tamaño de ventana
-            window.addEventListener('resize', () => {
-                if (window.innerWidth > 768) {
-                    document.querySelector('.chat-container').classList.remove('chat-active');
-                }
-            });
+    if (this.mobileToggle) {
+        this.mobileToggle.addEventListener('click', () => {
+            this.toggleSidebar();
+        });
+    }
 
+    if (this.chatOverlay) {
+        this.chatOverlay.addEventListener('click', () => {
+            this.hideSidebar();
+        });
+    }
 
-             // Manejar interacción entre sidebars
+    // Mostrar la lista de chats automáticamente en vista móvil
+    if (window.innerWidth <= 768) {
+        this.showSidebar();
+    }
+
+    // Manejar clicks en los chats para móvil
+    this.chatList.addEventListener('click', (e) => {
+        const chatItem = e.target.closest('.chat-item');
+        if (chatItem && window.innerWidth <= 768) {
+            this.hideSidebar();
+        }
+    });
+
+    if (window.innerWidth <= 768) {
+        document.querySelector('.chat-container').classList.remove('chat-active');
+    }
+
+    // Manejar cambios de tamaño de ventana
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768) {
+            document.querySelector('.chat-container').classList.remove('chat-active');
+        }
+    });
+
+    // Manejar interacción entre sidebars
     const mainSidebar = document.querySelector('.sidebar');
     const sidebarToggle = document.querySelector('.js-sidebar-toggle');
 
@@ -1406,9 +1553,8 @@ async removeParticipant(chatId, participantId) {
                 this.hideChatSidebar();
             }
         });
-        }
     }
-
+}
         backToList() {
             document.querySelector('.chat-container').classList.remove('chat-active');
         }
