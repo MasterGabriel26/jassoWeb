@@ -1,4 +1,14 @@
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Forzar redibujado en Safari
+    const input = document.querySelector('.message-input-container');
+    if (input && /iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        input.style.display = 'none';
+        setTimeout(() => {
+            input.style.display = 'flex';
+        }, 0);
+    }
+});
 
 class ChatApp {
     constructor() {
@@ -70,7 +80,7 @@ class ChatApp {
                 this.setupMobileUI();
                 
             } else {
-                window.location.href = 'login.html';
+                window.location.href = '/page-sign-in.html';
             }
         });
     }
@@ -270,9 +280,7 @@ class ChatApp {
                 this.usersModal.hide();
                 await this.openChat(chatRef.id, otherUserData);
                 
-                if (window.innerWidth <= 768) {
-                    this.hideSidebar();
-                }
+               
             } else {
                 throw new Error('No se pudo crear el chat');
             }
@@ -347,17 +355,98 @@ class ChatApp {
         });
     }
 
-   async createGroup() {
+    async createChat(otherUser) {
+        try {
+            const participantsId = [this.currentUser.uid, otherUser.uid].sort().join('_');
+            
+            // Buscar chat existente
+            const existingChatQuery = await this.db
+                .collection('chats')
+                .where('participantsId', '==', participantsId)
+                .get();
+    
+            if (!existingChatQuery.empty) {
+                const chatDoc = existingChatQuery.docs[0];
+                const chatData = chatDoc.data();
+                
+                // Si el chat existe pero fue eliminado por el usuario actual, restaurarlo
+                if (chatData.participants[this.currentUser.uid].deleted) {
+                    // Restaurar en participants
+                    await chatDoc.ref.update({
+                        [`participants.${this.currentUser.uid}.deleted`]: false,
+                        [`participants.${this.currentUser.uid}.deletedAt`]: null,
+                        // Restaurar en participantsArray
+                        participantsArray: chatData.participantsArray.map(p => {
+                            if (p.uid === this.currentUser.uid) {
+                                return { ...p, deleted: false };
+                            }
+                            return p;
+                        }),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                return chatDoc.ref;
+            }
+    
+            // Obtener datos del usuario actual
+            const currentUserDoc = await this.db.collection('usuarios').doc(this.currentUser.uid).get();
+            const currentUserData = currentUserDoc.data();
+    
+            // Crear nuevo chat
+            const chatData = {
+                type: 'direct',
+                participantsId: participantsId,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                lastMessage: null,
+                participantsArray: [
+                    { uid: this.currentUser.uid, deleted: false },
+                    { uid: otherUser.uid, deleted: false }
+                ],
+                participants: {
+                    [this.currentUser.uid]: {
+                        uid: this.currentUser.uid,
+                        name: currentUserData.name || this.currentUser.email,
+                        email: this.currentUser.email,
+                        photoURL: currentUserData.imageProfile || null,
+                        role: currentUserData.userType || 'member',
+                        online: true,
+                        lastRead: firebase.firestore.FieldValue.serverTimestamp(),
+                        deleted: false,
+                        deletedAt: null
+                    },
+                    [otherUser.uid]: {
+                        uid: otherUser.uid,
+                        name: otherUser.name,
+                        email: otherUser.email,
+                        photoURL: otherUser.photoURL || otherUser.imageProfile || null,
+                        role: otherUser.userType || 'member',
+                        online: otherUser.online || false,
+                        lastRead: null,
+                        deleted: false,
+                        deletedAt: null
+                    }
+                }
+            };
+    
+            return await this.db.collection('chats').add(chatData);
+        } catch (error) {
+            console.error('Error en createChat:', error);
+            throw error;
+        }
+    }
+    
+    async createGroup() {
         try {
             if (this.selectedGroupUsers.size < 2) {
                 throw new Error('Selecciona al menos 2 participantes');
             }
-
+    
             const groupName = document.getElementById('groupName').value.trim();
             if (!groupName) {
                 throw new Error('El nombre del grupo es requerido');
             }
-
+    
             const loadingToast = Swal.fire({
                 title: 'Creando grupo...',
                 allowOutsideClick: false,
@@ -365,7 +454,7 @@ class ChatApp {
                     Swal.showLoading();
                 }
             });
-
+    
             // Subir imagen del grupo si existe
             let groupImageUrl = null;
             const groupImageInput = document.getElementById('groupImageInput');
@@ -374,10 +463,13 @@ class ChatApp {
                 await imageRef.put(groupImageInput.files[0]);
                 groupImageUrl = await imageRef.getDownloadURL();
             }
-
+    
             // Obtener datos del usuario actual
             const currentUserData = await this.getUserData(this.currentUser.uid);
-
+    
+            // Crear array de participantes
+            const participantsArray = [{ uid: this.currentUser.uid, deleted: false }];
+            
             // Crear objeto con los participantes
             const participants = {};
             
@@ -388,24 +480,29 @@ class ChatApp {
                 email: this.currentUser.email,
                 photoURL: currentUserData?.imageProfile || null,
                 role: 'admin',
-                joined: firebase.firestore.FieldValue.serverTimestamp()
+                joined: firebase.firestore.FieldValue.serverTimestamp(),
+                deleted: false,
+                deletedAt: null
             };
-
+    
             // Añadir participantes seleccionados
             for (const userId of this.selectedGroupUsers) {
                 const userData = await this.getUserData(userId);
                 if (userData) {
+                    participantsArray.push({ uid: userId, deleted: false });
                     participants[userId] = {
                         uid: userId,
                         name: userData.name || userData.email,
                         email: userData.email,
                         photoURL: userData.imageProfile || null,
                         role: 'member',
-                        joined: firebase.firestore.FieldValue.serverTimestamp()
+                        joined: firebase.firestore.FieldValue.serverTimestamp(),
+                        deleted: false,
+                        deletedAt: null
                     };
                 }
             }
-
+    
             // Crear el grupo en Firestore
             const groupData = {
                 type: 'group',
@@ -414,11 +511,18 @@ class ChatApp {
                 createdBy: this.currentUser.uid,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                participantsArray: participantsArray, // Nuevo campo
                 participants: participants,
                 lastMessage: null
             };
-
+    
             const groupRef = await this.db.collection('chats').add(groupData);
+    
+ // Limpiar los backdrops modal que puedan quedar
+ const backdrops = document.getElementsByClassName('modal-backdrop');
+ while(backdrops.length > 0) {
+     backdrops[0].parentNode.removeChild(backdrops[0]);
+ }
 
             await loadingToast.close();
             this.usersModal.hide();
@@ -427,13 +531,82 @@ class ChatApp {
                 photoURL: groupImageUrl,
                 type: 'group'
             });
-
+    
             Swal.fire('¡Éxito!', 'Grupo creado correctamente', 'success');
-
+    
         } catch (error) {
             console.error('Error al crear grupo:', error);
             Swal.fire('Error', error.message, 'error');
         }
+    }
+    
+    // Y la función loadChats modificada:
+    async loadChats() {
+        if (this.chatsListener) this.chatsListener();
+    
+        try {
+            this.chatsListener = this.db
+                .collection('chats')
+                .where('participantsArray', 'array-contains', { uid: this.currentUser.uid, deleted: false })
+                .orderBy('updatedAt', 'desc')
+                .onSnapshot(async snapshot => {
+                    this.chatList.innerHTML = '';
+                    
+                    if (snapshot.empty) {
+                        this.showEmptyMessage();
+                        return;
+                    }
+    
+                    // Filtrar chats
+                    for (const doc of snapshot.docs) {
+                        const chatData = doc.data();
+                        const userParticipant = chatData.participants[this.currentUser.uid];
+                        
+                        // Si el chat no está eliminado para el usuario actual
+                        if (!userParticipant.deleted) {
+                            // Si es un grupo, mostrarlo siempre
+                            if (chatData.type === 'group') {
+                                this.renderChatItem(doc.id, chatData);
+                            } else {
+                                // Para chats individuales, verificar si hay mensajes
+                                const messagesQuery = await this.db
+                                    .collection(`chats/${doc.id}/messages`)
+                                    .limit(1)
+                                    .get();
+    
+                                if (!messagesQuery.empty || chatData.lastMessage) {
+                                    this.renderChatItem(doc.id, chatData);
+                                }
+                            }
+                        }
+                    }
+    
+                    // Verificar si después del filtrado no hay chats para mostrar
+                    if (this.chatList.children.length === 0) {
+                        this.showEmptyMessage();
+                    }
+                }, error => {
+                    console.error("Error loading chats:", error);
+                    this.chatList.innerHTML = `
+                        <div class="error-message">
+                            <i class="fas fa-exclamation-circle"></i>
+                            <p>Error al cargar los chats</p>
+                        </div>
+                    `;
+                });
+        } catch (error) {
+            console.error("Error setting up chat listener:", error);
+        }
+    }
+    
+    showEmptyMessage() {
+        this.chatList.innerHTML = `
+            <div class="no-chats-message">
+                <i class="fas fa-comments"></i>
+                <p>No tienes conversaciones aún</p>
+                <small>Haz clic en el botón + para comenzar un chat</small>
+            </div>
+        `;
     }
 
     async showNewGroupParticipantsModal() {
@@ -794,59 +967,7 @@ confirmEditParticipantSelection() {
         });
     }
 
-        async createChat(otherUser) {
-            try {
-                const participantsId = [this.currentUser.uid, otherUser.uid].sort().join('_');
-                
-                // Buscar chat existente
-                const existingChatQuery = await this.db
-                    .collection('chats')
-                    .where('participantsId', '==', participantsId)
-                    .get();
-        
-                if (!existingChatQuery.empty) {
-                    return existingChatQuery.docs[0].ref;
-                }
-        
-                // Obtener datos del usuario actual
-                const currentUserDoc = await this.db.collection('usuarios').doc(this.currentUser.uid).get();
-                const currentUserData = currentUserDoc.data();
-        
-                // Crear nuevo chat
-                const chatData = {
-                    type: 'direct',
-                    participantsId: participantsId,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    lastMessage: null,
-                    participants: {
-                        [this.currentUser.uid]: {
-                            uid: this.currentUser.uid,
-                            name: currentUserData.name || this.currentUser.email,
-                            email: this.currentUser.email,
-                            photoURL: currentUserData.imageProfile || null,
-                            role: currentUserData.userType || 'member',
-                            online: true,
-                            lastRead: firebase.firestore.FieldValue.serverTimestamp()
-                        },
-                        [otherUser.uid]: {
-                            uid: otherUser.uid,
-                            name: otherUser.name,
-                            email: otherUser.email,
-                            photoURL: otherUser.photoURL || otherUser.imageProfile || null,
-                            role: otherUser.userType || 'member',
-                            online: otherUser.online || false,
-                            lastRead: null
-                        }
-                    }
-                };
-        
-                return await this.db.collection('chats').add(chatData);
-            } catch (error) {
-                console.error('Error en createChat:', error);
-                throw error;
-            }
-        }
+  
     
         async openChat(chatId, chatInfo = null) {
             try {
@@ -929,13 +1050,20 @@ confirmEditParticipantSelection() {
     
         renderChatItem(chatId, chatData) {
             try {
+                // Verificar si el chat está eliminado para el usuario actual
+                const currentUserParticipant = chatData.participantsArray?.find(p => p.uid === this.currentUser.uid);
+                if (currentUserParticipant?.deleted) {
+                    return; // No renderizar chats eliminados
+                }
+        
                 let name, photoURL, online;
+                const deletedAt = currentUserParticipant?.deletedAt;
         
                 if (chatData.type === 'group') {
                     // Para grupos
                     name = chatData.name;
                     photoURL = chatData.imageUrl;
-                    online = false; // Los grupos no tienen estado "online"
+                    online = false;
                 } else {
                     // Para chats individuales
                     const otherParticipantId = Object.keys(chatData.participants)
@@ -952,8 +1080,19 @@ confirmEditParticipantSelection() {
                     online = otherParticipant.online;
                 }
         
-                const lastMessageTime = chatData.lastMessage?.timestamp 
-                    ? this.formatTime(chatData.lastMessage.timestamp)
+                // Manejar el último mensaje considerando la fecha de eliminación
+                let lastMessage = chatData.lastMessage;
+                if (deletedAt && lastMessage && lastMessage.timestamp) {
+                    const lastMessageDate = lastMessage.timestamp.toDate();
+                    const deletedDate = deletedAt.toDate();
+                    
+                    if (lastMessageDate < deletedDate) {
+                        lastMessage = null; // No mostrar mensajes anteriores a la eliminación
+                    }
+                }
+        
+                const lastMessageTime = lastMessage?.timestamp 
+                    ? this.formatTime(lastMessage.timestamp)
                     : '';
         
                 // Avatar
@@ -970,9 +1109,9 @@ confirmEditParticipantSelection() {
                         <div class="chat-info">
                             <h2>${name}</h2>
                             <p class="last-message">
-                                ${chatData.type === 'group' && chatData.lastMessage ? 
-                                    `${chatData.lastMessage.senderName}: ${this.formatLastMessage(chatData.lastMessage)}` :
-                                    this.formatLastMessage(chatData.lastMessage)}
+                                ${chatData.type === 'group' && lastMessage ? 
+                                    `${lastMessage.senderName}: ${this.formatLastMessage(lastMessage)}` :
+                                    this.formatLastMessage(lastMessage)}
                             </p>
                         </div>
                         <div class="chat-meta">
@@ -985,13 +1124,23 @@ confirmEditParticipantSelection() {
                 `;
         
                 this.chatList.insertAdjacentHTML('beforeend', template);
+                
+                // Agregar evento de click
                 const chatItem = this.chatList.lastElementChild;
-                chatItem.addEventListener('click', () => this.openChat(chatId));
+                chatItem.addEventListener('click', () => {
+                    // Si el chat fue eliminado y hay nuevos mensajes, mostrar desde la fecha de eliminación
+                    if (deletedAt) {
+                        this.openChat(chatId, { deletedAt });
+                    } else {
+                        this.openChat(chatId);
+                    }
+                });
         
             } catch (error) {
                 console.error('Error rendering chat item:', error);
             }
         }
+        
         
         updateChatHeader(chatInfo) {
             const isGroup = chatInfo.type === 'group';
@@ -1044,9 +1193,9 @@ confirmEditParticipantSelection() {
                                         <i class="fas fa-sign-out-alt"></i> Salir del grupo
                                     </a></li>
                                 ` : `
-                                    <li><a class="dropdown-item text-danger" href="#" id="blockUser">
-                                        <i class="fas fa-ban"></i> Bloquear usuario
-                                    </a></li>
+                                         <li><a class="dropdown-item text-danger" href="#" id="deleteChat">
+                            <i class="fas fa-trash"></i> Eliminar conversación
+                        </a></li>
                                 `}
                             </ul>
                         </div>
@@ -1094,10 +1243,171 @@ confirmEditParticipantSelection() {
                             this.confirmLeaveGroup(chatInfo.id);
                         });
                     }
+
+                  
+                }
+
+                const eliminarChat = header.querySelector('#deleteChat');
+                if (eliminarChat) {
+                    eliminarChat.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.confirmDeleteChat(chatInfo.id);
+                    });
                 }
             }
         }
 
+
+
+    
+
+        async confirmLeaveGroup(chatId) {
+            try {
+                const chatRef = this.db.collection('chats').doc(chatId);
+                const chatDoc = await chatRef.get();
+                const chatData = chatDoc.data();
+                
+                // Verificar si el usuario es admin
+                const isAdmin = chatData.participants[this.currentUser.uid].role === 'admin';
+                
+                let message = 'Al salir del grupo, se eliminará la conversación para ti.';
+                if (isAdmin) {
+                    message += ' Como eres administrador, se asignará un nuevo administrador antes de tu salida.';
+                }
+        
+                const result = await Swal.fire({
+                    title: '¿Salir del grupo?',
+                    text: message,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Salir',
+                    cancelButtonText: 'Cancelar'
+                });
+        
+                if (result.isConfirmed) {
+                    await this.leaveGroup(chatId);
+                }
+            } catch (error) {
+                console.error('Error al confirmar salida del grupo:', error);
+                Swal.fire('Error', 'No se pudo procesar la solicitud', 'error');
+            }
+        }
+        
+        async leaveGroup(chatId) {
+            try {
+                // Mostrar loading
+                Swal.fire({
+                    title: 'Procesando...',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+        
+                const chatRef = this.db.collection('chats').doc(chatId);
+                const chatDoc = await chatRef.get();
+                const chatData = chatDoc.data();
+        
+                const currentUserIsAdmin = chatData.participants[this.currentUser.uid].role === 'admin';
+                const participants = chatData.participants;
+                const participantsArray = chatData.participantsArray;
+        
+                // Si es admin, asignar nuevo admin
+                if (currentUserIsAdmin) {
+                    const activeParticipants = Object.entries(participants)
+                        .filter(([uid, data]) => !data.deleted && uid !== this.currentUser.uid);
+        
+                    if (activeParticipants.length > 0) {
+                        // Seleccionar el primer participante activo como nuevo admin
+                        const [newAdminId] = activeParticipants[0];
+                        participants[newAdminId].role = 'admin';
+        
+                        // Crear mensaje del sistema sobre el cambio de admin
+                        await this.db.collection(`chats/${chatId}/messages`).add({
+                            type: 'system',
+                            text: `${participants[this.currentUser.uid].name} dejó el grupo. ${participants[newAdminId].name} es el nuevo administrador.`,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                } else {
+                    // Mensaje del sistema para participante normal
+                    await this.db.collection(`chats/${chatId}/messages`).add({
+                        type: 'system',
+                        text: `${participants[this.currentUser.uid].name} dejó el grupo.`,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+        
+                // Marcar como eliminado para el usuario actual
+                participants[this.currentUser.uid].deleted = true;
+                participants[this.currentUser.uid].deletedAt = firebase.firestore.FieldValue.serverTimestamp();
+        
+                // Actualizar participantsArray
+                const updatedParticipantsArray = participantsArray.map(p => {
+                    if (p.uid === this.currentUser.uid) {
+                        return { ...p, deleted: true };
+                    }
+                    return p;
+                });
+        
+                // Verificar si todos han eliminado el chat
+                const allDeleted = Object.values(participants).every(p => p.deleted);
+        
+                if (allDeleted) {
+                    // Eliminar todo el grupo
+                    const messagesRef = this.db.collection(`chats/${chatId}/messages`);
+                    const messages = await messagesRef.get();
+                    
+                    const batch = this.db.batch();
+                    messages.docs.forEach(doc => {
+                        batch.delete(doc.ref);
+                    });
+                    
+                    batch.delete(chatRef);
+                    await batch.commit();
+                } else {
+                    // Actualizar el documento del chat
+                    await chatRef.update({
+                        participants: participants,
+                        participantsArray: updatedParticipantsArray,
+                        participantsCount: Object.values(participants).filter(p => !p.deleted).length,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+        
+                // Cerrar el chat actual y actualizar la UI
+                if (this.currentChat === chatId) {
+                    this.currentChat = null;
+                    if (window.innerWidth <= 768) {
+                        document.querySelector('.chat-container').classList.remove('chat-active');
+                    }
+                    const chatMainHeader = document.querySelector('.chat-main-header');
+                    const messagesContainer = document.querySelector('.messages-container');
+                    if (chatMainHeader) chatMainHeader.innerHTML = '';
+                    if (messagesContainer) messagesContainer.innerHTML = '';
+                }
+        
+                // Actualizar la lista de chats
+                await this.loadChats();
+        
+                await Swal.fire({
+                    icon: 'success',
+                    title: 'Has salido del grupo',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+        
+            } catch (error) {
+                console.error('Error al salir del grupo:', error);
+                await Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo completar la acción'
+                });
+            }
+        }
 
         // Función para mostrar los participantes del grupo
         async showGroupParticipants(chatId) {
@@ -1526,9 +1836,7 @@ setupMobileUI() {
     // Manejar clicks en los chats para móvil
     this.chatList.addEventListener('click', (e) => {
         const chatItem = e.target.closest('.chat-item');
-        if (chatItem && window.innerWidth <= 768) {
-            this.hideSidebar();
-        }
+      
     });
 
     if (window.innerWidth <= 768) {
@@ -1590,30 +1898,7 @@ setupMobileUI() {
        
 
     // Modificar el loadMessages para mostrar el estado inicial
-    async loadMessages(chatId) {
-        if (this.messageListener) this.messageListener();
-    
-        // Limpiar mensajes anteriores
-        this.messagesContainer.innerHTML = '';
-    
-        // Mostrar mensaje de bienvenida si no hay mensajes
-        this.messageListener = this.db
-            .collection(`chats/${chatId}/messages`)
-            .orderBy('timestamp', 'desc')
-            .limit(50)
-            .onSnapshot(snapshot => {
-                if (snapshot.empty) {
-                    this.showWelcomeMessage();
-                } else {
-                    const messages = [];
-                    snapshot.forEach(doc => {
-                        messages.unshift({ id: doc.id, ...doc.data() });
-                    });
-                    this.renderMessages(messages);
-                }
-            });
-    }
-    
+ 
     showWelcomeMessage() {
         const template = `
             <div class="welcome-message">
@@ -1639,64 +1924,176 @@ setupMobileUI() {
         });
     }
 
-    async loadChats() {
-        if (this.chatsListener) this.chatsListener();
+   
     
+    showNoChatsMessage() {
+        this.chatList.innerHTML = `
+            <div class="no-chats-message">
+                <i class="fas fa-comments"></i>
+                <p>No tienes conversaciones aún</p>
+                <small>Haz clic en el botón + para comenzar un chat</small>
+            </div>
+        `;
+    }
+    
+    showErrorMessage() {
+        this.chatList.innerHTML = `
+            <div class="error-message">
+                <i class="fas fa-exclamation-circle"></i>
+                <p>Error al cargar los chats</p>
+            </div>
+        `;
+    }
+
+    async deleteChat(chatId) {
         try {
-            this.chatsListener = this.db
-                .collection('chats')
-                .where(`participants.${this.currentUser.uid}.uid`, '==', this.currentUser.uid)
-                .orderBy('updatedAt', 'desc')
-                .onSnapshot(async snapshot => {
-                    this.chatList.innerHTML = ''; // Limpiar lista actual
-                    
-                    if (snapshot.empty) {
-                        // Mostrar mensaje cuando no hay chats
-                        this.chatList.innerHTML = `
-                            <div class="no-chats-message">
-                                <i class="fas fa-comments"></i>
-                                <p>No tienes conversaciones aún</p>
-                                <small>Haz clic en el botón + para comenzar un chat</small>
-                            </div>
-                        `;
-                        return;
-                    }
+           
     
-                    // Procesar cada chat
-                    snapshot.forEach(doc => {
-                        this.renderChatItem(doc.id, doc.data());
-                    });
-                }, error => {
-                    console.error("Error loading chats:", error);
-                    this.chatList.innerHTML = `
-                        <div class="error-message">
-                            <i class="fas fa-exclamation-circle"></i>
-                            <p>Error al cargar los chats</p>
-                        </div>
-                    `;
+            // Mostrar loading
+            Swal.fire({
+                title: 'Eliminando conversación...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+    
+            const chatRef = this.db.collection('chats').doc(chatId);
+            const chatDoc = await chatRef.get();
+            
+            if (!chatDoc.exists) {
+                throw new Error('Chat no encontrado');
+            }
+    
+            const chatData = chatDoc.data();
+            const participants = chatData.participants;
+            
+            // Marcar como eliminado para el usuario actual
+            participants[this.currentUser.uid].deleted = true;
+            participants[this.currentUser.uid].deletedAt = firebase.firestore.FieldValue.serverTimestamp();
+    
+            // Actualizar también el participantsArray
+            const participantsArray = chatData.participantsArray.map(p => {
+                if (p.uid === this.currentUser.uid) {
+                    return { ...p, deleted: true };
+                }
+                return p;
+            });
+    
+            // Verificar si todos los participantes han eliminado el chat
+            const allDeleted = Object.values(participants).every(p => p.deleted);
+    
+            if (allDeleted) {
+                // Eliminar todos los mensajes
+                const messagesRef = this.db.collection(`chats/${chatId}/messages`);
+                const messages = await messagesRef.get();
+                
+                const batch = this.db.batch();
+                messages.docs.forEach(doc => {
+                    batch.delete(doc.ref);
                 });
+                
+                // Eliminar el documento del chat
+                batch.delete(chatRef);
+                await batch.commit();
+            } else {
+                // Solo actualizar el estado de eliminación
+                await chatRef.update({
+                    participants: participants,
+                    participantsArray: participantsArray
+                });
+            }
+    
+            // Cerrar el chat actual
+            if (this.currentChat === chatId) {
+                this.currentChat = null;
+                // Si estamos en móvil, volver a la lista de chats
+                if (window.innerWidth <= 768) {
+                    document.querySelector('.chat-container').classList.remove('chat-active');
+                }
+                // Limpiar el contenido del chat
+                const chatMainHeader = document.querySelector('.chat-main-header');
+                const messagesContainer = document.querySelector('.messages-container');
+                if (chatMainHeader) chatMainHeader.innerHTML = '';
+                if (messagesContainer) messagesContainer.innerHTML = '';
+            }
+    
+            // Actualizar la lista de chats
+            await this.loadChats();
+    
+            // Mostrar mensaje de éxito
+            await Swal.fire({
+                icon: 'success',
+                title: 'Eliminado',
+                text: 'La conversación ha sido eliminada',
+                timer: 1500,
+                showConfirmButton: false
+            });
+    
         } catch (error) {
-            console.error("Error setting up chat listener:", error);
+            console.error('Error al eliminar chat:', error);
+            await Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo eliminar la conversación'
+            });
         }
     }
+
+async loadMessages(chatId) {
+    if (this.messageListener) this.messageListener();
+
+    try {
+        const chatRef = this.db.collection('chats').doc(chatId);
+        const chatDoc = await chatRef.get();
+        const chatData = chatDoc.data();
+        const userParticipant = chatData.participants[this.currentUser.uid];
+        const deletedAt = userParticipant.deletedAt;
+
+        this.messageListener = this.db
+            .collection(`chats/${chatId}/messages`)
+            .orderBy('timestamp', 'desc')
+            .limit(50)
+            .onSnapshot(snapshot => {
+                if (snapshot.empty) {
+                    this.showWelcomeMessage();
+                } else {
+                    const messages = [];
+                    snapshot.forEach(doc => {
+                        const messageData = doc.data();
+                        // Solo incluir mensajes posteriores a la fecha de eliminación
+                        if (!deletedAt || messageData.timestamp > deletedAt) {
+                            messages.unshift({ id: doc.id, ...messageData });
+                        }
+                    });
+                    this.renderMessages(messages);
+                }
+            });
+    } catch (error) {
+        console.error('Error loading messages:', error);
+    }
+}
+
+confirmDeleteChat(chatId) {
+    Swal.fire({
+        title: '¿Eliminar conversación?',
+        text: 'Los mensajes se eliminarán solo para ti. La otra persona seguirá viendo la conversación.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            this.deleteChat(chatId);
+        }
+    });
+}
     
   
     
-    // Método auxiliar para formatear el último mensaje
-    formatLastMessage(lastMessage) {
-        if (!lastMessage) return 'No hay mensajes';
-        
-        switch (lastMessage.type) {
-            case 'text':
-                return this.truncateText(lastMessage.content, 30);
-            case 'image':
-                return '📷 Imagen';
-            case 'file':
-                return '📎 Archivo';
-            default:
-                return 'Mensaje';
-        }
-    }
+    
     
     // Método para truncar texto largo
     truncateText(text, maxLength) {
@@ -1704,15 +2101,21 @@ setupMobileUI() {
         return text.substring(0, maxLength) + '...';
     }
   
-
- 
-
     renderMessages(messages) {
-        // Usar DocumentFragment para mejor rendimiento
         const fragment = document.createDocumentFragment();
         let lastSenderId = null;
+        let currentDate = null;
         
         messages.forEach((message, index) => {
+            const messageDate = message.timestamp.toDate();
+            const dateString = this.getDateString(messageDate);
+            
+            if (dateString !== currentDate) {
+                const dateSeparator = this.createDateSeparator(dateString);
+                fragment.appendChild(dateSeparator);
+                currentDate = dateString;
+            }
+    
             const isSent = message.senderId === this.currentUser.uid;
             const showAvatar = !isSent && lastSenderId !== message.senderId;
             
@@ -1720,14 +2123,16 @@ setupMobileUI() {
             messageElement.className = `message ${isSent ? 'sent' : 'received'}`;
             
             messageElement.innerHTML = `
-                ${showAvatar ? `
-                    <div class="message-avatar">
-                        ${message.senderPhoto 
-                            ? `<img src="${message.senderPhoto}" alt="${message.senderName}" 
-                                 onerror="this.onerror=null; this.src='../img/default-avatar.png';">` 
-                            : this.createInitialsAvatar(message.senderName)}
-                    </div>
-                ` : ''}
+                <div class="${isSent ? '' : 'message-avatar-container'}">
+                    ${!isSent ? `
+                        <div class="message-avatar ${showAvatar ? 'visible' : 'invisible'}">
+                            ${message.senderPhoto 
+                                ? `<img src="${message.senderPhoto}" alt="${message.senderName}" 
+                                     onerror="this.onerror=null; this.src='../img/default-avatar.png';">` 
+                                : this.createInitialsAvatar(message.senderName)}
+                        </div>
+                    ` : ''}
+                </div>
                 <div class="message-wrapper">
                     ${!isSent && showAvatar ? `<span class="sender">${message.senderName}</span>` : ''}
                     <div class="message-content">
@@ -1746,6 +2151,65 @@ setupMobileUI() {
         this.messagesContainer.innerHTML = '';
         this.messagesContainer.appendChild(fragment);
         this.scrollToBottom();
+    }
+    
+    // Métodos auxiliares para las fechas
+    getDateString(date) {
+        const now = new Date();
+        const yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+        
+        if (this.isSameDay(date, now)) {
+            return 'Hoy';
+        }
+        
+        if (this.isSameDay(date, yesterday)) {
+            return 'Ayer';
+        }
+        
+        if (this.isThisWeek(date)) {
+            return this.getDayName(date);
+        }
+        
+        return this.formatDate(date);
+    }
+    
+    isSameDay(date1, date2) {
+        return date1.getDate() === date2.getDate() &&
+               date1.getMonth() === date2.getMonth() &&
+               date1.getFullYear() === date2.getFullYear();
+    }
+    
+    isThisWeek(date) {
+        const now = new Date();
+        const weekStart = new Date(now);
+        weekStart.setDate(now.getDate() - now.getDay());
+        return date >= weekStart;
+    }
+    
+    getDayName(date) {
+        const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+        return days[date.getDay()];
+    }
+    
+    formatDate(date) {
+        const months = [
+            'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+            'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+        ];
+        
+        return `${date.getDate()} de ${months[date.getMonth()]} de ${date.getFullYear()}`;
+    }
+    
+    createDateSeparator(dateString) {
+        const separator = document.createElement('div');
+        separator.className = 'message-date-separator';
+        separator.innerHTML = `
+            <div class="date-content">
+                <span>${dateString}</span>
+            </div>
+        `;
+        return separator;
     }
 
     async sendMessage() {
@@ -1999,9 +2463,67 @@ setupMobileUI() {
                             </a>
                         </div>
                     </div>`;
-                
+    
+                    case 'prospecto_share':
+                        try {
+                            const data = JSON.parse(message.content);
+                            return `
+                                <div class="message-prospecto">
+                                    <div class="prospecto-header">
+                                        <div class="prospecto-badge">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span>Prospecto Compartido</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="prospecto-content">
+                                        <div class="prospecto-title">
+                                            ${data.preview.title}
+                                        </div>
+                                        
+                                        <div class="prospecto-details">
+                                            <div class="detail-item">
+                                                <i class="fas fa-hashtag"></i>
+                                                <span>Folio: ${data.preview.folio}</span>
+                                            </div>
+                                            <div class="detail-item">
+                                                <i class="fas fa-phone"></i>
+                                                <span>${data.preview.telefono}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="prospecto-footer">
+                                        <a href="${data.url}" target="_blank" class="view-details-btn">
+                                            <span>Ver detalles</span>
+                                            <i class="fas fa-external-link-alt"></i>
+                                        </a>
+                                    </div>
+                                </div>`;
+                        } catch (error) {
+                            console.error('Error al formatear mensaje de prospecto:', error);
+                            return 'Error al mostrar el prospecto';
+                        }
             default:
                 return message.content;
+        }
+    }
+    
+    // Método auxiliar para formatear el último mensaje
+    formatLastMessage(lastMessage) {
+        if (!lastMessage) return 'No hay mensajes';
+        
+        switch (lastMessage.type) {
+            case 'text':
+                return this.truncateText(lastMessage.content, 30);
+            case 'image':
+                return '📷 Imagen';
+            case 'file':
+                return '📎 Archivo';
+            case 'prospecto_share':
+                return '👤 Compartió un prospecto';
+            default:
+                return 'Mensaje';
         }
     }
     

@@ -7,9 +7,11 @@
 	<meta name="description" content="Sistema de gestión de prospectos y seguimiento de eventos para JASSO">
 	<meta name="author" content="JASSO">
 	<meta name="keywords" content="jasso, eventos, bodas, xv años, gestión, prospectos, seguimiento, cotizaciones, paquetes, salón de eventos">
-	
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 
-    <title>Inicio | JASSO</title>
+    <title>Chat | JASSO</title>
     <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
@@ -310,24 +312,74 @@ body {
   margin-right: 8px;
 }
 
-/* Message Input */
+/* Estilos base del input */
 .message-input-container {
-  display: flex;
-  align-items: center;
-  padding: 16px 24px;
-  background-color: var(--bg-white);
-  border-top: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 16px 24px;
+    background-color: var(--bg-white);
+    border-top: 1px solid var(--border-color);
 }
 
 .message-input-container input {
-  flex: 1;
-  padding: 12px 16px;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  margin: 0 12px;
-  background-color: var(--bg-gray);
+    flex: 1;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    margin: 0 12px;
+    background-color: var(--bg-gray);
+    /* Prevenir zoom en iOS */
+    font-size: 16px;
+    -webkit-appearance: none;
+    appearance: none;
 }
 
+/* Ajustes para móvil */
+@media (max-width: 768px) {
+    .chat-container {
+        padding-bottom: calc(60px + env(safe-area-inset-bottom, 20px));
+    }
+
+    .message-input-container {
+        position: fixed;
+        bottom: env(safe-area-inset-bottom, 0);
+        left: 0;
+        right: 0;
+        width: 100%;
+        background-color: var(--bg-white);
+        z-index: 1000;
+        padding: 12px 16px;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom, 20px));
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        /* Asegurar que Safari lo muestre */
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+
+    .messages-container {
+        padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+        /* Asegurar que el contenido no se oculte detrás del input */
+        margin-bottom: env(safe-area-inset-bottom, 20px);
+    }
+}
+
+/* Ajustes específicos para Safari */
+@supports (-webkit-touch-callout: none) {
+    .message-input-container {
+        /* Asegurar que el input sea visible en Safari */
+        bottom: 0;
+        padding-bottom: calc(12px + env(safe-area-inset-bottom, 20px));
+        /* Forzar la capa de hardware */
+        -webkit-transform: translateZ(0);
+        transform: translateZ(0);
+    }
+
+    .chat-main {
+        /* Ajustar el espacio para Safari */
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+}
 .attachment-btn,
 .send-btn {
   width: 40px;
@@ -371,26 +423,7 @@ body {
   background: #94A3B8;
 }
 
-@media (max-width: 768px) {
-    .chat-container {
-        padding-bottom: 60px; /* Ajusta este valor según la altura de la barra de navegación */
-    }
 
-    .message-input-container {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background-color: var(--bg-white);
-        z-index: 1000;
-        padding: 8px 16px;
-        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .messages-container {
-        padding-bottom: 80px; /* Asegura que los mensajes no queden detrás del input */
-    }
-}
 /* Estilos para la lista de usuarios en el modal */
 .users-list {
   max-height: 60vh;
@@ -1247,8 +1280,200 @@ body, html {
 }
 
 
+.message-date-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 16px 0;
+    position: relative;
+    z-index: 1;
+}
+
+.date-content {
+    background-color: rgba(225, 225, 225, 0.95);
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    color: #4A5568;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Ajustes para mensajes alrededor del separador */
+.message-date-separator + .message {
+    margin-top: 16px;
+}
+
+.message + .message-date-separator {
+    margin-top: 24px;
+}
 
 
+
+
+/* Estilos para el mensaje de prospecto */
+.message-prospecto {
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 300px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.2s ease;
+}
+
+.message-prospecto:hover {
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+
+/* Header del prospecto */
+.prospecto-header {
+    padding: 12px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.prospecto-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.prospecto-badge i {
+    color: #2196F3;
+    font-size: 16px;
+}
+
+.prospecto-badge span {
+    color: #616161;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Contenido del prospecto */
+.prospecto-content {
+    padding: 16px;
+}
+
+.prospecto-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #212121;
+    margin-bottom: 12px;
+}
+
+.prospecto-details {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #616161;
+    font-size: 13px;
+}
+
+.detail-item i {
+    width: 16px;
+    color: #757575;
+    text-align: center;
+}
+
+/* Footer del prospecto */
+.prospecto-footer {
+    padding: 12px;
+    background: #f8f9fa;
+    border-top: 1px solid #e0e0e0;
+}
+
+.view-details-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 16px;
+    background: #2196F3;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+}
+
+.view-details-btn:hover {
+    background: #1976D2;
+    color: white;
+    text-decoration: none;
+}
+
+.view-details-btn i {
+    font-size: 12px;
+}
+
+/* Estilos específicos para mensajes enviados/recibidos */
+.message.sent .message-prospecto {
+    background: #E3F2FD;
+    border-color: #BBDEFB;
+}
+
+.message.sent .prospecto-header,
+.message.sent .prospecto-footer {
+    background: #BBDEFB;
+    border-color: #90CAF9;
+}
+
+.message.received .message-prospecto {
+    background: #ffffff;
+}
+
+/* Estilos para modo oscuro (opcional) */
+@media (prefers-color-scheme: dark) {
+    .message-prospecto {
+        background: #1e1e1e;
+        border-color: #333;
+    }
+
+    .prospecto-header,
+    .prospecto-footer {
+        background: #252525;
+        border-color: #333;
+    }
+
+    .prospecto-title {
+        color: #000000;
+    }
+
+    .prospecto-badge span,
+    .detail-item {
+        color: #aaa;
+    }
+
+    .view-details-btn {
+        background: #1976D2;
+    }
+
+    .view-details-btn:hover {
+        background: #1565C0;
+    }
+
+    .message.sent .message-prospecto {
+        background: #0d47a1;
+        border-color: #1565C0;
+    }
+
+    .message.sent .prospecto-header,
+    .message.sent .prospecto-footer {
+        background: #1565C0;
+        border-color: #1976D2;
+    }
+}
       </style>
 </head>
 <body>

@@ -1045,3 +1045,79 @@ document.getElementById("pasoAnterior").addEventListener("click", () => {
     }
   });
   
+
+
+// Función para marcar como visto un prospecto compartido
+async function marcarProspectoComoVisto(prospectoCompartidoId) {
+    try {
+        const currentUser = firebase.auth().currentUser;
+        if (!currentUser) return;
+
+        const prospectoCompartidoRef = firebase.firestore()
+            .collection('prospectoCompartidos')
+            .doc(prospectoCompartidoId);
+
+        const doc = await prospectoCompartidoRef.get();
+        if (!doc.exists) return;
+
+        const data = doc.data();
+        const index = data.uidDestino.indexOf(currentUser.uid);
+        
+        if (index !== -1 && !data.vistos[index]) {
+            // Actualizar el array de vistos
+            const newVistos = [...data.vistos];
+            newVistos[index] = true;
+
+            await prospectoCompartidoRef.update({
+                vistos: newVistos
+            });
+        }
+    } catch (error) {
+        console.error('Error al marcar prospecto como visto:', error);
+    }
+}
+
+
+  // En la página de prospectos, modificar el listener para usar el ID
+document.addEventListener('DOMContentLoaded', async function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const action = urlParams.get('action');
+    const prospectoId = urlParams.get('id'); // Este será el ID real del prospecto
+
+    const prospectoCompartidoId = urlParams.get('prospectoCompartidoId');
+
+    if (action === 'openProspecto' && prospectoId) {
+        try {
+
+
+               // Si viene de un prospecto compartido, marcarlo como visto
+               if (prospectoCompartidoId) {
+                await marcarProspectoComoVisto(prospectoCompartidoId);
+            }
+            // Obtener los datos del prospecto usando el ID
+            const prospectoDoc = await db.collection('prospectos2').doc(prospectoId).get();
+            
+            if (prospectoDoc.exists) {
+                const prospectoData = prospectoDoc.data();
+                
+                // Obtener el nombre del asesor
+                let nombreAsesor = "Sin asignar";
+                if (prospectoData.asesor) {
+                    const asesorDoc = await db.collection('usuarios').doc(prospectoData.asesor).get();
+                    if (asesorDoc.exists) {
+                        nombreAsesor = asesorDoc.data().name || "Sin asignar";
+                    }
+                }
+
+                // Abrir el modal usando la función existente
+                await mostrarModalProspecto(prospectoData, prospectoId, nombreAsesor);
+            } else {
+                console.error('Prospecto no encontrado');
+                mostrarAlerta('Prospecto no encontrado', 'error');
+            }
+        } catch (error) {
+            console.error('Error al abrir el prospecto:', error);
+            mostrarAlerta('Error al cargar el prospecto', 'error');
+        }
+    }
+});

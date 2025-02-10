@@ -65,1463 +65,314 @@
 	<link rel="stylesheet" href="css/loading.css">
 	<link rel="stylesheet" href="css/prospectos/prospectos.css">
 	<link rel="stylesheet" href="css/prospectos/modal.css">
+    <link rel="stylesheet" href="css/prospectos/seguimiento.css">
     <link rel="stylesheet" href="css/userPic.css">
 	<link href="css/app.css" rel="stylesheet">
-	<style>
 
 
-html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-}
+    <style>
 
 
-
-/* Estilos generales del contenido */
-.content {
-    padding: 2rem;
-    background: #f8f9fc;
-}
-
-/* Título principal */
-.h3 {
-    color: #1e2330;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    font-size: 1.75rem;
-}
-
-/* Estilos de la tarjeta */
-.card {
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.04);
-    background: white;
-    margin-bottom: 2rem;
-}
-
-.card-header {
-    background: white;
-    border-bottom: 1px solid #f1f3f9;
-    padding: 1.5rem;
-    border-radius: 16px 16px 0 0 !important;
-}
-
-/* Formulario de filtros */
-.form-label {
-    color: #6b7280;
-    font-size: 0.875rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-.form-control, .form-select {
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 0.625rem 1rem;
-    font-size: 0.95rem;
-    transition: all 0.2s ease;
-    background-color: #f9fafb;
-}
-
-.form-control:focus, .form-select:focus {
-    border-color: #2d3456;
-    box-shadow: 0 0 0 3px rgba(45, 52, 86, 0.1);
-    background-color: white;
-}
-
-/* Botones */
-.btn-primary {
-    background: #1e2330;
-    border: none;
-    border-radius: 12px;
-    padding: 0.625rem 1.25rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.btn-primary:hover {
-    background: #2d3456;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(45, 52, 86, 0.15);
-}
-
-
-/* Estilos base de la tabla */
-.table-responsive {
-    border-radius: 12px;
-    background: white;
-    padding: 0;
-    overflow-x: auto;
-    min-width: 100%;
-}
-
-.table {
-    margin: 0;
-    border-collapse: separate;
-    border-spacing: 0;
-    width: 100%;
-}
-
-/* Encabezados */
-.table thead th {
-    background: #f8f9fc;
-    color: #4a5568;
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 1rem;
-    border-bottom: 2px solid #e5e7eb;
-    white-space: nowrap;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-/* Celdas del cuerpo */
-.table tbody td {
-    padding: 1rem;
-    color: #2d3748;
-    font-size: 0.95rem;
-    border-bottom: 1px solid #f1f3f9;
-    vertical-align: middle;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 0;
-    background-color: inherit; /* Importante para el hover */
-}
-
-/* Valores por defecto */
-.table tbody td.text-muted {
-    color: #a0aec0 !important;
-    font-weight: 400;
-}
-
-/* Efectos hover en la tabla */
-.table tbody tr {
-    transition: background-color 0.2s ease;
-    position: relative;
-}
-
-.table tbody tr:hover {
-    background-color: #f8f9fc;
-}
-
-/* Estilo zebra */
-.table tbody tr:nth-child(even) {
-    background-color: #fafbfc;
-}
-
-.table tbody tr:nth-child(even):hover {
-    background-color: #f8f9fc;
-}
-
-/* Manejo específico del hover para la columna de nombre */
-.table tbody td:nth-child(2) {
-    position: relative;
-}
-
-
-
-
-/* Anchos de columnas */
-.table th:nth-child(1), .table td:nth-child(1) { width: 150px; min-width: 150px; }
-.table th:nth-child(2), .table td:nth-child(2) { width: 300px; min-width: 300px; }
-.table th:nth-child(3), .table td:nth-child(3) { width: 200px; min-width: 200px; }
-.table th:nth-child(4), .table td:nth-child(4) { width: 250px; min-width: 250px; }
-.table th:nth-child(5), .table td:nth-child(5) { width: 200px; min-width: 200px; }
-.table th:nth-child(6), .table td:nth-child(6) { width: 250px; min-width: 250px; }
-.table th:nth-child(7), .table td:nth-child(7) { width: 200px; min-width: 200px; }
-
-/* Scrollbar personalizado */
-.table-responsive::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-}
-
-.table-responsive::-webkit-scrollbar-track {
-    background: #f1f3f9;
-    border-radius: 3px;
-}
-
-.table-responsive::-webkit-scrollbar-thumb {
-    background: #cbd5e0;
-    border-radius: 3px;
-}
-
-.table-responsive::-webkit-scrollbar-thumb:hover {
-    background: #a0aec0;
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .table thead th,
-    .table tbody td {
-        font-size: 0.875rem;
-        padding: 0.75rem;
-    }
-}
-
-
-.card-header {
-    padding: 1.5rem;
-    background: white;
-    border-bottom: 1px solid #f1f3f9;
-}
-
-.header-content {
+.chat-item {
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
     align-items: center;
-    gap: 1rem;
-}
-
-.search-section {
-    flex: 1;
-    max-width: 800px;
-}
-
-.search-container {
-    display: flex;
-    gap: 1rem;
-    width: 100%;
-}
-
-.search-box {
-    position: relative;
-    flex: 1;
-}
-
-.search-icon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6b7280;
-    font-size: 0.9rem;
-}
-
-.search-input {
-    width: 100%;
-    padding: 0.75rem 1rem 0.75rem 2.5rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    background: #f9fafb;
-    transition: all 0.2s ease;
-}
-
-.search-input:focus {
-    background: white;
-    border-color: #2d3456;
-    box-shadow: 0 0 0 3px rgba(45, 52, 86, 0.1);
-    outline: none;
-}
-
-.filter-box {
-    width: 140px;
-    min-width: 140px;
-}
-
-.filter-select {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    background: #f9fafb;
-    transition: all 0.2s ease;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
-.filter-select:focus {
-    border-color: #2d3456;
-    box-shadow: 0 0 0 3px rgba(45, 52, 86, 0.1);
-    outline: none;
+.chat-item:hover {
+    background-color: #f8f9fa;
 }
 
-.btn-create {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1.5rem;
-    background: #1e2330;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    white-space: nowrap;
-}
-
-.btn-create:hover {
-    background: #2d3456;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(45, 52, 86, 0.15);
-    color: white;
-}
-
-.btn-create i {
-    font-size: 0.9rem;
-}
-
-/* Responsive Design */
-@media (max-width: 768px) {
-    .header-content {
-        flex-direction: column;
-        gap: 1rem;
-    }
-
-    .search-section {
-        width: 100%;
-        max-width: none;
-    }
-
-    .search-container {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    .filter-box {
-        width: 100%;
-        min-width: 100%;
-    }
-
-    .action-container {
-        width: 100%;
-    }
-
-    .btn-create {
-        width: 100%;
-        justify-content: center;
-    }
-}
-
-/* Ajustes para pantallas muy pequeñas */
-@media (max-width: 480px) {
-    .card-header {
-        padding: 1rem;
-    }
-
-    .search-input,
-    .filter-select {
-        padding: 0.625rem 1rem;
-        font-size: 0.9rem;
-    }
-
-    .search-input {
-        padding-left: 2.25rem;
-    }
-
-    .btn-create {
-        padding: 0.625rem 1rem;
-        font-size: 0.9rem;
-    }
-}
-
-/* Ajustes para pantallas medianas */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .search-section {
-        max-width: 600px;
-    }
-
-    .filter-box {
-        width: 120px;
-        min-width: 120px;
-    }
-}
-
-
-
-
-
-
-
-/* Estilos para el tooltip del asesor */
-.asesor-hover {
+.chat-avatar {
     position: relative;
-    cursor: pointer;
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
 }
 
-.asesor-profile-card {
-    position: absolute;
-    top: calc(100% + 10px);
-    left: 50%;
-    transform: translateX(-50%);
-    width: 280px;
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    padding: 1.5rem;
-    visibility: hidden;
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 1060;
-}
-
-.asesor-hover:hover .asesor-profile-card {
-    visibility: visible;
-    opacity: 1;
-}
-
-/* Flecha del tooltip */
-.asesor-profile-card::before {
-    content: '';
-    position: absolute;
-    top: -8px;
-    left: 50%;
-    transform: translateX(-50%);
-    border-width: 0 8px 8px 8px;
-    border-style: solid;
-    border-color: transparent transparent white transparent;
-}
-
-/* Header del perfil */
-.profile-header {
-    position: relative;
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: center;
-}
-
-.profile-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background-color: #f1f3f9;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    font-weight: 600;
-    color: white;
-    background-size: cover;
-    background-position: center;
-    border: 3px solid white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.profile-status {
-    position: absolute;
-    bottom: 0;
-    right: 85px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: 2px solid white;
-}
-
-.profile-status.online {
-    background-color: #10B981;
-}
-
-.profile-status.offline {
-    background-color: #6B7280;
-}
-
-/* Información del perfil */
-.profile-info {
-    text-align: center;
-}
-
-.profile-name {
-    margin: 0;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #1F2937;
-}
-
-.profile-phone {
-    margin: 0.25rem 0 1rem;
-    font-size: 0.9rem;
-    color: #6B7280;
-}
-
-/* Estadísticas */
-.profile-stats {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #E5E7EB;
-}
-
-.stat-item {
-    text-align: center;
-}
-
-.stat-item i {
-    color: #6B7280;
-    font-size: 1.2rem;
-    margin-bottom: 0.25rem;
-}
-
-.stat-value {
-    display: block;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #1F2937;
-}
-
-.stat-label {
-    display: block;
-    font-size: 0.8rem;
-    color: #6B7280;
-}
-
-
-
-.modal-loading {
-    position: fixed;
-    top: 0;
-    left: 0;
+.chat-avatar img {
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1060;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-.modal-loading.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-.modal-loading-content {
-    background: white;
-    padding: 2rem;
-    border-radius: 16px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
-
-.modal-loading .spinner {
-    width: 40px;
-    height: 40px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #3b82f6;
     border-radius: 50%;
-    margin: 0 auto 1rem;
-    animation: spin 1s linear infinite;
-}
-
-.modal-loading p {
-    color: #1e293b;
-    margin: 0;
-    font-size: 0.95rem;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-
-
-/* Contenedor para el botón crear */
-.action-container {
-    margin-bottom: 1rem;
-}
-
-/* Estilos del botón crear */
-.btn-create {
-    background: #1e2330;
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    border: none;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-weight: 500;
-    transition: all 0.2s ease;
-    text-decoration: none;
-}
-
-.btn-create:hover {
-    background: #2d3456;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(45, 52, 86, 0.15);
-    color: white;
-}
-
-.btn-create i {
-    font-size: 1.1rem;
-}
-
-/* Estilos para móvil */
-@media (max-width: 768px) {
-    .action-container {
-        margin: 0;
-        position: fixed;
-        right: 20px; /* Ajustado para la esquina derecha */
-        bottom: 20px;
-        z-index: 1000;
-        width: auto; /* Asegura que el contenedor no se estire */
-        display: block; /* Cambia el display si es necesario */
-    }
-
-    .btn-create {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        padding: 0;
-        justify-content: center;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        background: #1e2330;
-        position: relative; /* Asegura el posicionamiento correcto */
-        display: flex; /* Mantiene el ícono centrado */
-    }
-
-    .btn-create span {
-        display: none;
-    }
-
-    .btn-create i {
-        margin: 0;
-        font-size: 1.5rem;
-    }
-
-    .btn-create:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-
-    /* Efecto de pulso para el botón flotante */
-    @keyframes pulse {
-        0% {
-            box-shadow: 0 0 0 0 rgba(30, 35, 48, 0.7);
-        }
-        70% {
-            box-shadow: 0 0 0 10px rgba(30, 35, 48, 0);
-        }
-        100% {
-            box-shadow: 0 0 0 0 rgba(30, 35, 48, 0);
-        }
-    }
-
-    .btn-create {
-        animation: pulse 2s infinite;
-    }
-
-    /* Ajuste para evitar que el botón tape contenido */
-    body {
-        padding-bottom: 80px;
-    }
-}
-
-/* Tooltip para móvil */
-@media (max-width: 768px) {
-    .btn-create::after {
-        content: 'Crear prospecto';
-        position: absolute;
-        bottom: 100%;
-        right: 0;
-        background: rgba(30, 35, 48, 0.9);
-        color: white;
-        padding: 8px 12px;
-        border-radius: 4px;
-        font-size: 14px;
-        margin-bottom: 8px;
-        white-space: nowrap;
-        opacity: 0;
-        visibility: hidden;
-        transition: all 0.3s ease;
-    }
-
-    .btn-create:active::after {
-        opacity: 1;
-        visibility: visible;
-    }
-}
-
-
-
-
-/* Estilos específicos para el modal de paquetes */
-#paquetesModal .modal-dialog {
-  max-width: 800px;
-  margin: 1.75rem auto;
-}
-
-#paquetesModal .modal-content {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.1);
-}
-
-#paquetesModal .modal-header {
-  border-bottom: 1px solid #e9ecef;
-  padding: 0.75rem 1rem;
-  background-color: #fff;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-#paquetesModal .modal-title {
-  color: #2d3456;
-  font-weight: 600;
-  font-size: 1.1rem;
-}
-
-#paquetesModal .modal-body {
-  padding: 1rem;
-  max-height: 70vh; /* Altura máxima fija */
-  overflow-y: auto; /* Habilita el scroll */
-}
-
-#paquetesContainer .card {
-  transition: transform 0.2s ease-in-out;
-  border: 1px solid #e9ecef;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 0.75rem;
-}
-
-#paquetesContainer .card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-}
-
-#paquetesContainer .card-img-top {
-  height: 150px;
-  object-fit: cover;
-  border-bottom: 1px solid #e9ecef;
-}
-
-#paquetesContainer .card-body {
-  padding: 0.75rem;
-}
-
-#paquetesContainer .card-title {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #2d3456;
-  margin-bottom: 0.4rem;
-  line-height: 1.3;
-}
-
-#paquetesContainer .card-text {
-  font-size: 0.8rem;
-  color: #6c757d;
-  margin-bottom: 0.75rem;
-  line-height: 1.4;
-}
-
-#paquetesContainer .text-primary {
-  color: #2d3456 !important;
-  font-size: 1rem;
-}
-
-#paquetesContainer .btn-primary {
-  background-color: #2d3456;
-  border-color: #2d3456;
-  padding: 0.25rem 0.5rem;
-  font-size: 0.8rem;
-  border-radius: 4px;
-}
-
-#paquetesContainer .btn-primary:hover {
-  background-color: #1e2330;
-  border-color: #1e2330;
-}
-
-/* Grid para 3 tarjetas por fila */
-#paquetesContainer .col-md-6 {
-  flex: 0 0 33.333333%;
-  max-width: 33.333333%;
-  padding: 0.5rem;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  #paquetesModal .modal-dialog {
-    max-width: 95%;
-    margin: 1rem auto;
-  }
-  
-  #paquetesModal .modal-body {
-    max-height: 60vh;
-  }
-  
-  #paquetesContainer .col-md-6 {
-    flex: 0 0 50%;
-    max-width: 50%;
-    padding: 0.4rem;
-  }
-  
-  #paquetesContainer .card-img-top {
-    height: 130px;
-  }
-}
-
-@media (max-width: 576px) {
-  #paquetesContainer .col-md-6 {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
-}
-
-/* Scrollbar customization */
-#paquetesModal .modal-body::-webkit-scrollbar {
-  width: 6px;
-}
-
-#paquetesModal .modal-body::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-#paquetesModal .modal-body::-webkit-scrollbar-thumb {
-  background: #2d3456;
-  border-radius: 3px;
-}
-
-#paquetesModal .modal-body::-webkit-scrollbar-thumb:hover {
-  background: #1e2330;
-}
-
-
-
-
-
-/* Variables globales */
-:root {
-  --primary-color: #2d3456;
-  --secondary-color: #1e2330;
-  --border-color: #e9ecef;
-  --text-color: #2d3456;
-  --background-light: #f8f9fa;
-  --shadow: 0 0 20px rgba(0,0,0,0.1);
-  --transition: all 0.3s ease;
-}
-
-/* Modal principal */
-#pagosModal .modal-dialog {
-  width: 500px !important;
-  max-width: 500px;
-  margin: 1.75rem auto;
-}
-
-#pagosModal .modal-content {
-  border-radius: 12px;
-  box-shadow: var(--shadow);
-  position: relative;
-  height: 600px;
-  background: #fff;
-  border: none;
-}
-
-#pagosModal .modal-header {
-  background-color: var(--primary-color);
-  border-bottom: 1px solid var(--border-color);
-  padding: 1.25rem 1.5rem;
-  border-radius: 12px 12px 0 0;
-}
-
-#pagosModal .modal-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #fff;
-  margin: 0;
-}
-
-#pagosModal .btn-close {
-  color: #fff;
-  opacity: 1;
-  filter: brightness(0) invert(1);
-}
-
-#pagosModal .modal-body {
-  padding: 1.5rem;
-  position: relative;
-}
-
-/* Contenedor de la tabla */
-#pagosModal .table-container {
-  height: 400px;
-  width: 100%;
-  margin: 0 auto;
-  overflow-y: auto;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-/* Estilos de la tabla */
-#pagosModal .table {
-  margin: 0;
-  width: 100%;
-  background: #fff;
-  font-size: 0.95rem;
-}
-
-#pagosModal .table thead {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: var(--primary-color);
-}
-
-#pagosModal .table th {
-  padding: 1rem;
-  font-weight: 600;
-  color: #020202;
-  border: none;
-}
-
-#pagosModal .table td {
-  padding: 0.875rem 1rem;
-  vertical-align: middle;
-  border-bottom: 1px solid var(--border-color);
-}
-
-#pagosModal .table tbody tr:hover {
-  background-color: rgba(45, 52, 86, 0.05);
-}
-
-/* Botones de acción */
-.action-buttons {
-  position: absolute;
-  bottom: 1.5rem;
-  right: 1.5rem;
-  display: flex;
-  gap: 1rem;
-}
-
-.btn-add-payment {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: var(--transition);
-}
-
-.btn-share {
-  background-color: #25D366;
-  color: white;
-  border: none;
-  border-radius: 25px;
-  padding: 0.75rem 1.5rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: var(--transition);
-  box-shadow: 0 3px 6px rgba(37, 211, 102, 0.2);
-}
-
-.btn-share i {
-  font-size: 1.1rem;
-}
-
-/* Efectos hover */
-.btn-add-payment:hover {
-  transform: scale(1.05);
-  background-color: var(--secondary-color);
-}
-
-.btn-share:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(37, 211, 102, 0.3);
-}
-
-/* Mensaje sin pagos */
-.no-payments {
-  padding: 3rem 1.5rem;
-  text-align: center;
-  color: #6c757d;
-}
-
-.no-payments i {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  color: var(--primary-color);
-  opacity: 0.5;
-}
-
-/* Scrollbar personalizado */
-#pagosModal .table-container::-webkit-scrollbar {
-  width: 6px;
-}
-
-#pagosModal .table-container::-webkit-scrollbar-track {
-  background: var(--background-light);
-  border-radius: 3px;
-}
-
-#pagosModal .table-container::-webkit-scrollbar-thumb {
-  background: var(--primary-color);
-  border-radius: 3px;
-}
-
-/* Responsive */
-@media (max-width: 576px) {
-  #pagosModal .modal-dialog {
-    width: 95% !important;
-    margin: 0.5rem auto;
-  }
-
-  #pagosModal .modal-content {
-    height: 90vh;
-  }
-
-  #pagosModal .table-container {
-    height: calc(90vh - 200px);
-  }
-
-  .action-buttons {
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 0.75rem;
-  }
-}
-
-
-/* Botón flotante de agregar */
-.btn-add-payment {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  box-shadow: 0 3px 6px rgba(0,0,0,0.16);
-  padding: 0; /* Elimina el padding */
-  position: relative; /* Para posicionamiento absoluto del ícono */
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex; /* Usar flexbox */
-  align-items: center; /* Centrar verticalmente */
-  justify-content: center; /* Centrar horizontalmente */
-}
-
-/* Estilos específicos para el ícono */
-.btn-add-payment i {
-  font-size: 20px;
-  line-height: 1; /* Resetear line-height */
-  width: auto; /* Eliminar ancho fijo */
-  height: auto; /* Eliminar altura fija */
-  margin: 0; /* Eliminar márgenes */
-  padding: 0; /* Eliminar padding */
-  position: absolute; /* Posicionamiento absoluto */
-  top: 50%; /* Posicionar al centro vertical */
-  left: 50%; /* Posicionar al centro horizontal */
-  transform: translate(-50%, -50%); /* Centrar perfectamente */
-}
-
-/* Efecto hover */
-.btn-add-payment:hover {
-  background-color: var(--secondary-color);
-  transform: scale(1.05);
-}
-
-/* Asegurar que el ícono no se mueva en hover */
-.btn-add-payment:hover i {
-  transform: translate(-50%, -50%); /* Mantener centrado en hover */
-}
-
-
-
-.btn-action-icon {
-    width: 32px;  /* Tamaño fijo del botón */
-    height: 32px; /* Mismo tamaño que el ancho para hacerlo cuadrado */
-    padding: 0;   /* Eliminar padding */
-    border: none; /* Eliminar borde */
-    border-radius: 50%; /* Hacer el botón circular */
-    background-color: transparent; /* Fondo transparente */
-    cursor: pointer;
-    position: relative; /* Para posicionamiento del ícono */
-    display: inline-flex; /* Usar flexbox */
-    align-items: center; /* Centrar verticalmente */
-    justify-content: center; /* Centrar horizontalmente */
-    transition: all 0.2s ease; /* Transición suave para efectos */
-}
-
-.btn-action-icon i {
-    font-size: 14px; /* Tamaño del ícono */
-    line-height: 1; /* Resetear line-height */
-    display: block; /* Asegurar que el ícono sea un bloque */
-    margin: 0; /* Eliminar márgenes */
-}
-
-/* Efectos hover */
-.btn-action-icon:hover {
-    background-color: rgba(0, 0, 0, 0.05); /* Fondo sutil al hover */
-}
-
-/* Estilos específicos para cada tipo de botón si es necesario */
-#btnEditar {
-    color: #4a5568; /* Color para el ícono de editar */
-}
-
-#btnEditar:hover {
-    color: #2d3748; /* Color más oscuro al hover */
-}
-
-/* Para el botón de cerrar */
-.btn-action-icon[aria-label="Close"] {
-    color: #718096; /* Color para el ícono de cerrar */
-}
-
-.btn-action-icon[aria-label="Close"]:hover {
-    color: #4a5568; /* Color más oscuro al hover */
-}
-
-
-/* Contenedor principal de búsqueda */
-.search-container {
-    background: #ffffff;
-    border-radius: 12px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-/* Contenedor de la caja de búsqueda */
-.search-box {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    width: 100%;
-    max-width: 800px;
-}
-
-/* Estilos compartidos para input y select */
-.search-input,
-.filter-select {
-    height: 45px;
-    border: 1.5px solid #e5e7eb;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    color: #1e2330;
-    transition: all 0.2s ease;
-    background: #f9fafb;
-}
-
-/* Estilos específicos para el select de filtro */
-#filter-type {
-    width: 180px;
-    padding: 0 1rem;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%236B7280' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
-    background-color: #ffffff;
-}
-
-/* Contenedor del input de búsqueda */
-.search-input-container {
-    position: relative;
-    flex: 1;
-}
-
-/* Input de búsqueda */
-#search-input {
-    width: 100%;
-    padding: 0 1rem 0 2.5rem;
-}
-
-/* Select para valores */
-#select-value {
-    flex: 1;
-    padding: 0 1rem;
-    background-color: #ffffff;
-}
-
-/* Icono de búsqueda */
-.search-icon {
-    position: absolute;
-    left: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #6b7280;
-    font-size: 0.9rem;
-    pointer-events: none;
-}
-
-/* Estados hover */
-.search-input:hover,
-.filter-select:hover {
-    border-color: #cbd5e0;
-    background-color: #ffffff;
-}
-
-/* Estados focus */
-.search-input:focus,
-.filter-select:focus {
-    border-color: #2d3456;
-    background-color: #ffffff;
-    box-shadow: 0 0 0 3px rgba(45, 52, 86, 0.1);
-    outline: none;
-}
-
-/* Estilos para las opciones del select */
-.filter-select option {
-    padding: 8px;
-    font-size: 0.95rem;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .search-box {
-        flex-direction: column;
-        gap: 0.75rem;
-    }
-
-    #filter-type {
-        width: 100%;
-    }
-
-    .search-input-container,
-    #select-value {
-        width: 100%;
-    }
-}
-
-/* Ajustes para pantallas muy pequeñas */
-@media (max-width: 480px) {
-    .search-container {
-        padding: 0.75rem;
-    }
-
-    .search-input,
-    .filter-select {
-        height: 40px;
-        font-size: 0.9rem;
-    }
-
-    .search-icon {
-        font-size: 0.85rem;
-    }
-}
-
-/* Animaciones suaves */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.search-input-container,
-#select-value {
-    animation: fadeIn 0.3s ease-out;
-}
-
-/* Mejoras visuales adicionales */
-.search-container {
-    background: linear-gradient(to right, #ffffff, #f9fafb);
-}
-
-.filter-select {
-    cursor: pointer;
-}
-
-/* Estilo para placeholder */
-.search-input::placeholder {
-    color: #9ca3af;
-    opacity: 0.8;
-}
-
-/* Efecto de transición suave para cambios */
-.search-box > * {
-    transition: all 0.3s ease;
-}
-
-
-
-/* Estilo para el contador */
-.counter-badge {
-    background: linear-gradient(135deg, #2d3456 0%, #1e2330 100%);
-    border-radius: 20px;
-    padding: 0.4rem 1rem;
-    margin-left: 1rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.9rem;
-    color: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-}
-
-.counter-badge:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-
-.counter-badge i {
-    font-size: 0.8rem;
-    opacity: 0.8;
-}
-
-#total-prospectos {
-    font-weight: 600;
-}
-
-/* Animación para el contador */
-@keyframes fadeInRight {
-    from {
-        opacity: 0;
-        transform: translateX(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-.counter-badge {
-    animation: fadeInRight 0.5s ease-out;
-}
-
-
-.publications-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 1rem;
-    padding: 1rem;
-}
-
-.publication-card {
-    background: #fff;
-    border-radius: 8px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border: 1px solid #eee;
-}
-
-.publication-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-}
-
-.publication-card.selected {
-    border: 2px solid #4CAF50;
-}
-
-.publication-image {
-    position: relative;
-    width: 100%;
-    height: 160px;
-    overflow: hidden;
-}
-
-.publication-image img {
-    width: 100%;
-    height: 100%;
     object-fit: cover;
 }
 
-.selection-overlay {
+.status-indicator {
     position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(255,255,255,0.9);
-    width: 24px;
-    height: 24px;
+    bottom: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.2s ease;
+    background-color: #ccc;
+    border: 2px solid white;
 }
 
-.publication-card.selected .selection-overlay {
-    opacity: 1;
-    background: #4CAF50;
-    color: white;
+.status-indicator.online {
+    background-color: #4CAF50;
 }
 
-.publication-info {
+.chat-info {
+    flex: 1;
+}
+
+.chat-info h6 {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.chat-info small {
+    color: #666;
+    font-size: 12px;
+}
+
+.chat-meta {
+    text-align: right;
+}
+
+.chat-meta small {
+    color: #999;
+    font-size: 11px;
+}
+
+.search-container {
+    position: relative;
     padding: 12px;
 }
 
-.publication-title {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin: 0 0 8px 0;
-    color: #333;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.search-container input {
+    width: 100%;
+    padding: 8px 32px 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
 }
 
-.publication-details {
+.search-container i {
+    position: absolute;
+    right: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+
+.card-preview-content {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .preview-header {
+        background: #f8f9fa;
+        padding: 8px 12px;
+        border-bottom: 1px solid #e0e0e0;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .preview-header i {
+        color: #6c757d;
+    }
+
+    .preview-body {
+        padding: 12px;
+    }
+
+    .preview-body h6 {
+        margin: 0 0 8px 0;
+        font-weight: 600;
+    }
+
+    .preview-details {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-bottom: 12px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: #666;
+        font-size: 0.9em;
+    }
+
+    .detail-item i {
+        width: 16px;
+        text-align: center;
+        color: #6c757d;
+    }
+
+    .preview-link {
+        text-align: right;
+    }
+
+    .preview-link .btn {
+        font-size: 0.85em;
+    }
+
+
+    
+    .share-prospect-modal .chat-list-container {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    font-size: 0.8rem;
-    color: #666;
+    gap: 8px;
+    padding: 8px;
 }
 
-.publication-details span {
+.share-prospect-modal .chat-list-item {
     display: flex;
     align-items: center;
-    gap: 5px;
+    padding: 12px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.publication-details i {
-    font-size: 0.75rem;
-    width: 14px;
+.share-prospect-modal .chat-list-item:hover {
+    background: #f8f9fa;
+    border-color: #dee2e6;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.category, .location {
+.share-prospect-modal .chat-item-avatar {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    margin-right: 12px;
+}
+
+.share-prospect-modal .chat-item-avatar img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background-color: #f8f9fa;
+}
+
+.share-prospect-modal .status-dot {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ccc;
+    border: 2px solid #fff;
+}
+
+.share-prospect-modal .status-dot.online {
+    background: #28a745;
+}
+
+.share-prospect-modal .chat-item-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.share-prospect-modal .chat-item-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: #212529;
+    margin-bottom: 2px;
+}
+
+.share-prospect-modal .chat-item-last-message,
+.share-prospect-modal .chat-item-members,
+.share-prospect-modal .chat-item-email {
+    font-size: 13px;
+    color: #6c757d;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-
-
-
-/* Estilos específicos para el modal de anticipo */
-.anticipo-modal .anticipo-buttons {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 20px;
-    padding-top: 15px;
-    border-top: 1px solid #e5e7eb;
+.share-prospect-modal .chat-item-meta {
+    font-size: 12px;
+    color: #adb5bd;
+    margin-left: 12px;
 }
 
-.anticipo-modal .btn {
-    display: inline-flex;
+.share-prospect-modal .empty-state {
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
+    padding: 32px 16px;
+    color: #6c757d;
+    text-align: center;
 }
 
-.anticipo-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 15px;
+.share-prospect-modal .empty-state i {
+    font-size: 24px;
+    margin-bottom: 8px;
+    opacity: 0.5;
 }
 
-/* Mantén el resto de tus estilos existentes para contract-status, status-badge, etc. */
-	</style>
+.share-prospect-modal .modal-body {
+    padding: 16px;
+}
+
+.share-prospect-modal .nav-tabs {
+    margin-bottom: 16px;
+}
+
+.share-prospect-modal .tab-content {
+    min-height: 300px;
+}
+
+
+.share-prospect-modal .search-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.share-prospect-modal .search-container input {
+    width: 100%;
+    padding: 8px 32px 8px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.share-prospect-modal .search-container input:focus {
+    outline: none;
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.share-prospect-modal .clear-search {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 4px;
+    cursor: pointer;
+    color: #6c757d;
+    display: none;
+}
+
+.share-prospect-modal .clear-search:hover {
+    color: #dc3545;
+}
+
+    
+  
+    </style>
 </head>
 
 <body>
@@ -1624,6 +475,8 @@ html, body {
                                                     <option value="lugar">Lugar</option>
                                                     <option value="tipo_evento">Tipo de Evento</option>
                                                     <option value="asesor">Asesor</option>
+                                                    <option value="compartidos">Compartidos</option>
+                                                    <option value="todos">Todos</option>
                                                 </select>
                                                 
                                                 <!-- Input para búsqueda por texto -->
@@ -1688,9 +541,19 @@ html, body {
                         </small>
                     </div>
                     <div class="modal-actions">
-                        <button type="button" class="btn-action-icon" id="btnEditar">
+                        <!-- Botón Editar -->
+                        <button type="button" class="btn-action-icon" id="btnEditar" title="Editar">
                             <i class="fas fa-pencil-alt"></i>
                         </button>
+                        
+                        <!-- Botón Enviar Prospecto (avioncito) -->
+                        <button type="button" class="btn-action-icon" id="btnEnviarProspecto" title="Enviar Prospecto">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                        
+                   
+                        
+                        <!-- Botón Cerrar -->
                         <button type="button" class="btn-action-icon" data-bs-dismiss="modal" aria-label="Close">
                             <i class="fas fa-times"></i>
                         </button>
@@ -1999,6 +862,60 @@ html, body {
 
 
 
+    <div class="modal fade share-prospect-modal" id="selectChatModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Compartir Prospecto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="search-container">
+                        <input type="text" class="form-control" placeholder="Buscar...">
+                    </div>
+    
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="recientes-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#recientes" type="button" role="tab">
+                                Recientes
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="grupos-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#grupos" type="button" role="tab">
+                                Grupos
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="contactos-tab" data-bs-toggle="tab" 
+                                    data-bs-target="#contactos" type="button" role="tab">
+                                Contactos
+                            </button>
+                        </li>
+                    </ul>
+    
+                    <div class="tab-content" style="min-height: 200px;">
+                        <div class="tab-pane fade show active" id="recientes" role="tabpanel">
+                            <div id="recentesList" style="padding: 10px;"></div>
+                        </div>
+                        <div class="tab-pane fade" id="grupos" role="tabpanel">
+                            <div id="gruposList" style="padding: 10px;"></div>
+                        </div>
+                        <div class="tab-pane fade" id="contactos" role="tabpanel">
+                            <div id="contactosList" style="padding: 10px;"></div>
+                        </div>
+                    </div>
+    
+                    <div class="preview-card">
+                        <h6>Vista previa</h6>
+                        <div class="prospect-card"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 	<script src="js/app.js"></script>
 	<script src="js/sesion-checked.js"></script>
@@ -2013,6 +930,9 @@ html, body {
    <script src="js/prospectos/paso5.js"></script>
     <script src="js/prospectos/paso7.js"></script>
 	<script src="js/prospectos/listarProspectos.js"></script>
+    <script src="js/prospectos/enviarProspecto.js"></script>
+
+ 
 </body>
 
 </html>

@@ -8,27 +8,133 @@ function initializeApp() {
 }
 
 // Configuración de la funcionalidad de búsqueda
-
 function setupSearchFunctionality() {
     let searchTimeout;
 
-    const updateSearchInterface = () => {
+    const updateSearchInterface = async () => {
         const filterType = elements.filterType.value;
         const isTextSearch = filterType === 'name' || filterType === 'telefono_prospecto';
+        const isCompartidos = filterType === 'compartidos';
+        const isTodos = filterType === 'todos';
 
+        // Ocultar/mostrar elementos según el tipo de filtro
         elements.textSearch.style.display = isTextSearch ? 'flex' : 'none';
-        elements.selectValue.style.display = isTextSearch ? 'none' : 'flex';
+        elements.selectValue.style.display = (!isTextSearch && !isCompartidos && !isTodos) ? 'flex' : 'none';
+
+        // Limpiar la tabla antes de mostrar nuevos resultados
+        elements.prospectosLista.innerHTML = "";
 
         if (isTextSearch) {
             elements.searchInput.placeholder = `Buscar por ${filterType === 'name' ? 'nombre' : 'teléfono'}...`;
-            elements.searchInput.value = ''; // Limpiar input al cambiar
+            elements.searchInput.value = '';
+            resetAndLoadProspectos();
+        } else if (isCompartidos) {
+            await loadCompartidosConmigo();
+        } else if (isTodos) {
+            resetAndLoadProspectos();
         } else {
-            elements.selectValue.value = ''; // Limpiar select al cambiar
+            elements.selectValue.value = '';
             updateSelectOptions(filterType);
+            resetAndLoadProspectos();
         }
+    };
 
-        // Resetear la búsqueda al cambiar el tipo
-        resetAndLoadProspectos();
+    const loadCompartidosConmigo = async () => {
+        showLoader();
+
+        try {
+            const currentUser = firebase.auth().currentUser;
+            if (!currentUser) {
+                hideLoader();
+                return;
+            }
+
+            const compartidosSnapshot = await db.collection('prospectoCompartidos')
+                .where('uidDestino', 'array-contains', currentUser.uid)
+                .where('activo', '==', true)
+                .orderBy('fecha', 'desc')
+                .get();
+
+            if (compartidosSnapshot.empty) {
+                elements.prospectosLista.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            No se han compartido prospectos contigo.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            const prospectosIds = new Set();
+            compartidosSnapshot.docs.forEach(doc => {
+                const data = doc.data();
+                data.idProspectos?.forEach(id => prospectosIds.add(id));
+            });
+
+            const prospectos = [];
+            for (const prospectoId of prospectosIds) {
+                const prospectoDoc = await db.collection('prospectos2').doc(prospectoId).get();
+                if (prospectoDoc.exists) {
+                    const prospectoData = prospectoDoc.data();
+                    const compartidoInfo = compartidosSnapshot.docs.find(doc => 
+                        doc.data().idProspectos.includes(prospectoId)
+                    );
+                    
+                    if (compartidoInfo) {
+                        const compartidoData = compartidoInfo.data();
+                        const usuarioOrigenDoc = await db.collection('usuarios')
+                            .doc(compartidoData.uidOrigen)
+                            .get();
+                        const usuarioOrigen = usuarioOrigenDoc.data();
+
+                        prospectos.push({
+                            ...prospectoData,
+                            id: prospectoDoc.id,
+                            compartidoPor: usuarioOrigen?.name || 'Usuario',
+                            fechaCompartido: compartidoData.fecha,
+                            compartidoId: compartidoInfo.id
+                        });
+                    }
+                }
+            }
+
+            prospectos.sort((a, b) => b.fechaCompartido - a.fechaCompartido);
+
+            const rows = await Promise.all(prospectos.map(async prospecto => {
+                const nAsesor = await obtenerNombreAsesor(prospecto.asesor);
+                const row = crearFilaProspecto(prospecto, prospecto.id, nAsesor);
+                
+                const compartidoInfo = document.createElement('div');
+                compartidoInfo.className = 'compartido-info';
+                compartidoInfo.innerHTML = `
+                    <small class="text-muted">
+                        <i class="fas fa-share-alt"></i>
+                         ${prospecto.compartidoPor}
+                        (${formatearFecha(prospecto.fechaCompartido)})
+                    </small>
+                `;
+                
+                const lastCell = row.lastElementChild;
+                lastCell.appendChild(compartidoInfo);
+                
+                return row;
+            }));
+
+            elements.prospectosLista.innerHTML = '';
+            rows.forEach(row => elements.prospectosLista.appendChild(row));
+        } catch (error) {
+            console.error('Error al cargar prospectos compartidos:', error);
+            elements.prospectosLista.innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center text-danger">
+                        Error al cargar los prospectos compartidos
+                    </td>
+                </tr>
+            `;
+        } finally {
+            hideLoader();
+        }
     };
 
     const handleTextSearch = () => {
@@ -45,7 +151,6 @@ function setupSearchFunctionality() {
             let query = db.collection("prospectos2");
 
             if (filterType === 'name') {
-                // Búsqueda por nombre con relevancia
                 const snapshot = await query.get();
                 const results = snapshot.docs
                     .map(doc => ({
@@ -58,7 +163,6 @@ function setupSearchFunctionality() {
 
                 await mostrarResultadosFiltrados(results);
             } else if (filterType === 'telefono_prospecto') {
-                // Búsqueda por teléfono
                 query = query
                     .orderBy("telefono_prospecto")
                     .startAt(searchValue)
@@ -81,21 +185,18 @@ function setupSearchFunctionality() {
         
         switch (filterType) {
             case 'lugar':
-                // Obtener el nombre del lugar
                 const lugarDoc = await db.collection('lugares').doc(filterValue).get();
                 if (lugarDoc.exists) {
                     query = query.where("pregunta_por", "==", lugarDoc.data().nombreLugar);
                 }
                 break;
             case 'tipo_evento':
-                // Obtener el nombre del evento
                 const eventoDoc = await db.collection('eventos').doc(filterValue).get();
                 if (eventoDoc.exists) {
                     query = query.where("tipo_evento", "==", eventoDoc.data().evento);
                 }
                 break;
             case 'asesor':
-                // Para asesor usamos directamente el ID
                 query = query.where("asesor", "==", filterValue);
                 break;
         }
@@ -147,62 +248,87 @@ function populateSelect(selectId, collectionName, attribute) {
             console.error("Error fetching data: ", error);
         });
 }
+
 // Función para calcular la relevancia de un resultado
 function calculateRelevance(name, searchValue) {
-  if (!name) return 0;
-  
-  const normalizedName = name.toLowerCase();
-  const searchTerms = searchValue.toLowerCase().split(' ');
-  
-  let relevance = 0;
-  
-  // Coincidencia exacta tiene la mayor relevancia
-  if (normalizedName === searchValue) {
-      relevance += 100;
-  }
-  
-  // Coincidencia al inicio del nombre
-  if (normalizedName.startsWith(searchValue)) {
-      relevance += 50;
-  }
-  
-  // Coincidencia de términos individuales
-  searchTerms.forEach(term => {
-      if (normalizedName.includes(term)) {
-          relevance += 25;
-          
-          // Bonus por coincidencia al inicio de una palabra
-          const words = normalizedName.split(' ');
-          if (words.some(word => word.startsWith(term))) {
-              relevance += 15;
-          }
-      }
-  });
-  
-  // Penalización para "Sin Nombre"
-  if (name === "Sin Nombre" || name === "sin nombre") {
-      relevance = Math.max(0, relevance - 50);
-  }
-  
-  return relevance;
+    if (!name) return 0;
+    
+    const normalizedName = name.toLowerCase();
+    const searchTerms = searchValue.toLowerCase().split(' ');
+    
+    let relevance = 0;
+    
+    if (normalizedName === searchValue) {
+        relevance += 100;
+    }
+    
+    if (normalizedName.startsWith(searchValue)) {
+        relevance += 50;
+    }
+    
+    searchTerms.forEach(term => {
+        if (normalizedName.includes(term)) {
+            relevance += 25;
+            
+            const words = normalizedName.split(' ');
+            if (words.some(word => word.startsWith(term))) {
+                relevance += 15;
+            }
+        }
+    });
+    
+    if (name === "Sin Nombre" || name === "sin nombre") {
+        relevance = Math.max(0, relevance - 50);
+    }
+    
+    return relevance;
 }
 
-// Función para mostrar los resultados filtrados
 async function mostrarResultadosFiltrados(results) {
-  elements.prospectosLista.innerHTML = "";
-  
-  if (results.length === 0) {
-      elements.prospectosLista.innerHTML = '<tr><td colspan="7" class="text-center">No se encontraron resultados</td></tr>';
-      return;
-  }
+    elements.prospectosLista.innerHTML = "";
+    
+    if (results.length === 0) {
+        elements.prospectosLista.innerHTML = '<tr><td colspan="7" class="text-center">No se encontraron resultados</td></tr>';
+        return;
+    }
 
-  for (const result of results) {
-      const nombreAsesor = await obtenerNombreAsesor(result.asesor);
-      const row = crearFilaProspecto(result, result.id, nombreAsesor);
-      elements.prospectosLista.appendChild(row);
-  }
+    for (const result of results) {
+        const nombreAsesor = await obtenerNombreAsesor(result.asesor);
+        const row = crearFilaProspecto(result, result.id, nombreAsesor);
+        elements.prospectosLista.appendChild(row);
+    }
 }
 
+// Modificar la función cargarProspectos para manejar el loader
+async function cargarProspectos(query) {
+    if (isLoading) return;
+    
+    isLoading = true;
+    showLoader();
+    
+    try {
+        const snapshot = await query.limit(pageSize).get();
+        
+        if (snapshot.empty) {
+            elements.prospectosLista.innerHTML = '<tr><td colspan="7" class="text-center">No se encontraron resultados</td></tr>';
+            return;
+        }
+
+        elements.prospectosLista.innerHTML = "";
+        
+        currentQuery = query;
+        await actualizarTabla(snapshot.docs, false);
+        loaderContainer.classList.add('hidden');
+        lastVisible = snapshot.docs[snapshot.docs.length - 1];
+       
+    } catch (error) {
+        console.error("Error al cargar prospectos:", error);
+        elements.prospectosLista.innerHTML = '<tr><td colspan="7" class="text-center">Error al cargar los datos</td></tr>';
+    } finally {
+        isLoading = false;
+        hideLoader();
+    }
+}
 // Configuración del scroll infinito
 function setupScrollListener() {
     elements.tableBody.addEventListener("scroll", () => {
@@ -257,41 +383,7 @@ async function actualizarContadorProspectos() {
   }
 }
 
-// Modificar la función cargarProspectos para manejar el loader
-async function cargarProspectos(query) {
-    if (isLoading) return;
-    
-    isLoading = true;
-    showLoader();
-    
-    try {
-        console.log('Iniciando carga de prospectos');
-        const snapshot = await query.limit(pageSize).get();
-        
-        if (snapshot.empty) {
-            elements.prospectosLista.innerHTML = '<tr><td colspan="7" class="text-center">No se encontraron resultados</td></tr>';
-            return;
-        }
 
-        // Limpiar explícitamente la tabla
-        elements.prospectosLista.innerHTML = "";
-        
-        // Log para debugging
-        console.log(`Número de documentos recuperados: ${snapshot.docs.length}`);
-        
-        currentQuery = query;
-        await actualizarTabla(snapshot.docs, false);
-        loaderContainer.classList.add('hidden');
-        lastVisible = snapshot.docs[snapshot.docs.length - 1];
-       
-    } catch (error) {
-        console.error("Error al cargar prospectos:", error);
-        elements.prospectosLista.innerHTML = '<tr><td colspan="7" class="text-center">Error al cargar los datos</td></tr>';
-    } finally {
-        isLoading = false;
-        hideLoader();
-    }
-}
 
 // Modificar cargarMasProspectos también
 async function cargarMasProspectos() {
@@ -360,6 +452,7 @@ function crearFilaProspecto(prospecto, id, nombreAsesor) {
     `;
     return row;
 }
+
 
 async function obtenerNombreAsesor(asesorId) {
     if (!asesorId) return "Sin asesor";
