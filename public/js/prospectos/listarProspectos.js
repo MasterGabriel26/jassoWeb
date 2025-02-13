@@ -4,8 +4,11 @@ let archivoAdjunto = null;
 let pasoActual = 0; // Cambia este valor dependiendo del paso en el que estés
 
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> admin
 // Define formatearFecha in the global scope
 let pasosCompletados = new Set();
 function formatearFecha(fecha) {
@@ -47,6 +50,7 @@ function mostrarAlerta(mensaje, tipo = 'info') {
   }, 3000);
 }
 
+<<<<<<< HEAD
 // Primero, el HTML del botón debe ser así
 const btnContactar = document.getElementById("btnContactar");
 btnContactar.innerHTML = `
@@ -484,10 +488,38 @@ async function mostrarModalPaquetes(telefonoProspecto) {
     </div>
   </div>
 `;
+=======
+
+async function mostrarModalPaquetes(telefonoProspecto) {
+  const modalHTML = `
+      <div class="modal fade" id="paquetesModal" tabindex="-1">
+          <div class="modal-dialog modal-lg modal-dialog-scrollable">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title">Catálogo de Publicaciones</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="publicaciones-grid" id="paquetesContainer">
+                          <!-- Aquí se cargarán las publicaciones dinámicamente -->
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  `;
+
+  // Eliminar modal anterior si existe
+  const modalAnterior = document.getElementById('paquetesModal');
+  if (modalAnterior) {
+      modalAnterior.remove();
+  }
+>>>>>>> admin
 
   // Agregar el modal al DOM
   document.body.insertAdjacentHTML('beforeend', modalHTML);
 
+<<<<<<< HEAD
   // Inicializar el modal
   const modal = new bootstrap.Modal(document.getElementById('paquetesModal'));
 
@@ -542,11 +574,85 @@ function createPaqueteCard(paquete, paqueteId, telefonoProspecto) {
         </div>
       </div>
     </div>
+=======
+  // Agregar estilos
+  addStyles();
+
+  try {
+      // Mostrar loading
+      const paquetesContainer = document.getElementById('paquetesContainer');
+      paquetesContainer.innerHTML = `
+          <div class="loading-container">
+              <div class="spinner-border text-primary" role="status">
+                  <span class="visually-hidden">Cargando...</span>
+              </div>
+          </div>
+      `;
+
+      // Obtener las publicaciones
+      const querySnapshot = await db.collection("publicaciones2").get();
+
+      if (querySnapshot.empty) {
+          paquetesContainer.innerHTML = `
+              <div class="no-results">
+                  <i class="fas fa-inbox fa-2x"></i>
+                  <p>No hay publicaciones disponibles</p>
+              </div>
+          `;
+      } else {
+          paquetesContainer.innerHTML = '';
+          querySnapshot.forEach(doc => {
+              const publicacion = doc.data();
+              const card = createPublicacionCard(publicacion, doc.id, telefonoProspecto);
+              paquetesContainer.appendChild(card);
+          });
+      }
+
+      // Mostrar modal
+      const modal = new bootstrap.Modal(document.getElementById('paquetesModal'));
+      modal.show();
+
+  } catch (error) {
+      console.error("Error al cargar las publicaciones:", error);
+      Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar las publicaciones'
+      });
+  }
+}
+
+function createPublicacionCard(publicacion, publicacionId, telefonoProspecto) {
+  const card = document.createElement('div');
+  card.className = 'publicacion-card';
+  
+  card.innerHTML = `
+      <div class="card-image">
+          <img src="${publicacion.imagen_destacada || 'ruta/imagen-default.jpg'}" 
+               alt="${publicacion.titulo || 'Sin título'}"
+               onerror="this.src='ruta/imagen-default.jpg'">
+      </div>
+      <div class="card-content">
+          <h3 class="card-title">${publicacion.titulo || 'Sin título'}</h3>
+          <div class="card-details">
+              <span class="category">
+                  <i class="fas fa-tag"></i> ${publicacion.categoria || 'Sin categoría'}
+              </span>
+              <span class="location">
+                  <i class="fas fa-map-marker-alt"></i> ${publicacion.lugar || 'Sin ubicación'}
+              </span>
+          </div>
+          <button class="share-button" onclick="enviarPaqueteWhatsApp('${publicacionId}', '${telefonoProspecto}')">
+              <i class="fab fa-whatsapp"></i> Compartir
+          </button>
+      </div>
+>>>>>>> admin
   `;
 
   return card;
 }
 
+<<<<<<< HEAD
 // Función para enviar el paquete por WhatsApp
 async function enviarPaqueteWhatsApp(paqueteId, telefonoProspecto) {
   try {
@@ -865,6 +971,153 @@ btnPagos.onclick = () => mostrarModalPagos(prospecto);
 }
 
 }
+=======
+function addStyles() {
+  const styles = `
+      .publicaciones-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+          gap: 1.5rem;
+          padding: 1.5rem;
+      }
+
+      .publicacion-card {
+          background: #fff;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+          transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .publicacion-card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      }
+
+      .card-image {
+          position: relative;
+          padding-top: 66.67%;
+          overflow: hidden;
+      }
+
+      .card-image img {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          transition: transform 0.3s;
+      }
+
+      .publicacion-card:hover .card-image img {
+          transform: scale(1.05);
+      }
+
+      .card-content {
+          padding: 1.25rem;
+      }
+
+      .card-title {
+          font-size: 1rem;
+          font-weight: 600;
+          margin: 0 0 0.75rem 0;
+          color: #2c3e50;
+          line-height: 1.4;
+      }
+
+      .card-details {
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+      }
+
+      .card-details span {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+          color: #64748b;
+      }
+
+      .share-button {
+          width: 100%;
+          padding: 0.75rem;
+          border: none;
+          border-radius: 6px;
+          background: #25D366;
+          color: white;
+          font-size: 0.875rem;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+          cursor: pointer;
+          transition: background-color 0.2s;
+      }
+
+      .share-button:hover {
+          background: #128C7E;
+      }
+
+      .loading-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 200px;
+      }
+
+      .no-results {
+          text-align: center;
+          padding: 2rem;
+          color: #64748b;
+      }
+  `;
+
+  if (!document.getElementById('publicaciones-styles')) {
+      const styleSheet = document.createElement('style');
+      styleSheet.id = 'publicaciones-styles';
+      styleSheet.textContent = styles;
+      document.head.appendChild(styleSheet);
+  }
+}
+
+async function enviarPaqueteWhatsApp(publicacionId, telefonoProspecto) {
+  try {
+      const aseName = localStorage.getItem('userName');
+      const telefono = telefonoProspecto.replace('+', '');
+      
+      const message = encodeURIComponent(
+          `Hola, tu asesor: ${aseName}, te está invitando a que conozcas más información de esta publicación: https://jassocompany.com/publicaciones/casaAntiguaAteaga.html?id=${publicacionId}&tipo=cliente`
+      );
+      
+      window.open(`https://api.whatsapp.com/send?phone=${telefono}&text=${message}`, '_blank');
+      
+      const modal = bootstrap.Modal.getInstance(document.getElementById('paquetesModal'));
+      modal.hide();
+      
+      Swal.fire({
+          icon: 'success',
+          title: 'Compartido',
+          text: 'La publicación se compartirá por WhatsApp',
+          timer: 2000,
+          showConfirmButton: false
+      });
+      
+  } catch (error) {
+      console.error("Error al compartir:", error);
+      Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo compartir la publicación'
+      });
+  }
+}
+
+
+>>>>>>> admin
 
 function calcularPasoInicial(seguimientoData) {
   // Check each step in order
@@ -916,6 +1169,7 @@ let tempStep5Data = {
   description: "",
 };
 
+<<<<<<< HEAD
 async function mostrarPasoSeguimiento(paso) {
   if (typeof pasosCompletados === "undefined") {
     pasosCompletados = new Set();
@@ -1654,6 +1908,9 @@ async function mostrarPasoSeguimiento(paso) {
     modalInstance.show();
   }
 }
+=======
+
+>>>>>>> admin
 
 // Función auxiliar para obtener las opciones de lugares
 async function obtenerLugaresOptions() {
@@ -1686,6 +1943,7 @@ function updateProgress(progress, text, subtext = '') {
     });
   }
 
+<<<<<<< HEAD
 async function generarCredenciales() {
 
 
@@ -1955,6 +2213,8 @@ async function copiarCredenciales(email, password) {
     alert("Error al copiar las credenciales");
   }
 }
+=======
+>>>>>>> admin
 
 async function guardarConfirmacionCita() {
   const mensajeWhatsApp = document
@@ -2334,6 +2594,7 @@ function mostrarError() {
     `;
 }
 
+<<<<<<< HEAD
 // Estilos CSS actualizados
 
 async function mostrarPublicaciones() {
@@ -2530,6 +2791,9 @@ async function guardarPublicacionesSeleccionadas() {
     alert("Error al procesar las publicaciones seleccionadas");
   }
 }
+=======
+
+>>>>>>> admin
 
 // Función para adjuntar archivo
 // Función para comprimir imagen
@@ -3213,6 +3477,7 @@ function adjuntarArchivoPaso(paso) {
 
 // Primero, necesitamos una variable global para almacenar los archivos
 
+<<<<<<< HEAD
 async function guardarDatosAnticipo() {
   try {
     const fecha = document.getElementById("fecha").value;
@@ -3398,6 +3663,9 @@ async function guardarDatosAnticipo() {
     });
   }
 }
+=======
+
+>>>>>>> admin
 
 function initializeFlatpickr() {
   flatpickr("#fecha-cita", {
@@ -3422,6 +3690,10 @@ function mostrarCalendario(paso) {
   agendarCita(paso);
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> admin
 // Actualizar los datos de los pasos
 const pasosData = [
     {
@@ -3595,6 +3867,7 @@ async function cargarDatosAnticipo() {
   }
 }
 
+<<<<<<< HEAD
 async function verificarPaso5() {
   const descripcion = document.getElementById("descripcion").value.trim();
 
@@ -3695,6 +3968,9 @@ async function verificarPaso5() {
     });
   }
 }
+=======
+
+>>>>>>> admin
 
 // Función auxiliar para mostrar el progreso de carga de archivos (opcional)
 function mostrarProgresoArchivos(progreso) {
@@ -3716,6 +3992,7 @@ function mostrarProgresoArchivos(progreso) {
   });
 }
 
+<<<<<<< HEAD
 // Event Listeners para navegación
 document.getElementById("pasoAnterior").addEventListener("click", () => {
   if (pasoActual > 1) {
@@ -3730,6 +4007,8 @@ document.getElementById("pasoSiguiente").addEventListener("click", () => {
     mostrarPasoSeguimiento(pasoActual);
   }
 });
+=======
+>>>>>>> admin
 
 // Variables globales
 let lastVisible = null;
@@ -3746,6 +4025,7 @@ const elements = {
     tableBody: document.querySelector(".table-responsive")
 };
 
+<<<<<<< HEAD
 // Inicialización cuando el DOM está cargado
 document.addEventListener("DOMContentLoaded", initializeApp);
 
@@ -4141,6 +4421,11 @@ function resetAndLoadProspectos() {
     cargarProspectos(currentQuery);
 }
 
+=======
+
+
+
+>>>>>>> admin
 // Configuración de modales
 function setupModalListeners() {
     const modales = ['prospectoModal', 'seguimientoModal', 'modalMasInformacion'];
@@ -4158,6 +4443,7 @@ function limpiarBackdrop() {
     document.body.classList.remove("modal-open");
 }
 
+<<<<<<< HEAD
 // Función para cargar datos iniciales
 function loadInitialData() {
     resetAndLoadProspectos();
@@ -4267,3 +4553,6 @@ async function obtenerConteoVentas(asesorId) {
       return 0;
   }
 }
+=======
+
+>>>>>>> admin

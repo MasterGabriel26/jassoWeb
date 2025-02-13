@@ -4,28 +4,36 @@ const loaderContainer = document.getElementById("loader");
 
 let galleryImages = [];
 
+
 // Cargar categorías desde Firebase
-function cargarCategorias() {
-  db.collection("galeria")
-    .get()
-    .then((querySnapshot) => {
-      const categorySelect = document.getElementById("imageCategory");
-      const categoriasUnicas = new Set();
+async function cargarCategorias() {
+  const categoriasPermitidas = ["Decoracion", "Eventos", "Vestidos", "Degustacion"];
+  const categorySelect = document.getElementById("imageCategory");
+  
+  // Limpiar opciones existentes
+  categorySelect.innerHTML = '';
 
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        if (data.categoriasDeImagenes) {
-          categoriasUnicas.add(data.categoriasDeImagenes);
-        }
-      });
+  // Verificar y crear documentos para cada categoría si no existen
+  for (const categoria of categoriasPermitidas) {
+    const querySnapshot = await db.collection("galeria")
+      .where("categoriasDeImagenes", "==", categoria)
+      .get();
 
-      categoriasUnicas.forEach((categoria) => {
-        const option = document.createElement("option");
-        option.value = categoria;
-        option.textContent = categoria;
-        categorySelect.appendChild(option);
+    if (querySnapshot.empty) {
+      // Si no existe el documento, lo creamos
+      await db.collection("galeria").add({
+        categoriasDeImagenes: categoria,
+        fecha_create: Date.now(),
+        imagenes: []
       });
-    });
+    }
+
+    // Crear option para el select
+    const option = document.createElement("option");
+    option.value = categoria;
+    option.textContent = categoria;
+    categorySelect.appendChild(option);
+  }
 }
 
 // Mostrar/ocultar el input para nueva categoría
@@ -400,20 +408,8 @@ $(document).ready(function () {
                 return;
             }
 
-            if (category === "nueva") {
-                const newCategory = document.getElementById("newCategory").value;
-                if (!newCategory) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Por favor ingrese el nombre de la nueva categoría'
-                    });
-                    return;
-                }
-                addImage(file, "nueva");
-            } else {
-                addImage(file, category);
-            }
+           
+            addImage(file, category);
         });
     }
 

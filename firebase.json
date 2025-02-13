@@ -15,6 +15,7 @@
     "trailingSlash": false
   },
   "functions": {
-    "source": "functions"
+    "source": "functions",
+    "runtime": "nodejs20"
   }
 }
