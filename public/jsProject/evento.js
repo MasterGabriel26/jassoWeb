@@ -116,7 +116,7 @@ async function handleFormSubmit(event) {
         const eventData = await getEventData(imageURL);
         
         // Guardar los datos en Firestore
-        await db.collection('eventosHTML').add(eventData);
+        await db.collection('eventosHTML').add(eventData); 
 
         alertify.alert('Éxito', 'Evento creado correctamente.', function () {
             location.reload();
