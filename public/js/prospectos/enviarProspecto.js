@@ -837,7 +837,7 @@ function createProspectoMessage(prospectoData, currentUser, prospectoCompartidoI
         folio: prospectoData.folio
     }).toString();
 
-    const baseUrl = window.location.origin;
+    const baseUrl = "https://jassocompany.com";
     const prospectoUrl = `${baseUrl}/page-prospectos.html?${params}`;
 
     return {

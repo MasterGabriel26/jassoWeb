@@ -26,6 +26,14 @@ function generateMenu() {
                     <span class="align-middle">Galería</span>
                 </a>
             </li>
+
+
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="/chat/chat.html">
+                    <i class="align-middle" data-feather="message-circle"></i>
+                    <span class="align-middle">Chat</span>
+                </a>
+            </li>
           
     `;
 

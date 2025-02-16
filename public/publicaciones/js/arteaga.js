@@ -429,82 +429,121 @@ if (data.material_ || data.galeria) {
     }
 
     // Crear lightbox común
-    const lightbox = document.createElement("div");
-    lightbox.className = "lightbox";
-    lightbox.innerHTML = `
-        <span class="lightbox-close">&times;</span>
-        <div class="lightbox-content"></div>
-    `;
-    document.body.appendChild(lightbox);
+ // Crear lightbox con botones de navegación
+const lightbox = document.createElement("div");
+lightbox.className = "lightbox";
+lightbox.innerHTML = `
+    <span class="lightbox-close">&times;</span>
+    <button class="lightbox-nav prev-btn">&lt;</button>
+    <button class="lightbox-nav next-btn">&gt;</button>
+    <div class="lightbox-content"></div>
+`;
+document.body.appendChild(lightbox);
 
-    // Funciones del lightbox
-    const openLightbox = (content) => {
-        const lightboxContent = lightbox.querySelector(".lightbox-content");
-        lightboxContent.innerHTML = content;
-        lightbox.classList.add("active");
-        document.body.classList.add("no-scroll");
-    };
+let currentMediaIndex = 0;
+let mediaArray = [];
 
-    const closeLightbox = () => {
-        lightbox.classList.remove("active");
-        lightbox.querySelector(".lightbox-content").innerHTML = "";
-        document.body.classList.remove("no-scroll");
-    };
+// Función para abrir el lightbox
+const openLightbox = (content, index) => {
+    currentMediaIndex = index;
+    mediaArray = [...document.querySelectorAll('.gallery-item')];
+    
+    const lightboxContent = lightbox.querySelector(".lightbox-content");
+    lightboxContent.innerHTML = content;
+    lightbox.classList.add("active");
+    document.body.classList.add("no-scroll");
+    
+    updateLightboxNavButtons();
+};
 
-    // Configurar eventos del lightbox
-    lightbox.querySelector(".lightbox-close").onclick = closeLightbox;
-    lightbox.onclick = (e) => {
-        if (e.target === lightbox) closeLightbox();
-    };
+// Función para cerrar el lightbox
+const closeLightbox = () => {
+    lightbox.classList.remove("active");
+    lightbox.querySelector(".lightbox-content").innerHTML = "";
+    document.body.classList.remove("no-scroll");
+};
 
-    // Función para crear elementos de galería
-    const createGalleryItem = (medio, container) => {
-        const div = document.createElement("div");
-        div.className = "gallery-item";
+// Función para actualizar los botones de navegación
+const updateLightboxNavButtons = () => {
+    const prevBtn = lightbox.querySelector('.prev-btn');
+    const nextBtn = lightbox.querySelector('.next-btn');
+    
+    prevBtn.style.display = currentMediaIndex > 0 ? 'block' : 'none';
+    nextBtn.style.display = currentMediaIndex < mediaArray.length - 1 ? 'block' : 'none';
+};
 
-        if (medio.tipo === "image" || medio.tipo === "imagen") {
-            const img = document.createElement("img");
-            img.src = medio.url;
-            img.alt = medio.nombre || "Imagen de galería";
-            img.loading = "lazy";
+// Función para navegar entre medios
+const navigateMedia = (direction) => {
+    if (direction === 'next' && currentMediaIndex < mediaArray.length - 1) {
+        currentMediaIndex++;
+    } else if (direction === 'prev' && currentMediaIndex > 0) {
+        currentMediaIndex--;
+    }
 
-            div.onclick = () => {
-                openLightbox(`<img src="${medio.url}" alt="${medio.nombre || "Imagen ampliada"}">`);
-            };
+    const nextMedia = mediaArray[currentMediaIndex];
+    const mediaData = nextMedia.mediaData; // Almacenamos los datos del medio en el elemento
 
-            div.appendChild(img);
-        } 
-        else if (medio.tipo === "video") {
-            const thumbnail = document.createElement("div");
-            thumbnail.className = "video-thumbnail";
-            thumbnail.innerHTML = '<i class="fas fa-play"></i>';
+    let content = '';
+    if (mediaData.tipo === 'image' || mediaData.tipo === 'imagen') {
+        content = `<img src="${mediaData.url}" alt="${mediaData.nombre || 'Imagen ampliada'}">`;
+    } else if (mediaData.tipo === 'video') {
+        content = `
+            <video src="${mediaData.url}" controls autoplay>
+                Tu navegador no soporta el elemento de video.
+            </video>
+        `;
+    }
 
-            div.onclick = () => {
-                openLightbox(`
-                    <video src="${medio.url}" controls autoplay>
-                        Tu navegador no soporta el elemento de video.
-                    </video>
-                `);
-            };
+    lightbox.querySelector('.lightbox-content').innerHTML = content;
+    updateLightboxNavButtons();
+};
 
-            div.appendChild(thumbnail);
-        }
-        else if (medio.tipo === "pdf" || medio.tipo === "application/pdf") {
-            div.className = "gallery-item pdf-item";
-            div.innerHTML = `
-                <div class="pdf-content">
-                    <i class="fas fa-file-pdf pdf-icon"></i>
-                    <span class="pdf-name">${medio.nombre || "Documento PDF"}</span>
-                </div>
-            `;
+// Configurar eventos del lightbox
+lightbox.querySelector(".lightbox-close").onclick = closeLightbox;
+lightbox.querySelector(".prev-btn").onclick = () => navigateMedia('prev');
+lightbox.querySelector(".next-btn").onclick = () => navigateMedia('next');
+lightbox.onclick = (e) => {
+    if (e.target === lightbox) closeLightbox();
+};
 
-            div.onclick = () => {
-                window.open(medio.url, '_blank');
-            };
-        }
+// Modificar la función createGalleryItem para incluir el índice
+const createGalleryItem = (medio, container, index) => {
+    const div = document.createElement("div");
+    div.className = "gallery-item";
+    div.mediaData = medio; // Almacenar los datos del medio en el elemento
 
-        container.appendChild(div);
-    };
+    if (medio.tipo === "image" || medio.tipo === "imagen") {
+        const img = document.createElement("img");
+        img.src = medio.url;
+        img.alt = medio.nombre || "Imagen de galería";
+        img.loading = "lazy";
+
+        div.onclick = () => {
+            openLightbox(`<img src="${medio.url}" alt="${medio.nombre || "Imagen ampliada"}">`, index);
+        };
+
+        div.appendChild(img);
+    } 
+    else if (medio.tipo === "video") {
+        const thumbnail = document.createElement("div");
+        thumbnail.className = "video-thumbnail";
+        thumbnail.innerHTML = '<i class="fas fa-play"></i>';
+
+        div.onclick = () => {
+            openLightbox(`
+                <video src="${medio.url}" controls autoplay>
+                    Tu navegador no soporta el elemento de video.
+                </video>
+            `, index);
+        };
+
+        div.appendChild(thumbnail);
+    }
+
+    container.appendChild(div);
+};
+
+
 
     // Cargar material de apoyo
     if (data.medios && data.medios.length > 0) {
@@ -514,9 +553,10 @@ if (data.material_ || data.galeria) {
     }
 
     // Cargar galería
-    if (data.galeria && data.galeria.length > 0) {
-        data.galeria.forEach(medio => createGalleryItem(medio, galeriaContainer));
-    } else {
+
+if (data.galeria && data.galeria.length > 0) {
+  data.galeria.forEach((medio, index) => createGalleryItem(medio, galeriaContainer, index));
+} else {
         galeriaContainer.innerHTML = "<p>No hay imágenes en la galería</p>";
     }
 }

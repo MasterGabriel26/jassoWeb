@@ -20,9 +20,62 @@
     />
 
     <link rel="stylesheet" href="css/arteaga.css" />
+
+    <style>
+      .back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-decoration: none;
+    z-index: 1000;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.back-button i {
+    font-size: 18px;
+    transition: transform 0.3s ease;
+}
+
+.back-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.05);
+}
+
+.back-button:hover i {
+    transform: translateX(-3px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .back-button {
+        top: 15px;
+        left: 15px;
+        width: 35px;
+        height: 35px;
+    }
+
+    .back-button i {
+        font-size: 16px;
+    }
+}
+    </style>
   </head>
 
   <body>
+    <a href="../index.html" class="back-button">
+      <i class="fas fa-arrow-left"></i>
+  </a>
     <div class="hero-section" id="hero-image">
       <div class="hero-overlay"></div>
       <div class="hero-content">
@@ -342,6 +395,20 @@ document.addEventListener("DOMContentLoaded", function () {
           comisionesCard.style.display = "none";
       }
   });
+
+
+  window.addEventListener('scroll', () => {
+    const backButton = document.querySelector('.back-button');
+    const heroHeight = document.querySelector('.hero-section').offsetHeight;
+    
+    if (window.scrollY > heroHeight - 100) {
+        backButton.style.color = '#333'; // Color oscuro para fondo claro
+        backButton.style.background = 'rgba(255, 255, 255, 0.9)';
+    } else {
+        backButton.style.color = 'white'; // Color claro para fondo oscuro
+        backButton.style.background = 'rgba(255, 255, 255, 0.2)';
+    }
+});
   </script>
 
 
