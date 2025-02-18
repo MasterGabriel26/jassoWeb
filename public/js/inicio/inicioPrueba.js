@@ -312,7 +312,7 @@ function createCarouselCard(post) {
             <i class="far fa-calendar"></i> ${formatearFecha(post.fecha_creacion)}
           </span>
         </div>
-      </div>
+      </div>C
     </div>
   `;
 

@@ -1,280 +1,693 @@
-:root {
-    --primary-color: #405de6;
-    --secondary-color: #5851db;
-    --background-color: #fafafa;
-    --text-color: #262626;
-    --light-text-color: #8e8e8e;
-    --border-color: #dbdbdb;
-    --heart-color: #ed4956;
-}
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background-color: var(--background-color);
-}
-
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-}
-
-.posts {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.post {
-    position: relative;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+.publication-card {
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    background: white;
+    margin-bottom: 20px;
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
-.post:hover {
-    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+.publication-card:hover {
+    transform: translateY(-5px);
 }
 
-.post-image {
+.publication-image {
     width: 100%;
     height: 200px;
     object-fit: cover;
-    cursor: pointer;
 }
 
-.post-content {
-    padding: 15px;
-    flex-grow: 1;
+.publication-content {
+    padding: 20px;
 }
 
-.post-title {
-    font-size: 18px;
+.publication-category {
+    background: #e9ecef;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    color: #495057;
+    display: inline-block;
+    margin-bottom: 10px;
+}
+
+.publication-title {
+    font-size: 1.5em;
     font-weight: bold;
     margin-bottom: 10px;
-    color: var(--text-color);
+    color: #212529;
 }
 
-.post-info {
-    font-size: 14px;
-    color: var(--light-text-color);
-    margin-bottom: 5px;
+.publication-location {
+    color: #6c757d;
+    font-size: 0.9em;
+    margin-bottom: 10px;
 }
 
-.post-description {
-    font-size: 14px;
-    line-height: 1.4;
-    max-height: 60px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
+.publication-date {
+    color: #adb5bd;
+    font-size: 0.8em;
 }
 
-.post-footer {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 10px 15px;
-    background-color: #f8f8f8;
-    border-top: 1px solid var(--border-color);
-}
-
-.post-date {
-    font-size: 12px;
-    color: var(--light-text-color);
-    text-align: right;
-}
-
-.like-button {
+.publication-status {
     position: absolute;
     top: 10px;
     right: 10px;
+    background: #28a745;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.8em;
+}
+
+.post-card {
+background: #ffffff !important;
+border-radius: 16px !important;
+overflow: hidden !important;
+box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02) !important;
+transition: all 0.3s ease !important;
+cursor: pointer !important;
+position: relative !important;
+border: 1px solid rgba(0, 0, 0, 0.03) !important;
+width: 100% !important;
+max-width: 280px !important;
+margin: 0 auto !important;
+}
+
+.post-card:hover {
+transform: translateY(-5px) !important;
+box-shadow: 0 8px 7px rgba(0, 0, 0, 0.03) !important;
+}
+
+.card-image-container {
+position: relative !important;
+height: 180px !important;
+overflow: hidden !important;
+width: 100% !important;
+}
+
+.card-image {
+width: 100% !important;
+height: 100% !important;
+object-fit: cover !important;
+transition: transform 0.5s ease !important;
+}
+
+.post-card:hover .card-image {
+transform: scale(1.05) !important;
+}
+
+.card-category {
+position: absolute !important;
+top: 15px !important;
+right: 15px !important;
+padding: 6px 12px !important;
+border-radius: 20px !important;
+background: rgba(255, 255, 255, 0.9) !important;
+color: #2c3e50 !important;
+font-size: 0.8rem !important;
+font-weight: 500 !important;
+backdrop-filter: blur(4px) !important;
+}
+
+.card-content {
+padding: 20px !important;
+width: 100% !important;
+}
+
+.card-title {
+font-size: 1.1rem !important;
+font-weight: 600 !important;
+color: #2c3e50 !important;
+margin: 0 0 12px 0 !important;
+line-height: 1.4 !important;
+}
+
+.card-info {
+display: flex !important;
+flex-direction: column !important;
+gap: 6px !important;
+}
+
+.card-location, .card-date {
+display: flex !important;
+align-items: center !important;
+gap: 6px !important;
+color: #666 !important;
+font-size: 0.85rem !important;
+}
+
+.carousel-card {
+min-width: 0px !important;
+flex: 0 0 auto !important;
+margin-right: 20px !important;
+}
+
+.posts-carousel {
+display: flex !important;
+overflow-x: auto !important;
+gap: 20px !important;
+padding: 10px 5px !important;
+scroll-behavior: smooth !important;
+-webkit-overflow-scrolling: touch !important;
+scrollbar-width: none !important;
+}
+
+.posts-carousel::-webkit-scrollbar {
+display: none !important;
+}
+
+@media (max-width: 768px) {
+.post-card {
+max-width: 250px !important;
+}
+
+.carousel-card {
+width: 250px !important;
+}
+
+.card-image-container {
+height: 150px !important;
+}
+
+.card-content {
+padding: 15px !important;
+}
+
+.card-title {
+font-size: 1rem !important;
+}
+}
+
+@media (max-width: 480px) {
+.post-card {
+max-width: 200px !important;
+}
+
+.carousel-card {
+width: 200px !important;
+}
+
+.card-image-container {
+height: 120px !important;
+}
+
+.card-content {
+padding: 12px !important;
+}
+
+.card-category {
+padding: 4px 8px !important;
+font-size: 0.7rem !important;
+}
+}
+
+
+.featured-slide {
+position: relative;
+height: 400px; /* O la altura que desees */
+width: 100%;
+overflow: hidden;
+}
+
+.featured-image {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+
+.featured-slide-link {
+display: block;
+text-decoration: none;
+height: 100%;
+}
+
+.featured-slide .promo-badge {
+position: absolute;
+top: 20px;
+right: 20px;
+font-size: 1rem;
+padding: 8px 15px;
+background-color: #e74c3c;
+color: white;
+border-radius: 4px;
+z-index: 3;
+animation: pulse 1.5s infinite;
+width: auto; /* Asegura que el ancho sea automático */
+height: auto; /* Asegura que la altura sea automática */
+max-height: 45px;
+max-width: 100px; /* Limita el ancho máximo */
+display: inline-block; /* Cambia el display */
+}
+
+.promo-badge span {
+display: block;
+white-space: nowrap; /* Evita que el texto se rompa en múltiples líneas */
+}
+
+.featured-content {
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+padding: 20px;
+background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+color: white;
+}
+
+.featured-title {
+margin: 0 0 10px 0;
+font-size: 1.5rem;
+}
+
+.featured-info {
+display: flex;
+gap: 15px;
+align-items: center;
+}
+
+.featured-category,
+.featured-location {
+font-size: 0.9rem;
+}
+/* Estilos para la etiqueta de promoción en las publicaciones recientes */
+.promo-badge {
+position: absolute;
+bottom: 10px; /* Cambiado de top a bottom */
+right: 10px; /* Cambiado de left a right */
+background-color: #e74c3c; /* Rojo llamativo */
+color: white;
+padding: 5px 10px;
+font-size: 0.8rem;
+font-weight: 600;
+text-transform: uppercase;
+border-radius: 4px;
+display: flex;
+align-items: center;
+justify-content: center;
+animation: pulse 1.5s infinite; /* Animación de pulso */
+z-index: 2;
+}
+
+/* Animación de pulso */
+@keyframes pulse {
+0% {
+transform: scale(1);
+}
+50% {
+transform: scale(1.1);
+}
+100% {
+transform: scale(1);
+}
+}
+
+/* Estilos para la etiqueta de promoción en el carrusel destacado */
+.featured-slide .promo-badge {
+position: absolute;
+top: 20px;
+right: 20px;
+font-size: 1rem;
+padding: 10px 20px;
+background-color: #e74c3c;
+color: white;
+border-radius: 4px;
+z-index: 3;
+animation: pulse 1.5s infinite; /* Animación de pulso */
+}
+
+
+
+
+
+
+
+/* Estilos para el botón flotante */
+.search-float-button {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #2c3e50; /* Color más oscuro para mejor contraste */
+    color: white;
+    border: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+  }
+  
+  .search-float-button:hover {
+    transform: scale(1.1);
+    background: #34495e;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.4);
+  }
+  
+  /* Estilos mejorados para el modal */
+  .search-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 1001;
+    backdrop-filter: blur(5px);
+    animation: modalFadeIn 0.3s ease;
+  }
+  
+
+  /* Header del modal mejorado */
+  .search-modal-header {
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+    border-radius: 20px 20px 0 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000; /* Aumentamos el z-index */
+    backdrop-filter: blur(5px);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* Añadimos sombra para mejor separación visual */
+  }
+  
+  .search-input-container {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 12px 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-right: 50px;
+  }
+  
+  .search-input-container i {
+    color: #666;
+    font-size: 18px;
+    margin-right: 12px;
+  }
+  
+  .search-input-container input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 16px;
+    color: #333;
+  }
+  
+  /* Botón de cerrar mejorado */
+  .close-modal {
+    position: absolute;
+    right: 20px;
+    top: 20px;
     background: none;
     border: none;
     font-size: 24px;
-    color: white;
-    text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    color: #666;
     cursor: pointer;
-    transition: transform 0.3s ease;
-}
+    padding: 5px;
+    transition: all 0.3s ease;
+  }
+  
+  .close-modal:hover {
+    color: #333;
+    transform: rotate(90deg);
+  }
+  
+  /* Estilos para los filtros */
+  .filters-toggle {
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .filters-toggle button {
+    background: none;
+    border: none;
+    color: #2c3e50;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+  
 
-.like-button:hover {
-    transform: scale(1.1);
-}
-
-.like-button.liked {
-    color: var(--heart-color);
-}
-
-.like-count {
+ /* Ajustar el z-index del badge de promoción */
+.promo-badge-result {
     position: absolute;
-    top: 40px;
+    top: 10px;
     right: 10px;
-    background-color: rgba(255, 255, 255, 0.8);
-    padding: 2px 6px;
-    border-radius: 10px;
+    background: #e74c3c;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
     font-size: 12px;
-    font-weight: bold;
-}
+    font-weight: 600;
+    z-index: 1; /* Reducimos el z-index para que esté por debajo del header */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  
+  /* Asegurar que el contenedor de resultados esté por debajo del header */
+  .search-results {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* Contenedor del modal */
+  .search-modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    margin: 50px auto;
+    background: white;
+    border-radius: 20px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    animation: modalSlideIn 0.4s ease;
+  }
 
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
+
+  .promo-badge-result::after {
+    content: '';
+    position: absolute;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.8);
-}
+    background: linear-gradient(
+      45deg,
+      rgba(255,255,255,0) 0%,
+      rgba(255,255,255,0.2) 50%,
+      rgba(255,255,255,0) 100%
+    );
+    animation: shine 2s infinite;
+    border-radius: 20px;
+  }
 
-.modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
+  
+  .filters-toggle button:hover {
+    background: #f0f2f5;
+  }
+  
+  .filters-container {
     padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-width: 600px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: color 0.3s ease;
-}
-
-.close:hover,
-.close:focus {
-    color: #000;
-    text-decoration: none;
-}
-
-.modal-image-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 20px;
-}
-
-.modal-image {
-    max-width: 100%;
-    max-height: 50vh;
-    object-fit: contain;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.modal-thumbnails {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.modal-thumbnail {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-}
-
-.modal-thumbnail:hover {
-    transform: scale(1.1);
-}
-
-.modal-details {
-    margin-top: 20px;
-    font-family: 'Poppins', sans-serif;
-    line-height: 1.6;
-}
-
-.modal-details p {
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: var(--text-color);
-}
-
-.modal-details pre {
-    font-family: 'Poppins', sans-serif;
-    font-size: 14px;
-    color: var(--text-color);
-    background: #f9f9f9;
+    background: #f8f9fa;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .filter-group {
+    margin-bottom: 15px;
+  }
+  
+  .filter-group select,
+  .filter-group input {
+    width: 100%;
     padding: 10px;
-    border-radius: 5px;
-    white-space: pre-wrap;
-    line-height: 1.6;
-    margin-bottom: 10px;
-}
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  
+  .filter-group select:focus,
+  .filter-group input:focus {
+    border-color: #2c3e50;
+    box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+  }
+  
 
-.modal-footer {
-    margin-top: 20px;
-    text-align: right;
+  /* Ajustar el contenedor de la tarjeta de resultado */
+.result-card {
+    position: relative; /* Importante para el posicionamiento absoluto del badge */
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+    background: white; /* Asegura que el fondo sea blanco */
+    overflow: visible; /* Permite que el badge sea visible fuera de la tarjeta */
+  }
+  
+  /* Estilos para el badge de promoción en resultados */
+  .promo-badge-result {
+    position: absolute;
+    top: 10px; /* Ajustado para que sea visible sin hover */
+    right: 10px;
+    background: #e74c3c;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    z-index: 2; /* Asegura que esté por encima de otros elementos */
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+  
+  .promo-badge-result i {
+    font-size: 10px;
+  }
+  
+  /* Contenedor de la imagen */
+  .result-image-container {
+    position: relative; /* Para contener elementos absolutos */
+    width: 120px;
+    min-width: 120px; /* Evita que la imagen se encoja */
+  }
+  
+  .result-image {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+  
+  /* Ajustes para móvil */
+  @media (max-width: 768px) {
+    .result-card {
+      flex-direction: column;
+    }
+  
+    .result-image-container {
+      width: 100%;
+    }
+  
+    .result-image {
+      height: 200px;
+    }
+  
+    .promo-badge-result {
+      top: 10px;
+      right: 10px;
+    }
+  }
+  
+
+  
+  .result-content {
+    flex: 1;
+  }
+  
+  .result-content h3 {
+    margin: 0 0 10px 0;
+    color: #2c3e50;
+    font-size: 18px;
+  }
+  
+  .result-meta {
+    display: flex;
+    gap: 15px;
+    color: #666;
     font-size: 14px;
-    color: var(--light-text-color);
-}
+  }
+  
 
-.whatsapp-share {
+  /* Animaciones */
+  @keyframes modalFadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+  @keyframes modalSlideIn {
+    from {
+      transform: translateY(-20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  /* Estilos para mensaje de no resultados */
+  .no-results {
     text-align: center;
-}
-
-.whatsapp-share p {
-    margin-top: 7px;
-    margin-bottom: 7px;
-}
-
-.whatsapp-share .input-group {
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.whatsapp-share .btn-success {
-    min-width: 200px;
-    margin-top: 10px;
-    background-color: #128C7E;
-    border-color: #128C7E;
-}
-
-.whatsapp-share .btn-success:hover {
-    background-color: #075E54;
-    border-color: #075E54;
-}
-
-/* Estilos para la sección de publicaciones populares */
-#popular-posts-container {
-    margin-bottom: 30px;
-}
-
-#popular-posts-container .post {
-    border: 2px solid var(--primary-color);
-}
-
-
-@media (max-width: 768px) {
-    .posts {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    padding: 40px 20px;
+    color: #666;
+  }
+  
+  .no-results i {
+    font-size: 48px;
+    margin-bottom: 15px;
+    color: #999;
+    animation: pulse 2s infinite;
+  }
+  
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
     }
-
-    .modal-content {
-        width: 90%;
-        margin: 10% auto;
+    50% {
+      transform: scale(1.1);
     }
-
-    .modal-image {
-        max-height: 40vh;
+    100% {
+      transform: scale(1);
     }
-}
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .search-modal-content {
+      width: 95%;
+      margin: 20px auto;
+      max-height: 90vh;
+    }
+  
+    .result-card {
+      flex-direction: column;
+    }
+  
+    .result-image {
+      width: 100%;
+      height: 200px;
+    }
+  
+    .search-float-button {
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      font-size: 20px;
+    }
+  }

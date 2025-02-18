@@ -241,6 +241,10 @@
     <div class="whatsapp-float" id="whatsapp-float" style="display: none">
       <i class="fab fa-whatsapp"></i>
     </div>
+
+
+    <!-- Añade esto justo antes del cierre del body -->
+<div class="mobile-comments-container"></div>
  
  
     
@@ -396,18 +400,59 @@ document.addEventListener("DOMContentLoaded", function () {
       }
   });
 
-
-  window.addEventListener('scroll', () => {
+  document.addEventListener('DOMContentLoaded', function() {
     const backButton = document.querySelector('.back-button');
-    const heroHeight = document.querySelector('.hero-section').offsetHeight;
     
-    if (window.scrollY > heroHeight - 100) {
-        backButton.style.color = '#333'; // Color oscuro para fondo claro
-        backButton.style.background = 'rgba(255, 255, 255, 0.9)';
-    } else {
-        backButton.style.color = 'white'; // Color claro para fondo oscuro
-        backButton.style.background = 'rgba(255, 255, 255, 0.2)';
+    // Obtener parámetros de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const webview = urlParams.get('webview');
+    const tipo = urlParams.get('tipo');
+
+    // Ocultar botón si webview=si o si tipo no es asesor ni admin
+    if (webview === 'si' || (tipo !== 'asesor' && tipo !== 'admin')) {
+        backButton.style.display = 'none';
     }
+
+    // Evento de scroll solo si el botón está visible
+    window.addEventListener('scroll', () => {
+        if (backButton.style.display !== 'none') {
+            const heroHeight = document.querySelector('.hero-section').offsetHeight;
+            
+            if (window.scrollY > heroHeight - 100) {
+                backButton.style.color = '#333';
+                backButton.style.background = 'rgba(255, 255, 255, 0.9)';
+            } else {
+                backButton.style.color = 'white';
+                backButton.style.background = 'rgba(255, 255, 255, 0.2)';
+            }
+        }
+    });
+});
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const commentsSection = document.querySelector('.comments-section');
+    const mobileCommentsContainer = document.querySelector('.mobile-comments-container');
+    
+    function handleResize() {
+        if (window.innerWidth <= 768) {
+            // En móvil, mueve los comentarios al contenedor móvil
+            if (commentsSection.parentElement !== mobileCommentsContainer) {
+                mobileCommentsContainer.appendChild(commentsSection);
+            }
+        } else {
+            // En desktop, devuelve los comentarios a su posición original
+            const leftColumn = document.querySelector('.left-column');
+            if (commentsSection.parentElement !== leftColumn) {
+                leftColumn.appendChild(commentsSection);
+            }
+        }
+    }
+
+    // Ejecuta al cargar y cuando cambie el tamaño de la ventana
+    handleResize();
+    window.addEventListener('resize', handleResize);
 });
   </script>
 

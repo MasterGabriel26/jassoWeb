@@ -871,7 +871,32 @@ body {
 
 
 
+/* Estilos para el contenedor de comentarios móvil */
+.mobile-comments-container {
+  display: none; /* Oculto por defecto */
+}
 
+/* Media query para dispositivos móviles */
+@media (max-width: 768px) {
+  /* Oculta los comentarios en su posición original */
+  .left-column .comments-section {
+      display: none;
+  }
+
+  /* Muestra los comentarios en el contenedor móvil */
+  .mobile-comments-container {
+      display: block;
+      width: 100%;
+      margin-top: 30px;
+      order: 999; /* Asegura que aparezca al final */
+  }
+
+  /* Ajusta el contenedor principal para flexbox */
+  .publication-detail {
+      display: flex;
+      flex-direction: column;
+  }
+}
 
 /* Contenedor principal de comentarios */
 .comments-section {
