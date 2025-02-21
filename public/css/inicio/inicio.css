@@ -691,3 +691,47 @@ animation: pulse 1.5s infinite; /* Animación de pulso */
       font-size: 20px;
     }
   }
+
+
+  /* CSS actualizado */
+.price-range {
+  margin-bottom: 15px;
+}
+
+.price-inputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.price-inputs input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.price-separator {
+  color: #666;
+  font-weight: 500;
+}
+
+.price-inputs input:focus {
+  border-color: #2c3e50;
+  box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+}
+
+/* Ajustes responsivos */
+@media (max-width: 480px) {
+  .price-inputs {
+      flex-direction: row; /* Mantener horizontal incluso en móviles */
+  }
+
+  .price-inputs input {
+      font-size: 14px; /* Reducir tamaño de fuente en móviles */
+      padding: 8px; /* Reducir padding en móviles */
+  }
+}

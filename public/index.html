@@ -167,10 +167,14 @@
           <option value="">Ubicación</option>
         </select>
       </div>
-      <div class="filter-group price-range">
-        <input type="number" id="minPrice" placeholder="Precio mínimo">
-        <input type="number" id="maxPrice" placeholder="Precio máximo">
-      </div>
+     <!-- HTML modificado -->
+<div class="filter-group price-range">
+  <div class="price-inputs">
+      <input type="number" id="minPrice" placeholder="Precio mínimo">
+      <span class="price-separator">-</span>
+      <input type="number" id="maxPrice" placeholder="Precio máximo">
+  </div>
+</div>
       <div class="filter-group">
         <label class="promo-filter">
           <input type="checkbox" id="promoFilter">

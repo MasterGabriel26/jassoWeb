@@ -354,6 +354,11 @@ if (data.isPromocion && data.descripcion_promocion) {
           formatearMoneda(data.comision_venta);
       }
 
+      if (data.precio_persona !== undefined) {
+        document.getElementById("precio-persona").textContent =
+          formatearMoneda(data.precio_persona);
+      }
+
       if (data.precio !== undefined) {
         document.getElementById("precio-total").textContent =
           formatearMoneda(data.precio);
