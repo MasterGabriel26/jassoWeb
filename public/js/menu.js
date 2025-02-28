@@ -59,10 +59,17 @@ function generateMenu() {
                     <span class="align-middle">Publicaciones</span>
                 </a>
             </li>
+
+            <li class="sidebar-item">
+            <a class="sidebar-link" href="/vista-admin/page-solicitudes.html">
+                <i class="align-middle" data-feather="inbox"></i>
+                <span class="align-middle">Solicitudes</span>
+            </a>
+        </li>
         `;
     }
 
-    if (userType === 'asesor') {
+    if (userType === 'asesor' ||userType === 'lider') {
         menuItems += `
            <li class="sidebar-item">
                 <a class="sidebar-link" href="/vista-admin/page-contratos.html">
@@ -70,6 +77,8 @@ function generateMenu() {
                     <span class="align-middle">Contratos</span>
                 </a>
             </li>
+
+            
         `;
     }
 

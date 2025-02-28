@@ -1671,6 +1671,7 @@ const pageSize = 7;
 
 // Elementos del DOM
 const elements = {
+    loader:document.getElementById('loader'),
     prospectosLista: document.getElementById('prospectos-lista'),
     filterType: document.getElementById('filter-type'),
     textSearch: document.getElementById('text-search'),

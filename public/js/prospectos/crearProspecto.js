@@ -217,6 +217,7 @@ async function generarProspecto(formData) {
       };
 
       const nombreAsesor = localStorage.getItem('userName');
+      const uidAsesor=localStorage.getItem('uid')
       const folio = generarFolio(formData.tipoEvento, formData.lugarEvento, formData.pagina, nombreAsesor);
 
       if (isEditing && prospectoId) {
@@ -227,14 +228,14 @@ async function generarProspecto(formData) {
               nameMin: formData.nombre.toLowerCase(),
               telefono_prospecto: formData.celular,
               tipo_evento: formData.tipoEvento,
-              fecha_evento: formData.fecha || 0,
+              fecha_evento: new Date(formData.fecha).getTime(),
               invitados: formData.invitados,
               pregunta_por: formData.lugarEvento,
               pregunta_porMin: formData.lugarEvento.toLowerCase(),
               observacion: formData.observacion,
               pagina: formData.pagina,
-              fechaModificacion: firebase.firestore.FieldValue.arrayUnion(new Date().toISOString()),
-              nombreUsuarioModificador: firebase.firestore.FieldValue.arrayUnion(formData.nombre),
+              fechaModificacion: firebase.firestore.FieldValue.arrayUnion(Date().now()),
+              nombreUsuarioModificador: firebase.firestore.FieldValue.arrayUnion(uidAsesor),
               uid_modify: asesor
           };
 
@@ -260,11 +261,11 @@ async function generarProspecto(formData) {
               colorEtiqueta: null,
               contador_llamadas: 0,
               etiqueta: null,
-              fechaModificacion: [new Date().toISOString()],
+              fechaModificacion: [Date().now()],
               fechaParaLlamada: 0,
               fecha_cita: 0,
               fecha_create: currentTime,
-              fecha_evento: formData.fecha || 0,
+              fecha_evento: new Date(formData.fecha).getTime() || 0,
               folio: folio,
               folioMin: folio.toLowerCase(),
               horaParaLlamada: 0,

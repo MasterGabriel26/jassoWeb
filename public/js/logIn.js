@@ -38,7 +38,7 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             return;
         }
 
-        if (userData.userType !== 'admin' && userData.userType !== 'asesor') {
+        if (userData.userType !== 'admin' && userData.userType !== 'asesor' && userData.userType !== 'lider') {
             alert('Este tipo de usuario no tiene acceso a esta sección');
             return;
         }
