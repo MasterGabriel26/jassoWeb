@@ -196,3 +196,308 @@ body.modal-open {
         .modal-left .is-invalid {
             background-image: none;
         }
+
+
+
+
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .chat-item:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .chat-avatar {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            margin-right: 12px;
+        }
+        
+        .chat-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .status-indicator {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ccc;
+            border: 2px solid white;
+        }
+        
+        .status-indicator.online {
+            background-color: #4CAF50;
+        }
+        
+        .chat-info {
+            flex: 1;
+        }
+        
+        .chat-info h6 {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .chat-info small {
+            color: #666;
+            font-size: 12px;
+        }
+        
+        .chat-meta {
+            text-align: right;
+        }
+        
+        .chat-meta small {
+            color: #999;
+            font-size: 11px;
+        }
+        
+        .search-container {
+            position: relative;
+            padding: 12px;
+        }
+        
+        .search-container input {
+            width: 100%;
+            padding: 8px 32px 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        .search-container i {
+            position: absolute;
+            right: 24px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+        
+        
+        .card-preview-content {
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                overflow: hidden;
+                background: white;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+        
+            .preview-header {
+                background: #f8f9fa;
+                padding: 8px 12px;
+                border-bottom: 1px solid #e0e0e0;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+        
+            .preview-header i {
+                color: #6c757d;
+            }
+        
+            .preview-body {
+                padding: 12px;
+            }
+        
+            .preview-body h6 {
+                margin: 0 0 8px 0;
+                font-weight: 600;
+            }
+        
+            .preview-details {
+                display: flex;
+                flex-direction: column;
+                gap: 4px;
+                margin-bottom: 12px;
+            }
+        
+            .detail-item {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                color: #666;
+                font-size: 0.9em;
+            }
+        
+            .detail-item i {
+                width: 16px;
+                text-align: center;
+                color: #6c757d;
+            }
+        
+            .preview-link {
+                text-align: right;
+            }
+        
+            .preview-link .btn {
+                font-size: 0.85em;
+            }
+        
+        
+            
+            .share-prospect-modal .chat-list-container {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 8px;
+        }
+        
+        .share-prospect-modal .chat-list-item {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .share-prospect-modal .chat-list-item:hover {
+            background: #f8f9fa;
+            border-color: #dee2e6;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .share-prospect-modal .chat-item-avatar {
+            position: relative;
+            width: 48px;
+            height: 48px;
+            margin-right: 12px;
+        }
+        
+        .share-prospect-modal .chat-item-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #f8f9fa;
+        }
+        
+        .share-prospect-modal .status-dot {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ccc;
+            border: 2px solid #fff;
+        }
+        
+        .share-prospect-modal .status-dot.online {
+            background: #28a745;
+        }
+        
+        .share-prospect-modal .chat-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .share-prospect-modal .chat-item-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #212529;
+            margin-bottom: 2px;
+        }
+        
+        .share-prospect-modal .chat-item-last-message,
+        .share-prospect-modal .chat-item-members,
+        .share-prospect-modal .chat-item-email {
+            font-size: 13px;
+            color: #6c757d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .share-prospect-modal .chat-item-meta {
+            font-size: 12px;
+            color: #adb5bd;
+            margin-left: 12px;
+        }
+        
+        .share-prospect-modal .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 16px;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        .share-prospect-modal .empty-state i {
+            font-size: 24px;
+            margin-bottom: 8px;
+            opacity: 0.5;
+        }
+        
+        .share-prospect-modal .modal-body {
+            padding: 16px;
+        }
+        
+        .share-prospect-modal .nav-tabs {
+            margin-bottom: 16px;
+        }
+        
+        .share-prospect-modal .tab-content {
+            min-height: 300px;
+        }
+        
+        
+        .share-prospect-modal .search-container {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+        
+        .share-prospect-modal .search-container input {
+            width: 100%;
+            padding: 8px 32px 8px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .share-prospect-modal .search-container input:focus {
+            outline: none;
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .share-prospect-modal .clear-search {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            padding: 4px;
+            cursor: pointer;
+            color: #6c757d;
+            display: none;
+        }
+        
+        .share-prospect-modal .clear-search:hover {
+            color: #dc3545;
+        }
+        
+            
+          
+        

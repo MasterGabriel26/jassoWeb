@@ -46,7 +46,20 @@ function mostrarAlerta(mensaje, tipo = 'info') {
 }
 
 
-async function mostrarModalPaquetes(telefonoProspecto) {
+async function mostrarModalPaquetes(telefonoProspecto,prospecto) {
+
+  if (!telefonoProspecto || telefonoProspecto.trim() === '') {
+    Swal.fire({
+        icon: 'warning',
+        title: 'No se puede compartir',
+        text: 'El prospecto no tiene un número de teléfono registrado. Por favor, registra un número de teléfono antes de compartir el paquete.',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3085d6'
+    });
+    return; // Detener la ejecución si no hay teléfono
+}
+
+
   const modalHTML = `
       <div class="modal fade" id="paquetesModal" tabindex="-1">
           <div class="modal-dialog modal-lg modal-dialog-scrollable">
@@ -102,7 +115,7 @@ async function mostrarModalPaquetes(telefonoProspecto) {
           paquetesContainer.innerHTML = '';
           querySnapshot.forEach(doc => {
               const publicacion = doc.data();
-              const card = createPublicacionCard(publicacion, doc.id, telefonoProspecto);
+              const card = createPublicacionCard(publicacion, doc.id, telefonoProspecto,prospecto);
               paquetesContainer.appendChild(card);
           });
       }
@@ -121,15 +134,15 @@ async function mostrarModalPaquetes(telefonoProspecto) {
   }
 }
 
-function createPublicacionCard(publicacion, publicacionId, telefonoProspecto) {
+function createPublicacionCard(publicacion, publicacionId, telefonoProspecto, prospecto) {
   const card = document.createElement('div');
   card.className = 'publicacion-card';
-  
+
   card.innerHTML = `
       <div class="card-image">
-          <img src="${publicacion.imagen_destacada || 'ruta/imagen-default.jpg'}" 
+          <img src="${publicacion.imagen_destacada || ''}" 
                alt="${publicacion.titulo || 'Sin título'}"
-               onerror="this.src='ruta/imagen-default.jpg'">
+               onerror="this.src=''">
       </div>
       <div class="card-content">
           <h3 class="card-title">${publicacion.titulo || 'Sin título'}</h3>
@@ -141,11 +154,17 @@ function createPublicacionCard(publicacion, publicacionId, telefonoProspecto) {
                   <i class="fas fa-map-marker-alt"></i> ${publicacion.lugar || 'Sin ubicación'}
               </span>
           </div>
-          <button class="share-button" onclick="enviarPaqueteWhatsApp('${publicacionId}', '${telefonoProspecto}')">
+          <button class="share-button">
               <i class="fab fa-whatsapp"></i> Compartir
           </button>
       </div>
   `;
+
+  // Agregar el evento click al botón
+  const shareButton = card.querySelector('.share-button');
+  shareButton.addEventListener('click', () => {
+    enviarPaqueteWhatsApp(publicacionId, telefonoProspecto, prospecto, publicacion.titulo);
+  });
 
   return card;
 }
@@ -262,20 +281,57 @@ function addStyles() {
   }
 }
 
-async function enviarPaqueteWhatsApp(publicacionId, telefonoProspecto) {
+
+// Objeto que mapea lugares con sus URLs correspondientes
+const lugaresToUrls = {
+  'Campanario': 'campanario.html',
+  'Casa Antigua Arteaga': 'casaAntiguaAteaga.html',
+  'Otro Lugar': 'otroLugar.html',
+  'Museo de las Aves': 'museoDeLasAves.html',
+  'Huerto el Nogal':'huertoElNogal.html'
+  // Añade más mapeos según necesites
+};
+
+
+// Función para formatear datos del prospecto de manera segura
+function formatearDatoProspecto(dato, etiqueta) {
+  return dato ? `\n${etiqueta}: ${dato}` : '';
+}
+
+async function enviarPaqueteWhatsApp(publicacionId, telefonoProspecto, prospecto,titulo) {
   try {
-      const aseName = localStorage.getItem('userName');
+      // Obtener datos del asesor y la publicación
+      const aseName = localStorage.getItem('userName') || 'Tu asesor';
       const telefono = telefonoProspecto.replace('+', '');
+
+      // Obtener la publicación para determinar el lugar
+      const publicacionDoc = await db.collection("publicaciones2").doc(publicacionId).get();
+      const publicacionData = publicacionDoc.data();
       
+      // Determinar la URL según el lugar
+      const urlBase = lugaresToUrls[publicacionData?.lugar] || lugaresToUrls.default;
+      const urlCompleta = `https://jassocompany.com/publicaciones/${urlBase}?id=${publicacionId}&tipo=cliente`;
+
+      // Formatear información del prospecto
+      const infoProspecto = `
+          ${formatearDatoProspecto(prospecto?.name, 'Nombre')}${formatearDatoProspecto(prospecto?.tipo_evento, 'Tipo de Evento')}${formatearDatoProspecto(prospecto?.pregunta_por, 'Lugar')}${formatearDatoProspecto(prospecto?.fecha_evento ? formatearFecha(prospecto.fecha_evento) : null, 'Fecha')}${formatearDatoProspecto(prospecto?.invitados, 'Cantidad de personas')}
+      `.trim();
+
+      // Construir mensaje completo
       const message = encodeURIComponent(
-          `Hola, tu asesor: ${aseName}, te está invitando a que conozcas más información de esta publicación: https://jassocompany.com/publicaciones/casaAntiguaAteaga.html?id=${publicacionId}&tipo=cliente`
+          `Hola${prospecto?.name ? ' ' + prospecto.name : ''},\n\n` +
+          `Tu asesor ${aseName} te está compartiendo información sobre ${titulo}.` +
+          `\n\nDetalles de tu evento:\n\n${infoProspecto}\n\n` +
+          `Conoce más información aquí: ${urlCompleta}`
       );
-      
+
+      // Abrir WhatsApp
       window.open(`https://api.whatsapp.com/send?phone=${telefono}&text=${message}`, '_blank');
-      
+
+      // Cerrar modal y mostrar confirmación
       const modal = bootstrap.Modal.getInstance(document.getElementById('paquetesModal'));
-      modal.hide();
-      
+      if (modal) modal.hide();
+
       Swal.fire({
           icon: 'success',
           title: 'Compartido',
@@ -283,7 +339,7 @@ async function enviarPaqueteWhatsApp(publicacionId, telefonoProspecto) {
           timer: 2000,
           showConfirmButton: false
       });
-      
+
   } catch (error) {
       console.error("Error al compartir:", error);
       Swal.fire({

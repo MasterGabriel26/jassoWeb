@@ -693,6 +693,7 @@ async function mostrarResultadosBusqueda(docs, append = false) {
 // Modificar resetAndLoadProspectos
 // Modificar la función resetAndLoadProspectos para limpiar los listeners
 function resetAndLoadProspectos() {
+    resetProspectosTracking();
     // Limpiar listeners de scroll
     if (window.searchScrollHandler) {
         elements.tableBody.removeEventListener('scroll', window.searchScrollHandler);
@@ -773,50 +774,65 @@ async function actualizarContadorProspectos() {
 
 
 
-// Modificar cargarMasProspectos también
 async function cargarMasProspectos() {
-  if (!lastVisible || !currentQuery || isLoading) return;
+    if (!lastVisible || !currentQuery || isLoading) return;
 
-  isLoading = true;
-  showLoader();
-  try {
-      const snapshot = await currentQuery
-          .startAfter(lastVisible)
-          .limit(pageSize)
-          .get();
+    isLoading = true;
+    showLoader();
+    try {
+        const snapshot = await currentQuery
+            .startAfter(lastVisible)
+            .limit(pageSize)
+            .get();
 
-      if (!snapshot.empty) {
-          await actualizarTabla(snapshot.docs, true);
-          lastVisible = snapshot.docs[snapshot.docs.length - 1];
-      }
-  } catch (error) {
-      console.error("Error al cargar más prospectos:", error);
-  } finally {
-      isLoading = false;
-      hideLoader();
-  }
+        if (!snapshot.empty) {
+            // Verificar duplicados antes de actualizar
+            const newDocs = snapshot.docs.filter(doc => !prospectosIds.has(doc.id));
+            if (newDocs.length > 0) {
+                await actualizarTabla(newDocs, true);
+                lastVisible = snapshot.docs[snapshot.docs.length - 1];
+            }
+        }
+    } catch (error) {
+        console.error("Error al cargar más prospectos:", error);
+    } finally {
+        isLoading = false;
+        hideLoader();
+    }
 }
+
+
+// Variable global para trackear IDs
+let prospectosIds = new Set();
+
+// Función para resetear el tracking cuando sea necesario
+function resetProspectosTracking() {
+    prospectosIds = new Set();
+}
+
 
 // Asegurarse de que actualizarTabla sea async
 async function actualizarTabla(docs, append = false) {
-  // Asegurarse de limpiar la tabla si no es append
-  if (!append) {
-      elements.prospectosLista.innerHTML = "";
-  }
-  
-  // Crear un Set para trackear IDs únicos
-  const addedIds = new Set();
-  
-  for (const doc of docs) {
-      // Verificar si este documento ya fue agregado
-      if (!addedIds.has(doc.id)) {
-          const prospecto = doc.data();
-          const nombreAsesor = await obtenerNombreAsesor(prospecto.asesor);
-          const row = crearFilaProspecto(prospecto, doc.id, nombreAsesor);
-          elements.prospectosLista.appendChild(row);
-          addedIds.add(doc.id);
-      }
-  }
+    // Limpiar la tabla y el tracking si no es append
+    if (!append) {
+        elements.prospectosLista.innerHTML = "";
+        resetProspectosTracking();
+    }
+    
+    const fragmento = document.createDocumentFragment(); // Usar fragmento para mejor rendimiento
+    
+    for (const doc of docs) {
+        // Verificar si este documento ya fue agregado
+        if (!prospectosIds.has(doc.id)) {
+            const prospecto = doc.data();
+            const nombreAsesor = await obtenerNombreAsesor(prospecto.asesor);
+            const row = crearFilaProspecto(prospecto, doc.id, nombreAsesor);
+            fragmento.appendChild(row);
+            prospectosIds.add(doc.id);
+        }
+    }
+    
+    elements.prospectosLista.appendChild(fragmento);
 }
 
 function crearFilaProspecto(prospecto, id, nombreAsesor) {

@@ -1221,10 +1221,8 @@ const precio_persona = document.getElementById('precio-persona').value || 0; // 
         
         // Si hay imagen nueva, subirla a Firebase Storage
         if (imagenDestacada) {
-            const storageRef = firebase.storage().ref();
-            const imageRef = storageRef.child(`publicaciones/${Date.now()}_${imagenDestacada.name}`);
-            await imageRef.put(imagenDestacada);
-            imagenURL = await imageRef.getDownloadURL();
+         
+            imagenURL = await subirImagen(imagenDestacada);
         }
 
         // Obtener usuario actual
@@ -1480,13 +1478,24 @@ function inicializarEventos() {
 // Función para inicializar TinyMCE
 
 
-
-// Función para comprimir imágenes
 async function comprimirImagen(file) {
-    return new Promise((resolve) => {
+    // Validar que el archivo sea una imagen
+    if (!file.type.startsWith('image/')) {
+        throw new Error('El archivo seleccionado no es una imagen');
+    }
+
+    // Validar tamaño máximo inicial (ejemplo: 10MB)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+        throw new Error('La imagen es demasiado grande (máximo 10MB)');
+    }
+
+    return new Promise((resolve, reject) => {
         const reader = new FileReader();
+
         reader.onload = function(e) {
             const img = new Image();
+
             img.onload = function() {
                 const canvas = document.createElement('canvas');
                 let width = img.width;
@@ -1496,14 +1505,15 @@ async function comprimirImagen(file) {
                 const MAX_WIDTH = 1200;
                 const MAX_HEIGHT = 1200;
 
+                // Calcular nuevas dimensiones manteniendo proporción
                 if (width > height) {
                     if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
+                        height = Math.round(height * MAX_WIDTH / width);
                         width = MAX_WIDTH;
                     }
                 } else {
                     if (height > MAX_HEIGHT) {
-                        width *= MAX_HEIGHT / height;
+                        width = Math.round(width * MAX_HEIGHT / height);
                         height = MAX_HEIGHT;
                     }
                 }
@@ -1514,15 +1524,81 @@ async function comprimirImagen(file) {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // Convertir a Blob con calidad 0.7
+                // Determinar la calidad según el tamaño original
+                let quality = 0.7;
+                if (file.size < 500 * 1024) { // Si es menor a 500KB
+                    quality = 0.9;
+                } else if (file.size > 5 * 1024 * 1024) { // Si es mayor a 5MB
+                    quality = 0.5;
+                }
+
+                // Convertir a Blob
                 canvas.toBlob((blob) => {
-                    resolve(blob);
-                }, file.type, 0.7);
+                    if (blob) {
+                        console.log(`Imagen comprimida: ${(blob.size / 1024 / 1024).toFixed(2)}MB`);
+                        resolve(blob);
+                    } else {
+                        reject(new Error('Error al comprimir la imagen'));
+                    }
+                }, file.type, quality);
             };
+
+            img.onerror = function() {
+                reject(new Error('Error al cargar la imagen'));
+            };
+
             img.src = e.target.result;
         };
+
+        reader.onerror = function() {
+            reject(new Error('Error al leer el archivo'));
+        };
+
         reader.readAsDataURL(file);
     });
+}
+
+// Ejemplo de uso:
+async function subirImagen(imagenDestacada) {
+    try {
+        // Mostrar loader
+        Swal.fire({
+            title: 'Procesando imagen...',
+            text: 'Por favor espere mientras se optimiza la imagen',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // Comprimir la imagen
+        const imagenComprimida = await comprimirImagen(imagenDestacada);
+
+        // Mostrar información sobre la compresión
+        console.log(`
+            Tamaño original: ${(imagenDestacada.size / 1024 / 1024).toFixed(2)}MB
+            Tamaño comprimido: ${(imagenComprimida.size / 1024 / 1024).toFixed(2)}MB
+            Reducción: ${(100 - (imagenComprimida.size / imagenDestacada.size * 100)).toFixed(2)}%
+        `);
+
+        // Subir a Firebase Storage
+        const storageRef = firebase.storage().ref();
+        const imageRef = storageRef.child(`publicaciones/${Date.now()}_${imagenDestacada.name}`);
+        await imageRef.put(imagenComprimida);
+        const imagenURL = await imageRef.getDownloadURL();
+
+        Swal.close();
+        return imagenURL;
+
+    } catch (error) {
+        console.error("Error al procesar la imagen:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'No se pudo procesar la imagen'
+        });
+        throw error;
+    }
 }
 
 // Función para subir archivo a Firebase Storage

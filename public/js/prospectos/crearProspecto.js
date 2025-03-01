@@ -234,7 +234,7 @@ async function generarProspecto(formData) {
               pregunta_porMin: formData.lugarEvento.toLowerCase(),
               observacion: formData.observacion,
               pagina: formData.pagina,
-              fechaModificacion: firebase.firestore.FieldValue.arrayUnion(Date().now()),
+              fechaModificacion: firebase.firestore.FieldValue.arrayUnion(Date.now()),
               nombreUsuarioModificador: firebase.firestore.FieldValue.arrayUnion(uidAsesor),
               uid_modify: asesor
           };
@@ -261,7 +261,7 @@ async function generarProspecto(formData) {
               colorEtiqueta: null,
               contador_llamadas: 0,
               etiqueta: null,
-              fechaModificacion: [Date().now()],
+              fechaModificacion: [Date.now()],
               fechaParaLlamada: 0,
               fecha_cita: 0,
               fecha_create: currentTime,

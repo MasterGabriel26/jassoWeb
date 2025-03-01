@@ -1000,7 +1000,7 @@ async function mostrarPasoSeguimiento(paso) {
     const btnPaquetes= document.getElementById("btnPaquetes")
     const btnPagos= document.getElementById("btnPagos")
   // En el botón de paquetes:
-  btnPaquetes.onclick = () => mostrarModalPaquetes(prospecto.telefono_prospecto);
+  btnPaquetes.onclick = () => mostrarModalPaquetes(prospecto.telefono_prospecto,prospecto);
   
   btnPagos.onclick = () => mostrarModalPagos(prospecto);
   

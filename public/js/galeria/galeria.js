@@ -48,74 +48,157 @@ document
     }
   });
 
+
+  // Función para comprimir la imagen
+async function comprimirImagen(file) {
+  return new Promise((resolve, reject) => {
+      // Validar que sea una imagen
+      if (!file.type.startsWith('image/')) {
+          reject(new Error('El archivo seleccionado no es una imagen'));
+          return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+          const img = new Image();
+          
+          img.onload = function() {
+              const canvas = document.createElement('canvas');
+              let width = img.width;
+              let height = img.height;
+
+              // Máximo tamaño deseado
+              const MAX_WIDTH = 1200;
+              const MAX_HEIGHT = 1200;
+
+              if (width > height) {
+                  if (width > MAX_WIDTH) {
+                      height = Math.round(height * MAX_WIDTH / width);
+                      width = MAX_WIDTH;
+                  }
+              } else {
+                  if (height > MAX_HEIGHT) {
+                      width = Math.round(width * MAX_HEIGHT / height);
+                      height = MAX_HEIGHT;
+                  }
+              }
+
+              canvas.width = width;
+              canvas.height = height;
+
+              const ctx = canvas.getContext('2d');
+              ctx.drawImage(img, 0, 0, width, height);
+
+              // Determinar calidad según tamaño original
+              let quality = 0.7;
+              if (file.size < 500 * 1024) { // < 500KB
+                  quality = 0.9;
+              } else if (file.size > 5 * 1024 * 1024) { // > 5MB
+                  quality = 0.5;
+              }
+
+              canvas.toBlob(
+                  (blob) => {
+                      if (blob) {
+                          // Crear nuevo File object
+                          const compressedFile = new File([blob], file.name, {
+                              type: file.type,
+                              lastModified: Date.now()
+                          });
+                          resolve(compressedFile);
+                      } else {
+                          reject(new Error('Error al comprimir la imagen'));
+                      }
+                  },
+                  file.type,
+                  quality
+              );
+          };
+
+          img.onerror = () => reject(new Error('Error al cargar la imagen'));
+          img.src = e.target.result;
+      };
+
+      reader.onerror = () => reject(new Error('Error al leer el archivo'));
+      reader.readAsDataURL(file);
+  });
+}
+
 // Función para agregar imagen
-function addImage(file, category) {
-    // Mostrar indicador de carga
+async function addImage(file, category) {
+  try {
+    // Mostrar indicador de carga con progreso
     Swal.fire({
-        title: 'Subiendo imagen...',
-        text: 'Por favor espere',
+        title: 'Procesando imagen...',
+        html: 'Comprimiendo imagen...',
         allowOutsideClick: false,
         didOpen: () => {
             Swal.showLoading();
         }
     });
 
-    const storageRef = firebase.storage().ref();
-    const imageRef = storageRef.child(`galeria/${file.name}`);
+    // Comprimir imagen
+    const compressedFile = await comprimirImagen(file);
+    
+    // Actualizar mensaje de carga
+    Swal.update({
+        html: 'Subiendo imagen...'
+    });
 
-    imageRef.put(file)
-        .then((snapshot) => {
-            return snapshot.ref.getDownloadURL();
-        })
-        .then((downloadURL) => {
-            if (category === 'nueva') {
-                const newCategory = document.getElementById('newCategory').value;
-                return db.collection('galeria').add({
-                    imagenes: [downloadURL],
-                    categoriasDeImagenes: newCategory,
-                    fecha_create: Date.now()
-                });
-            } else {
-                return db.collection('galeria')
-                    .where('categoriasDeImagenes', '==', category)
-                    .get()
-                    .then((querySnapshot) => {
-                        if (querySnapshot.empty) {
-                            // Si no existe la categoría, crear nuevo documento
-                            return db.collection('galeria').add({
-                                imagenes: [downloadURL],
-                                categoriasDeImagenes: category,
-                                fecha_create: Date.now()
-                            });
-                        } else {
-                            // Si existe, actualizar el documento existente
-                            const doc = querySnapshot.docs[0];
-                            return doc.ref.update({
-                                imagenes: firebase.firestore.FieldValue.arrayUnion(downloadURL)
-                            });
-                        }
-                    });
-            }
-        })
-        .then(() => {
-            Swal.fire({
-                icon: 'success',
-                title: '¡Éxito!',
-                text: 'Imagen subida correctamente',
-                showConfirmButton: false,
-                timer: 1500
-            }).then(() => {
-                location.reload();
-            });
-        })
-        .catch((error) => {
-            console.error("Error:", error);
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Hubo un problema al subir la imagen'
-            });
+    const storageRef = firebase.storage().ref();
+    const imageRef = storageRef.child(`galeria/${Date.now()}_${compressedFile.name}`);
+
+    // Subir archivo comprimido
+    const snapshot = await imageRef.put(compressedFile);
+    const downloadURL = await snapshot.ref.getDownloadURL();
+
+    // Guardar en Firestore
+    if (category === 'nueva') {
+        const newCategory = document.getElementById('newCategory').value;
+        await db.collection('galeria').add({
+            imagenes: [downloadURL],
+            categoriasDeImagenes: newCategory,
+            fecha_create: Date.now()
         });
+    } else {
+        const querySnapshot = await db.collection('galeria')
+            .where('categoriasDeImagenes', '==', category)
+            .get();
+
+        if (querySnapshot.empty) {
+            // Crear nueva categoría
+            await db.collection('galeria').add({
+                imagenes: [downloadURL],
+                categoriasDeImagenes: category,
+                fecha_create: Date.now()
+            });
+        } else {
+            // Actualizar categoría existente
+            await querySnapshot.docs[0].ref.update({
+                imagenes: firebase.firestore.FieldValue.arrayUnion(downloadURL)
+            });
+        }
+    }
+
+    // Mostrar mensaje de éxito
+    await Swal.fire({
+        icon: 'success',
+        title: '¡Éxito!',
+        text: 'Imagen subida correctamente',
+        showConfirmButton: false,
+        timer: 1500
+    });
+
+    location.reload();
+
+} catch (error) {
+    console.error("Error:", error);
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: error.message || 'Hubo un problema al procesar la imagen'
+    });
+  }
 }
 
 // Verificar estado de administrador

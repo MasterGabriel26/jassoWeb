@@ -12,37 +12,52 @@ btnContactar.innerHTML = `
 
 // La función de inicialización se mantiene igual
 function inicializarBotonesContacto(prospecto, id) {
-    const btnLlamada = document.getElementById("btnLlamada");
-    const btnWhatsapp = document.getElementById("btnWhatsapp");
+  const btnLlamada = document.getElementById("btnLlamada");
+  const btnWhatsapp = document.getElementById("btnWhatsapp");
 
-    if (btnLlamada && btnWhatsapp) {
-        const telefono = prospecto.telefono_prospecto;
-        if (!telefono) {
-            btnLlamada.classList.add('disabled');
-            btnWhatsapp.classList.add('disabled');
-            return;
-        }
+  if (btnLlamada && btnWhatsapp) {
+      const telefono = prospecto.telefono_prospecto;
 
-        const numeroLimpio = telefono.replace(/[^\d+]/g, '');
+      // Función para mostrar alerta cuando no hay teléfono
+      const mostrarAlertaTelefono = () => {
+          Swal.fire({
+              icon: 'warning',
+              title: 'Teléfono no registrado',
+              text: 'Este prospecto no tiene un número de teléfono registrado',
+              confirmButtonText: 'Entendido',
+              confirmButtonColor: '#3085d6'
+          });
+      };
 
-        btnLlamada.onclick = () => {
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            if (isMobile) {
-                window.location.href = `tel:${numeroLimpio}`;
-                registrarLlamada(id, prospecto);
-            } else {
-                mostrarModalLlamada(numeroLimpio);
-            }
-        };
+      // Si no hay teléfono, deshabilitar botones y mostrar alerta al hacer clic
+      if (!telefono || telefono.trim() === '') {
+          btnLlamada.classList.add('disabled');
+          btnWhatsapp.classList.add('disabled');
+          btnLlamada.onclick = mostrarAlertaTelefono;
+          btnWhatsapp.onclick = mostrarAlertaTelefono;
+          return;
+      }
 
-        const nombreAsesorMen= localStorage.getItem('userName') 
-        btnWhatsapp.onclick = () => {
-            const mensaje = `Hola, te habla tu asesor: ${nombreAsesorMen}`;
-            const mensajeCodificado = encodeURIComponent(mensaje);
-            const whatsappUrl = `https://wa.me/${numeroLimpio}?text=${mensajeCodificado}`;
-            window.open(whatsappUrl, '_blank');
-        };
-    }
+      const numeroLimpio = telefono.replace(/[^\d+]/g, '');
+
+      btnLlamada.onclick = () => {
+          const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+          if (isMobile) {
+              window.location.href = `tel:${numeroLimpio}`;
+              registrarLlamada(id, prospecto);
+          } else {
+              mostrarModalLlamada(numeroLimpio);
+          }
+      };
+
+      const nombreAsesorMen = localStorage.getItem('userName');
+      btnWhatsapp.onclick = () => {
+          const mensaje = `Hola, te habla tu asesor: ${nombreAsesorMen}`;
+          const mensajeCodificado = encodeURIComponent(mensaje);
+          const whatsappUrl = `https://wa.me/${numeroLimpio}?text=${mensajeCodificado}`;
+          window.open(whatsappUrl, '_blank');
+      };
+  }
 }
 
 // Y simplificamos los estilos CSS significativamente
