@@ -5,7 +5,7 @@ revisionesContainer.innerHTML = ''; // Limpiar el contenedor
 
 try {
   const querySnapshot = await db.collection('seguimientoProspectos2').get();
-  
+  let hayRevisionesPendientes=false
   for (const doc of querySnapshot.docs) {
       const seguimientoData = doc.data();
       if (!seguimientoData || !seguimientoData.idProspecto) continue;
@@ -42,6 +42,7 @@ try {
 
       // Si hay pasos para revisar, obtener la información del prospecto
       if (pasosParaRevisar.length > 0) {
+        hayRevisionesPendientes=true
           const prospectoDoc = await db.collection('prospectos2').doc(seguimientoData.idProspecto).get();
           
           if (!prospectoDoc.exists) {
@@ -110,7 +111,29 @@ try {
               botonesContainer.appendChild(btnRechazar);
           }
       }
+
+      
   }
+
+    // Si no hay revisiones pendientes, mostrar mensaje
+    if (!hayRevisionesPendientes) {
+        revisionesContainer.innerHTML = `
+            <div class="no-revisiones-container">
+                <div class="text-center p-5">
+                    <i class="fas fa-check-circle fa-4x text-success mb-3"></i>
+                    <h4 class="text-muted">No hay documentos pendientes de aprobación</h4>
+                    <p class="text-muted">Todas las solicitudes han sido procesadas</p>
+                </div>
+            </div>
+        `;
+    }
+     // Agregar evento de búsqueda
+     const searchInput = document.getElementById('searchInput');
+     if (searchInput) {
+         searchInput.addEventListener('input', (e) => {
+             filtrarRevisiones(e.target.value);
+         });
+     }
 } catch (error) {
   console.error("Error obteniendo revisiones:", error);
 }
@@ -434,5 +457,83 @@ async function rechazarRevision(idSeguimiento, numeroPaso) {
         });
     }
 }
+
+
+// Variable global para almacenar todas las revisiones
+let todasLasRevisiones = [];
+
+function filtrarRevisiones(searchTerm) {
+    const term = searchTerm.toLowerCase();
+    const revisionElements = document.querySelectorAll('.revision-item');
+    const clearButton = document.querySelector('.clear-search');
+    const searchStats = document.getElementById('searchStats');
+    
+    // Mostrar/ocultar botón de limpiar
+    clearButton.style.display = searchTerm ? 'block' : 'none';
+    
+    let resultadosCount = 0;
+    revisionElements.forEach(element => {
+        const nombre = element.querySelector('h6').textContent.toLowerCase();
+        const folio = element.querySelector('small').textContent.toLowerCase();
+        const asesor = element.querySelector('.info-item p').textContent.toLowerCase();
+        
+        if (nombre.includes(term) || folio.includes(term) || asesor.includes(term)) {
+            element.classList.remove('filtered');
+            element.style.display = '';
+            resultadosCount++;
+        } else {
+            element.classList.add('filtered');
+            setTimeout(() => {
+                element.style.display = 'none';
+            }, 300);
+        }
+    });
+
+    // Actualizar estadísticas de búsqueda
+    if (searchTerm) {
+        searchStats.textContent = `${resultadosCount} resultado${resultadosCount !== 1 ? 's' : ''} encontrado${resultadosCount !== 1 ? 's' : ''}`;
+    } else {
+        searchStats.textContent = '';
+    }
+
+    // Mostrar mensaje si no hay resultados
+    const existingMessage = document.querySelector('.no-results-message');
+    if (resultadosCount === 0 && searchTerm) {
+        if (!existingMessage) {
+            const message = document.createElement('div');
+            message.className = 'no-results-message';
+            message.innerHTML = `
+                <i class="fas fa-search fa-3x"></i>
+                <h5>No se encontraron resultados</h5>
+                <p>Intenta con otros términos de búsqueda</p>
+            `;
+            document.getElementById('revisionesPendientes').appendChild(message);
+        }
+    } else if (existingMessage) {
+        existingMessage.remove();
+    }
+}
+
+function limpiarBusqueda() {
+    const searchInput = document.getElementById('searchInput');
+    const searchStats = document.getElementById('searchStats');
+    if (searchInput) {
+        searchInput.value = '';
+        searchInput.focus();
+        filtrarRevisiones('');
+        searchStats.textContent = '';
+    }
+}
+
+// Agregar esto en tu función de inicialización
+document.addEventListener('DOMContentLoaded', () => {
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            filtrarRevisiones(e.target.value);
+        });
+    }
+});
+
 
 

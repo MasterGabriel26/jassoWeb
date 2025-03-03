@@ -52,7 +52,126 @@
     />
 
 
+<style>
+.search-section {
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
 
+.search-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 50px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+}
+
+.search-box:focus-within {
+    box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    transform: translateY(-1px);
+}
+
+.search-icon {
+    position: absolute;
+    left: 20px;
+    color: #6c757d;
+}
+
+#searchInput {
+    width: 100%;
+    padding: 12px 45px 12px 50px;
+    border: none;
+    border-radius: 50px;
+    font-size: 15px;
+    color: #495057;
+    transition: all 0.3s ease;
+}
+
+#searchInput:focus {
+    outline: none;
+}
+
+#searchInput::placeholder {
+    color: #adb5bd;
+}
+
+.clear-search {
+    position: absolute;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 5px;
+    display: none;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.clear-search:hover {
+    opacity: 1;
+}
+
+.search-stats {
+    margin-top: 10px;
+    text-align: center;
+    color: #6c757d;
+    font-size: 14px;
+}
+
+/* Estilos para los resultados de búsqueda */
+.revision-item {
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.revision-item.filtered {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+/* Mensaje de no resultados */
+.no-results-message {
+    text-align: center;
+    padding: 40px 20px;
+    background: #fff;
+    border-radius: 10px;
+    margin: 20px 0;
+    animation: fadeIn 0.3s ease;
+}
+
+.no-results-message i {
+    color: #dee2e6;
+    margin-bottom: 15px;
+}
+
+.no-results-message h5 {
+    color: #495057;
+    margin-bottom: 10px;
+}
+
+.no-results-message p {
+    color: #6c757d;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
 
   </head>
 
@@ -146,7 +265,29 @@
               <div class="col-12">
                 <div class="card">
                   <div class="card-header">
-                    <h5 class="card-title">Revisiones Pendientes</h5>
+                    <div class="d-flex justify-content-between align-items-center">
+                      <h5 class="card-title">Revisiones Pendientes</h5>
+                      <!-- Agregar esto después del título de la card pero antes del card-body -->
+
+                    </div>
+                  </div>
+                  <div class="search-section">
+                    <div class="search-wrapper">
+                        <div class="search-box">
+                            <i class="fas fa-search search-icon"></i>
+                            <input 
+                                type="text" 
+                                id="searchInput" 
+                                placeholder="Buscar por nombre, folio o asesor..."
+                            >
+                            <button class="clear-search" onclick="limpiarBusqueda()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="search-stats" id="searchStats">
+                            <!-- Aquí se mostrará el contador de resultados -->
+                        </div>
+                    </div>
                   </div>
                   <div class="card-body" id="revisionesPendientes">
                     <!-- Aquí se insertarán dinámicamente las revisiones -->
@@ -164,9 +305,18 @@
 <div class="modal fade" id="documentosModal" tabindex="-1" aria-labelledby="documentosModalLabel" aria-hidden="true" data-bs-backdrop="static">
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="documentosModalLabel">Documentos Adjuntos</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="card-header">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="card-title">Revisiones Pendientes</h5>
+          <div class="search-container">
+            <input 
+              type="text" 
+              id="searchInput" 
+              class="form-control" 
+              placeholder="Buscar por nombre o folio..."
+            >
+          </div>
+        </div>
       </div>
       <div class="modal-body">
         <div id="documentosContainer" class="row">
