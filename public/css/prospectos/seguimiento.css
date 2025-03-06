@@ -1438,27 +1438,57 @@ html, body {
 
 
 
+/* Estilos para los botones y acciones */
+.anticipo-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
 
-/* Estilos específicos para el modal de anticipo */
 .anticipo-modal .anticipo-buttons {
     display: flex;
-    justify-content: flex-end;
     gap: 10px;
     margin-top: 20px;
     padding-top: 15px;
     border-top: 1px solid #e5e7eb;
 }
 
-.anticipo-modal .btn {
+/* Estilos específicos para los botones */
+.btn {
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
 }
 
-.anticipo-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 15px;
+.btn-primary {
+    background-color: #1976d2;
+    color: white;
+    border: none;
 }
 
-/* Mantén el resto de tus estilos existentes para contract-status, status-badge, etc. */
+.btn-secondary {
+    background-color: #757575;
+    color: white;
+    border: none;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+}
+
+/* Estilos para los iconos dentro de los botones */
+.btn i {
+    font-size: 16px;
+}
+
+/* Efectos hover para los botones */
+.btn:hover {
+    opacity: 0.9;}

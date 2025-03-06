@@ -71,6 +71,186 @@
 
 
  
+    <style>
+        #paquetesModal .modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+#listaPaquetes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
+
+#listaPaquetes .carousel-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+#listaPaquetes .carousel-card:hover {
+    transform: scale(1.02);
+}
+
+.btn-info {
+    margin-left: 10px;
+    background-color: #17a2b8;
+    color: white;
+}
+
+.anticipo-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+.selected-package-info {
+    margin-bottom: 20px;
+}
+
+.selected-package-info .alert {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.selected-package-info .btn-link {
+    margin-left: auto;
+    padding: 0;
+    color: #0056b3;
+    text-decoration: none;
+}
+
+.selected-package-info .btn-link:hover {
+    color: #003d7a;
+    text-decoration: underline;
+}
+
+    #paquetesModal .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+        padding: 15px;
+        /* Agregar will-change para optimizar el rendimiento */
+        will-change: transform;
+        /* Activar aceleración por hardware */
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        /* Mejorar el scroll */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    #listaPaquetes {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 10px;
+        /* Evitar reflow innecesario */
+        contain: content;
+    }
+
+    .package-item {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        background: white;
+        /* Activar aceleración por hardware para cada item */
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+    }
+
+    /* Optimizar las imágenes */
+    .package-image img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        /* Evitar reflow durante la carga de imágenes */
+        contain: size;
+    }
+
+
+    #paquetesModal .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+        padding: 15px;
+    }
+
+    #listaPaquetes {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 10px;
+    }
+
+    .package-item {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: white;
+    }
+
+    .package-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .package-content {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .package-image {
+        width: 80px;
+        height: 80px;
+        flex-shrink: 0;
+        margin-right: 15px;
+    }
+
+    .package-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+
+    .package-details {
+        flex-grow: 1;
+    }
+
+    .package-title {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .package-info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 13px;
+        color: #666;
+    }
+
+    .package-category {
+        color: #2196F3;
+        font-weight: 500;
+    }
+
+    .package-location {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .package-location i {
+        font-size: 12px;
+        color: #757575;
+    }
+    </style>
 </head>
 
 <body>
@@ -533,7 +713,11 @@
                             </div>
                             <div class="form-group">
                                 <label>Fecha</label>
-                                <input type="date" class="form-control" id="fecha">
+                                <input type="date" 
+       class="form-control" 
+       id="fecha_evento" 
+       name="fecha"
+       onchange="console.log('Cambio directo:', this.value)">
                             </div>
                         </div>
                         <div class="form-row">
@@ -630,6 +814,22 @@
     <script src="js/prospectos/paso7.js"></script>
 	<script src="js/prospectos/listarProspectos.js"></script>
     <script src="js/prospectos/enviarProspecto.js"></script>
+
+    <script>
+        const inputCelular = document.getElementById('celular');
+      
+        inputCelular.addEventListener('input', function (event) {
+          // Expresión regular para permitir solo números y el signo +
+          const regex = /^[0-9+]*$/;
+          const valor = event.target.value;
+      
+          // Si el valor no coincide con la expresión regular, lo corregimos
+          if (!regex.test(valor)) {
+            // Eliminamos los caracteres no permitidos
+            event.target.value = valor.replace(/[^0-9+]/g, '');
+          }
+        });
+      </script>
 
  
 </body>

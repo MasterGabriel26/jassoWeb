@@ -596,53 +596,56 @@ async function mostrarPasoSeguimiento(paso) {
                 }
             } else {
                 botonesHTML = `
-                    <div class="anticipo-modal">
-                        <div class="contract-upload-container">
-                            <div class="upload-header">
-                                <i class="fas fa-money-bill-wave"></i>
-                                <span>Registro de Anticipo</span>
-                            </div>
-                            <div class="upload-instructions">
-                                <p>Complete la siguiente información:</p>
-                                <div class="form-grid">
-                                    <div class="form-group">
-                                        <label for="fecha">
-                                            <i class="fas fa-calendar"></i>
-                                            Fecha
-                                        </label>
-                                        <input type="date" id="fecha" class="form-control custom-input" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="numPersonas">
-                                            <i class="fas fa-users"></i>
-                                            No. Personas
-                                        </label>
-                                        <input type="number" id="numPersonas" class="form-control custom-input" />
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="lugar">
-                                            <i class="fas fa-map-marker-alt"></i>
-                                            Lugar
-                                        </label>
-                                        <select id="lugar" class="form-control custom-input">
-                                            <option value="">Seleccione un lugar</option>
-                                            ${await obtenerLugaresOptions()}
-                                        </select>
-                                    </div>
+                <div class="anticipo-modal">
+                    <div class="contract-upload-container">
+                        <div class="upload-header">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span>Registro de Anticipo</span>
+                        </div>
+                        <div class="upload-instructions">
+                            <p>Complete la siguiente información:</p>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="fecha">
+                                        <i class="fas fa-calendar"></i>
+                                        Fecha
+                                    </label>
+                                    <input type="date" id="fecha" class="form-control custom-input" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="numPersonas">
+                                        <i class="fas fa-users"></i>
+                                        No. Personas
+                                    </label>
+                                    <input type="number" id="numPersonas" class="form-control custom-input" />
+                                </div>
+                                <div class="form-group">
+                                    <label for="lugar">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        Lugar
+                                    </label>
+                                    <select id="lugar" class="form-control custom-input">
+                                        <option value="">Seleccione un lugar</option>
+                                        ${await obtenerLugaresOptions()}
+                                    </select>
                                 </div>
                             </div>
-                            <div class="anticipo-buttons">
-                                <button class="btn btn-primary" onclick="guardarDatosAnticipo()">
-                                    <i class="fas fa-save"></i> Guardar información
-                                </button>
-                                <button class="btn btn-secondary" onclick="seleccionarArchivosAnticipo(${paso})" data-paso="${paso}">
-                                    <i class="fas fa-paperclip"></i> Adjuntar recibo
-                                </button>
-                            </div>
+                        </div>
+                        <div class="anticipo-buttons">
+                            <button class="btn btn-primary" onclick="guardarDatosAnticipo()">
+                                <i class="fas fa-save"></i> Guardar información
+                            </button>
+                            <button class="btn btn-secondary" onclick="seleccionarArchivosAnticipo(${paso})" data-paso="${paso}">
+                                <i class="fas fa-paperclip"></i> Adjuntar recibo
+                            </button>
+                            <button class="btn btn-info" onclick="seleccionarPaquete()">
+                                <i class="fas fa-box"></i> Seleccionar Paquete Vendido
+                            </button>
                         </div>
                     </div>
-                `;
-            }
+                </div>
+            `;
+        }
             break;
          case 13:
           if (pasosCompletados.has(13)) {
@@ -741,6 +744,196 @@ async function mostrarPasoSeguimiento(paso) {
     }
   }
 
+
+// Modificar la función para abrir el modal
+function seleccionarPaquete() {
+    const modalHTML = `
+        <div class="modal fade" id="paquetesModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">
+                            <i class="fas fa-box"></i> 
+                            Seleccionar Paquete Vendido
+                        </h5>
+                               <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                      
+                    </div>
+                    <div class="modal-body">
+                        <div class="search-box mb-3">
+                            <input type="text" 
+                                   class="form-control" 
+                                   placeholder="Buscar paquete..." 
+                                   id="searchPackage">
+                        </div>
+                        <div id="listaPaquetes"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // Remover modal anterior si existe
+    const modalAnterior = document.getElementById('paquetesModal');
+    if (modalAnterior) {
+        modalAnterior.remove();
+    }
+
+    // Agregar el nuevo modal
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    // Mostrar el modal
+    $('#paquetesModal').modal('show');
+
+    // Cargar los paquetes después de que el modal esté visible
+    $('#paquetesModal').on('shown.bs.modal', function () {
+        cargarPaquetes();
+    });
+
+    // Optimizar la búsqueda
+    let searchTimeout;
+    document.getElementById('searchPackage').addEventListener('input', function(e) {
+        // Cancelar el timeout anterior
+        clearTimeout(searchTimeout);
+        
+        // Crear un nuevo timeout
+        searchTimeout = setTimeout(() => {
+            const searchTerm = e.target.value.toLowerCase();
+            const items = document.querySelectorAll('.package-item');
+            
+            items.forEach(item => {
+                const title = item.querySelector('.package-title').textContent.toLowerCase();
+                const category = item.querySelector('.package-category').textContent.toLowerCase();
+                const location = item.querySelector('.package-location').textContent.toLowerCase();
+                
+                const shouldShow = title.includes(searchTerm) || 
+                                 category.includes(searchTerm) || 
+                                 location.includes(searchTerm);
+                
+                item.style.display = shouldShow ? '' : 'none';
+            });
+        }, 150); // Debounce de 150ms
+    });
+}
+
+// Función para crear un item compacto para el modal de paquetes
+function createCompactPackageItem(post) {
+    const defaultPost = {
+        imagen_destacada: 'img/default-image.jpg',
+        titulo: 'Sin título',
+        categoria: 'Sin categoría',
+        lugar: 'Lugar no especificado',
+        fecha_creacion: new Date(),
+        ...post
+    };
+
+    const itemElement = document.createElement("div");
+    itemElement.className = "package-item";
+    
+    itemElement.innerHTML = `
+        <div class="package-content">
+            <div class="package-image">
+                <img 
+                    src="${defaultPost.imagen_destacada}"
+                    alt="${defaultPost.titulo}"
+                    onerror="this.src='img/default-image.jpg'"
+                >
+            </div>
+            <div class="package-details">
+                <h4 class="package-title">${defaultPost.titulo}</h4>
+                <div class="package-info">
+                    <span class="package-category">${defaultPost.categoria}</span>
+                    <span class="package-location">
+                        <i class="fas fa-map-marker-alt"></i> ${defaultPost.lugar}
+                    </span>
+                </div>
+            </div>
+        </div>
+    `;
+
+    return itemElement;
+}
+
+// Modificar la función de carga de paquetes para implementar virtualización
+async function cargarPaquetes() {
+    try {
+        const querySnapshot = await db.collection('publicaciones2').get();
+        const listaPaquetes = document.getElementById('listaPaquetes');
+        listaPaquetes.innerHTML = '';
+
+        // Convertir los documentos a un array
+        const paquetes = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        // Crear un fragmento para mejor rendimiento
+        const fragment = document.createDocumentFragment();
+
+        paquetes.forEach(paquete => {
+            const paqueteItem = createCompactPackageItem(paquete);
+            paqueteItem.onclick = () => seleccionarPaqueteEspecifico(paquete.id, paquete);
+            fragment.appendChild(paqueteItem);
+        });
+
+        listaPaquetes.appendChild(fragment);
+
+    } catch (error) {
+        console.error("Error al cargar paquetes:", error);
+        mostrarAlerta('Error al cargar los paquetes', 'error');
+    }
+}
+
+
+
+// Variable global para almacenar el ID del paquete seleccionado
+let paqueteSeleccionadoId = null;
+
+// Modificar la función seleccionarPaqueteEspecifico
+async function seleccionarPaqueteEspecifico(paqueteId, paqueteData) {
+    try {
+        // Guardar el ID del paquete seleccionado
+        paqueteSeleccionadoId = paqueteId;
+
+        // Cerrar el modal
+        $('#paquetesModal').modal('hide');
+        
+        // Mostrar mensaje de éxito
+        mostrarAlerta('Paquete seleccionado correctamente', 'success');
+        
+        // Actualizar la vista para mostrar el paquete seleccionado
+        const paqueteInfo = document.createElement('div');
+        paqueteInfo.className = 'selected-package-info';
+        paqueteInfo.innerHTML = `
+            <div class="alert alert-info">
+                <i class="fas fa-box"></i>
+                <strong>Paquete seleccionado:</strong> ${paqueteData.titulo}
+                <button class="btn btn-sm btn-link" onclick="cambiarPaquete()">
+                    <i class="fas fa-exchange-alt"></i> Cambiar
+                </button>
+            </div>
+        `;
+
+        // Insertar la información del paquete seleccionado en el formulario
+        const formulario = document.querySelector('.upload-instructions');
+        const paqueteInfoExistente = formulario.querySelector('.selected-package-info');
+        if (paqueteInfoExistente) {
+            paqueteInfoExistente.remove();
+        }
+        formulario.insertBefore(paqueteInfo, formulario.firstChild);
+
+    } catch (error) {
+        console.error("Error al seleccionar paquete:", error);
+        mostrarAlerta('Error al seleccionar el paquete', 'error');
+    }
+}
+
+
+// Función para cambiar el paquete
+function cambiarPaquete() {
+    paqueteSeleccionadoId = null;
+    seleccionarPaquete();
+}
 
   async function mostrarModalProspecto(prospecto, id, nombreAsesor) {
 

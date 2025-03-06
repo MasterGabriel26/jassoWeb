@@ -48,40 +48,86 @@ document.addEventListener("DOMContentLoaded", function () {
       modal.show();
   });
 
-  // Manejar el envío del formulario
   document.getElementById("crearProspectoBtn").addEventListener("click", async function(e) {
     e.preventDefault();
     
     try {
-        // Deshabilitar el botón y mostrar loading
         this.disabled = true;
         this.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Procesando...';
         
-        // Obtener los valores ANTES de cualquier reseteo
+        // Obtener fecha
+        const fechaInput = document.getElementById("fecha_evento");
+        const fechaValue = fechaInput.value || localStorage.getItem('selectedDate');
+        
+        console.log('Valor del input fecha:', fechaValue);
+        
+        let timestamp = 0;
+        
+        if (fechaValue) {
+            const fechaObj = new Date(fechaValue + 'T00:00:00'); // Agregar tiempo
+            timestamp = fechaObj.getTime();
+            
+            console.log('Fecha procesada:', {
+                original: fechaValue,
+                objeto: fechaObj,
+                timestamp: timestamp
+            });
+        }
+
         const formData = {
             nombre: document.getElementById("nombre").value.trim(),
             celular: document.getElementById("celular").value.trim(),
             tipoEvento: getSelectedText(document.getElementById("tipoEvento")),
-            fecha: document.getElementById("fecha").value,
+            fecha: timestamp,
             invitados: document.getElementById("invitados").value,
             lugarEvento: getSelectedText(document.getElementById("lugarEvento")),
             observacion: document.getElementById("observacion").value.trim(),
             pagina: getSelectedText(document.getElementById("referencia"))
         };
 
-        // Llamar a generarProspecto con los datos recolectados
+        if (fechaValue && formData.fecha === 0) {
+            throw new Error('Error al procesar la fecha: ' + fechaValue);
+        }
+
+        console.log('FormData final:', formData);
         await generarProspecto(formData);
         
     } catch (error) {
         console.error("Error:", error);
         showErrorMessage(error);
     } finally {
-        // Restaurar el botón
         this.disabled = false;
         this.innerHTML = document.getElementById('crearProspectoModal').getAttribute('data-mode') === 'edit' 
             ? 'Actualizar prospecto' 
             : 'Crear prospecto';
     }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+  const fechaInput = document.getElementById("fecha");
+  
+  // Agregar listener para cambios
+  fechaInput.addEventListener('change', function(e) {
+      console.log('Fecha seleccionada:', this.value);
+      // Guardar en localStorage para respaldo
+      localStorage.setItem('selectedDate', this.value);
+  });
+  
+  // Agregar listener para input
+  fechaInput.addEventListener('input', function(e) {
+      console.log('Input fecha:', this.value); 
+  });
+});
+
+modalElement.addEventListener('hidden.bs.modal', function () {
+  // Solo resetear si no estamos en modo edición
+  if (this.getAttribute('data-mode') !== 'edit') {
+      const inputs = this.querySelectorAll('input:not([type="date"]), textarea');
+      inputs.forEach(input => {
+          input.value = '';
+          input.classList.remove('is-invalid', 'is-valid');
+      });
+  }
 });
 
   // Botón de editar
@@ -118,7 +164,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
           if (prospectoData.fecha_evento) {
               const fecha = new Date(prospectoData.fecha_evento);
-              document.getElementById("fecha").value = fecha.toISOString().split('T')[0];
+              document.getElementById("fecha_evento").value = fecha.toISOString().split('T')[0];
           }
 
           // Seleccionar valores en los selects
@@ -204,17 +250,12 @@ async function generarProspecto(formData) {
       const isEditing = modalElement.getAttribute("data-mode") === "edit";
       const prospectoId = modalElement.getAttribute("data-prospecto-id");
 
-      // Capturar todos los valores antes de cualquier operación
-      const formData = {
-          nombre: document.getElementById("nombre").value.trim() || "Sin nombre",
-          celular: document.getElementById("celular").value.trim() || "Sin teléfono",
-          fecha: document.getElementById("fecha").value,
-          invitados: document.getElementById("invitados").value || "0",
-          observacion: document.getElementById("observacion").value.trim() || "Sin observaciones",
-          tipoEvento: getSelectedText(document.getElementById("tipoEvento")),
-          lugarEvento: getSelectedText(document.getElementById("lugarEvento")),
-          pagina: getSelectedText(document.getElementById("referencia"))
-      };
+         // Verificar que la fecha sea un número
+         console.log('Fecha recibida en generarProspecto:', formData.fecha);
+
+         // No necesitas verificar el tipo aquí, ya que ya lo hicimos antes
+         const fecha_evento = formData.fecha;
+
 
       const nombreAsesor = localStorage.getItem('userName');
       const uidAsesor=localStorage.getItem('uid')
@@ -222,19 +263,19 @@ async function generarProspecto(formData) {
 
       if (isEditing && prospectoId) {
           console.log("Actualizando prospecto con ID:", prospectoId);
-          
+          fechaModificacion=Date.now()
           const updateData = {
               name: formData.nombre,
               nameMin: formData.nombre.toLowerCase(),
               telefono_prospecto: formData.celular,
               tipo_evento: formData.tipoEvento,
-              fecha_evento: new Date(formData.fecha).getTime(),
+              fecha_evento: fecha_evento,
               invitados: formData.invitados,
               pregunta_por: formData.lugarEvento,
               pregunta_porMin: formData.lugarEvento.toLowerCase(),
               observacion: formData.observacion,
               pagina: formData.pagina,
-              fechaModificacion: firebase.firestore.FieldValue.arrayUnion(Date.now()),
+              fechaModificacion: firebase.firestore.FieldValue.arrayUnion(fechaModificacion.toString()),
               nombreUsuarioModificador: firebase.firestore.FieldValue.arrayUnion(uidAsesor),
               uid_modify: asesor
           };
@@ -254,6 +295,7 @@ async function generarProspecto(formData) {
           const id = db.collection("prospectos2").doc().id;
           const currentTime = Date.now();
 
+          fechaModificacion=Date.now()
           const prospectoData = {
               id: id,
               asesor: asesor || null,
@@ -261,11 +303,11 @@ async function generarProspecto(formData) {
               colorEtiqueta: null,
               contador_llamadas: 0,
               etiqueta: null,
-              fechaModificacion: [Date.now()],
+              fechaModificacion: [fechaModificacion.toString()],
               fechaParaLlamada: 0,
               fecha_cita: 0,
               fecha_create: currentTime,
-              fecha_evento: new Date(formData.fecha).getTime() || 0,
+              fecha_evento:fecha_evento,
               folio: folio,
               folioMin: folio.toLowerCase(),
               horaParaLlamada: 0,
@@ -354,22 +396,12 @@ async function generarProspecto(formData) {
           timer: 2000
       });
 
-      window.location.reload();
+      //window.location.reload();
 
   } catch (error) {
       console.error("Error completo:", error);
       
-      // Log detallado
-      const formData = {
-          nombre: document.getElementById("nombre").value,
-          celular: document.getElementById("celular").value,
-          tipoEvento: document.getElementById("tipoEvento").value,
-          fecha: document.getElementById("fecha").value,
-          invitados: document.getElementById("invitados").value,
-          lugarEvento: document.getElementById("lugarEvento").value,
-          observacion: document.getElementById("observacion").value
-      };
-      
+
       console.log("Datos del formulario:", formData);
       console.log("Variables importantes:", { asesor, nombre, lider });
 

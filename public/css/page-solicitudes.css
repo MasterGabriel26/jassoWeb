@@ -330,3 +330,7 @@ box-shadow: 0 3px 10px rgba(0,0,0,0.1);
 }
 
 
+
+button.btn.btn-action.btn-view.mb-2{
+    color: white;
+}

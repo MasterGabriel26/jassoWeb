@@ -14,7 +14,17 @@ async function guardarDatosAnticipo() {
         });
         return;
       }
-  
+      // Validar que se haya seleccionado un paquete
+      if (!paqueteSeleccionadoId) {
+        Swal.fire({
+            icon: "warning",
+            title: "Paquete no seleccionado",
+            text: "Por favor, seleccione un paquete antes de continuar",
+            confirmButtonText: "Entendido",
+        });
+        return;
+    }
+
       if (archivosAnticipo.length === 0) {
         Swal.fire({
             icon: 'warning',
@@ -121,6 +131,7 @@ async function guardarDatosAnticipo() {
         invitados: numPersonas,
         pregunta_por: lugar,
         pregunta_porMin: lugar.toLowerCase(),
+        idPaqueteVendido: paqueteSeleccionadoId
       });
   
       // Calcular y actualizar porcentaje
