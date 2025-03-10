@@ -1,0 +1,250 @@
+.comision-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    margin-bottom: 0.8rem;
+    overflow: hidden;
+    transition: all 0.2s ease;
+}
+
+.comision-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.comision-header {
+    background: linear-gradient(135deg, #1e2940 0%, #2a3f5f 100%);
+    padding: 0.8rem;
+    position: relative;
+}
+
+.comision-status {
+    margin-bottom: 0.5rem;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 500;
+}
+
+.status-badge.pending {
+    background: rgba(255, 193, 7, 0.15);
+    color: #ffc107;
+}
+
+.comision-title h3 {
+    color: white;
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+}
+
+.comision-id {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.75rem;
+}
+
+.comision-body {
+    padding: 0.8rem;
+}
+
+.comision-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.detail-group {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.6rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.detail-item i {
+    color: #1e2940;
+    font-size: 0.9rem;
+}
+
+.detail-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.detail-content label {
+    color: #6c757d;
+    font-size: 0.7rem;
+}
+
+.detail-content span {
+    color: #2c3e50;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.package-info {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 0.8rem;
+}
+
+.package-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.6rem;
+}
+
+.package-header i {
+    color: #1e2940;
+    font-size: 0.9rem;
+}
+
+.package-header h4 {
+    color: #2c3e50;
+    font-size: 0.9rem;
+    margin: 0;
+}
+
+.package-name {
+    color: #2c3e50;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.package-commission {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.commission-label {
+    color: #6c757d;
+    font-size: 0.8rem;
+}
+
+.commission-amount {
+    color: #28a745;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.comision-actions {
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn-aprobar-comision {
+    width: 100%;
+    padding: 0.6rem;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+}
+
+.btn-aprobar-comision:hover {
+    background: #218838;
+    transform: translateY(-1px);
+}
+
+.btn-aprobar-comision i {
+    font-size: 0.9rem;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    color: #28a745;
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    color: #2c3e50;
+    margin-bottom: 0.4rem;
+    font-size: 1.1rem;
+}
+
+.empty-state p {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .detail-group {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .comision-card {
+        margin-bottom: 0.6rem;
+    }
+
+    .comision-header {
+        padding: 0.6rem;
+    }
+    
+    .comision-body {
+        padding: 0.6rem;
+    }
+    
+    .detail-group {
+        grid-template-columns: 1fr;
+    }
+
+    .package-info {
+        padding: 0.6rem;
+    }
+
+    .detail-item {
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .comision-title h3 {
+        font-size: 0.9rem;
+    }
+
+    .status-badge {
+        font-size: 0.65rem;
+        padding: 0.2rem 0.6rem;
+    }
+
+    .package-name {
+        font-size: 0.8rem;
+    }
+
+    .btn-aprobar-comision {
+        font-size: 0.8rem;
+        padding: 0.5rem;
+    }
+}

@@ -35,6 +35,7 @@ function generateMenu() {
                 </a>
             </li>
           
+            
     `;
 
     if (userType === 'admin') {
@@ -66,6 +67,27 @@ function generateMenu() {
                 <span class="align-middle">Solicitudes</span>
             </a>
         </li>
+
+        <li class="sidebar-item">
+    <a data-bs-target="#comisiones" data-bs-toggle="collapse" class="sidebar-link collapsed">
+        <i class="align-middle" data-feather="dollar-sign"></i>
+        <span class="align-middle">Comisiones</span>
+    </a>
+    <ul id="comisiones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
+        <li class="sidebar-item">
+            <a class="sidebar-link" href="/vista-admin/page-comisiones-admin.html">
+                <i class="align-middle" data-feather="clock"></i>
+                Pendientes
+            </a>
+        </li>
+        <li class="sidebar-item">
+            <a class="sidebar-link" href="/vista-admin/page-historial-comisiones-admin.html">
+                <i class="align-middle" data-feather="check-circle"></i>
+                Historial
+            </a>
+        </li>
+    </ul>
+</li>
         `;
     }
 
@@ -78,6 +100,12 @@ function generateMenu() {
                 </a>
             </li>
 
+            <li class="sidebar-item">
+    <a class="sidebar-link" href="/page-historial-comisiones.html">
+        <i class="align-middle" data-feather="dollar-sign"></i>
+        <span class="align-middle">Comisiones</span>
+    </a>
+</li>
             
         `;
     }
