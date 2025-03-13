@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Evento</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232c4167'%3E%3Cpath d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z'/%3E%3C/svg%3E">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="administrarInvitados.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+          .blur {
+            filter: blur(8px);
+            pointer-events: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="event-header">
+            <div class="event-title">
+                <h1 id="event-name">Nombre del Evento</h1>
+                <p><i class="far fa-calendar-alt"></i> <span id="event-date">Fecha del Evento</span></p>
+            </div>
+            <div class="event-actions">
+                <button class="btn btn-secondary" id="edit-event-btn">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="btn btn-primary" id="share-event-btn">
+                    <i class="fas fa-share-alt"></i> Compartir
+                </button>
+            </div>
+        </div>
+
+        <div class="event-details-grid">
+            <!-- Detalles del Evento -->
+            <div class="event-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        <h2>Detalles del Evento</h2>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div id="event-details-loader" class="loader"></div>
+                    <div id="event-details-content" class="event-details-list" style="display: none;">
+                        <!-- Detalles del evento se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invitados -->
+            <div class="event-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-users"></i>
+                        <h2>Invitados</h2>
+                    </div>
+                    <button class="btn btn-primary" id="add-invitado-btn" style="background-color: var(--primary-color); color: white;">
+                        <i class="fas fa-user-plus"></i> Añadir
+                    </button>
+                </div>
+                <div class="section-content">
+                    <div id="invitados-loader" class="loader"></div>
+                    <ul id="invitados-list" class="invitados-list" style="display: none;">
+                        <!-- Lista de invitados se cargará dinámicamente -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="administrarInvitados.js"></script>
+
+
+ 
+</body>
+</html>
