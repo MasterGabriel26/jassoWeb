@@ -77,7 +77,6 @@ class EventoManager {
     configurarEventListeners() {
         // Botones de acción del evento
         document.getElementById('edit-event-btn').addEventListener('click', () => this.editarEvento());
-        document.getElementById('share-event-btn').addEventListener('click', () => this.compartirEvento());
         document.getElementById('add-invitado-btn').addEventListener('click', () => this.mostrarModalAgregarInvitado());
     }
 
@@ -194,21 +193,7 @@ class EventoManager {
                 <div class="detail-value">${this.valorSeguro(eventoData.cantidadPersonas, '0')}</div>
             </div>
             
-            <div class="event-detail-item">
-                <div class="detail-label">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Creado</span>
-                </div>
-                <div class="detail-value">${this.formatearFecha(eventoData.fechaRegistro)}</div>
-            </div>
             
-            <div class="event-detail-item">
-                <div class="detail-label">
-                    <i class="fas fa-tag"></i>
-                    <span>Tipo</span>
-                </div>
-                <div class="detail-value">${this.valorSeguro(eventoData.tipoEvento, 'No especificado')}</div>
-            </div>
         `;
     }
 
@@ -578,9 +563,13 @@ class EventoManager {
                 uidCliente: this.state.currentUser.uid,
                 listadoAcompanantes: {}
             };
-
-            await this.db.collection('invitados').add(nuevoInvitado);
+    
+            // Agregar el invitado y obtener la referencia del documento
+            const docRef = await this.db.collection('invitados').add(nuevoInvitado);
             
+            // Actualizar el documento con su propio ID
+            await docRef.update({ id: docRef.id });
+    
             Swal.fire({
                 title: 'Invitado Añadido',
                 text: `${datosInvitado.nombre} ha sido agregado exitosamente`,
@@ -588,10 +577,10 @@ class EventoManager {
                 timer: 2000,
                 showConfirmButton: false
             });
-
+    
             // Recargar invitados
             await this.cargarInvitados();
-
+    
         } catch (error) {
             console.error("Error al guardar invitado:", error);
             this.mostrarError('Error', 'No se pudo guardar el invitado.');
@@ -790,6 +779,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+ 
+    
     // Verificar el token en Firebase
     verificarTokenEnFirebase(eventoId, token);
 });
@@ -819,10 +810,7 @@ async function verificarTokenEnFirebase(eventoId, token) {
         // Si no hay token o no coincide con la contraseña, mostrar modal
         if (!token || token !== eventoData.password) {
             // Ocultar botón de edición
-            const editEventBtn = document.getElementById('edit-event-btn');
-            if (editEventBtn) {
-                editEventBtn.style.display = 'none';
-            }
+            document.getElementById('edit-event-btn').classList.add('hidden');
             mostrarModalAcceso();
         }
     } catch (error) {
@@ -970,7 +958,7 @@ function mostrarModalAcceso() {
                         style="
                             position: absolute;
                             right: 10px;
-                            top: 50%;
+                            top: 35%;
                             transform: translateY(-50%);
                             background: none;
                             border: none;
@@ -1004,6 +992,11 @@ function mostrarModalAcceso() {
             </div>
         `;
         document.body.appendChild(modalAcceso);
+
+        const editEventBtn = document.getElementById('edit-event-btn');
+        if (editEventBtn) {
+            editEventBtn.style.display = 'none';
+        }
 
         // Agregar evento para mostrar/ocultar contraseña
         const passwordInput = document.getElementById('password');

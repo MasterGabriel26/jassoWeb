@@ -47,6 +47,11 @@ body {
     padding: 2rem;
 }
 
+/* En tu CSS */
+.hidden {
+    display: none !important;
+}
+
 /* Event Header */
 .event-header {
     display: flex;

@@ -293,7 +293,7 @@ async function sendEventLinkToClient(eventoId, eventoNombre) {
     }
     
     // URL de tu página de eventos con el uid como parámetro
-    const eventUrl = `https://jassocompany.com/invitadosCliente/page-administrar-invitados.html?uid=${eventoId}&tp9ju=${contrasena}`;
+    const eventUrl = `https://jassocompany.com/invitadosCliente/page-administrar-invitados.html?uid=${eventoId}`;
     
     // Construir el mensaje con formato
     const mensaje = `Hola, tu asesor te está invitando a conocer más sobre la lista de invitados de tu evento "${eventoNombre}".
