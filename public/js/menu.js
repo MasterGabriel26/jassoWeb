@@ -78,6 +78,13 @@ function generateMenu() {
                 </li>
             </ul>
         </li>
+
+        <li class="sidebar-item">
+    <a class="sidebar-link" href="/invitadosCliente/page-invitados-cliente.html">
+        <i class="align-middle" data-feather="user-plus"></i>
+        <span class="align-middle">Invitados del cliente</span>
+    </a>
+</li>
     `;
 
     if (userType === 'admin') {

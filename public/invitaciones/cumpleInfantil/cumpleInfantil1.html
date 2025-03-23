@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación de Cumpleaños</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700&family=Bubblegum+Sans&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #FF5757;
+            --secondary: #4ECDC4;
+            --accent1: #FFE66D;
+            --accent2: #7B68EE;
+            --accent3: #FF9966;
+            --dark: #333333;
+            --light: #FFFFFF;
+            --background: #F7F9FC;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+        
+        @keyframes wiggle {
+            0%, 100% {
+                transform: rotate(-3deg);
+            }
+            50% {
+                transform: rotate(3deg);
+            }
+        }
+        
+        @keyframes confetti {
+            0% {
+                transform: translateY(0) rotate(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--background);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent1);
+            opacity: 0.8;
+            animation: confetti 5s linear infinite;
+        }
+        
+        .invitation-card {
+            width: 100%;
+            max-width: 600px;
+            background-color: var(--light);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        
+        .card-header {
+            background-color: var(--primary);
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header::before {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: radial-gradient(circle, transparent, transparent 50%, var(--light) 50%, var(--light));
+            background-size: 20px 20px;
+        }
+        
+        .balloon-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .balloon {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            border-radius: 50%;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .balloon::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .balloon-1 {
+            background-color: var(--accent1);
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .balloon-2 {
+            background-color: var(--secondary);
+            top: 10%;
+            right: 15%;
+            animation-delay: 0.5s;
+        }
+        
+        .balloon-3 {
+            background-color: var(--accent2);
+            bottom: 30%;
+            left: 20%;
+            animation-delay: 1s;
+        }
+        
+        .balloon-4 {
+            background-color: var(--accent3);
+            bottom: 20%;
+            right: 10%;
+            animation-delay: 1.5s;
+        }
+        
+        .birthday-title {
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 2.5rem;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+            animation: wiggle 3s ease-in-out infinite;
+        }
+        
+        .birthday-subtitle {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.2rem;
+            color: var(--light);
+            margin-bottom: 1rem;
+        }
+        
+        .age-badge {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            background-color: var(--accent1);
+            border-radius: 50%;
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 2.5rem;
+            color: var(--light);
+            line-height: 80px;
+            text-align: center;
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        .age-badge::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 2px dashed var(--light);
+            border-radius: 50%;
+            animation: wiggle 5s linear infinite;
+        }
+        
+        .card-content {
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .child-name {
+            font-family: 'Baloo 2', cursive;
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .invitation-text {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .details-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .detail-item {
+            background-color: rgba(78, 205, 196, 0.1);
+            border-radius: 15px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .detail-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .detail-icon {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-title {
+            font-family: 'Baloo 2', cursive;
+            font-size: 1rem;
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-text {
+            font-size: 1rem;
+            color: var(--dark);
+        }
+        
+        .rsvp-container {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        
+        .rsvp-text {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .rsvp-button {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background-color: var(--primary);
+            color: var(--light);
+            border: none;
+            border-radius: 30px;
+            font-family: 'Baloo 2', cursive;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(255, 87, 87, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .rsvp-button:hover {
+            background-color: var(--accent2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(123, 104, 238, 0.4);
+        }
+        
+        .contact-info {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--dark);
+        }
+        
+        .card-footer {
+            background-color: var(--secondary);
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .card-footer::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: radial-gradient(circle, transparent, transparent 50%, var(--secondary) 50%, var(--secondary));
+            background-size: 20px 20px;
+        }
+        
+        .footer-text {
+            font-family: 'Bubblegum Sans', cursive;
+            font-size: 1.3rem;
+            color: var(--light);
+        }
+        
+        .gift-icon {
+            font-size: 1.5rem;
+            color: var(--accent1);
+            margin: 0 0.5rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .invitation-card {
+                max-width: 100%;
+            }
+            
+            .birthday-title {
+                font-size: 2rem;
+            }
+            
+            .age-badge {
+                width: 70px;
+                height: 70px;
+                font-size: 2rem;
+                line-height: 70px;
+            }
+            
+            .child-name {
+                font-size: 1.8rem;
+            }
+            
+            .details-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .card-header {
+                padding: 1.5rem 1rem;
+            }
+            
+            .birthday-title {
+                font-size: 1.8rem;
+            }
+            
+            .birthday-subtitle {
+                font-size: 1rem;
+            }
+            
+            .age-badge {
+                width: 60px;
+                height: 60px;
+                font-size: 1.8rem;
+                line-height: 60px;
+            }
+            
+            .card-content {
+                padding: 1.5rem 1rem;
+            }
+            
+            .child-name {
+                font-size: 1.5rem;
+            }
+            
+            .invitation-text {
+                font-size: 1rem;
+            }
+            
+            .detail-item {
+                padding: 0.8rem;
+            }
+            
+            .detail-icon {
+                font-size: 1.2rem;
+            }
+            
+            .detail-title {
+                font-size: 0.9rem;
+            }
+            
+            .detail-text {
+                font-size: 0.9rem;
+            }
+            
+            .footer-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="confetti-container" id="confetti-container"></div>
+        
+        <div class="invitation-card">
+            <div class="card-header">
+                <div class="balloon-container">
+                    <div class="balloon balloon-1"></div>
+                    <div class="balloon balloon-2"></div>
+                    <div class="balloon balloon-3"></div>
+                    <div class="balloon balloon-4"></div>
+                </div>
+                
+                <h1 class="birthday-title">¡Fiesta de Cumpleaños!</h1>
+                <p class="birthday-subtitle">¡Estás invitado a celebrar conmigo!</p>
+                
+                <div class="age-badge">5</div>
+            </div>
+            
+            <div class="card-content">
+                <h2 class="child-name">Mateo</h2>
+                
+                <p class="invitation-text">¡Hola amiguito! Estoy muy emocionado de invitarte a mi fiesta de cumpleaños. ¡Habrá juegos, pastel, piñata y mucha diversión!</p>
+                
+                <div class="details-container">
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-alt detail-icon"></i>
+                        <h3 class="detail-title">Fecha</h3>
+                        <p class="detail-text">Sábado, 15 de Junio</p>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <i class="fas fa-clock detail-icon"></i>
+                        <h3 class="detail-title">Hora</h3>
+                        <p class="detail-text">3:00 PM - 7:00 PM</p>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt detail-icon"></i>
+                        <h3 class="detail-title">Lugar</h3>
+                        <p class="detail-text">Salón de Fiestas "Arcoiris"</p>
+                        <p class="detail-text">Av. de los Niños #123</p>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <i class="fas fa-tshirt detail-icon"></i>
+                        <h3 class="detail-title">Vestimenta</h3>
+                        <p class="detail-text">Ropa cómoda</p>
+                        <p class="detail-text">¡Ven listo para jugar!</p>
+                    </div>
+                </div>
+                
+                <div class="rsvp-container">
+                    <p class="rsvp-text">Por favor confirma tu asistencia antes del 8 de Junio</p>
+                    <a href="#" class="rsvp-button">¡Sí asistiré!</a>
+                    
+                    <div class="contact-info">
+                        <p>Contacto: Mamá de Mateo</p>
+                        <p>Tel: 555-123-4567</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <p class="footer-text">
+                    <i class="fas fa-gift gift-icon"></i>
+                    ¡No faltes, te esperamos!
+                    <i class="fas fa-gift gift-icon"></i>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Crear confeti
+            const confettiContainer = document.getElementById('confetti-container');
+            const confettiColors = ['#FF5757', '#4ECDC4', '#FFE66D', '#7B68EE', '#FF9966'];
+            const confettiCount = 50;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Posición aleatoria
+                const posX = Math.random() * 100;
+                
+                // Tamaño aleatorio
+                const size = Math.random() * 10 + 5;
+                
+                // Color aleatorio
+                const colorIndex = Math.floor(Math.random() * confettiColors.length);
+                
+                // Forma aleatoria (círculo, cuadrado o triángulo)
+                const shapes = ['50%', '0%', '50% 0, 0 100%, 100% 100%'];
+                const shapeIndex = Math.floor(Math.random() * shapes.length);
+                
+                // Velocidad aleatoria
+                const duration = Math.random() * 3 + 2;
+                const delay = Math.random() * 5;
+                
+                confetti.style.left = `${posX}%`;
+                confetti.style.top = `-${size}px`;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = confettiColors[colorIndex];
+                
+                if (shapeIndex === 0) {
+                    // Círculo
+                    confetti.style.borderRadius = shapes[0];
+                } else if (shapeIndex === 1) {
+                    // Cuadrado
+                    confetti.style.borderRadius = shapes[1];
+                } else {
+                    // Triángulo
+                    confetti.style.backgroundColor = 'transparent';
+                    confetti.style.borderBottom = `${size}px solid ${confettiColors[colorIndex]}`;
+                    confetti.style.borderLeft = `${size/2}px solid transparent`;
+                    confetti.style.borderRight = `${size/2}px solid transparent`;
+                    confetti.style.height = '0';
+                }
+                
+                confetti.style.animationDuration = `${duration}s`;
+                confetti.style.animationDelay = `${delay}s`;
+                
+                confettiContainer.appendChild(confetti);
+            }
+        });
+    </script>
+</body>
+</html>

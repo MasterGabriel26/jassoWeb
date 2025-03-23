@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación de Boda</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Great+Vibes&family=Montserrat:wght@100;200;300;400;500&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <style>
+        :root {
+            --primary: #b8866f;
+            --primary-light: #d4b2a7;
+            --primary-dark: #8c5e4a;
+            --secondary: #718ea4;
+            --secondary-light: #a7c1d4;
+            --text-dark: #2d2d2d;
+            --text-light: #f8f5f2;
+            --background: #faf7f5;
+            --gold: #d4af37;
+            --gold-light: #f0e6a9;
+            --timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        @keyframes shimmer {
+            0% {
+                background-position: -100% 0;
+            }
+            100% {
+                background-position: 200% 0;
+            }
+        }
+        
+        @keyframes fadeInBlur {
+            0% {
+                opacity: 0;
+                filter: blur(10px);
+            }
+            100% {
+                opacity: 1;
+                filter: blur(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes expandWidth {
+            from {
+                width: 0;
+                opacity: 0;
+            }
+            to {
+                width: 150px;
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                transform: translateX(-100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+            height: 100%;
+        }
+        
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--background);
+            color: var(--text-dark);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(216, 191, 216, 0.05) 0%, rgba(216, 191, 216, 0) 90%),
+                radial-gradient(circle at 90% 80%, rgba(184, 134, 111, 0.07) 0%, rgba(184, 134, 111, 0) 90%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('/placeholder.svg?height=1080&width=1920');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.08;
+            z-index: -2;
+            filter: blur(3px);
+        }
+        
+        .invitation-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.85));
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 3rem 2rem;
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+                0 0 30px rgba(184, 134, 111, 0.2) inset;
+            text-align: center;
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInBlur 1s ease forwards;
+            margin: 0 auto;
+        }
+        
+        .invitation-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 20%,
+                rgba(255, 255, 255, 0.1) 20%,
+                rgba(255, 255, 255, 0.1) 40%,
+                transparent 40%,
+                transparent 60%,
+                rgba(255, 255, 255, 0.1) 60%,
+                rgba(255, 255, 255, 0.1) 80%,
+                transparent 80%
+            );
+            transform: rotate(30deg);
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .card-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .names-container {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 2s ease 0.5s forwards;
+        }
+        
+        .pre-names {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            letter-spacing: 3px;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+            position: relative;
+            display: inline-block;
+            padding: 0 20px;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        }
+        
+        .pre-names::before,
+        .pre-names::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--primary), transparent);
+            animation: expandWidth 1.5s ease 1.5s forwards;
+        }
+        
+        .pre-names::before {
+            right: 100%;
+        }
+        
+        .pre-names::after {
+            left: 100%;
+        }
+        
+        .names {
+            font-family: 'Great Vibes', cursive;
+            font-size: 5rem;
+            background: linear-gradient(45deg, var(--primary-dark), var(--gold), var(--primary));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            line-height: 1.2;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            opacity: 0;
+        }
+        
+        .first-name {
+            animation: slideInLeft 1.5s ease 1s forwards;
+        }
+        
+        .second-name {
+            animation: slideInRight 1.5s ease 1.5s forwards;
+        }
+        
+        .and {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-style: italic;
+            color: var(--gold);
+            margin: 0.5rem 0;
+            position: relative;
+            opacity: 0;
+            animation: fadeIn 1.5s ease 1.3s forwards;
+        }
+        
+        .date-divider {
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--primary), var(--gold), var(--primary), transparent);
+            margin: 3rem auto;
+            position: relative;
+            opacity: 0;
+            animation: expandWidth 1.5s ease 2.5s forwards;
+        }
+        
+        .details-container {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 2s ease 2.5s forwards;
+            position: relative;
+        }
+        
+        .invitation-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 2.5rem;
+            color: var(--text-dark);
+            font-weight: 400;
+            position: relative;
+        }
+        
+        .invitation-text::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 1px;
+            background-color: var(--primary-light);
+            margin: 1.5rem auto 0;
+        }
+        
+        .icon {
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .icon-large {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--gold);
+        }
+        
+        .icon-circle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(184, 134, 111, 0.1);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .date-time {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+            font-weight: 400;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+            padding: 5px 15px;
+        }
+        
+        .location {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            font-weight: 600;
+            margin: 1.5rem 0 0.5rem;
+            color: var(--primary-dark);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .address {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            margin-bottom: 2.5rem;
+            font-weight: 300;
+            color: var(--text-dark);
+            position: relative;
+        }
+        
+        .rsvp-container {
+            margin-top: 3rem;
+            position: relative;
+            padding: 1.5rem;
+            border: 1px solid rgba(184, 134, 111, 0.2);
+            border-radius: 5px;
+        }
+        
+        .rsvp {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-style: italic;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        
+        .contact {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            color: var(--text-dark);
+            margin-top: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .countdown {
+            margin-top: 2rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+        
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+        
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .countdown-value {
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: var(--primary-dark);
+            background: rgba(255, 255, 255, 0.8);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            margin-bottom: 0.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .countdown-label {
+            font-size: 0.8rem;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .section-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--primary);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .icon-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+        
+        .icon-divider-line {
+            height: 1px;
+            width: 60px;
+            background-color: var(--primary-light);
+        }
+        
+        .icon-divider-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .icon-divider-circle i {
+            color: var(--primary);
+            font-size: 0.8rem;
+        }
+
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: var(--background);
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(184, 134, 111, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            background-color: rgba(255, 0, 0, 0.1);
+            color: #d32f2f;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px auto;
+            text-align: center;
+            display: none;
+            max-width: 800px;
+            width: 90%;
+        }
+        
+        /* Estilos para los botones */
+        .buttons-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 2.5rem;
+            width: 100%;
+        }
+        
+        .btn {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            border: none;
+            outline: none;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+            min-width: 200px;
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            z-index: -1;
+            transition: all 0.4s ease;
+        }
+        
+        .btn:hover::before {
+            transform: scale(1.1);
+            filter: brightness(1.1);
+        }
+        
+        .btn-primary {
+            color: white;
+            box-shadow: 0 4px 15px rgba(184, 134, 111, 0.4);
+        }
+        
+        .btn-secondary {
+            color: white;
+            background: linear-gradient(45deg, var(--gold), var(--gold-dark, #aa8c2c));
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+        }
+        
+        .btn-secondary::before {
+            background: linear-gradient(45deg, var(--gold), var(--gold-dark, #aa8c2c));
+        }
+        
+        .btn i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        /* Estilos para el modal de QR */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal.active .modal-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .modal-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            color: var(--primary-dark);
+            margin-bottom: 0.5rem;
+        }
+        
+        .modal-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            color: var(--text-dark);
+            opacity: 0.7;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: var(--text-dark);
+            opacity: 0.5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-close:hover {
+            opacity: 1;
+            transform: rotate(90deg);
+        }
+        
+        /* Estilos para el modal de QR */
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 1rem 0;
+        }
+        
+        #qrcode {
+            margin: 1.5rem 0;
+            padding: 15px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .qr-instructions {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            opacity: 0.7;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .btn-download {
+            margin-top: 1rem;
+            background: linear-gradient(45deg, var(--secondary), var(--secondary-light));
+            color: white;
+            box-shadow: 0 4px 15px rgba(113, 142, 164, 0.4);
+        }
+        
+        .btn-download::before {
+            background: linear-gradient(45deg, var(--secondary), var(--secondary-light));
+        }
+        
+        /* Estilos para SweetAlert personalizado */
+        .swal2-popup {
+            font-family: 'Montserrat', sans-serif;
+            border-radius: 10px;
+            padding: 2rem;
+        }
+        
+        .swal2-title {
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--primary-dark);
+        }
+        
+        .swal2-html-container {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--text-dark);
+        }
+        
+        .swal2-confirm {
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark)) !important;
+            border-radius: 50px !important;
+            padding: 10px 25px !important;
+            font-family: 'Montserrat', sans-serif !important;
+            font-weight: 500 !important;
+        }
+        
+        /* Estilos para el estado de confirmación */
+        .confirmation-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 1rem;
+            animation: fadeIn 1s ease forwards;
+        }
+        
+        .status-confirmed {
+            background-color: rgba(76, 175, 80, 0.1);
+            color: #4CAF50;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+        }
+        
+        .status-pending {
+            background-color: rgba(255, 152, 0, 0.1);
+            color: #FF9800;
+            border: 1px solid rgba(255, 152, 0, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .invitation-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .names {
+                font-size: 3.5rem;
+            }
+            
+            .pre-names::before,
+            .pre-names::after {
+                display: none;
+            }
+            
+            .countdown-timer {
+                gap: 1rem;
+            }
+            
+            .countdown-value {
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+            
+            .buttons-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .btn {
+                width: 100%;
+                max-width: 250px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0.5rem;
+            }
+            
+            .invitation-card {
+                padding: 1.5rem 1rem;
+                border-radius: 8px;
+            }
+            
+            .names {
+                font-size: 2.5rem;
+            }
+            
+            .and {
+                font-size: 1.5rem;
+            }
+            
+            .pre-names {
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+            
+            .invitation-text {
+                font-size: 1.1rem;
+                line-height: 1.6;
+                margin-bottom: 1.5rem;
+            }
+            
+            .date-time {
+                font-size: 0.9rem;
+                letter-spacing: 1px;
+                padding: 3px 10px;
+            }
+            
+            .location {
+                font-size: 1.5rem;
+                margin: 1rem 0 0.3rem;
+            }
+            
+            .address {
+                font-size: 0.9rem;
+                margin-bottom: 1.5rem;
+            }
+            
+            .countdown-timer {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.8rem;
+            }
+            
+            .countdown-item {
+                margin: 0.3rem;
+            }
+            
+            .countdown-value {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+            
+            .countdown-label {
+                font-size: 0.7rem;
+            }
+            
+            .modal-content {
+                padding: 1.5rem 1rem;
+            }
+            
+            .modal-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <p>Cargando invitación...</p>
+    </div>
+
+    <div id="error-message" class="error-message">
+        No se pudo cargar la invitación. Por favor, verifica el enlace e intenta nuevamente.
+    </div>
+
+    <div class="container" id="invitation-container" style="display: none;">
+        <div class="background"></div>
+        
+        <div class="invitation-card">
+            <div class="card-content">
+                <div class="names-container">
+                    <p class="pre-names"><i class="fas fa-dove icon"></i>JUNTOS CON SUS FAMILIAS<i class="fas fa-dove icon" style="transform: scaleX(-1);"></i></p>
+                    <h1 class="names first-name" id="nombre1"></h1>
+                    <p class="and">&</p>
+                    <h1 class="names second-name" id="nombre2"></h1>
+                </div>
+                
+                <div class="date-divider"></div>
+                
+                <div class="details-container">
+                    <div class="section-icon">
+                        <div class="icon-circle">
+                            <i class="fas fa-heart icon-large" style="margin-top: 20px;"></i>
+                        </div>
+                        <p class="section-title">Invitación</p>
+                    </div>
+                    
+                    <p class="invitation-text" id="fraseInvitacion"></p>
+                    
+                    <div class="icon-divider">
+                        <div class="icon-divider-line"></div>
+                        <div class="icon-divider-circle">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <div class="icon-divider-line"></div>
+                    </div>
+                    
+                    <p class="date-time" id="fechaBoda"><i class="fas fa-calendar-day icon"></i></p>
+                    <p class="date-time" id="horaBoda"><i class="fas fa-clock icon"></i></p>
+                    
+                    <div class="icon-divider">
+                        <div class="icon-divider-line"></div>
+                        <div class="icon-divider-circle">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="icon-divider-line"></div>
+                    </div>
+                    
+                    <p class="location" id="lugarBoda"><i class="fas fa-church icon"></i></p>
+                    <p class="address" id="direccionBoda"><i class="fas fa-map-pin icon"></i></p>
+                    
+                    <p class="invitation-text">Será un honor contar con su presencia en este día tan especial para nosotros</p>
+                    
+                    <div class="countdown">
+                        <div class="section-icon">
+                            <div class="icon-circle">
+                                <i class="fas fa-hourglass-half icon-large" style="margin-top: 20px;"></i>
+                            </div>
+                            <p class="section-title">Faltan</p>
+                        </div>
+                        <div class="countdown-timer" id="countdown">
+                            <div class="countdown-item">
+                                <div class="countdown-value" id="days">00</div>
+                                <div class="countdown-label"><i class="fas fa-sun icon"></i>Días</div>
+                            </div>
+                            <div class="countdown-item">
+                                <div class="countdown-value" id="hours">00</div>
+                                <div class="countdown-label"><i class="fas fa-hourglass icon"></i>Horas</div>
+                            </div>
+                            <div class="countdown-item">
+                                <div class="countdown-value" id="minutes">00</div>
+                                <div class="countdown-label"><i class="fas fa-stopwatch icon"></i>Minutos</div>
+                            </div>
+                            <div class="countdown-item">
+                                <div class="countdown-value" id="seconds">00</div>
+                                <div class="countdown-label"><i class="fas fa-clock icon"></i>Segundos</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Estado de confirmación -->
+                    <div id="confirmation-status-container" style="display: none; margin-top: 2rem;">
+                        <p>Estado de tu invitación:</p>
+                        <div id="confirmation-status" class="confirmation-status"></div>
+                    </div>
+                    
+                    <!-- Botones para confirmar asistencia y generar QR -->
+                    <div class="buttons-container">
+                        <button id="rsvp-btn" class="btn btn-primary">
+                            <i class="fas fa-envelope"></i>Confirmar Asistencia
+                        </button>
+                        <button id="qr-btn" class="btn btn-secondary">
+                            <i class="fas fa-qrcode"></i>Generar Código QR
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para código QR -->
+    <div id="qr-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="qr-close">&times;</span>
+            <div class="modal-header">
+                <h3 class="modal-title">Código QR de la Invitación</h3>
+                <p class="modal-subtitle">Comparte este código QR para que tus invitados accedan a la invitación</p>
+            </div>
+            <div class="qr-container">
+                <div id="qrcode"></div>
+                <p class="qr-instructions">Puedes guardar la imagen o compartirla directamente</p>
+                <button id="download-qr" class="btn btn-download">
+                    <i class="fas fa-download"></i>Descargar QR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <!-- QR Code Library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyAOvefpvlXLtbTx1T2hYg2Ds56eiKI3eAk",
+            authDomain: "jassodb-4b8e4.firebaseapp.com",
+            databaseURL: "https://jassodb-4b8e4-default-rtdb.firebaseio.com",
+            projectId: "jassodb-4b8e4",
+            storageBucket: "jassodb-4b8e4.appspot.com",
+            messagingSenderId: "851107842246",
+            appId: "1:851107842246:web:aa155261b9acdda47e6fc7",
+            measurementId: "G-N18F7GL2NG"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        // Variables para almacenar datos de la invitación
+        let invitacionId = '';
+        let invitadoId = '';
+        let invitacionUrl = '';
+        let invitadoData = null;
+        
+        // Función para obtener parámetros de la URL
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            const results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
+        
+        // Función para formatear la fecha
+        function formatearFecha(fechaStr) {
+            if (!fechaStr) return '';
+            
+            const fecha = new Date(fechaStr);
+            const opciones = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            
+            let fechaFormateada = fecha.toLocaleDateString('es-ES', opciones);
+            // Convertir primera letra a mayúscula
+            fechaFormateada = fechaFormateada.charAt(0).toUpperCase() + fechaFormateada.slice(1);
+            return fechaFormateada;
+        }
+        
+        // Función para formatear la hora
+        function formatearHora(horaStr) {
+            if (!horaStr) return '';
+            
+            const [horas, minutos] = horaStr.split(':');
+            return `A LAS ${horas}:${minutos} HORAS`;
+        }
+        
+        // Función para extraer nombres de novios
+        function extraerNombres(nombresCompletos) {
+            if (!nombresCompletos) return ['', ''];
+            
+            // Asumiendo que los nombres están separados por "y" o "&"
+            const separadores = [' y ', ' & '];
+            let nombres = ['', ''];
+            
+            for (const separador of separadores) {
+                if (nombresCompletos.includes(separador)) {
+                    nombres = nombresCompletos.split(separador);
+                    break;
+                }
+            }
+            
+            return nombres.map(nombre => nombre.trim());
+        }
+        
+        // Función para actualizar el contador
+        function actualizarContador(fechaBoda, horaBoda) {
+            if (!fechaBoda || !horaBoda) return;
+            
+            const [horas, minutos] = horaBoda.split(':');
+            const fechaHoraBoda = new Date(fechaBoda);
+            fechaHoraBoda.setHours(parseInt(horas), parseInt(minutos), 0);
+            
+            const countdownDate = fechaHoraBoda.getTime();
+            
+            // Declarar la variable countdownInterval antes de usarla
+            let countdownInterval;
+            
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = countdownDate - now;
+                
+                if (distance < 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById("days").innerText = "00";
+                    document.getElementById("hours").innerText = "00";
+                    document.getElementById("minutes").innerText = "00";
+                    document.getElementById("seconds").innerText = "00";
+                    return;
+                }
+                
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+                
+                document.getElementById("days").innerText = days.toString().padStart(2, '0');
+                document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+                document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+                document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+            }
+            
+            updateCountdown();
+            // Asignar a la variable después de definir la función
+            countdownInterval = setInterval(updateCountdown, 1000);
+        }
+        
+        // Función para mostrar el estado de confirmación
+        function mostrarEstadoConfirmacion(status) {
+            const statusContainer = document.getElementById('confirmation-status-container');
+            const statusElement = document.getElementById('confirmation-status');
+            
+            statusContainer.style.display = 'block';
+            
+            if (status === 'CONFIRMADO') {
+                statusElement.textContent = 'Asistencia Confirmada';
+                statusElement.className = 'confirmation-status status-confirmed';
+            } else {
+                statusElement.textContent = 'Pendiente de Confirmación';
+                statusElement.className = 'confirmation-status status-pending';
+            }
+        }
+        
+        // Función para confirmar asistencia
+        function confirmarAsistencia() {
+            if (!invitadoId) {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se ha encontrado información del invitado.',
+                    icon: 'error',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+            
+            // Verificar si ya está confirmado
+            if (invitadoData && invitadoData.status === 'CONFIRMADO') {
+                Swal.fire({
+                    title: 'Información',
+                    text: 'Usted ya ha confirmado su asistencia.',
+                    icon: 'info',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+            
+            // Mostrar confirmación antes de actualizar
+            Swal.fire({
+                title: '¿Confirmar asistencia?',
+                text: 'Al confirmar, estás indicando que asistirás a este evento.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, confirmar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Actualizar el status a "CONFIRMADO" en Firestore
+                    db.collection('invitados').doc(invitadoId).update({
+                        status: 'CONFIRMADO',
+                        fechaConfirmacion: new Date().getTime()
+                    })
+                    .then(() => {
+                        // Actualizar el estado local
+                        invitadoData.status = 'CONFIRMADO';
+                        mostrarEstadoConfirmacion('CONFIRMADO');
+                        
+                        Swal.fire({
+                            title: '¡Confirmado!',
+                            text: 'Gracias por confirmar tu asistencia. ¡Te esperamos!',
+                            icon: 'success',
+                            confirmButtonText: 'Entendido'
+                        });
+                    })
+                    .catch((error) => {
+                        console.error("Error al confirmar asistencia:", error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Hubo un problema al confirmar tu asistencia. Por favor, intenta nuevamente.',
+                            icon: 'error',
+                            confirmButtonText: 'Entendido'
+                        });
+                    });
+                }
+            });
+        }
+        
+        // Función para generar el código QR
+        function generateQRCode() {
+            const qrcodeContainer = document.getElementById('qrcode');
+            qrcodeContainer.innerHTML = ''; // Limpiar contenido previo
+            
+            QRCode.toCanvas(qrcodeContainer, invitacionUrl, {
+                width: 200,
+                margin: 1,
+                color: {
+                    dark: '#8c5e4a',
+                    light: '#ffffff'
+                }
+            }, function (error) {
+                if (error) console.error(error);
+            });
+        }
+        
+        // Función para descargar el código QR
+        function downloadQRCode() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (!canvas) return;
+            
+            const link = document.createElement('a');
+            link.download = 'invitacion-boda-qr.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+        
+        // Función para cargar datos del invitado
+        function cargarDatosInvitado() {
+            invitadoId = getUrlParameter('invitado');
+            
+            if (!invitadoId) {
+                console.log("No se proporcionó ID de invitado");
+                return;
+            }
+            
+            db.collection('invitados').doc(invitadoId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        invitadoData = doc.data();
+                        console.log("Datos del invitado:", invitadoData);
+                        
+                        // Mostrar el estado de confirmación
+                        mostrarEstadoConfirmacion(invitadoData.status);
+                    } else {
+                        console.log("No se encontró el documento del invitado");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error al obtener datos del invitado:", error);
+                });
+        }
+        
+        // Función principal para cargar los datos de la invitación
+        function cargarInvitacion() {
+            invitacionId = getUrlParameter('id');
+            invitacionUrl = window.location.href;
+            
+            // Cargar datos del invitado si existe el parámetro
+            cargarDatosInvitado();
+            
+            if (!invitacionId) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').textContent = 'No se ha proporcionado un ID de invitación válido.';
+                return;
+            }
+            
+            // Consultar la colección "invitaciones2" con el ID proporcionado
+            db.collection("invitaciones2").doc(invitacionId).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const datos = doc.data();
+                        
+                        // Extraer los nombres de los novios
+                        const [nombre1, nombre2] = extraerNombres(datos.nombresNovios);
+                        
+                        // Actualizar los elementos HTML con los datos de Firebase
+                        document.getElementById('nombre1').textContent = nombre1;
+                        document.getElementById('nombre2').textContent = nombre2;
+                        document.getElementById('fraseInvitacion').textContent = datos.fraseInvitacion;
+                        document.getElementById('fechaBoda').innerHTML = `<i class="fas fa-calendar-day icon"></i>${formatearFecha(datos.fechaBoda)}`;
+                        document.getElementById('horaBoda').innerHTML = `<i class="fas fa-clock icon"></i>${formatearHora(datos.horaBoda)}`;
+                        document.getElementById('lugarBoda').innerHTML = `<i class="fas fa-church icon"></i>${datos.lugarBoda}`;
+                        document.getElementById('direccionBoda').innerHTML = `<i class="fas fa-map-pin icon"></i>${datos.direccionBoda}`;
+                        
+                        // Iniciar el contador
+                        actualizarContador(datos.fechaBoda, datos.horaBoda);
+                        
+                        // Mostrar la invitación
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('invitation-container').style.display = 'block';
+                    } else {
+                        // No se encontró el documento
+                        document.getElementById('loading').style.display = 'none';
+                        document.getElementById('error-message').style.display = 'block';
+                        document.getElementById('error-message').textContent = 'No se encontró la invitación solicitada.';
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error al obtener la invitación:", error);
+                    document.getElementById('loading').style.display = 'none';
+                    document.getElementById('error-message').style.display = 'block';
+                    document.getElementById('error-message').textContent = 'Error al cargar la invitación. Por favor, intenta nuevamente.';
+                });
+        }
+        
+        // Funciones para manejar los modales
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            
+            // Si es el modal de QR, generar el código QR
+            if (modalId === 'qr-modal') {
+                generateQRCode();
+            }
+        }
+        
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+        }
+        
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            // Cargar la invitación
+            cargarInvitacion();
+            
+            // Botón para confirmar asistencia
+            document.getElementById('rsvp-btn').addEventListener('click', confirmarAsistencia);
+            
+            // Botón para generar QR
+            document.getElementById('qr-btn').addEventListener('click', () => openModal('qr-modal'));
+            
+            // Botón para cerrar modal de QR
+            document.getElementById('qr-close').addEventListener('click', () => closeModal('qr-modal'));
+            
+            // Botón para descargar QR
+            document.getElementById('download-qr').addEventListener('click', downloadQRCode);
+            
+            // Cerrar modales al hacer clic fuera del contenido
+            window.addEventListener('click', (event) => {
+                if (event.target.classList.contains('modal')) {
+                    closeModal(event.target.id);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

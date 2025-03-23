@@ -526,3 +526,373 @@ body {
 .form-full-width {
     grid-column: span 2;
 }
+
+
+
+.blur {
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+.event-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 20px;
+background-color: #f8f9fa;
+border-radius: 8px;
+box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.event-title h1 {
+margin-bottom: 10px;
+color: #333;
+}
+
+.event-actions {
+display: flex;
+gap: 10px;
+}
+
+.btn {
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 10px 15px;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.btn i {
+margin-right: 8px;
+}
+
+.btn-secondary {
+background-color: #6c757d;
+color: white;
+}
+
+.btn-secondary:hover {
+background-color: #545b62;
+}
+
+.btn-create-invitation {
+background-color: #28a745;
+color: white;
+}
+
+.btn-create-invitation:hover {
+background-color: #218838;
+}
+
+
+/* Estilos Generales */
+body {
+font-family: 'Poppins', sans-serif;
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+/* Estilos de Blur */
+.blur {
+filter: blur(8px);
+pointer-events: none;
+}
+
+/* Estilos de Encabezado de Evento */
+.event-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+padding: 20px;
+background-color: #f8f9fa;
+border-radius: 8px;
+box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.event-title h1 {
+margin-bottom: 10px;
+color: #333;
+}
+
+.event-actions {
+display: flex;
+gap: 10px;
+}
+
+/* Estilos de Botones */
+.btn {
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 10px 15px;
+border: none;
+border-radius: 6px;
+cursor: pointer;
+transition: all 0.3s ease;
+}
+
+.btn i {
+margin-right: 8px;
+}
+
+.btn-secondary {
+background-color: #6c757d;
+color: white;
+}
+
+.btn-secondary:hover {
+background-color: #545b62;
+}
+
+.btn-create-invitation {
+background-color: #28a745;
+color: white;
+}
+
+.btn-create-invitation:hover {
+background-color: #218838;
+}
+
+/* Estilos de Modal de Invitación */
+/* Estilos de Modal de Invitación */
+#invitation-modal {
+display: none;
+position: fixed;
+z-index: 1100;
+left: 0;
+top: 0;
+width: 100%;
+height: 100%;
+background-color: rgba(0, 0, 0, 0.6);
+display: flex;
+align-items: center;
+justify-content: center;
+backdrop-filter: blur(5px);
+padding: 20px; /* Añadir padding para dispositivos más pequeños */
+}
+
+#invitation-modal .modal-content {
+width: 90%;
+max-width: 1100px;
+height: 90vh;
+background-color: white;
+border-radius: 24px;
+display: flex;
+overflow: hidden;
+box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+animation: modalSlideIn 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+margin: 0 auto; /* Centrar horizontalmente */
+}
+
+/* Estilo para el botón de crear invitación */
+#invitation-modal .btn-create-invitation {
+width: 100%;
+padding: 15px;
+background: linear-gradient(135deg, #084188 0%, #075fbd 100%);
+color: white;
+border: none;
+border-radius: 12px;
+font-size: 1.1rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 1px;
+transition: all 0.4s ease;
+position: relative;
+overflow: hidden;
+box-shadow: 0 10px 20px rgba(37, 117, 252, 0.3);
+cursor: pointer;
+}
+
+#invitation-modal .btn-create-invitation::before {
+content: '';
+position: absolute;
+top: 0;
+left: -100%;
+width: 100%;
+height: 100%;
+background: linear-gradient(120deg, transparent, rgba(255,255,255,0.3), transparent);
+transition: all 0.4s ease;
+}
+
+#invitation-modal .btn-create-invitation:hover::before {
+left: 100%;
+}
+
+#invitation-modal .btn-create-invitation:hover {
+transform: translateY(-5px);
+box-shadow: 0 15px 30px rgba(37, 117, 252, 0.4);
+}
+
+/* Efecto adicional de pulsación */
+#invitation-modal .btn-create-invitation:active {
+transform: translateY(2px);
+box-shadow: 0 5px 10px rgba(37, 117, 252, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+#invitation-modal .modal-content {
+flex-direction: column;
+height: auto;
+max-height: 90vh;
+width: 95%;
+max-width: 95%;
+border-radius: 16px;
+}
+
+#invitation-modal .modal-left,
+#invitation-modal .modal-right {
+width: 100%;
+height: auto;
+}
+
+#invitation-modal {
+padding: 10px;
+}
+}
+
+@keyframes modalSlideIn {
+from {
+  opacity: 0;
+  transform: scale(0.8);
+}
+to {
+  opacity: 1;
+  transform: scale(1);
+}
+}
+
+#invitation-modal .modal-left {
+width: 40%;
+background: linear-gradient(135deg, #053977 0%, #075fbd 100%);;
+color: white;
+padding: 40px;
+display: flex;
+flex-direction: column;
+justify-content: space-between;
+position: relative;
+}
+
+#invitation-modal .modal-left::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+background: radial-gradient(circle at top right, rgba(255,255,255,0.2), transparent 50%);
+opacity: 0.3;
+}
+
+#invitation-modal .modal-left-content {
+z-index: 1;
+position: relative;
+}
+
+#invitation-modal .modal-left h2 {
+font-size: 2.5rem;
+margin-bottom: 20px;
+font-weight: 700;
+line-height: 1.3;
+}
+
+#invitation-modal .modal-left p {
+font-size: 1rem;
+opacity: 0.8;
+line-height: 1.6;
+margin-bottom: 30px;
+}
+
+#invitation-modal .close-modal {
+position: absolute;
+top: 20px;
+right: 20px;
+font-size: 30px;
+color: #aaa;
+cursor: pointer;
+transition: all 0.3s ease;
+z-index: 10;
+}
+
+#invitation-modal .close-modal:hover {
+color: #ff4d4d;
+transform: rotate(90deg);
+}
+
+#invitation-modal .modal-right {
+width: 60%;
+padding: 40px;
+overflow-y: auto;
+position: relative;
+}
+
+#invitation-modal .form-group {
+margin-bottom: 20px;
+}
+
+#invitation-modal .form-group label {
+display: block;
+margin-bottom: 8px;
+color: #333;
+font-weight: 600;
+}
+
+#invitation-modal .form-control {
+width: 100%;
+padding: 12px 15px;
+border: 2px solid #e0e0e0;
+border-radius: 12px;
+transition: all 0.3s ease;
+font-size: 1rem;
+}
+
+#invitation-modal .form-control:focus {
+outline: none;
+border-color: #2575fc;
+box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
+}
+
+#invitation-modal .template-gallery {
+display: flex;
+gap: 20px;
+overflow-x: auto;
+padding: 20px 0;
+scrollbar-width: thin;
+}
+
+#invitation-modal .template-item {
+width: 200px;
+height: 280px;
+border-radius: 15px;
+overflow: hidden;
+box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+transition: all 0.4s ease;
+position: relative;
+}
+
+#invitation-modal .template-item img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+#invitation-modal .modal-content {
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  border-radius: 0;
+}
+
+#invitation-modal .modal-left,
+#invitation-modal .modal-right {
+  width: 100%;
+  height: auto;
+}
+}
