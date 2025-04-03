@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles del Evento</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232c4167'%3E%3Cpath d='M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z'/%3E%3C/svg%3E">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="administrarInvitados.css">
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+
+</head>
+<body>
+    <div class="page-container">
+        <div class="event-header">
+            <div class="event-title">
+                <h1 id="event-name" style="color: white;">Nombre del Evento</h1>
+                <p><i class="far fa-calendar-alt"></i> <span id="event-date">Fecha del Evento</span></p>
+            </div>
+            <div class="event-actions">
+                <button class="btn btn-secondary" id="edit-event-btn">
+                    <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="btn btn-create-invitation" id="create-invitation-btn">
+                    <i class="fas fa-envelope"></i> Crear Invitación
+                </button>
+             
+            </div>
+        </div>
+
+        <div class="event-details-grid">
+            <!-- Detalles del Evento -->
+            <div class="event-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-info-circle"></i>
+                        <h2>Detalles del Evento</h2>
+                    </div>
+                </div>
+                <div class="section-content">
+                    <div id="event-details-loader" class="loader"></div>
+                    <div id="event-details-content" class="event-details-list" style="display: none;">
+                        <!-- Detalles del evento se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Invitados -->
+            <div class="event-section">
+                <div class="section-header">
+                    <div class="section-title">
+                        <i class="fas fa-users"></i>
+                        <h2>Invitados</h2>
+                    </div>
+                    <button class="btn btn-primary" id="add-invitado-btn" style="background-color: var(--primary-color); color: white;">
+                        <i class="fas fa-user-plus"></i> Añadir
+                    </button>
+                </div>
+                <div class="section-content">
+                    <div id="invitados-loader" class="loader"></div>
+                    <ul id="invitados-list" class="invitados-list" style="display: none;">
+                        <!-- Lista de invitados se cargará dinámicamente -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+<!-- Modal de Creación de Invitación -->
+<div class="modal" id="invitation-modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-left">
+            <span class="close-modal">&times;</span>
+            <div class="modal-left-content">
+                <h2>Crea tu Invitación Perfecta</h2>
+                <p>Personaliza cada detalle de tu evento especial. Elige una plantilla única que refleje la esencia de tu celebración.</p>
+            </div>
+            <div class="design-details">
+                <h3>Diseño Personalizado</h3>
+                <p>Cada invitación es un lienzo en blanco. Transforma tu visión en realidad.</p>
+            </div>
+        </div>
+        <div class="modal-right">
+            <form id="invitation-form">
+                <!-- Selector de Tipo de Evento -->
+                <div class="form-group">
+                    <label for="event-type">Tipo de Evento</label>
+                    <select id="event-type" class="form-control">
+                        <option value="">Selecciona un tipo de evento</option>
+                        <option value="boda">Boda</option>
+                        <option value="cumple-nino">Cumpleaños Infantil</option>
+                        <option value="cumple-adulto">Cumpleaños Adulto</option>
+                    </select>
+                </div>
+    
+                <!-- Contenedor dinámico para inputs específicos -->
+                <div id="dynamic-fields"></div>
+    
+                <!-- Galería de Plantillas de Invitación -->
+                <div class="invitation-templates">
+                    <h3>Elige una Plantilla</h3>
+                    <div class="template-gallery" id="template-gallery">
+                        <!-- Las plantillas se generarán dinámicamente -->
+                    </div>
+                </div>
+    
+                <!-- Vista Previa de la Invitación -->
+                <div class="invitation-preview">
+                    <h3>Vista Previa</h3>
+                    <div id="invitation-preview-container"></div>
+                </div>
+                <button type="submit" class="btn-create-invitation">
+                    Crear Invitación
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const createInvitationBtn = document.getElementById('create-invitation-btn');
+    const modal = document.getElementById('invitation-modal');
+    const closeModalBtn = modal.querySelector('.close-modal');
+    const pageContainer = document.querySelector('.page-container');
+
+    // Abrir modal
+    createInvitationBtn.addEventListener('click', () => {
+        modal.style.display = 'block';
+        pageContainer.classList.add('blur');
+    });
+
+    // Cerrar modal
+    function closeModal() {
+        modal.style.display = 'none';
+        pageContainer.classList.remove('blur');
+    }
+
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // Cerrar modal si se hace clic fuera
+    window.addEventListener('click', (event) => {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Opcional: Cerrar con tecla Escape
+    window.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    });
+});
+
+function getDynamicFields(eventType) {
+    const dynamicFields = {
+        boda: `
+    <div class="form-group">
+        <label>Nombres de los Novios</label>
+        <input type="text" class="form-control" placeholder="Nombre del Novio" id="groom-name">
+        <input type="text" class="form-control" placeholder="Nombre de la Novia" id="bride-name">
+    </div>
+    <div class="form-group">
+        <label>Fecha de la Boda</label>
+        <input type="date" class="form-control" id="wedding-date">
+    </div>
+    <div class="form-group">
+        <label>Lugar de la Ceremonia</label>
+        <input type="text" class="form-control" placeholder="Nombre del Venue" id="wedding-venue">
+    </div>
+    <div class="form-group">
+        <label>Dirección del Lugar</label>
+        <input type="text" class="form-control" placeholder="Dirección" id="wedding-address">
+    </div>
+    <div class="form-group">
+        <label>Hora de la Ceremonia</label>
+        <input type="time" class="form-control" id="wedding-time">
+    </div>
+    <div class="form-group">
+        <label>Fecha límite de Confirmación</label>
+        <input type="date" class="form-control" id="confirmation-date">
+    </div>
+    <div class="form-group">
+        <label>Frase para la Invitación</label>
+        <textarea class="form-control" placeholder="Escribe una frase especial" id="wedding-phrase"></textarea>
+    </div>
+`,
+        'cumple-nino': `
+            <div class="form-group">
+                <label>Nombre del Cumpleañero</label>
+                <input type="text" class="form-control" placeholder="Nombre del Niño/a" id="child-name">
+            </div>
+            <div class="form-group">
+                <label>Edad</label>
+                <input type="number" class="form-control" min="1" max="15" id="child-age">
+            </div>
+            <div class="form-group">
+                <label>Tema de la Fiesta</label>
+                <select class="form-control" id="party-theme">
+                    <option value="">Selecciona un tema</option>
+                    <option value="superhero">Superhéroes</option>
+                    <option value="princess">Princesas</option>
+                    <option value="dinosaurs">Dinosaurios</option>
+                    <option value="space">Espacio</option>
+                </select>
+            </div>
+        `,
+        'cumple-adulto': `
+            <div class="form-group">
+                <label>Nombre del Cumpleañero</label>
+                <input type="text" class="form-control" placeholder="Nombre del Adulto" id="adult-name">
+            </div>
+            <div class="form-group">
+                <label>Edad</label>
+                <input type="number" class="form-control" min="18" max="120" id="adult-age">
+            </div>
+            <div class="form-group">
+                <label>Tipo de Celebración</label>
+                <select class="form-control" id="celebration-type">
+                    <option value="">Selecciona el tipo</option>
+                    <option value="cocktail">Cóctel</option>
+                    <option value="dinner">Cena</option>
+                    <option value="party">Fiesta</option>
+                </select>
+            </div>
+        `
+    };
+
+    return dynamicFields[eventType] || '';
+}
+
+function generateTemplates(eventType) {
+    const templates = {
+        boda: [
+            { 
+                image: '../invitaciones/imagenesPlantilla/boda1.png', 
+                preview: '../invitaciones/bodas/invitacionBoda1.html' 
+            },
+            { 
+                image:'../invitaciones/imagenesPlantilla/boda2.png', 
+                preview: '../invitaciones/bodas/invitacionBoda2.html'
+            }
+        ],
+        'cumple-nino': [
+            {
+                image:'../invitaciones/imagenesPlantilla/cumpleInfa1.png', 
+                preview: '../invitaciones/cumpleInfantil/cumpleInfantil1.html' 
+            },
+            { 
+                image:'../invitaciones/imagenesPlantilla/cumpleInfa2.png', 
+                preview: '../invitaciones/cumpleInfantil/cumpleInfantil2.html' 
+            }
+        ],
+        'cumple-adulto': [
+            { 
+                image: 'birthday-adult1.jpg', 
+                preview: 'birthday-adult-preview1.html' 
+            },
+            { 
+                image: 'birthday-adult2.jpg', 
+                preview: 'birthday-adult-preview2.html' 
+            }
+        ]
+    };
+
+    return templates[eventType] || [];
+}
+
+
+async function crearInvitacion(tipoEvento, plantilla, idEvento, datosInvitacion) {
+  try {
+    // Asegúrate de que plantilla tenga un valor válido
+    const plantillaValida = plantilla || null;
+
+    // Crea un nuevo documento en la colección
+    const invitacionesRef = db.collection("invitaciones2");
+    const docRef = await invitacionesRef.add({
+      tipoEvento: tipoEvento,
+      plantilla: plantillaValida, // Usa el valor válido o null
+      idEvento: idEvento,
+      ...datosInvitacion,
+    });
+
+    console.log("Invitación creada con éxito:", docRef.id);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error al crear invitación:", error);
+    throw error; // Re-lanza el error para manejarlo en el llamador
+  }
+}
+
+// Función para crear un objeto con los datos de la invitación según el tipo de evento
+function getDatosInvitacion(tipoEvento) {
+  switch (tipoEvento) {
+    case "boda":
+      return {
+        nombresNovios: document.getElementById("groom-name").value + " y " + document.getElementById("bride-name").value,
+        fechaBoda: document.getElementById("wedding-date").value,
+        lugarBoda: document.getElementById("wedding-venue").value,
+        direccionBoda: document.getElementById("wedding-address").value, 
+        horaBoda: document.getElementById("wedding-time").value,
+        fechaConfirmacion: document.getElementById("confirmation-date").value,
+        fraseInvitacion: document.getElementById("wedding-phrase").value, 
+        plantilla: document.querySelector(".template-item.selected").dataset.preview === '../invitaciones/bodas/invitacionBoda1.html' ? 1 : 2,
+      };
+    case "cumple-nino":
+      return {
+        nombreCumpleañero: document.getElementById("child-name").value,
+        edad: document.getElementById("child-age").value,
+        temaFiesta: document.getElementById("party-theme").value,
+        plantilla: document.querySelector(".template-item.selected").dataset.preview === '../invitaciones/cumpleInfantil/cumpleInfantil1.html' ? 1 : 2,
+      };
+    case "cumple-adulto":
+      return {
+        nombreCumpleañero: document.getElementById("adult-name").value,
+        edad: document.getElementById("adult-age").value,
+        tipoCelebracion: document.getElementById("celebration-type").value,
+        plantilla: document.querySelector(".template-item.selected").dataset.preview === 'birthday-adult-preview1.html' ? 1 : 2,
+      };
+    default:
+      return {};
+  }
+}
+
+// Función para crear una invitación cuando se envía el formulario
+document.getElementById("invitation-form").addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const tipoEvento = document.getElementById("event-type").value;
+  const selectedTemplate = document.querySelector(".template-item.selected");
+
+  if (!selectedTemplate) {
+    Swal.fire({
+      icon: "error",
+      title: "Error",
+      text: "Debes seleccionar una plantilla",
+    });
+    return;
+  }
+
+  const plantilla = selectedTemplate.dataset.preview;
+  const urlParams2 = new URLSearchParams(window.location.search);
+  const idEvento = urlParams2.get('uid');
+
+  const datosInvitacion = getDatosInvitacion(tipoEvento);
+
+  crearInvitacion(tipoEvento, plantilla, idEvento, datosInvitacion)
+    .then(() => {
+      // Cerrar el modal
+      const modal = document.getElementById('invitation-modal');
+      modal.style.display = 'none';
+
+      // Mostrar un mensaje de éxito cuando se crea la invitación
+      Swal.fire({
+        icon: "success",
+        title: "Éxito",
+        text: "Invitación creada con éxito",
+      });
+    })
+    .catch((error) => {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Hubo un problema al crear la invitación",
+      });
+      console.error(error);
+    });
+});
+
+
+// Evento para cambiar campos dinámicos
+document.getElementById('event-type').addEventListener('change', (e) => {
+    const eventType = e.target.value;
+    const dynamicFieldsContainer = document.getElementById('dynamic-fields');
+    const templateGallery = document.getElementById('template-gallery');
+
+    // Actualizar campos dinámicos
+    dynamicFieldsContainer.innerHTML = getDynamicFields(eventType);
+
+    // Generar plantillas
+    const templates = generateTemplates(eventType);
+    templateGallery.innerHTML = templates.map((template, index) => `
+        <div class="template-item" data-preview="${template.preview}">
+            <img src="${template.image}" alt="Plantilla ${index + 1}">
+        </div>
+    `).join('');
+
+
+    // Modificar el evento de vista previa
+// Modificar el evento de vista previa
+document.querySelectorAll('.template-item').forEach(item => {
+  item.addEventListener('click', () => {
+    // Quitar la clase selected de todas las plantillas
+    document.querySelectorAll('.template-item').forEach((i) => {
+      i.classList.remove('selected');
+    });
+
+    // Agregar la clase selected a la plantilla que se clickea
+    item.classList.add('selected');
+
+    const previewPath = item.dataset.preview;
+    const previewContainer = document.getElementById('invitation-preview-container');
+    
+    // Crear un iframe para aislar los estilos
+    previewContainer.innerHTML = `
+      <iframe id="preview-iframe" style="width:100%; height:400px; border:none;"></iframe>
+    `;
+    
+    const iframe = document.getElementById('preview-iframe');
+    
+    fetch(previewPath)
+      .then(response => response.text())
+      .then(html => {
+        const iframeDocument = iframe.contentDocument;
+        iframeDocument.open();
+        iframeDocument.write(html);
+        iframeDocument.close();
+      });
+  });
+});
+});
+</script>
+    <script src="administrarInvitados.js"></script>
+
+
+ 
+</body>
+</html>

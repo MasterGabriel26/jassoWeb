@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Sistema de gestión de prospectos y seguimiento de eventos para JASSO">
+	<meta name="author" content="JASSO">
+	<meta name="keywords" content="jasso, eventos, bodas, xv años, gestión, prospectos, seguimiento, cotizaciones, paquetes, salón de eventos">
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+    <title>Chat | JASSO</title>
+    <link rel="shortcut icon" href="img/icons/icon-48x48.png" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="../../css/app.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../css/loading.css">
+
+    <link rel="stylesheet" href="../../css/notificaciones.css">
+    <link rel="stylesheet" href="../../css/userPic.css">
+    <link rel="stylesheet" href="../chat.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+ 
+<!-- En el head de tu HTML -->
+<link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-bootstrap-4/bootstrap-4.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+      <!-- Open Graph Meta Tags for WhatsApp Preview -->
+      <meta property="og:title" content="Paquetes JASSO">
+      <meta property="og:description" content="Descubre nuestros increíbles paquetes para eventos">
+      <meta property="og:image" content="https://jassocompany.com/img/logo.jpg">
+      <meta property="og:url" content="https://jassocompany.com/paquete-detalle.html">
+      <meta property="og:type" content="website">
+      <meta property="og:site_name" content="JASSO">
+  
+      <!-- WhatsApp specific meta -->
+      <meta property="og:image:width" content="600">
+      <meta property="og:image:height" content="315">
+
+
+
+</head>
+<body>
+    <!-- <div id="loader" class="loader-container">
+        <div class="loader-content">
+            <div class="loader"></div>
+        </div>
+    </div> -->
+    <div class="wrapper">
+        <nav id="sidebar" class="sidebar js-sidebar">
+            <!-- Sidebar content -->
+        </nav>
+
+        <div class="main">
+          <nav class="navbar navbar-expand navbar-light navbar-bg">
+            <a class="sidebar-toggle js-sidebar-toggle">
+              <i class="hamburger align-self-center"></i>
+            </a>
+  
+            <div class="navbar-collapse collapse">
+              <ul class="navbar-nav navbar-align">
+                <li class="nav-item dropdown">
+                  <a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+                    <div class="position-relative">
+                    
+                 <!-- Update the notification list container in your HTML -->
+
+                </li>
+            
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-icon dropdown-toggle d-inline-block d-sm-none"
+                    href="#"
+                    data-bs-toggle="dropdown"
+                  >
+                    <i class="align-middle" data-feather="settings"></i>
+                  </a>
+  
+                    <div class="dropdown-menu dropdown-menu-end">
+                      <a class="dropdown-item" href="pages-profile.html"
+                        ><i class="align-middle me-1" data-feather="user"></i>
+                        Profile</a
+                      >
+                      <a class="dropdown-item" href="#"
+                        ><i
+                          class="align-middle me-1"
+                          data-feather="pie-chart"
+                        ></i>
+                        Analytics</a
+                      >
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="index.html"
+                        ><i class="align-middle me-1" data-feather="settings"></i>
+                        Settings & Privacy</a
+                      >
+                      <a class="dropdown-item" href="#"
+                        ><i
+                          class="align-middle me-1"
+                          data-feather="help-circle"
+                        ></i>
+                        Help Center</a
+                      >
+                      <div class="dropdown-divider"></div>
+                      <a id="logOut" class="dropdown-item" href="#"
+                        >Cerrar sesion</a
+                      >
+                    </div>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </nav>
+
+
+          <main class="content">
+            <div class="chat-container">
+              <!-- Sidebar de chats -->
+              <div class="chat-sidebar">
+                <div class="chat-header">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h1>Chats</h1>
+                    <button class="new-chat-btn">
+                      <i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+                  <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar chats...">
+                  </div>
+                </div>
+                <div class="chat-list">
+                  <!-- Los chats se cargarán aquí -->
+                </div>
+              </div>
+          
+              <!-- Área principal del chat -->
+              <div class="chat-main">
+                <div class="chat-main-header">
+                  <button class="mobile-toggle-chat d-md-none">
+                    <i class="fas fa-bars"></i>
+                  </button>
+                  <div class="chat-header-content">
+                    <!-- El contenido del header se cargará aquí -->
+                  </div>
+                </div>
+                <div class="messages-container">
+                  <!-- Los mensajes se cargarán aquí -->
+                </div>
+                <div class="message-input-container">
+                  <button class="attachment-btn">
+                    <i class="fas fa-paperclip"></i>
+                  </button>
+                  <input type="text" placeholder="Escribe un mensaje...">
+                  <button class="send-btn">
+                    <i class="fas fa-paper-plane"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <!-- Overlay para móvil -->
+            <div class="chat-overlay"></div>
+          </main>
+        </div>
+    </div>
+
+   <!-- Modal de Usuarios -->
+<!-- Modal de Usuarios y Grupos -->
+<div class="modal fade" id="usersModal" tabindex="-1" aria-labelledby="usersModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="usersModalLabel">Nuevo Chat</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Tabs para elegir entre chat individual y grupo -->
+        <ul class="nav nav-tabs mb-3" id="chatTypeTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="individual-tab" data-bs-toggle="tab" data-bs-target="#individual" type="button" role="tab">
+              Chat Individual
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="group-tab" data-bs-toggle="tab" data-bs-target="#group" type="button" role="tab">
+              Grupo Nuevo
+            </button>
+          </li>
+        </ul>
+
+        <!-- Contenido de los tabs -->
+        <div class="tab-content" id="chatTypeContent">
+          <!-- Tab de chat individual -->
+          <div class="tab-pane fade show active" id="individual" role="tabpanel">
+            <div class="user-search mb-3">
+              <input type="text" class="form-control" id="userSearchInput" placeholder="Buscar usuario...">
+            </div>
+            <div class="users-list">
+              <!-- Los usuarios se cargarán aquí dinámicamente -->
+            </div>
+          </div>
+
+          <!-- Tab de grupo nuevo -->
+          <div class="tab-pane fade" id="group" role="tabpanel">
+            <form id="groupForm" class="group-form">
+              <div class="mb-3">
+                <label class="form-label">Foto del Grupo</label>
+                <div class="group-image-container position-relative mx-auto">
+                  <div class="image-preview-wrapper">
+                      <img src="${chatData.imageUrl || '../img/default-group.png'}" 
+                           class="rounded-circle preview-image" 
+                           id="groupImagePreview">
+                      <div class="image-overlay">
+                          <i class="fas fa-camera"></i>
+                          <span>Cambiar imagen</span>
+                      </div>
+                  </div>
+                  <input type="file" hidden id="groupImageInput" accept="image/*">
+              </div>
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nombre del Grupo</label>
+                <input type="text" class="form-control" id="groupName" required placeholder="Escribe un nombre para el grupo">
+              </div>
+             <!-- Reemplaza la sección de participantes en el formulario del grupo -->
+<div class="mb-3">
+  <label class="form-label">Participantes</label>
+  <div class="selected-users-container mb-2" id="selectedUsers">
+    <!-- Aquí se mostrarán los usuarios seleccionados -->
+  </div>
+  <button type="button" class="btn btn-outline-primary w-100" id="addParticipantsBtn">
+    <i class="fas fa-user-plus"></i> Añadir Participantes
+  </button>
+</div>
+              <button type="submit" class="btn btn-primary w-100">Crear Grupo</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal para seleccionar participantes de nuevo grupo -->
+<div class="modal fade" id="newGroupParticipantsModal" tabindex="-1" aria-labelledby="newGroupParticipantsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Seleccionar Participantes</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="user-search mb-3">
+          <input type="text" class="form-control" id="newGroupSearchInput" placeholder="Buscar usuarios...">
+        </div>
+        <div class="participants-list" id="newGroupParticipantsList">
+          <!-- Los usuarios se cargarán aquí -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="confirmNewGroupParticipants">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal para añadir participantes a grupo existente -->
+<div class="modal fade" id="addParticipantsModal" tabindex="-1" aria-labelledby="addParticipantsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Añadir Participantes</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="user-search mb-3">
+          <input type="text" class="form-control" id="addParticipantSearchInput" placeholder="Buscar usuarios...">
+        </div>
+        <div class="participants-list" id="addParticipantsList">
+          <!-- Los usuarios se cargarán aquí -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="confirmAddParticipants">Confirmar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../js/app.js"></script>
+
+    <script src="../../js/menu.js"></script>
+    <script src="chat-app.js"></script>
+   
+</body>
+</html>

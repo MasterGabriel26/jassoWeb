@@ -1,3 +1,25 @@
+function agregarEstiloSubmenuAzul() {
+    const styles = `
+        /* Aumentar la especificidad del selector */
+        #sidebar #comisiones.sidebar-dropdown {
+            background-color: #1a237e !important; /* Azul oscuro */
+            margin-left: 29px;
+        }
+    `;
+
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = styles;
+    
+    // Añadir los estilos al documento
+    document.head.appendChild(styleSheet);
+}
+
+// Asegúrate de que el DOM esté cargado antes de aplicar los estilos
+document.addEventListener('DOMContentLoaded', () => {
+    // Añadir un pequeño retardo para asegurar que todo el contenido esté cargado
+    setTimeout(agregarEstiloSubmenuAzul, 500); // Aumentar el tiempo a 500ms
+});
+
 function generateMenu() {
     const userType = localStorage.getItem('userType');
     let menuItems = `
@@ -26,7 +48,43 @@ function generateMenu() {
                     <span class="align-middle">Galería</span>
                 </a>
             </li>
+
+
+              <li class="sidebar-item">
+                <a class="sidebar-link" href="/chat/chat.html">
+                    <i class="align-middle" data-feather="message-circle"></i>
+                    <span class="align-middle">Chat</span>
+                </a>
+            </li>
           
+
+       <li class="sidebar-item">
+            <a data-bs-target="#comisiones" data-bs-toggle="collapse" class="sidebar-link collapsed">
+                <i class="align-middle" data-feather="dollar-sign"></i>
+                <span class="align-middle">Comisiones</span>
+            </a>
+            <ul id="comisiones" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar" style="background-color: #1a237e !important;">
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="/vista-admin/page-comisiones-admin.html">
+                        <i class="align-middle" data-feather="clock"></i>
+                        Pendientes
+                    </a>
+                </li>
+                <li class="sidebar-item">
+                    <a class="sidebar-link" href="/vista-admin/page-historial-comisiones-admin.html">
+                        <i class="align-middle" data-feather="check-circle"></i>
+                        Historial
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <li class="sidebar-item">
+    <a class="sidebar-link" href="/invitadosCliente/page-invitados-cliente.html">
+        <i class="align-middle" data-feather="user-plus"></i>
+        <span class="align-middle">Invitados del cliente</span>
+    </a>
+</li>
     `;
 
     if (userType === 'admin') {
@@ -51,10 +109,19 @@ function generateMenu() {
                     <span class="align-middle">Publicaciones</span>
                 </a>
             </li>
+
+            <li class="sidebar-item">
+            <a class="sidebar-link" href="/vista-admin/page-solicitudes.html">
+                <i class="align-middle" data-feather="inbox"></i>
+                <span class="align-middle">Solicitudes</span>
+            </a>
+        </li>
+
+       
         `;
     }
 
-    if (userType === 'asesor') {
+    if (userType === 'asesor' ||userType === 'lider') {
         menuItems += `
            <li class="sidebar-item">
                 <a class="sidebar-link" href="/vista-admin/page-contratos.html">
@@ -62,6 +129,14 @@ function generateMenu() {
                     <span class="align-middle">Contratos</span>
                 </a>
             </li>
+
+            <li class="sidebar-item">
+    <a class="sidebar-link" href="/page-historial-comisiones.html">
+        <i class="align-middle" data-feather="dollar-sign"></i>
+        <span class="align-middle">Comisiones</span>
+    </a>
+</li>
+            
         `;
     }
 

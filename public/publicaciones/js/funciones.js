@@ -56,25 +56,121 @@ function iniciarTiny() {
             'nonbreaking', 'anchor', 'insertdatetime', 'advlist', 'lists',
             'wordcount', 'help', 'charmap', 'quickbars', 'emoticons'
         ],
-        toolbar: [
-            'undo redo | styles | bold italic fullscreen image underline strikethrough | alignleft aligncenter alignright alignjustify |',
-            'bullist numlist | outdent indent | link  media | forecolor backcolor emoticons |',
-            'removeformat code  help'
-        ].join(' '),
 
-        // Activar quickbars
+                // Configuración de dimensiones predefinidas
+                templates: [
+                    {
+                        title: 'Tamaños de imagen',
+                        items: [
+                            {
+                                title: 'Pequeño',
+                                description: '300px de ancho',
+                                content: '<img src="" width="300" height="auto" />'
+                            },
+                            {
+                                title: 'Mediano',
+                                description: '600px de ancho',
+                                content: '<img src="" width="600" height="auto" />'
+                            },
+                            {
+                                title: 'Grande',
+                                description: '900px de ancho',
+                                content: '<img src="" width="900" height="auto" />'
+                            }
+                        ]
+                    }
+                ],
+        
+                // Agregar botón de tamaños en la barra de herramientas
+                toolbar: [
+                    'undo redo | styles | bold italic fullscreen underline strikethrough |',
+                    'image media imageoptions | alignleft aligncenter alignright alignjustify | imagesize',
+                    'bullist numlist | outdent indent | link | forecolor backcolor emoticons |',
+                    'removeformat code help '
+                ].join(' '),
+        
+           // Agregar menú contextual para imágenes
+           setup: function (editor) {
+            // Agregar botón de tamaños de imagen
+            editor.ui.registry.addSplitButton('imagesize', {
+                text: 'Tamaño de imagen',
+                onAction: function () {
+                    // Acción por defecto (último tamaño usado)
+                },
+                onItemAction: function (api, value) {
+                    const selectedImage = editor.selection.getNode();
+                    if (selectedImage.tagName === 'IMG') {
+                        editor.dom.setAttribs(selectedImage, {
+                            width: value,
+                            height: 'auto'
+                        });
+                    }
+                },
+                fetch: function (callback) {
+                    const items = [
+                        {
+                            type: 'choiceitem',
+                            text: 'Pequeño (300px)',
+                            value: '300'
+                        },
+                        {
+                            type: 'choiceitem',
+                            text: 'Mediano (600px)',
+                            value: '600'
+                        },
+                        {
+                            type: 'choiceitem',
+                            text: 'Grande (900px)',
+                            value: '900'
+                        },
+                        {
+                            type: 'choiceitem',
+                            text: 'Original',
+                            value: ''
+                        }
+                    ];
+                    callback(items);
+                }
+            });
+
+            // Agregar menú contextual para imágenes
+            editor.ui.registry.addContextMenu('imagesize', {
+                update: function (element) {
+                    return element.nodeName.toLowerCase() === 'img' ? 'imagesize' : '';
+                }
+            });
+        },
+
+        // Menú contextual
+        context_menu: 'imagesize link',
+
+        // Configuración de quickbars
         quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote',
         quickbars_insert_toolbar: 'image media quicktable',
-        quickbars_image_toolbar: 'alignleft aligncenter alignright | editimage imageoptions',
+        quickbars_image_toolbar: 'alignleft aligncenter alignright',
 
-        // Configuración de imágenes
+        // Configuración básica de imágenes
         image_dimensions: true,
         image_advtab: true,
         image_title: true,
+        image_description: true,
+        image_caption: true,
 
-        // Configuración específica para dispositivos móviles
+            // Lista de dimensiones predefinidas (actualizada)
+            image_list: false, // Deshabilitamos la lista de imágenes predefinidas
+            image_class_list: false, // Deshabilitamos la lista de clases
+        
+
+        // Lista de dimensiones predefinidas
+        image_dimensions_list: [
+            {title: 'Pequeño (300px)', width: 300, height: 'auto'},
+            {title: 'Mediano (600px)', width: 600, height: 'auto'},
+            {title: 'Grande (900px)', width: 900, height: 'auto'},
+            {title: 'Original', width: '', height: ''}
+        ],
+
+        // Configuración móvil
         mobile: {
-            theme: 'mobile',
             menubar: true,
             plugins: ['autosave', 'lists', 'autolink', 'image', 'link', 'media', 'quickbars'],
             toolbar: ['undo redo | bold italic underline | alignleft aligncenter alignright | bullist numlist | image'],
@@ -103,15 +199,32 @@ function iniciarTiny() {
         images_reuse_filename: true,
         paste_data_images: true,
 
-        // Manejo de subida de imágenes
+        // Manejador de subida de imágenes
         images_upload_handler: async function (blobInfo, progress) {
             try {
-                const imagenComprimida = await comprimirImagen(blobInfo.blob());
-                const resultado = await subirArchivo(imagenComprimida, 'imagenes');
+                const archivo = blobInfo.blob();
+                
+                // Validación de tipo de archivo
+                const tiposPermitidos = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                if (!tiposPermitidos.includes(archivo.type)) {
+                    throw new Error('Tipo de archivo no permitido. Use JPG, PNG, GIF o WEBP');
+                }
+
+                // Validación de tamaño
+                const tamañoMaximo = 5 * 1024 * 1024; // 5MB
+                if (archivo.size > tamañoMaximo) {
+                    throw new Error('La imagen no debe superar 5MB');
+                }
+
+                const imagenComprimida = await comprimirImagen(archivo);
+                const resultado = await subirArchivo(imagenComprimida, 'imagenes', progress);
+
                 return {
                     url: resultado.url,
-                    width: '500px', // Tamaño mediano predeterminado
-                    height: 'auto'
+                    width: resultado.width || '500px',
+                    height: resultado.height || 'auto',
+                    alt: blobInfo.filename(),
+                    title: blobInfo.filename()
                 };
             } catch (error) {
                 console.error('Error al subir imagen:', error);
@@ -122,7 +235,7 @@ function iniciarTiny() {
         // Selector de archivos
         file_picker_types: 'file image media',
         file_picker_callback: async function (callback, value, meta) {
-            var input = document.createElement('input');
+            const input = document.createElement('input');
             input.setAttribute('type', 'file');
 
             if (meta.filetype === 'image') {
@@ -134,7 +247,7 @@ function iniciarTiny() {
             }
 
             input.onchange = async function () {
-                var file = this.files[0];
+                const file = this.files[0];
 
                 try {
                     let resultado;
@@ -142,7 +255,10 @@ function iniciarTiny() {
                         const imagenComprimida = await comprimirImagen(file);
                         resultado = await subirArchivo(imagenComprimida, 'imagenes');
                     } else {
-                        resultado = await subirArchivo(file, meta.filetype === 'media' ? 'videos' : 'documentos');
+                        resultado = await subirArchivo(
+                            file, 
+                            meta.filetype === 'media' ? 'videos' : 'documentos'
+                        );
                     }
 
                     callback(resultado.url, {
@@ -169,7 +285,7 @@ function iniciarTiny() {
         autosave_interval: '30s',
         autosave_prefix: 'tinymce-autosave-{path}{query}-{id}-',
         autosave_retention: '30m',
-     
+
         // Configuración adicional
         branding: false,
         promotion: false,
@@ -794,6 +910,7 @@ async function cargarItemParaEditar(id) {
             document.getElementById('comision-llamada').value = data.comision_llamada || '';
             document.getElementById('comision-lider').value = data.comision_lider || '';
             document.getElementById('comision-venta').value = data.comision_venta || '';
+            document.getElementById('precio-persona').value = data.precio_persona || '';
             document.getElementById('precio').value = data.precio || '';
 
             // Limpiar el campo de descripción después de guardar
@@ -1070,7 +1187,8 @@ async function handleGuardarContenido() {
         const comision_lider = parseFloat(document.getElementById('comision-lider').value) || 0;
         const comision_venta = parseFloat(document.getElementById('comision-venta').value) || 0;
         const precio = parseFloat(document.getElementById('precio').value) || 0;
-
+       // En la función handleGuardarContenido, modifica esta línea:
+const precio_persona = document.getElementById('precio-persona').value || 0; // Obtener el valor del input
             // Obtener la descripción del material
       const descripcion_material = document.getElementById('descripcion_material').value||"";
         
@@ -1103,10 +1221,8 @@ async function handleGuardarContenido() {
         
         // Si hay imagen nueva, subirla a Firebase Storage
         if (imagenDestacada) {
-            const storageRef = firebase.storage().ref();
-            const imageRef = storageRef.child(`publicaciones/${Date.now()}_${imagenDestacada.name}`);
-            await imageRef.put(imagenDestacada);
-            imagenURL = await imageRef.getDownloadURL();
+         
+            imagenURL = await subirImagen(imagenDestacada);
         }
 
         // Obtener usuario actual
@@ -1133,6 +1249,7 @@ async function handleGuardarContenido() {
                 email: user.email
             },
             descripcion_material,
+            precio_persona,
             isPromocion,
             descripcion_promocion
 
@@ -1361,13 +1478,24 @@ function inicializarEventos() {
 // Función para inicializar TinyMCE
 
 
-
-// Función para comprimir imágenes
 async function comprimirImagen(file) {
-    return new Promise((resolve) => {
+    // Validar que el archivo sea una imagen
+    if (!file.type.startsWith('image/')) {
+        throw new Error('El archivo seleccionado no es una imagen');
+    }
+
+    // Validar tamaño máximo inicial (ejemplo: 10MB)
+    const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+        throw new Error('La imagen es demasiado grande (máximo 10MB)');
+    }
+
+    return new Promise((resolve, reject) => {
         const reader = new FileReader();
+
         reader.onload = function(e) {
             const img = new Image();
+
             img.onload = function() {
                 const canvas = document.createElement('canvas');
                 let width = img.width;
@@ -1377,14 +1505,15 @@ async function comprimirImagen(file) {
                 const MAX_WIDTH = 1200;
                 const MAX_HEIGHT = 1200;
 
+                // Calcular nuevas dimensiones manteniendo proporción
                 if (width > height) {
                     if (width > MAX_WIDTH) {
-                        height *= MAX_WIDTH / width;
+                        height = Math.round(height * MAX_WIDTH / width);
                         width = MAX_WIDTH;
                     }
                 } else {
                     if (height > MAX_HEIGHT) {
-                        width *= MAX_HEIGHT / height;
+                        width = Math.round(width * MAX_HEIGHT / height);
                         height = MAX_HEIGHT;
                     }
                 }
@@ -1395,15 +1524,81 @@ async function comprimirImagen(file) {
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // Convertir a Blob con calidad 0.7
+                // Determinar la calidad según el tamaño original
+                let quality = 0.7;
+                if (file.size < 500 * 1024) { // Si es menor a 500KB
+                    quality = 0.9;
+                } else if (file.size > 5 * 1024 * 1024) { // Si es mayor a 5MB
+                    quality = 0.5;
+                }
+
+                // Convertir a Blob
                 canvas.toBlob((blob) => {
-                    resolve(blob);
-                }, file.type, 0.7);
+                    if (blob) {
+                        console.log(`Imagen comprimida: ${(blob.size / 1024 / 1024).toFixed(2)}MB`);
+                        resolve(blob);
+                    } else {
+                        reject(new Error('Error al comprimir la imagen'));
+                    }
+                }, file.type, quality);
             };
+
+            img.onerror = function() {
+                reject(new Error('Error al cargar la imagen'));
+            };
+
             img.src = e.target.result;
         };
+
+        reader.onerror = function() {
+            reject(new Error('Error al leer el archivo'));
+        };
+
         reader.readAsDataURL(file);
     });
+}
+
+// Ejemplo de uso:
+async function subirImagen(imagenDestacada) {
+    try {
+        // Mostrar loader
+        Swal.fire({
+            title: 'Procesando imagen...',
+            text: 'Por favor espere mientras se optimiza la imagen',
+            allowOutsideClick: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // Comprimir la imagen
+        const imagenComprimida = await comprimirImagen(imagenDestacada);
+
+        // Mostrar información sobre la compresión
+        console.log(`
+            Tamaño original: ${(imagenDestacada.size / 1024 / 1024).toFixed(2)}MB
+            Tamaño comprimido: ${(imagenComprimida.size / 1024 / 1024).toFixed(2)}MB
+            Reducción: ${(100 - (imagenComprimida.size / imagenDestacada.size * 100)).toFixed(2)}%
+        `);
+
+        // Subir a Firebase Storage
+        const storageRef = firebase.storage().ref();
+        const imageRef = storageRef.child(`publicaciones/${Date.now()}_${imagenDestacada.name}`);
+        await imageRef.put(imagenComprimida);
+        const imagenURL = await imageRef.getDownloadURL();
+
+        Swal.close();
+        return imagenURL;
+
+    } catch (error) {
+        console.error("Error al procesar la imagen:", error);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: error.message || 'No se pudo procesar la imagen'
+        });
+        throw error;
+    }
 }
 
 // Función para subir archivo a Firebase Storage

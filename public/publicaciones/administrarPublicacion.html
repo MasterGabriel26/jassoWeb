@@ -495,7 +495,7 @@
               <table id="postsTable" class="table">
                   <thead>
                       <tr>
-                          <th>ID</th>
+                         
                           <th>Imagen</th>
                           <th>Título</th>
                           <th>Lugar</th>
@@ -543,121 +543,116 @@ let docid;
 $(document).ready(function() {
     // Configuración de DataTables
     const dataTableConfig = {
-        language: {
-            decimal: "",
-            emptyTable: "No hay publicaciones disponibles",
-            info: "_START_ - _END_ de _TOTAL_ publicaciones",
-            infoEmpty: "0 publicaciones",
-            infoFiltered: "(filtrado de _MAX_ total)",
-            lengthMenu: "_MENU_ por página",
-            loadingRecords: `
-                <div class="loading-state">
-                    <i class="fas fa-circle-notch fa-spin"></i>
-                    <span>Cargando...</span>
-                </div>`,
-            search: "",
-            searchPlaceholder: "Buscar por título, lugar o categoría...",
-            zeroRecords: "No se encontraron coincidencias",
-            paginate: {
-                first: '<i class="fas fa-angle-double-left"></i>',
-                last: '<i class="fas fa-angle-double-right"></i>',
-                next: '<i class="fas fa-angle-right"></i>',
-                previous: '<i class="fas fa-angle-left"></i>'
-            }
-        },
-        order: [[5, 'desc']],
-        pageLength: 10,
-        responsive: true,
+    language: {
+        decimal: "",
+        emptyTable: "No hay publicaciones disponibles",
+        info: "_START_ - _END_ de _TOTAL_ publicaciones",
+        infoEmpty: "0 publicaciones",
+        infoFiltered: "(filtrado de _MAX_ total)",
+        lengthMenu: "_MENU_ por página",
+        loadingRecords: `
+            <div class="loading-state">
+                <i class="fas fa-circle-notch fa-spin"></i>
+                <span>Cargando...</span>
+            </div>`,
+        search: "",
+        searchPlaceholder: "Buscar por título, lugar o categoría...",
+        zeroRecords: "No se encontraron coincidencias",
+        paginate: {
+            first: '<i class="fas fa-angle-double-left"></i>',
+            last: '<i class="fas fa-angle-double-right"></i>',
+            next: '<i class="fas fa-angle-right"></i>',
+            previous: '<i class="fas fa-angle-left"></i>'
+        }
+    },
+    order: [[4, 'desc']], // Ajustar el índice de la columna de fecha
+    pageLength: 10,
+    responsive: true,
     scrollX: true,
     scrollCollapse: true,
     autoWidth: false,
     fixedHeader: true,
-        searching: true,
-        search: {
-            return: true,
-            smart: true
+    searching: true,
+    search: {
+        return: true,
+        smart: true
+    },
+    columnDefs: [
+        {
+            targets: [0], // Columna de imagen (ahora es la primera columna)
+            className: 'text-center',
+            width: '60px',
+            searchable: false
         },
-        columnDefs: [
-            {
-                targets: [1], // Columna de imagen
-                className: 'text-center',
-                width: '60px',
-                searchable: false
-            },
-            {
-                targets: [6], // Columna de acciones
-                className: 'text-right',
-                width: '120px',
-                orderable: false,
-                searchable: false
-            },
-            {
-                targets: [2, 3, 4], // Título, Lugar, Categoría
-                searchable: true
-            }
-        ],
-        dom: `<"table-top"
-                <"table-actions"
-          
-                    <"table-search"f>
-                  
-                >
-            >
-            rt
-            <"table-bottom"ip>`,
-        drawCallback: function() {
-            $('.dataTables_paginate > .pagination').addClass('custom-pagination');
+        {
+            targets: [5], // Columna de acciones (ahora es la sexta columna)
+            className: 'text-right',
+            width: '120px',
+            orderable: false,
+            searchable: false
         },
-        initComplete: function() {
-            // Agregar botón de limpiar filtros
-            $('.table-filters').html(`
-                <button class="btn btn-outline-secondary btn-sm clear-filters">
-                    <i class="fas fa-times"></i> Limpiar filtros
-                </button>
-            `);
-
-            // Agregar filtros por columna
-            this.api().columns([3, 4]).every(function(index) { // Lugar y Categoría
-                const column = this;
-                const title = $(column.header()).text();
-              
-                  
-
-                // Obtener valores únicos para el filtro
-                const values = new Set();
-                column.data().each(function(d) {
-                    if (d && d !== '<span class="text-muted">No especificado</span>') {
-                        values.add(d.replace(/<[^>]+>/g, ''));
-                    }
-                });
-
-                // Agregar opciones al select
-                Array.from(values).sort().forEach(function(d) {
-                    select.append(`<option value="${d}">${d}</option>`);
-                });
-            });
-
-            // Mejorar la búsqueda
-            const searchInput = $('.dataTables_filter input')
-                .off()
-                .on('input', function() {
-                    table
-                        .search(this.value)
-                        .draw();
-                });
-
-            // Manejar limpieza de filtros
-            $('.clear-filters').on('click', function() {
-                table
-                    .search('')
-                    .columns().search('')
-                    .draw();
-                $('.dataTables_filter input').val('');
-                $('.table-filters select').val('');
-            });
+        {
+            targets: [1, 2, 3], // Título, Lugar, Categoría (ajustar índices)
+            searchable: true
         }
-    };
+    ],
+    dom: `<"table-top"
+            <"table-actions"
+                <"table-search"f>
+            >
+        >
+        rt
+        <"table-bottom"ip>`,
+    drawCallback: function() {
+        $('.dataTables_paginate > .pagination').addClass('custom-pagination');
+    },
+    initComplete: function() {
+        // Agregar botón de limpiar filtros
+        $('.table-filters').html(`
+            <button class="btn btn-outline-secondary btn-sm clear-filters">
+                <i class="fas fa-times"></i> Limpiar filtros
+            </button>
+        `);
 
+        // Agregar filtros por columna
+        this.api().columns([2, 3]).every(function(index) { // Lugar y Categoría (ajustar índices)
+            const column = this;
+            const title = $(column.header()).text();
+
+            // Obtener valores únicos para el filtro
+            const values = new Set();
+            column.data().each(function(d) {
+                if (d && d !== '<span class="text-muted">No especificado</span>') {
+                    values.add(d.replace(/<[^>]+>/g, ''));
+                }
+            });
+
+            // Agregar opciones al select
+            Array.from(values).sort().forEach(function(d) {
+                select.append(`<option value="${d}">${d}</option>`);
+            });
+        });
+
+        // Mejorar la búsqueda
+        const searchInput = $('.dataTables_filter input')
+            .off()
+            .on('input', function() {
+                table
+                    .search(this.value)
+                    .draw();
+            });
+
+        // Manejar limpieza de filtros
+        $('.clear-filters').on('click', function() {
+            table
+                .search('')
+                .columns().search('')
+                .draw();
+            $('.dataTables_filter input').val('');
+            $('.table-filters select').val('');
+        });
+    }
+};
     // Inicializar DataTable
     const table = $('#postsTable').DataTable(dataTableConfig);
 
@@ -756,7 +751,7 @@ querySnapshot.forEach((doc) => {
     
     docid=doc.id
     table.row.add([
-        `<span class="id-badge">${doc.id.slice(0, 8)}...</span>`,
+       
         pub.imagen_destacada ? 
             `<img src="${pub.imagen_destacada}" alt="${pub.titulo}" class="table-image">` : 
             '<div class="no-image"><i class="fas fa-image"></i></div>',
@@ -778,56 +773,6 @@ querySnapshot.forEach((doc) => {
             });
         }
     }
-
-   /* // Manejador para ver contenido
-   // Manejador para ver contenido
-$(document).on('click', '.btn-view', async function() {
-    const docId = $(this).data('id');
-    
-    try {
-        const doc = await db.collection('publicaciones2').doc(docId).get();
-        
-        if (doc.exists) {
-            const pub = doc.data();
-            
-            Swal.fire({
-                title: pub.titulo,
-                html: `
-                    <div class="publication-detail">
-                        ${pub.imagen_destacada ? 
-                            `<div class="detail-image-container">
-                                <img src="${pub.imagen_destacada}" class="detail-image" alt="${pub.titulo}">
-                            </div>` : ''
-                        }
-                        <div class="detail-info">
-                            <p><strong>Categoría:</strong> ${pub.categoria}</p>
-                            <p><strong>Lugar:</strong> ${pub.lugar || 'No especificado'}</p>
-                            <p><strong>Fecha:</strong> ${formatearFecha(pub.fecha_creacion)}</p>
-                        </div>
-                        <div class="detail-content">
-                            ${pub.contenido}
-                        </div>
-                    </div>
-                `,
-                width: '600px',
-                showCloseButton: true,
-                showConfirmButton: false,
-                customClass: {
-                    container: 'detail-modal-container',
-                    popup: 'detail-modal-popup',
-                    content: 'detail-modal-content'
-                }
-            });
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'No se pudo cargar el contenido'
-        });
-    }
-});*/
 
 const userType= localStorage.getItem("userType")
 

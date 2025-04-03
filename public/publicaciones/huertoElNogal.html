@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle de Evento | JASSO</title>
+
+    
+
+        <!-- Meta tags básicos -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jassocompany.com/">
+<meta property="og:title" content="Huerto el Nogal">
+<meta property="og:description" content="Conoce mas informacion sobre el paquete que solicitaste">
+
+<!-- Meta tags específicos para la imagen -->
+<meta property="og:image" content="https://jassocompany.com/publicaciones/assets/img/huertoElNogal.png">
+<meta property="og:image:secure_url" content="https://jassocompany.com/publicaciones/assets/img/huertoElNogal.png">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Huerto El Nogal">
+
+<!-- Meta tags adicionales -->
+<meta property="og:site_name" content="jassocompany">
+<meta property="og:locale" content="es_ES">
+
+<!-- WhatsApp específico -->
+<meta property="og:image:whatsapp" content="https://jassocompany.com/publicaciones/assets/img/huertoElNogal.png">
+
+    <!-- Estilos -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="css/arteaga.css" />
+
+  </head>
+
+  <body>
+    <a href="../index.html" class="back-button">
+      <i class="fas fa-arrow-left"></i>
+  </a>
+    <div class="hero-section" id="hero-image">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+       
+        <h1 class="publication-title" id="titulo"></h1>
+        <div class="meta-tags">
+          <span class="meta-tag">
+            <i class="fas fa-calendar"></i>
+            <span id="fecha"></span>
+          </span>
+         <!-- Etiqueta de promoción flotante -->
+<div class="promocion-badge" id="promocion-badge" style="display: none;">
+  <a href="#promocion-card" class="promocion-link">¡Promoción!</a>
+</div>
+          <span class="meta-tag">
+            <i class="fas fa-tag"></i>
+            <span id="categoria"></span>
+          </span>
+          <span class="meta-tag">
+            <i class="fas fa-map-marker-alt"></i>
+            <span id="lugar"></span>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="publication-detail">
+      <div class="content-wrapper">
+        <div class="left-column">
+          <div class="main-content">
+            <div class="publication-content" id="contenido"></div>
+          </div>
+          <div class="comments-section">
+            <h3 class="comments-title">Comentarios</h3>
+            <div class="comment-form">
+              <div class="comment-input-wrapper">
+                <div class="user-avatar" id="currentUserAvatar"></div>
+                <textarea
+                  id="commentText"
+                  placeholder="Escribe tu comentario..."
+                ></textarea>
+              </div>
+              <button id="submitComment" class="comment-btn">
+                Publicar comentario
+              </button>
+            </div>
+            <div class="comments-list" id="commentsList"></div>
+          </div>
+        </div>
+      
+   
+
+        <div class="sidebar">
+          <div class="info-card">
+            <h3 class="info-title">Información del Evento</h3>
+            <div class="info-item">
+              <i class="fas fa-map-marker-alt"></i>
+              <div>
+                <strong>Ubicación</strong><br />
+                <span id="lugar-sidebar"></span>
+              </div>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-calendar-alt"></i>
+              <div>
+                <strong>Fecha</strong><br />
+                <span id="fecha-sidebar"></span>
+              </div>
+            </div>
+            <div class="info-item">
+              <i class="fas fa-tag"></i>
+              <div>
+                <strong>Categoría</strong><br />
+                <span id="categoria-sidebar"></span>
+              </div>
+            </div>
+            <!--  <a href="#contacto" class="cta-button"> Solicitar Información </a>-->
+          </div>
+
+          <!-- Agregar después del primer info-card y antes de la galería -->
+         <!-- Primero, vamos a separar el HTML en dos cards diferentes -->
+<div class="info-card" id="precio-card">
+  <h3 class="info-title">Precio</h3>
+  <div class="info-item precio-total">
+      <i class="fas fa-tag"></i>
+      <div>
+          <strong>Precio del paquete</strong><br />
+          <span class="precio-texto destacado" id="precio-total">$0</span>
+      </div>
+  </div>
+</div>
+
+<div class="info-card" id="comisiones-card" style="display: none">
+  <h3 class="info-title">Comisiones</h3>
+  <div class="comisiones-container">
+      <div class="info-item">
+          <i class="fas fa-phone"></i>
+          <div>
+              <strong>Comisión por Llamada</strong><br />
+              <span class="precio-texto" id="comision-llamada">$0</span>
+          </div>
+      </div>
+
+      <div class="info-item">
+          <i class="fas fa-user-tie"></i>
+          <div>
+              <strong>Comisión de Líder</strong><br />
+              <span class="precio-texto" id="comision-lider">$0</span>
+          </div>
+      </div>
+
+      <div class="info-item">
+          <i class="fas fa-handshake"></i>
+          <div>
+              <strong>Comisión de Venta</strong><br />
+              <span class="precio-texto" id="comision-venta">$0</span>
+          </div>
+      </div>
+
+      
+      <div class="info-item">
+        <i class="fas fa-money-bill"></i>
+        <div>
+            <strong>Precio por persona</strong><br />
+            <span class="precio-texto" id="precio-persona">$0</span>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+          <!-- Dentro del div con class="sidebar", después de la sección de Material de Apoyo -->
+<div class="info-card" id="promocion-card" style="display: none;">
+  <h3 class="info-title">Promoción</h3>
+  <div class="promocion-indicator">
+    <i class="fas fa-tag"></i>
+    <span>¡Este evento está en promoción!</span>
+  </div>
+  <div class="promocion-descripcion" id="descripcion-promocion-sidebar">
+    <!-- La descripción de la promoción se cargará aquí -->
+  </div>
+</div>
+
+         <!-- Sección de Galería -->
+<div class="info-card" >
+  <h3 class="info-title">Galería</h3>
+  <div class="gallery" id="galeria-imagenes">
+      <!-- Las imágenes se cargarán dinámicamente -->
+  </div>
+</div>
+
+<!-- Sección de Material de Apoyo -->
+<div class="info-card" id="material-card">
+  <h3 class="info-title">Material de apoyo</h3>
+  <p id="descripcion-material" class="material-description"></p>
+  <div class="gallery" id="material-apoyo">
+      <!-- El material de apoyo se cargará dinámicamente -->
+  </div>
+</div>
+
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Firebase Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+
+    <div class="whatsapp-float" id="whatsapp-float" style="display: none">
+      <i class="fab fa-whatsapp"></i>
+    </div>
+
+
+    <!-- Añade esto justo antes del cierre del body -->
+<div class="mobile-comments-container"></div>
+ 
+ 
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const publicacionId = urlParams.get("id");
+        const tipoUsuario = urlParams.get("tipo");
+        const whatsappFloat = document.getElementById("whatsapp-float");
+
+        // Mostrar el botón solo si el usuario es asesor o admin
+        if (
+          tipoUsuario &&
+          (tipoUsuario.toLowerCase() === "asesor" ||
+            tipoUsuario.toLowerCase() === "admin")
+        ) {
+          whatsappFloat.style.display = "flex";
+        }
+
+        whatsappFloat.addEventListener("click", function () {
+          const titulo = document.getElementById("titulo").textContent;
+          const asesor = localStorage.getItem("userName");
+          console.log(asesor);
+
+          const mensaje = encodeURIComponent(
+            `Hola, descubre más información de ${titulo} en https://jassocompany.com/publicaciones/huertoElNogal.html?id=${publicacionId}&tipo=cliente`
+          );
+
+          // Abre WhatsApp en una nueva ventana
+          window.open(`https://wa.me/?text=${mensaje}`, "_blank");
+        });
+      });
+    </script>
+
+<script>
+
+  // Scroll suave al hacer clic en la etiqueta de promoción
+document.addEventListener("DOMContentLoaded", function () {
+  const promocionBadge = document.getElementById("promocion-badge");
+  const promocionLink = document.querySelector(".promocion-link");
+
+  if (promocionLink) {
+    promocionLink.addEventListener("click", function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute("href"));
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
+  }
+});
+</script>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tipoUsuario = urlParams.get("tipo");
+      const comisionesCard = document.getElementById("comisiones-card");
+      
+      // Las comisiones solo se muestran para asesores y admins
+      if (tipoUsuario && (tipoUsuario.toLowerCase() === "asesor" || tipoUsuario.toLowerCase() === "admin")) {
+          comisionesCard.style.display = "block";
+      } else {
+          comisionesCard.style.display = "none";
+      }
+  });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const backButton = document.querySelector('.back-button');
+    
+    // Obtener parámetros de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const webview = urlParams.get('webview');
+    const tipo = urlParams.get('tipo');
+
+    // Ocultar botón si webview=si o si tipo no es asesor ni admin
+    if (webview === 'si' || (tipo !== 'asesor' && tipo !== 'admin')) {
+        backButton.style.display = 'none';
+    }
+
+    // Evento de scroll solo si el botón está visible
+    window.addEventListener('scroll', () => {
+        if (backButton.style.display !== 'none') {
+            const heroHeight = document.querySelector('.hero-section').offsetHeight;
+            
+            if (window.scrollY > heroHeight - 100) {
+                backButton.style.color = '#333';
+                backButton.style.background = 'rgba(255, 255, 255, 0.9)';
+            } else {
+                backButton.style.color = 'white';
+                backButton.style.background = 'rgba(255, 255, 255, 0.2)';
+            }
+        }
+    });
+});
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const commentsSection = document.querySelector('.comments-section');
+    const mobileCommentsContainer = document.querySelector('.mobile-comments-container');
+    
+    function handleResize() {
+        if (window.innerWidth <= 768) {
+            // En móvil, mueve los comentarios al contenedor móvil
+            if (commentsSection.parentElement !== mobileCommentsContainer) {
+                mobileCommentsContainer.appendChild(commentsSection);
+            }
+        } else {
+            // En desktop, devuelve los comentarios a su posición original
+            const leftColumn = document.querySelector('.left-column');
+            if (commentsSection.parentElement !== leftColumn) {
+                leftColumn.appendChild(commentsSection);
+            }
+        }
+    }
+
+    // Ejecuta al cargar y cuando cambie el tamaño de la ventana
+    handleResize();
+    window.addEventListener('resize', handleResize);
+});
+  </script>
+
+
+    <script src="js/arteaga.js"></script>
+
+
+  </body>
+</html>

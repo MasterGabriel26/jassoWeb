@@ -5,6 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Detalle de Evento | JASSO</title>
 
+
+<!-- Meta tags básicos -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jassocompany.com/">
+<meta property="og:title" content="Casa Antigua Arteaga">
+<meta property="og:description" content="Conoce mas informacion sobre el paquete que solicitaste">
+
+<!-- Meta tags específicos para la imagen -->
+<meta property="og:image" content="https://jassocompany.com/publicaciones/assets/img/casa.jpg">
+<meta property="og:image:secure_url" content="https://jassocompany.com/publicaciones/assets/img/casa.jpg">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Casa Antigua Aerteaga">
+
+<!-- Meta tags adicionales -->
+<meta property="og:site_name" content="jassocompany">
+<meta property="og:locale" content="es_ES">
+
+<!-- WhatsApp específico -->
+<meta property="og:image:whatsapp" content="https://jassocompany.com/publicaciones/assets/img/casa.jpg">
+
+
     <!-- Estilos -->
     <link
       href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap"
@@ -20,9 +43,13 @@
     />
 
     <link rel="stylesheet" href="css/arteaga.css" />
+
   </head>
 
   <body>
+    <a href="../index.html" class="back-button">
+      <i class="fas fa-arrow-left"></i>
+  </a>
     <div class="hero-section" id="hero-image">
       <div class="hero-overlay"></div>
       <div class="hero-content">
@@ -141,6 +168,15 @@
               <span class="precio-texto" id="comision-venta">$0</span>
           </div>
       </div>
+
+      
+      <div class="info-item">
+        <i class="fas fa-money-bill"></i>
+        <div>
+            <strong>Precio por persona</strong><br />
+            <span class="precio-texto" id="precio-persona">$0</span>
+        </div>
+    </div>
   </div>
 </div>
 
@@ -188,95 +224,14 @@
     <div class="whatsapp-float" id="whatsapp-float" style="display: none">
       <i class="fab fa-whatsapp"></i>
     </div>
+
+
+    <!-- Añade esto justo antes del cierre del body -->
+<div class="mobile-comments-container"></div>
  
  
     
-    <style>
-/* Estilos para la etiqueta de promoción flotante */
-.promocion-badge {
-  position: fixed;
-  bottom: 100px;
-  right: 20px;
-  background-color: #e74c3c; /* Rojo llamativo */
-  color: white;
-  padding: 15px 25px;
-  border-radius: 30px;
-  font-size: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3); /* Sombra para resaltar */
-  animation: pulse 1.5s infinite; /* Animación de pulso */
-  z-index: 1000; /* Asegura que esté por encima de otros elementos */
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
 
-.promocion-badge:hover {
-  transform: scale(1.1);
-  box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
-}
-
-.promocion-link {
-  color: white;
-  text-decoration: none;
-}
-
-/* Animación de pulso */
-@keyframes pulse {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-/* Ajustes para dispositivos móviles */
-@media (max-width: 768px) {
-  .promocion-badge {
-    bottom: 80px;
-    right: 10px;
-    font-size: 0.9rem;
-    padding: 10px 20px;
-  }
-}
-      /* Estilos para el indicador de promoción */
-.promocion-indicator {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: #e8f4ff;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  color: var(--primary);
-  font-weight: 600;
-}
-
-.promocion-indicator i {
-  font-size: 1.2rem;
-  color: var(--primary);
-}
-
-/* Estilos para la descripción de la promoción */
-.promocion-descripcion {
-  padding: 10px;
-  background-color: #f8f9fa;
-  border-radius: 8px;
-  color: #495057;
-  font-size: 0.9rem;
-  line-height: 1.5;
-  border-left: 3px solid #4a90e2;
-}
-
-/* Ocultar la sección si no hay descripción */
-.promocion-descripcion:empty {
-  display: none;
-}
-    </style>
   
     <script>
       document.addEventListener("DOMContentLoaded", function () {
@@ -300,7 +255,7 @@
           console.log(asesor);
 
           const mensaje = encodeURIComponent(
-            `Hola, tu asesor(a): ${asesor} te invita a ver más información de ${titulo} en https://jassocompany.com/publicaciones/casaAntiguaAteaga.html?id=${publicacionId}&tipo=cliente`
+            `Hola, decubre más información de ${titulo} en https://jassocompany.com/publicaciones/casaAntiguaAteaga.html?id=${publicacionId}&tipo=cliente`
           );
 
           // Abre WhatsApp en una nueva ventana
@@ -342,6 +297,61 @@ document.addEventListener("DOMContentLoaded", function () {
           comisionesCard.style.display = "none";
       }
   });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const backButton = document.querySelector('.back-button');
+    
+    // Obtener parámetros de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const webview = urlParams.get('webview');
+    const tipo = urlParams.get('tipo');
+
+    // Ocultar botón si webview=si o si tipo no es asesor ni admin
+    if (webview === 'si' || (tipo !== 'asesor' && tipo !== 'admin')) {
+        backButton.style.display = 'none';
+    }
+
+    // Evento de scroll solo si el botón está visible
+    window.addEventListener('scroll', () => {
+        if (backButton.style.display !== 'none') {
+            const heroHeight = document.querySelector('.hero-section').offsetHeight;
+            
+            if (window.scrollY > heroHeight - 100) {
+                backButton.style.color = '#333';
+                backButton.style.background = 'rgba(255, 255, 255, 0.9)';
+            } else {
+                backButton.style.color = 'white';
+                backButton.style.background = 'rgba(255, 255, 255, 0.2)';
+            }
+        }
+    });
+});
+
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    const commentsSection = document.querySelector('.comments-section');
+    const mobileCommentsContainer = document.querySelector('.mobile-comments-container');
+    
+    function handleResize() {
+        if (window.innerWidth <= 768) {
+            // En móvil, mueve los comentarios al contenedor móvil
+            if (commentsSection.parentElement !== mobileCommentsContainer) {
+                mobileCommentsContainer.appendChild(commentsSection);
+            }
+        } else {
+            // En desktop, devuelve los comentarios a su posición original
+            const leftColumn = document.querySelector('.left-column');
+            if (commentsSection.parentElement !== leftColumn) {
+                leftColumn.appendChild(commentsSection);
+            }
+        }
+    }
+
+    // Ejecuta al cargar y cuando cambie el tamaño de la ventana
+    handleResize();
+    window.addEventListener('resize', handleResize);
+});
   </script>
 
 

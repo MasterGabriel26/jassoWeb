@@ -70,308 +70,186 @@
 	<link href="css/app.css" rel="stylesheet">
 
 
+ 
     <style>
+        #paquetesModal .modal-body {
+    max-height: 70vh;
+    overflow-y: auto;
+}
 
+#listaPaquetes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1rem;
+    padding: 1rem;
+}
 
-.chat-item {
+#listaPaquetes .carousel-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+#listaPaquetes .carousel-card:hover {
+    transform: scale(1.02);
+}
+
+.btn-info {
+    margin-left: 10px;
+    background-color: #17a2b8;
+    color: white;
+}
+
+.anticipo-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+}
+.selected-package-info {
+    margin-bottom: 20px;
+}
+
+.selected-package-info .alert {
     display: flex;
     align-items: center;
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    cursor: pointer;
-    transition: background-color 0.2s;
+    gap: 10px;
 }
 
-.chat-item:hover {
-    background-color: #f8f9fa;
+.selected-package-info .btn-link {
+    margin-left: auto;
+    padding: 0;
+    color: #0056b3;
+    text-decoration: none;
 }
 
-.chat-avatar {
-    position: relative;
-    width: 48px;
-    height: 48px;
-    margin-right: 12px;
+.selected-package-info .btn-link:hover {
+    color: #003d7a;
+    text-decoration: underline;
 }
 
-.chat-avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-}
+    #paquetesModal .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+        padding: 15px;
+        /* Agregar will-change para optimizar el rendimiento */
+        will-change: transform;
+        /* Activar aceleración por hardware */
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
+        /* Mejorar el scroll */
+        -webkit-overflow-scrolling: touch;
+    }
 
-.status-indicator {
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background-color: #ccc;
-    border: 2px solid white;
-}
+    #listaPaquetes {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 10px;
+        /* Evitar reflow innecesario */
+        contain: content;
+    }
 
-.status-indicator.online {
-    background-color: #4CAF50;
-}
-
-.chat-info {
-    flex: 1;
-}
-
-.chat-info h6 {
-    margin: 0;
-    font-size: 14px;
-    font-weight: 600;
-}
-
-.chat-info small {
-    color: #666;
-    font-size: 12px;
-}
-
-.chat-meta {
-    text-align: right;
-}
-
-.chat-meta small {
-    color: #999;
-    font-size: 11px;
-}
-
-.search-container {
-    position: relative;
-    padding: 12px;
-}
-
-.search-container input {
-    width: 100%;
-    padding: 8px 32px 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 20px;
-    font-size: 14px;
-}
-
-.search-container i {
-    position: absolute;
-    right: 24px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #999;
-}
-
-
-.card-preview-content {
+    .package-item {
         border: 1px solid #e0e0e0;
         border-radius: 8px;
         overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s ease;
         background: white;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        /* Activar aceleración por hardware para cada item */
+        transform: translateZ(0);
+        -webkit-transform: translateZ(0);
     }
 
-    .preview-header {
-        background: #f8f9fa;
-        padding: 8px 12px;
-        border-bottom: 1px solid #e0e0e0;
+    /* Optimizar las imágenes */
+    .package-image img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        /* Evitar reflow durante la carga de imágenes */
+        contain: size;
+    }
+
+
+    #paquetesModal .modal-body {
+        max-height: 70vh;
+        overflow-y: auto;
+        padding: 15px;
+    }
+
+    #listaPaquetes {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 10px;
+    }
+
+    .package-item {
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: white;
+    }
+
+    .package-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .package-content {
         display: flex;
         align-items: center;
-        gap: 8px;
+        padding: 10px;
     }
 
-    .preview-header i {
-        color: #6c757d;
+    .package-image {
+        width: 80px;
+        height: 80px;
+        flex-shrink: 0;
+        margin-right: 15px;
     }
 
-    .preview-body {
-        padding: 12px;
+    .package-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 4px;
     }
 
-    .preview-body h6 {
-        margin: 0 0 8px 0;
-        font-weight: 600;
+    .package-details {
+        flex-grow: 1;
     }
 
-    .preview-details {
+    .package-title {
+        margin: 0 0 5px 0;
+        font-size: 16px;
+        font-weight: 500;
+        color: #333;
+    }
+
+    .package-info {
         display: flex;
         flex-direction: column;
         gap: 4px;
-        margin-bottom: 12px;
+        font-size: 13px;
+        color: #666;
     }
 
-    .detail-item {
+    .package-category {
+        color: #2196F3;
+        font-weight: 500;
+    }
+
+    .package-location {
         display: flex;
         align-items: center;
-        gap: 8px;
-        color: #666;
-        font-size: 0.9em;
+        gap: 5px;
     }
 
-    .detail-item i {
-        width: 16px;
-        text-align: center;
-        color: #6c757d;
+    .package-location i {
+        font-size: 12px;
+        color: #757575;
     }
-
-    .preview-link {
-        text-align: right;
-    }
-
-    .preview-link .btn {
-        font-size: 0.85em;
-    }
-
-
-    
-    .share-prospect-modal .chat-list-container {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    padding: 8px;
-}
-
-.share-prospect-modal .chat-list-item {
-    display: flex;
-    align-items: center;
-    padding: 12px;
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.share-prospect-modal .chat-list-item:hover {
-    background: #f8f9fa;
-    border-color: #dee2e6;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-}
-
-.share-prospect-modal .chat-item-avatar {
-    position: relative;
-    width: 48px;
-    height: 48px;
-    margin-right: 12px;
-}
-
-.share-prospect-modal .chat-item-avatar img {
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    object-fit: cover;
-    background-color: #f8f9fa;
-}
-
-.share-prospect-modal .status-dot {
-    position: absolute;
-    bottom: 2px;
-    right: 2px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #ccc;
-    border: 2px solid #fff;
-}
-
-.share-prospect-modal .status-dot.online {
-    background: #28a745;
-}
-
-.share-prospect-modal .chat-item-info {
-    flex: 1;
-    min-width: 0;
-}
-
-.share-prospect-modal .chat-item-name {
-    font-weight: 600;
-    font-size: 14px;
-    color: #212529;
-    margin-bottom: 2px;
-}
-
-.share-prospect-modal .chat-item-last-message,
-.share-prospect-modal .chat-item-members,
-.share-prospect-modal .chat-item-email {
-    font-size: 13px;
-    color: #6c757d;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.share-prospect-modal .chat-item-meta {
-    font-size: 12px;
-    color: #adb5bd;
-    margin-left: 12px;
-}
-
-.share-prospect-modal .empty-state {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 16px;
-    color: #6c757d;
-    text-align: center;
-}
-
-.share-prospect-modal .empty-state i {
-    font-size: 24px;
-    margin-bottom: 8px;
-    opacity: 0.5;
-}
-
-.share-prospect-modal .modal-body {
-    padding: 16px;
-}
-
-.share-prospect-modal .nav-tabs {
-    margin-bottom: 16px;
-}
-
-.share-prospect-modal .tab-content {
-    min-height: 300px;
-}
-
-
-.share-prospect-modal .search-container {
-    position: relative;
-    margin-bottom: 1rem;
-}
-
-.share-prospect-modal .search-container input {
-    width: 100%;
-    padding: 8px 32px 8px 12px;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    font-size: 14px;
-}
-
-.share-prospect-modal .search-container input:focus {
-    outline: none;
-    border-color: #86b7fe;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.share-prospect-modal .clear-search {
-    position: absolute;
-    right: 8px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    padding: 4px;
-    cursor: pointer;
-    color: #6c757d;
-    display: none;
-}
-
-.share-prospect-modal .clear-search:hover {
-    color: #dc3545;
-}
-
-    
-  
     </style>
 </head>
 
@@ -476,6 +354,7 @@
                                                     <option value="tipo_evento">Tipo de Evento</option>
                                                     <option value="asesor">Asesor</option>
                                                     <option value="compartidos">Compartidos</option>
+                                                    <option value="mis-prospectos">Mis prospectos</option>
                                                     <option value="todos">Todos</option>
                                                 </select>
                                                 
@@ -834,7 +713,11 @@
                             </div>
                             <div class="form-group">
                                 <label>Fecha</label>
-                                <input type="date" class="form-control" id="fecha">
+                                <input type="date" 
+       class="form-control" 
+       id="fecha_evento" 
+       name="fecha"
+       onchange="console.log('Cambio directo:', this.value)">
                             </div>
                         </div>
                         <div class="form-row">
@@ -931,6 +814,22 @@
     <script src="js/prospectos/paso7.js"></script>
 	<script src="js/prospectos/listarProspectos.js"></script>
     <script src="js/prospectos/enviarProspecto.js"></script>
+
+    <script>
+        const inputCelular = document.getElementById('celular');
+      
+        inputCelular.addEventListener('input', function (event) {
+          // Expresión regular para permitir solo números y el signo +
+          const regex = /^[0-9+]*$/;
+          const valor = event.target.value;
+      
+          // Si el valor no coincide con la expresión regular, lo corregimos
+          if (!regex.test(valor)) {
+            // Eliminamos los caracteres no permitidos
+            event.target.value = valor.replace(/[^0-9+]/g, '');
+          }
+        });
+      </script>
 
  
 </body>

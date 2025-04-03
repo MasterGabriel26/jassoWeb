@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación de Cumpleaños</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Fredoka:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6C63FF;
+            --secondary: #FF6584;
+            --accent1: #4ECDC4;
+            --accent2: #FFD166;
+            --accent3: #F8A4D8;
+            --dark: #333333;
+            --light: #FFFFFF;
+            --background: #F9F9F9;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+        
+        @keyframes confetti-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(1000px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideInUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--background);
+            color: var(--dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(108, 99, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 101, 132, 0.05) 0%, transparent 50%);
+            background-attachment: fixed;
+        }
+        
+        .container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .confetti-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            opacity: 0.8;
+            animation: confetti-fall 5s linear infinite;
+        }
+        
+        .invitation-card {
+            width: 100%;
+            max-width: 650px;
+            background-color: var(--light);
+            border-radius: 20px;
+            box-shadow: 0 15px 35px var(--shadow);
+            overflow: hidden;
+            position: relative;
+            z-index: 2;
+            animation: fadeIn 0.8s ease forwards;
+        }
+        
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 2.5rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background-image: 
+                radial-gradient(circle at 25px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 75px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 125px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 175px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 225px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 275px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 325px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 375px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 425px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 475px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 525px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 575px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 625px 0, transparent 25px, white 26px),
+                radial-gradient(circle at 675px 0, transparent 25px, white 26px);
+            background-size: 50px 30px;
+            background-position: 0 0;
+        }
+        
+        .decoration-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .balloon {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            border-radius: 50%;
+            animation: float 4s ease-in-out infinite;
+        }
+        
+        .balloon::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1px;
+            height: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .balloon-1 {
+            background-color: var(--accent1);
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .balloon-2 {
+            background-color: var(--accent2);
+            top: 15%;
+            right: 15%;
+            animation-delay: 0.5s;
+        }
+        
+        .balloon-3 {
+            background-color: var(--accent3);
+            bottom: 30%;
+            left: 20%;
+            animation-delay: 1s;
+        }
+        
+        .balloon-4 {
+            background-color: var(--primary);
+            bottom: 25%;
+            right: 10%;
+            animation-delay: 1.5s;
+        }
+        
+        .birthday-title {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        .birthday-subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: var(--light);
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+        }
+        
+        .age-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            background: var(--light);
+            border-radius: 50%;
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            position: relative;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .age-badge::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 2px dashed var(--light);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: pulse 3s linear infinite;
+        }
+        
+        .card-content {
+            padding: 2.5rem 2rem;
+            text-align: center;
+        }
+        
+        .child-name {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            animation: slideInUp 0.5s ease forwards;
+        }
+        
+        .invitation-text {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: slideInUp 0.7s ease forwards;
+        }
+        
+        .details-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            animation: slideInUp 0.9s ease forwards;
+        }
+        
+        .detail-item {
+            background-color: rgba(249, 249, 249, 0.8);
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(108, 99, 255, 0.1);
+        }
+        
+        .detail-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            border-color: rgba(108, 99, 255, 0.3);
+        }
+        
+        .detail-icon {
+            font-size: 1.8rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+        
+        .detail-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .detail-text {
+            font-size: 1rem;
+            color: var(--dark);
+        }
+        
+        .rsvp-container {
+            margin-top: 2rem;
+            text-align: center;
+            animation: slideInUp 1.1s ease forwards;
+        }
+        
+        .rsvp-text {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .rsvp-button {
+            display: inline-block;
+            padding: 0.8rem 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--light);
+            border: none;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .rsvp-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s ease;
+        }
+        
+        .rsvp-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 99, 255, 0.4);
+        }
+        
+        .rsvp-button:hover::before {
+            left: 100%;
+        }
+        
+        .contact-info {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--dark);
+            opacity: 0.8;
+        }
+        
+        .card-footer {
+            background: linear-gradient(135deg, var(--accent1), var(--accent2));
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            animation: slideInUp 1.3s ease forwards;
+        }
+        
+        .card-footer::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 0;
+            width: 100%;
+            height: 30px;
+            background-image: 
+                radial-gradient(circle at 25px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 75px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 125px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 175px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 225px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 275px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 325px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 375px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 425px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 475px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 525px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 575px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 625px 30px, transparent 25px, var(--accent1) 26px),
+                radial-gradient(circle at 675px 30px, transparent 25px, var(--accent1) 26px);
+            background-size: 50px 30px;
+            background-position: 0 0;
+        }
+        
+        .footer-text {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--light);
+        }
+        
+        .party-icon {
+            font-size: 1.2rem;
+            margin: 0 0.5rem;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .invitation-card {
+                max-width: 100%;
+            }
+            
+            .birthday-title {
+                font-size: 2rem;
+            }
+            
+            .birthday-subtitle {
+                font-size: 1rem;
+            }
+            
+            .age-badge {
+                width: 70px;
+                height: 70px;
+                font-size: 2.2rem;
+            }
+            
+            .child-name {
+                font-size: 1.8rem;
+            }
+            
+            .invitation-text {
+                font-size: 1rem;
+            }
+            
+            .details-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+            
+            .detail-item {
+                padding: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .card-header {
+                padding: 2rem 1rem;
+            }
+            
+            .birthday-title {
+                font-size: 1.8rem;
+            }
+            
+            .birthday-subtitle {
+                font-size: 0.9rem;
+            }
+            
+            .age-badge {
+                width: 60px;
+                height: 60px;
+                font-size: 2rem;
+            }
+            
+            .card-content {
+                padding: 2rem 1rem;
+            }
+            
+            .child-name {
+                font-size: 1.5rem;
+            }
+            
+            .invitation-text {
+                font-size: 0.95rem;
+            }
+            
+            .detail-icon {
+                font-size: 1.5rem;
+            }
+            
+            .detail-title {
+                font-size: 1rem;
+            }
+            
+            .detail-text {
+                font-size: 0.9rem;
+            }
+            
+            .footer-text {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="confetti-container" id="confetti-container"></div>
+        
+        <div class="invitation-card">
+            <div class="card-header">
+                <div class="decoration-container">
+                    <div class="balloon balloon-1"></div>
+                    <div class="balloon balloon-2"></div>
+                    <div class="balloon balloon-3"></div>
+                    <div class="balloon balloon-4"></div>
+                </div>
+                
+                <h1 class="birthday-title">¡Fiesta de Cumpleaños!</h1>
+                <p class="birthday-subtitle">Te invito a celebrar conmigo</p>
+                
+                <div class="age-badge">6</div>
+            </div>
+            
+            <div class="card-content">
+                <h2 class="child-name">Sofía</h2>
+                
+                <p class="invitation-text">¡Hola! Estoy muy feliz de invitarte a mi fiesta de cumpleaños. Habrá juegos, sorpresas, pastel y mucha diversión. ¡No puedes faltar!</p>
+                
+                <div class="details-container">
+                    <div class="detail-item">
+                        <i class="fas fa-calendar-alt detail-icon"></i>
+                        <h3 class="detail-title">Fecha</h3>
+                        <p class="detail-text">Sábado, 12 de Julio</p>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <i class="fas fa-clock detail-icon"></i>
+                        <h3 class="detail-title">Hora</h3>
+                        <p class="detail-text">4:00 PM - 8:00 PM</p>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt detail-icon"></i>
+                        <h3 class="detail-title">Lugar</h3>
+                        <p class="detail-text">Salón de Fiestas "Alegría"</p>
+                        <p class="detail-text">Calle Primavera #45</p>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <i class="fas fa-gift detail-icon"></i>
+                        <h3 class="detail-title">Información</h3>
+                        <p class="detail-text">Ropa cómoda</p>
+                        <p class="detail-text">Padres bienvenidos</p>
+                    </div>
+                </div>
+                
+                <div class="rsvp-container">
+                    <p class="rsvp-text">Por favor confirma tu asistencia antes del 5 de Julio</p>
+                    <a href="#" class="rsvp-button">Confirmar Asistencia</a>
+                    
+                    <div class="contact-info">
+                        <p>Contacto: Padres de Sofía</p>
+                        <p>Tel: 555-987-6543</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <p class="footer-text">
+                    <i class="fas fa-birthday-cake party-icon"></i>
+                    ¡Te esperamos para celebrar juntos!
+                    <i class="fas fa-star party-icon"></i>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Crear confeti
+            const confettiContainer = document.getElementById('confetti-container');
+            const confettiColors = ['#6C63FF', '#FF6584', '#4ECDC4', '#FFD166', '#F8A4D8'];
+            const confettiCount = 50;
+            const confettiShapes = ['circle', 'square', 'triangle'];
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Posición aleatoria
+                const posX = Math.random() * 100;
+                
+                // Tamaño aleatorio
+                const size = Math.random() * 10 + 5;
+                
+                // Color aleatorio
+                const colorIndex = Math.floor(Math.random() * confettiColors.length);
+                
+                // Forma aleatoria
+                const shapeIndex = Math.floor(Math.random() * confettiShapes.length);
+                
+                // Velocidad aleatoria
+                const duration = Math.random() * 3 + 2;
+                const delay = Math.random() * 5;
+                
+                confetti.style.left = `${posX}%`;
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = confettiColors[colorIndex];
+                confetti.style.animationDuration = `${duration}s`;
+                confetti.style.animationDelay = `${delay}s`;
+                
+                if (shapeIndex === 0) {
+                    // Círculo
+                    confetti.style.borderRadius = '50%';
+                } else if (shapeIndex === 1) {
+                    // Cuadrado
+                    confetti.style.borderRadius = '0';
+                } else {
+                    // Triángulo
+                    confetti.style.backgroundColor = 'transparent';
+                    confetti.style.borderBottom = `${size}px solid ${confettiColors[colorIndex]}`;
+                    confetti.style.borderLeft = `${size/2}px solid transparent`;
+                    confetti.style.borderRight = `${size/2}px solid transparent`;
+                    confetti.style.height = '0';
+                }
+                
+                confettiContainer.appendChild(confetti);
+            }
+        });
+    </script>
+</body>
+</html>

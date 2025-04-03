@@ -281,58 +281,133 @@ function formatearFecha(fecha) {
   return "Fecha no disponible";
 }
 
-// Actualizar la función createCarouselCard
+// Objeto que mapea lugares con sus URLs correspondientes
+const lugaresToUrls = {
+  'Campanario': 'campanario.html',
+  'Casa Antigua Arteaga': 'casaAntiguaAteaga.html',
+  'Otro Lugar': 'otroLugar.html',
+  'Museo de las Aves': 'museoDeLasAves.html',
+  'Huerto el Nogal':'huertoElNogal.html'
+  // Añade más mapeos según necesites
+};
+
+// Función auxiliar para obtener la URL correcta según el lugar
+function getUrlByLugar(lugar, id) {
+  // Obtener la URL correspondiente al lugar o usar una URL por defecto
+  const baseUrl = lugaresToUrls[lugar] || 'default.html';
+  return `publicaciones/${baseUrl}?id=${id}&tipo=asesor`;
+}
+
+// Clase para manejar la carga de imágenes
+class ImageLoader {
+  constructor() {
+      this.observer = new IntersectionObserver(this.handleIntersection.bind(this), {
+          root: null,
+          rootMargin: '50px',
+          threshold: 0.1
+      });
+  }
+
+  handleIntersection(entries, observer) {
+      entries.forEach(entry => {
+          if (entry.isIntersecting) {
+              this.loadImage(entry.target);
+              observer.unobserve(entry.target);
+          }
+      });
+  }
+
+  loadImage(imageElement) {
+      const realSrc = imageElement.dataset.src;
+      if (!realSrc) return;
+
+      const tempImage = new Image();
+      tempImage.onload = () => {
+          imageElement.src = realSrc;
+          imageElement.classList.add('loaded');
+      };
+      tempImage.src = realSrc;
+  }
+
+  observe(element) {
+      if (element) {
+          this.observer.observe(element);
+      }
+  }
+}
+
+// Instancia global del ImageLoader
+const imageLoader = new ImageLoader();
+
+// Función para crear el card del carrusel
 function createCarouselCard(post) {
   const defaultPost = {
-    imagen_destacada: 'img/default-image.jpg',
-    titulo: 'Sin título',
-    categoria: 'Sin categoría',
-    lugar: 'Lugar no especificado',
-    fecha_creacion: new Date(),
-    ...post
+      imagen_destacada: 'img/default-image.jpg',
+      titulo: 'Sin título',
+      categoria: 'Sin categoría',
+      lugar: 'Lugar no especificado',
+      fecha_creacion: new Date(),
+      ...post
   };
 
   const cardElement = document.createElement("div");
   cardElement.className = "carousel-card";
   cardElement.style.width = window.innerWidth <= 480 ? '200px' : window.innerWidth <= 768 ? '250px' : '280px';
+  
   cardElement.innerHTML = `
-    <div class="post-card">
-      <div class="card-image-container">
-        <img src="${defaultPost.imagen_destacada}" alt="${defaultPost.titulo}" class="card-image">
-        ${defaultPost.isPromocion ? '<div class="promo-badge"><span>Promo</span></div>' : ''}
-        <span class="card-category">${defaultPost.categoria}</span>
+      <div class="post-card">
+          <div class="card-image-container">
+              <div class="image-placeholder"></div>
+              <img 
+                  src="img/default-image.jpg"
+                  data-src="${defaultPost.imagen_destacada}"
+                  alt="${defaultPost.titulo}"
+                  class="card-image lazy-image"
+              >
+              ${defaultPost.isPromocion ? '<div class="promo-badge"><span>Promo</span></div>' : ''}
+              <span class="card-category">${defaultPost.categoria}</span>
+          </div>
+          <div class="card-content">
+              <h3 class="card-title">${defaultPost.titulo}</h3>
+              <div class="card-info">
+                  <span class="card-location">
+                      <i class="fas fa-map-marker-alt"></i> ${defaultPost.lugar}
+                  </span>
+                  <span class="card-date">
+                      <i class="far fa-calendar"></i> ${formatearFecha(post.fecha_creacion)}
+                  </span>
+              </div>
+          </div>
       </div>
-      <div class="card-content">
-        <h3 class="card-title">${defaultPost.titulo}</h3>
-        <div class="card-info">
-          <span class="card-location">
-            <i class="fas fa-map-marker-alt"></i> ${defaultPost.lugar}
-          </span>
-          <span class="card-date">
-            <i class="far fa-calendar"></i> ${formatearFecha(post.fecha_creacion)}
-          </span>
-        </div>
-      </div>
-    </div>
   `;
 
   cardElement.onclick = () => {
-    window.location.href = `publicaciones/casaAntiguaAteaga.html?id=${defaultPost.id}&tipo=asesor`;  
+      window.location.href = getUrlByLugar(defaultPost.lugar, defaultPost.id);
   };
+
+  // Inicializar lazy loading para la imagen
+  const lazyImage = cardElement.querySelector('.lazy-image');
+  imageLoader.observe(lazyImage);
 
   return cardElement;
 }
 
-
-
+// Función para crear slides destacados
 function createFeaturedSlide(post) {
   const slide = document.createElement('a');
-  slide.href = `publicaciones/casaAntiguaAteaga.html?id=${post.id}&tipo=asesor`;
+  slide.href = getUrlByLugar(post.lugar, post.id);
   slide.classList.add('featured-slide-link');
+  
   slide.innerHTML = `
       <div class="featured-slide">
           ${post.isPromocion ? '<div class="promo-badge"><span>Promo</span></div>' : ''}
-          <img src="${post.imagen_destacada}" alt="${post.titulo}" class="featured-image">
+          <div class="image-placeholder"></div>
+          <img 
+              src="img/default-image.jpg"
+              data-src="${post.imagen_destacada}"
+              alt="${post.titulo}"
+              class="featured-image lazy-image"
+          >
           <div class="featured-content">
               <h2 class="featured-title">${post.titulo}</h2>
               <div class="featured-info">
@@ -344,9 +419,80 @@ function createFeaturedSlide(post) {
           </div>
       </div>
   `;
+
+  // Inicializar lazy loading para la imagen
+  const lazyImage = slide.querySelector('.lazy-image');
+  imageLoader.observe(lazyImage);
+
   return slide;
 }
 
+// Estilos CSS necesarios (agregar al head o en tu archivo CSS)
+const styles = `
+  .card-image-container {
+      position: relative;
+      overflow: hidden;
+      background: #f0f0f0;
+      aspect-ratio: 16/9;
+  }
+
+  .image-placeholder {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(110deg, #ececec 8%, #f5f5f5 18%, #ececec 33%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite linear;
+  }
+
+  .lazy-image {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.3s ease-in-out;
+  }
+
+  .lazy-image.loaded {
+      opacity: 1;
+  }
+
+  @keyframes shimmer {
+      0% {
+          background-position: -200% 0;
+      }
+      100% {
+          background-position: 200% 0;
+      }
+  }
+
+  .featured-slide {
+      position: relative;
+      overflow: hidden;
+  }
+
+  .featured-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+  }
+`;
+
+// Agregar los estilos al documento
+function addStyles() {
+  if (!document.getElementById('lazy-loading-styles')) {
+      const styleSheet = document.createElement('style');
+      styleSheet.id = 'lazy-loading-styles';
+      styleSheet.textContent = styles;
+      document.head.appendChild(styleSheet);
+  }
+}
+
+// Llamar a addStyles cuando el documento esté listo
+document.addEventListener('DOMContentLoaded', addStyles);
 function initializeFeaturedCarousel(posts) {
   const featuredContainer = document.getElementById('featured-container');
   const indicatorsContainer = document.getElementById('featured-indicators');
