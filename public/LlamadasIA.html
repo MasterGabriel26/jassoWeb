@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Llamadas IA - JASSO Company</title>
+</head>
+<body>
+  <h2>Llamadas Inteligentes</h2>
+
+  <ul id="lista-clientes"></ul>
+
+  <button onclick="hacerLlamada()">📞 Llamar al seleccionado</button>
+
+  <script>
+    // Lista de personas (puedes agregar más)
+    const clientes = [
+      {
+        nombre: "Alejandro",
+        telefono: "+528715668371",
+        fecha: 1712176800000 // equivalente a una fecha en long
+      },
+      {
+        nombre: "Gabriela",
+        telefono: "+528715668371",
+        fecha: 1712263200000
+      }
+    ];
+
+    let telefonoSeleccionado = null;
+
+    // Cargar lista en pantalla
+    const lista = document.getElementById("lista-clientes");
+    clientes.forEach((c, i) => {
+      const fecha = new Date(c.fecha).toLocaleString("es-MX");
+      const li = document.createElement("li");
+      li.innerHTML = `<input type="radio" name="cliente" value="${i}"> ${c.nombre} - ${c.telefono} - ${fecha}`;
+      lista.appendChild(li);
+    });
+
+    // Función para llamar
+    async function hacerLlamada() {
+      const seleccionado = document.querySelector('input[name="cliente"]:checked');
+      if (!seleccionado) return alert("Selecciona un cliente");
+
+      const cliente = clientes[seleccionado.value];
+
+      // Aquí usamos fetch para llamar a un backend local
+      const res = await fetch("http://localhost:3000/llamar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ numero: cliente.telefono })
+      });
+
+      const data = await res.json();
+      alert(data.message || "Llamada iniciada.");
+    }
+  </script>
+</body>
+</html>

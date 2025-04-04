@@ -42,6 +42,13 @@ function generateMenu() {
             </a>
         </li>
        
+        <li class="sidebar-item">
+            <a class="sidebar-link" href="/public/LlamadasIA.html">
+                <i class="align-middle" data-feather="phone"></i>
+                <span class="align-middle">Llamadas con IA</span>
+            </a>
+        </li>
+       
           <li class="sidebar-item">
                 <a class="sidebar-link" href="/page-galeria.html">
                     <i class="align-middle" data-feather="image"></i>
